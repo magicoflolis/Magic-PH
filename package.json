@@ -1,0 +1,29 @@
+{
+  "name": "magic-ph",
+  "version": "1.0.0",
+  "description": "Dev for my extension",
+  "main": "MagicPH.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.4.0"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magicoflolis/Magic-PH.git"
+  },
+  "keywords": [
+    "magicph",
+    "ph",
+    "pornhub",
+    "pornhubpremium"
+  ],
+  "author": "Magic Of Lolis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/magicoflolis/Magic-PH/issues"
+  },
+  "homepage": "https://github.com/magicoflolis/Magic-PH#readme"
+}

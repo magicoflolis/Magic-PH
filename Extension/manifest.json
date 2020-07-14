@@ -1,0 +1,63 @@
+{
+  "author": "Magic Of Lolis",
+  "background": {
+    "page": "background.html"
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "img/icon_16.png",
+      "32": "img/icon_32.png"
+    },
+    "default_popup": "options.html",
+    "default_title": "Magic PH dev build"
+  },
+  "content_scripts": [
+    {
+      "all_frames": false,
+      "js": [
+        "/js/MagicPH.js"
+      ],
+      "matches": [
+        "*://*.pornhub.com/*",
+        "*://*.pornhubpremium.com/*"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "content_security_policy": "script-src 'self'; object-src 'self'",
+  "description": "Enhanced pornhub",
+  "icons": {
+    "128": "img/icon_128.png",
+    "16": "img/icon_16.png",
+    "32": "img/icon_32.png",
+    "64": "img/icon_64.png"
+  },
+  "incognito": "split",
+  "manifest_version": 2,
+  "minimum_chrome_version": "51.0",
+  "name": "Magic Pornhub",
+  "options_ui": {
+    "open_in_tab": true,
+    "page": "options.html"
+  },
+  "permissions": [
+    "contextMenus",
+    "privacy",
+    "storage",
+    "tabs",
+    "unlimitedStorage",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+  "short_name": "uBlock\u2080 dev build",
+  "storage": {
+    "managed_schema": "managed_storage.json"
+  },
+  "version": "1.0.1",
+  "web_accessible_resources": [
+    "/web_accessible_resources/*",
+    "/js/*"
+  ]
+}

@@ -1,0 +1,5 @@
+*.vscode
+*.code-workspace
+*.zip
+Examples
+node_modules
