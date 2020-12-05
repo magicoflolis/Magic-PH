@@ -1,0 +1,441 @@
+html,
+body {
+    color: #333 !important;
+    background: #000 !important;
+    background-color: #000 !important;
+    width: 45% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transition: background-color 0.5s;
+    /* display:none !important; */
+}
+
+
+#btnMenuList {
+    position: fixed !important;
+    display: none;
+    /* top: 50em; */
+    top: 90%;
+    /* right: 70%; */
+    left: 90%;
+    width: auto;
+    height: auto;
+    list-style-type: none;
+    white-space: nowrap;
+    font-size: 16px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: 0 none;
+    text-align: left !important;
+    appearance: none;
+    vertical-align: top;
+    font-weight: 700;
+    background: #f90;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    margin: 0 3px !important;
+    background-color: #000;
+    border: 3px solid #f90;
+    color: #f90;
+    line-height: 48px !important;
+    padding: 0 25px;
+    text-decoration-style: solid;
+    text-decoration-color: currentcolor;
+    text-decoration-thickness: auto;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+    .sidenav a {
+        font-size: 18px;
+    }
+}
+.sidenav {
+    height: 100%;
+    /* width: 100%; */
+    width: 250px;
+    display: none;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+.wrapper {
+    transition: margin-left 0.5s !important;
+    padding: 0px !important;
+}
+
+#blur {
+    filter: blur(20px) !important;
+    -webkit-filter: blur(20px) !important;
+}
+#searchSuggestions {
+    background-color: #c6c6c6 !important;
+    color: #f90 !important;
+}
+#searchSuggestions > .label {
+    background-color: #000 !important;
+    color: #f90 !important;
+}
+
+div.pagination3 {
+    /* position: relative; */
+    display: inline-block !important;
+    position: fixed !important;
+    top: 90%;
+    clear: both !important;
+    margin: 20px 0 0 0 !important;
+    overflow: hidden !important;
+    text-align: center !important;
+    width: 100% !important;
+    /* left: 90%; */
+}
+.firstPage {
+    position: fixed !important;
+    top: 90%;
+    clear: both !important;
+    margin: 20px 0 0 0 !important;
+    overflow: hidden !important;
+    text-align: center !important;
+    width: 100% !important;
+    left: 20% !important;
+}
+#mcover {
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: black;
+    color: black;
+}
+
+.sticky {
+    left: 0;
+    top: 0;
+    margin: 0px;
+    padding: 0px;
+    width: 98vw;
+}
+
+.fixed {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 95vw;
+}
+
+.dropdownWrapper {
+    left: 0 !important;
+}
+
+#header #headerContainer #topRightProfileMenu #profileMenuWrapper ul#profileMenuDropdown {
+    margin-left: 0px !important;
+}
+ul#profileMenuDropdown::before {
+    margin-left: 0px !important;
+}
+
+.container {
+    width: inherit !important;
+    height: inherit !important;
+    margin: 10px !important;
+    padding: 0 !important;
+}
+
+#main-container,
+.gridWrapper,
+.frontListingWrapper {
+    width: 95vw !important;
+    height: inherit !important;
+    margin: 10px !important;
+    padding: 0 !important;
+}
+
+.video-wrapper {
+    /* width: 97vw !important; */
+    width: 100% !important;
+    height: inherit !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.video-detailed-info {
+    width: inherit !important;
+}
+
+#relatedVideosCenter {
+    display: grid;
+}
+
+header,
+#header,
+#headerWrapper {
+    width: 98.8vw !important;
+    margin: 0px !important;
+}
+/* #headerWrapper {
+    width: inherit !important;
+    margin: 0px !important;
+} */
+#headerContainer,
+#headerMenuContainer #headerCampaignDiv {
+    width: inherit !important;
+    margin: 0px !important;
+    min-width: auto !important;
+    max-width: 98vw !important;
+    grid-template-rows: auto !important;
+    grid-template-columns: 200px 1fr 0px 200px !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: 1fr !important;
+    grid-gap: 10px !important;
+    justify-items: center !important;
+    align-items: center !important;
+}
+
+.headerSearchWrapper {
+    width: 60vw;
+}
+.pcVideoListItem {
+    display: flex;
+}
+
+ul.videos.user-playlist {
+    display: grid !important;
+    justify-content: center;
+    align-content: center;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(4, 1fr);
+    grid-row-gap: 15px;
+    grid-column-gap: 10px;
+    padding: 20px 10px;
+}
+
+#player {
+    height: 86vh !important;
+}
+
+.mhp1138_autoplay {
+    display: initial !important;
+}
+
+/* .active {
+    display: flex !important;
+} */
+
+#vb {
+    display: none;
+}
+
+#vr {
+    display: none;
+}
+
+.popularSearches {
+    display: none !important;
+}
+
+.innerDropdown .headerSubMenu {
+    display: none !important;
+}
+
+#loadMoreRelatedVideosCenter {
+    display: none !important;
+}
+.innerDropdown .community .titles {
+    display: none !important;
+}
+
+/* .mhp1138_upsell {
+    display: none !important;
+}
+
+#pornportal-wrapper {
+    display: none !important;
+}
+
+.livesex {
+    display: none !important;
+}
+
+.realsex {
+    display: none !important;
+}
+
+.footerContentWrapper {
+    size: 0px !important;
+    display: none !important;
+}
+
+#welcome {
+    display: none !important;
+} */
+
+button.tooltipTrig.open-playlist-link.playlist-trigger {
+    display: none !important;
+}
+
+.trendingWrapper {
+    display: none !important;
+}
+
+.abovePlayer {
+    display: none !important;
+}
+
+.fanclub-info-pop {
+    display: none !important;
+}
+
+.js-paidDownload {
+    display: none !important;
+}
+
+#under-player-playlists {
+    display: none !important;
+}
+
+.alpha.videoBox.videoblock.js-pop.pcVideoListItem {
+    display: none !important;
+}
+
+#p2vVideosVPage {
+    display: none !important;
+}
+
+.favorites-message {
+    display: none !important;
+}
+
+.streamatesModelsContainer {
+    display: none !important;
+}
+
+.active.fanclub-info-pop {
+    display: none !important;
+}
+
+#hd-rightColVideoPage {
+    display: none !important;
+}
+
+.section-relateds {
+    display: none !important;
+}
+
+/* [href^="javascript:void(0)"] {
+    display: none !important;
+} */
+
+.subscribers-count {
+    display: none !important;
+}
+
+#under-player-comments {
+    display: none !important;
+}
+
+[data-tab="jump-to-tab"] {
+    display: none !important;
+}
+
+#trendingChannelsSlider {
+    display: none !important;
+}
+
+.featuredNetwork > .sectionWrapperPremium {
+    display: none !important;
+}
+
+.featuredChannel {
+    display: none !important;
+}
+
+.sectionCarousel.sectionWrapper {
+    display: none !important;
+}
+
+/* #topBannerSlider {
+    display: none !important;
+}
+
+#hotVideosSection>li.sniperModeEngaged {
+    display: none !important;
+} */
+
+[muted=""] {
+    display: none !important;
+}
+
+#htcheck {
+    display: none !important;
+}
+
+ul.discover:after {
+    content: "";
+    display: none !important;
+    margin-top: 0px !important;
+    width: 0px !important;
+    height: 0px !important;
+}
+
+.innerHeaderSubMenu:nth-child(1) {
+    display: none !important;
+    margin-left: 0px !important;
+}
+
+.innerHeaderSubMenu:nth-child(2) {
+    display: none !important;
+    margin-left: 0px !important;
+}
+
+.innerHeaderSubMenu:nth-child(3) {
+    display: none !important;
+    margin-left: 0px !important;
+}
+
+.innerHeaderSubMenu:nth-child(4) {
+    display: none !important;
+    margin-left: 0px !important;
+}
+
+li .wideDropdown.categories .innerDropdown .leftPanel p {
+    display: none !important;
+}
+
+.backgroundImg {
+    display: none !important;
+}
+
+/* #mostRecentVideosSection,
+#hotVideosSection,
+#mostViewedPerCountry {
+    display: none !important;
+}
+#recommended-category-videos
+#recommended-videos */

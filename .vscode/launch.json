@@ -1,0 +1,50 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "compounds": [
+        {
+          "name": "Attach/Launch",
+          "configurations": ["Firefox Attach", "Launch WebExtension"]
+        }
+      ],
+    "configurations": [
+        {
+            "name": "Firefox Attach",
+            "type": "firefox",
+            "request": "attach",
+        },
+        {
+            "name": "Launch WebExtension",
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "reloadOnAttach": true,
+            "keepProfileChanges": true,
+            "addonPath": "${workspaceFolder}\\src"
+        },
+        {
+            "name": "Online Site",
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "reloadOnAttach": true,
+            "clearConsoleOnReload": false,
+            "keepProfileChanges": false,
+            "addonPath": "${workspaceFolder}\\src",
+            "internalConsoleOptions": "openOnFirstSessionStart",
+            "url": "https://www.pornhub.com",
+            "webRoot": "https://www.pornhub.com/"
+        },
+        {
+            "name": "Offline Site",
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "keepProfileChanges": true,
+            "addonPath": "${workspaceFolder}\\src",
+            "file": "${workspaceFolder}\\Notes\\site\\offline.html"
+        }
+    ]
+}

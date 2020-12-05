@@ -1,0 +1,72 @@
+{
+    "name": "Magic Pornhub",
+    "version": "1.0.2",
+    "background": {
+        "page": "background.html"
+    },
+    "browser_action": {
+      "default_icon": {
+        "16": "img/icon_16.png",
+        "32": "img/icon_32.png"
+      },
+      "default_popup": "foreground.html",
+      "default_title": "Magic PH"
+    },
+    "options_ui": {
+		"page": "options.html",
+		"open_in_tab": true
+	},
+    "content_scripts": [
+      {
+        "all_frames": true,
+        "js": [
+            "/js/magicinject.js"
+        ],
+        "matches": [
+          "https://*.pornhub.com/*",
+          "https://*.pornhubpremium.com/*"
+        ],
+        "run_at": "document_start"
+      },
+      {
+        "all_frames": false,
+        "css": [
+            "/css/mod.css"
+        ],
+        "js": [
+            "/js/logo.js"
+        ],
+        "matches": [
+          "https://*.pornhub.com/*",
+          "https://*.pornhubpremium.com/*"
+        ],
+        "run_at": "document_end"
+      }
+    ],
+    "content_security_policy": "script-src 'self'; object-src 'self'",
+    "icons": {
+      "128": "img/icon_128.png",
+      "16": "img/icon_16.png",
+      "32": "img/icon_32.png",
+      "64": "img/icon_64.png"
+    },
+    "manifest_version": 2,
+    "minimum_chrome_version": "51.0",
+    "permissions": [
+      "tabs",
+      "storage",
+      "unlimitedStorage",
+      "<all_urls>"
+    ],
+    "storage": {
+      "managed_schema": "managed_storage.json"
+    },
+    "web_accessible_resources": [
+      "*.js",
+      "*.png"
+    ],
+    "homepage_url": "https://github.com/magicoflolis/Magic-PH",
+    "author": "Magic Of Lolis",
+    "description": "Enhanced pornhub",
+    "commands": {}
+  }

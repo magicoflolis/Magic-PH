@@ -1,29 +1,36 @@
 {
-  "name": "magic-ph",
-  "version": "1.0.0",
-  "description": "Dev for my extension",
-  "main": "MagicPH.js",
-  "dependencies": {},
-  "devDependencies": {
-    "eslint": "^7.4.0"
-  },
-  "scripts": {
-    "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/magicoflolis/Magic-PH.git"
-  },
-  "keywords": [
-    "magicph",
-    "ph",
-    "pornhub",
-    "pornhubpremium"
-  ],
-  "author": "Magic Of Lolis",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/magicoflolis/Magic-PH/issues"
-  },
-  "homepage": "https://github.com/magicoflolis/Magic-PH#readme"
+    "name": "magic-ph",
+    "version": "1.0.0",
+    "description": "Dev for my extension",
+    "private": true,
+    "devDependencies": {
+        "@types/chrome": "^0.0.126",
+        "@types/firefox-webext-browser": "^82.0.0",
+        "@types/jquery": ">=3.5.4",
+        "eslint": ">=7.11.0",
+        "eslint-config-prettier": "^6.15.0",
+        "jquery": "^3.5.1",
+        "prettier": "^2.2.1",
+        "web-ext": ">=5.3.0"
+    },
+    "scripts": {
+        "start:Browser": "web-ext run --keep-profile-changes --no-reload --bc --start-url www.pornhub.com -p debug -s ./src/",
+        "start:Offline": "web-ext run --start-url ./offline.html -s ./src/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/magicoflolis/Magic-PH.git"
+    },
+    "keywords": [
+        "magicph",
+        "ph",
+        "pornhub",
+        "pornhubpremium"
+    ],
+    "author": "Magic Of Lolis",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/magicoflolis/Magic-PH/issues"
+    },
+    "homepage": "https://github.com/magicoflolis/Magic-PH#readme"
 }

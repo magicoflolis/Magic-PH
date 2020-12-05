@@ -1,0 +1,7 @@
+#mcover {
+    position: fixed !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: white;
+    color: black;
+}
