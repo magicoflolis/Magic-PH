@@ -1,36 +1,38 @@
 {
-    "name": "magic-ph",
-    "version": "1.0.0",
-    "description": "Dev for my extension",
-    "private": true,
-    "devDependencies": {
-        "@types/chrome": "^0.0.126",
-        "@types/firefox-webext-browser": "^82.0.0",
-        "@types/jquery": ">=3.5.4",
-        "eslint": ">=7.11.0",
-        "eslint-config-prettier": "^6.15.0",
-        "jquery": "^3.5.1",
-        "prettier": "^2.2.1",
-        "web-ext": ">=5.3.0"
-    },
-    "scripts": {
-        "start:Browser": "web-ext run --keep-profile-changes --no-reload --bc --start-url www.pornhub.com -p debug -s ./src/",
-        "start:Offline": "web-ext run --start-url ./offline.html -s ./src/"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/magicoflolis/Magic-PH.git"
-    },
-    "keywords": [
-        "magicph",
-        "ph",
-        "pornhub",
-        "pornhubpremium"
-    ],
-    "author": "Magic Of Lolis",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/magicoflolis/Magic-PH/issues"
-    },
-    "homepage": "https://github.com/magicoflolis/Magic-PH#readme"
+  "name": "magicph",
+  "version": "1.0.0",
+  "description": "Enhances your porn viewing experience. Quick, clean, and easy.",
+  "devDependencies": {
+    "@types/chrome": "^0.0.126",
+    "@types/firefox-webext-browser": "^82.0.0",
+    "@types/jquery": ">=3.5.4",
+    "jquery": ">=3.5.1",
+    "stylelint": "^13.8.0",
+    "web-ext": ">=5.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magicoflolis/Magic-PH.git"
+  },
+  "webExt": {
+    "sourceDir": "./src/",
+    "artifactsDir": "./dist/"
+  },
+  "scripts": {
+    "start:firefox": "web-ext run --arg='-devtools' -t firefox-desktop -p debug",
+    "start:chrome": "web-ext run --chromium-binary='./chrome/ungoogled-chromium-portable.exe' -t chromium --chromium-profile='./chrome/data' --keep-profile-changes",
+    "build": "web-ext build --as-needed -o -s ./src -a ./dist"
+  },
+  "keywords": [
+    "magicph",
+    "ph",
+    "pornhub",
+    "pornhubpremium"
+  ],
+  "author": "Magic Of Lolis",
+  "license": "GNU",
+  "bugs": {
+    "url": "https://github.com/magicoflolis/Magic-PH/issues"
+  },
+  "homepage": "https://github.com/magicoflolis/Magic-PH#readme"
 }

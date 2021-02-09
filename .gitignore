@@ -1,8 +1,9 @@
 *.bak
 *.code-workspace
-/dist/build/
-/tmp/
 node_modules
-builds
+dist
 Notes
 /Notes/
+.vscode
+chrome
+/chrome/

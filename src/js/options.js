@@ -1,36 +1,36 @@
-"use strict";
-let $ = window.$,
-    chrome = browser;
-$("input").click(() => {
-    let setting = {
-        blurimg: false,
-        thumbnails: true,
-        comments: false,
-        autoscroll: true,
-        topbutton: true,
-        altplayers: false,
-    };
-    setting[$(this).attr("id")] = $(this).get(0).checked;
-    chrome.storage.local.set(setting);
-});
 
-function restoreOptions() {
-    // For each checkbox, see if stored value of setting has changed
-    $("input").each(() => {
-        let id = $(this).attr("id");
-        chrome.storage.local.get(id, (setting) => {
-            if (Object.keys(setting).length) {
-                $("#" + id).get(0).checked = setting[id]
-                    ? "checked"
-                    : undefined;
-            } else {
-                // This block runs only the first time the settings page is opened.
-                let cfg = {};
-                cfg[id] = true;
-                chrome.storage.local.set(cfg);
-            }
-        });
-    });
-}
+browser.storage.local.get((storedConfig) => {
+let $form = document.querySelector('form'),
+config = {
+    altplayers: false,
+    autoscroll: true,
+    blurimg: false,
+    comments: true,
+    topbutton: false,
+    fasttravel: true,
+    header1: 'separate',
+    ...storedConfig
+  }
 
-document.addEventListener("DOMContentLoaded", restoreOptions);
+  for (let prop in config) {
+    if (prop in $form.elements) {
+      if ($form.elements[prop].type == 'checkbox') {
+        $form.elements[prop].checked = config[prop]
+      }
+      else {
+        $form.elements[prop].value = config[prop]
+      }
+    }
+  }
+
+  $form.addEventListener('change', (e) => {
+    let $el = (/** @type {HTMLInputElement} */ (e.target))
+    if ($el.type == 'checkbox') {
+      config[$el.name] = $el.checked
+    }
+    else {
+      config[$el.name] = $el.value
+    }
+    browser.storage.local.set(config)
+  })
+})

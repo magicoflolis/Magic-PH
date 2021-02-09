@@ -1,20 +1,21 @@
 module.exports = {
     "env": {
         "browser": true,
+        "chrome": false,
         "es2020": true,
-        "node": true
+        "node": false,
+        "mozilla": true
     },
     "extends": [
-        "eslint:recommended",
-        "prettier"
+        "eslint:recommended"
     ],
     "parserOptions": {
         "ecmaVersion": 11,
         "sourceType": "module",
-        ecmaFeatures: {
-            arrowFunctions: true,
-            modules: true
+        "ecmaFeatures": {
+            "arrowFunctions": true,
+            "modules": true
         }
     },
-    "rules": {}
+    "rules": { }
 };
