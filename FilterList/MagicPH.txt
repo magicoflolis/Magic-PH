@@ -1,0 +1,48 @@
+! Title: MagicPH Filter
+! Expires: 4 days
+! Description: Annoyances and removes most ads on Pornhub/PornhubPremium
+! Version: 1.0.0
+! Author: MagicOfLolis
+! Homepage: https://github.com/magicoflolis/Magic-PH
+!
+! -----------------Allowed-----------------!
+@@||ss.phncdn.com
+@@||phncdn.com^$image,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
+@@||*/login$domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
+@@||*/signup$domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
+@@||*/create_account_select$domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
+
+
+! -----------------General-----------------!
+$websocket,domain=pornhub.*|pornhubthbh7ap3u.onion
+||static.trafficjunky.com$all,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
+||*smallimg.phncdn.com^$image,redirect=noop.gif,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
+||phncdn.com/*/networkbar*.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+||phncdn.com/*/promo-banner.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+||phncdn.com/*front*^$script,css,important,domain=pornhub.*
+||phncdn.com/*/premium/premium-modals.*$script,css,important,domain=pornhub.*
+||pornhub*/front/menu_livesex*$document,xhr,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+||pornhub*/_xa/^$document,xhr,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+pornhub.*,redtube.*,pornhubthbh7ap3u.onion###main-container > .abovePlayer
+pornhub.*,pornhubpremium.*##head > stylesheet
+pornhub.*,pornhubpremium.*###welcome
+pornhub.*,pornhubpremium.*##.footerContentWrapper
+pornhub.*,pornhubpremium.*##.tooltipPromo
+pornhub.*,pornhubpremium.*##.livesex
+pornhub.*,pornhubpremium.*###popsByTrafficJunky
+pornhub.*,pornhubpremium.*##.headerBtnsWrapper
+pornhub.*,pornhubpremium.*##.pornportal-wrapper
+pornhub.*,pornhubpremium.*##.recommendedPornstarsWrapper
+pornhub.*,pornhubpremium.*##.recommendedCategoriesWrapper
+
+! -----------------Pornhub-----------------!
+pornhub.*##[rel="nofollow"]:nth-ancestor(1)
+pornhub.*##.leftPanel > p
+pornhub.*##.leftPanel > .popularSearches
+pornhub.*##.headerSubMenu > .trendingWrapper
+pornhub.*##.headerSubMenu > .popularFilterPhotos
+pornhub.*##.headerSubMenu > .innerHeaderFilters
+pornhub.*###under-player-playlists
+
+! -----------------Premium-----------------!
+||portalcdn.com$important

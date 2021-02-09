@@ -1,12 +1,9 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "compounds": [
         {
           "name": "Attach/Launch",
-          "configurations": ["Firefox Attach", "Launch WebExtension"]
+          "configurations": ["Firefox Attach", "Launch WebExt"]
         }
       ],
     "configurations": [
@@ -16,12 +13,13 @@
             "request": "attach",
         },
         {
-            "name": "Launch WebExtension",
+            "name": "Launch WebExt",
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
             "reloadOnAttach": true,
             "keepProfileChanges": true,
+            "clearConsoleOnReload": false,
             "addonPath": "${workspaceFolder}\\src"
         },
         {
