@@ -1,7 +1,6 @@
 html,
 body {
   width: 45% !important;
-  height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
 }
@@ -11,7 +10,7 @@ body {
   z-index: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
 }
 
 .pagination3 > ul {
@@ -51,9 +50,9 @@ body {
   border-radius: 5px;
   -webkit-border-radius: 5px;
   margin: 0 3px !important;
-  background-color: #000;
   border: 3px solid #f90;
   color: #f90;
+  background-color: #000;
   line-height: 48px !important;
   padding: 0 25px;
   -webkit-text-decoration-style: solid;
@@ -64,7 +63,8 @@ body {
 }
 .magicTop:hover {
   background: #464646;
-  text-decoration: 0;
+  -webkit-text-decoration: 0;
+          text-decoration: 0;
 }
 
 .sidenav {
@@ -82,7 +82,7 @@ body {
   padding-top: 10px;
 }
 
-#magicNav {
+.sidenav > a {
   z-index: 5;
   position: relative;
   padding: 8px 8px 8px 32px;
@@ -91,7 +91,7 @@ body {
   color: #fff;
   display: block;
 }
-#magicNav:hover {
+.sidenav > a:hover {
   cursor: pointer;
   background-color: #000;
   border: 2px solid #f90;
@@ -123,36 +123,47 @@ body {
   background-origin: padding-box;
   background-clip: border-box;
 }
-
-.magic-pop {
-  transition: top 500ms ease-in-out 200ms;
-  -moz-transition: top 500ms ease-in-out 200ms;
-  -webkit-transition: top 500ms ease-in-out 200ms;
-  background-color: #000;
-  border: 2px solid #f90;
-  height: 95%;
-  width: 76%;
-  position: fixed;
-  z-index: 10;
-  top: 100%;
-  left: 20%;
-  overflow-x: auto;
-}
-
 .magic-popup {
   transition: top 200ms ease-in-out 200ms;
   -moz-transition: top 200ms ease-in-out 200ms;
   -webkit-transition: top 200ms ease-in-out 200ms;
   background: transparent;
   height: auto;
-  width: 76%;
+  width: -moz-available;
   position: fixed;
   z-index: 10;
   top: 100%;
+  overflow-x: auto;
+}
+.favorites > .wrap {
+  background-color: black;
+  max-width: max-content;
+  width: 100%;
+  height: 100%;
+}
+.favorites > .wrap > .phimage {
+  cursor: pointer;
+  width: 99.7% !important;
+  height: auto;
+  display: block;
+}
+.favorites > .wrap > .title {
+  font-size: 17px;
+font-weight: 700;
+color: #fff;
+word-break: break-word;
+word-wrap: break-word;
+}
+.magic-popup > #categoriesListSection {
+  color: #f90;
+  background-color: #000;
+  border: 2px solid #f90;
+  height: 95%;
+  position: fixed;
+  z-index: 10;
   left: 20%;
   overflow-x: auto;
 }
-
 .magic-popup > .sortBy {
   margin: 1%;
 }
@@ -193,8 +204,8 @@ body {
   width: auto !important;
   height: auto !important;
 }
-#hd-leftColVideoPage {
-  width: 100% !important;
+[data-title="Jump to..."] {
+  cursor: pointer !important;
 }
 #relatedVideosCenter {
   display: grid;
@@ -307,10 +318,13 @@ ul.videos.user-playlist {
   display: initial !important;
 }
 
+.mph1,
+.mph2,
 #vb,
 #vr,
 #under-player-comments {
   display: none;
+  color: #4080fb;
 }
 
 
@@ -332,10 +346,10 @@ ul.videos.user-playlist {
   width: 0px !important;
   height: 0px !important;
 }
-
 .blur {
   transition: -webkit-filter 250ms ease-in-out 200ms;
   transition: filter 250ms ease-in-out 200ms;
+  transition: filter 250ms ease-in-out 200ms, -webkit-filter 250ms ease-in-out 200ms;
   transition: filter 250ms ease-in-out 200ms,
     -webkit-filter 250ms ease-in-out 200ms;
   transition: filter 250ms ease-in-out 200ms,
@@ -354,7 +368,7 @@ ul.videos.user-playlist {
   width: 96vw !important;
 }
 
-.wrap > .phimage {
+li > .wrap > .phimage {
   max-width: -webkit-max-content !important;
   max-width: -moz-max-content !important;
   max-width: max-content !important;

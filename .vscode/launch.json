@@ -3,27 +3,28 @@
     "compounds": [
         {
           "name": "Attach/Launch",
-          "configurations": ["Firefox Attach", "Launch WebExt"]
+          "configurations": ["Attach:Firefox", "Start:Firefox"]
         }
       ],
     "configurations": [
         {
-            "name": "Firefox Attach",
+            "name": "Attach:Firefox",
             "type": "firefox",
             "request": "attach",
         },
         {
-            "name": "Launch WebExt",
+            "name": "Start:Firefox",
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
             "reloadOnAttach": true,
+            "reloadOnChange": ["${workspaceFolder}/css/mod.css","${workspaceFolder}/js/*.js"],
             "keepProfileChanges": true,
-            "clearConsoleOnReload": false,
+            "clearConsoleOnReload": true,
             "addonPath": "${workspaceFolder}\\src"
         },
         {
-            "name": "Online Site",
+            "name": "PH Site",
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
@@ -34,15 +35,6 @@
             "internalConsoleOptions": "openOnFirstSessionStart",
             "url": "https://www.pornhub.com",
             "webRoot": "https://www.pornhub.com/"
-        },
-        {
-            "name": "Offline Site",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "keepProfileChanges": true,
-            "addonPath": "${workspaceFolder}\\src",
-            "file": "${workspaceFolder}\\Notes\\site\\offline.html"
         }
     ]
 }

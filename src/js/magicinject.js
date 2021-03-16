@@ -1,7 +1,5 @@
 "use strict";
-
-const cfg = {},
-  check = {},
+const check = {},
   jsname = "[Init]",
   debug = "[Init Debug]",
   cache = "2021020802",
@@ -13,14 +11,13 @@ const cfg = {},
   logo = document.createElement("a"),
   pop = document.createElement("div"),
   navbackground = document.createElement("div");
-let callback = () => {
+function callback() {
     document.head.prepend(s);
     const sel = document.querySelector(".jump-to-tab > .seconds"),
       wrapper = document.querySelector(".wrapper"),
       jump = document.querySelector('[data-tab="jump-to-tab"]'),
-      jptrigger = document.getElementsByClassName("js-triggerJumpCat"),
-      favs = document.createElement("script");
-    logo.onclick = async () => {
+      jptrigger = document.getElementsByClassName("js-triggerJumpCat");
+    logo.onclick = () => {
       let w = document.querySelector(".wrapper"),
         s = document.querySelector(".sidenav");
       navbackground.style.width = "100%";
@@ -29,49 +26,55 @@ let callback = () => {
       pop.style.top = "100%";
     };
     check.gay = document.querySelector(".gayLayout") ? true : false;
-    // Prevents duplicate
-    cfg.logo = () => {
-      if (check.gay) {
-        logo.innerHTML =
-          '<img src="https://ci.phncdn.com/www-static/images/pornhub_logo_gay.png?cache=2020120703">';
-        document.querySelector(".pornhub_logo_gay").appendChild(logo);
-      } else {
-        logo.innerHTML =
-          '<img src="https://di.phncdn.com/www-static/images/pornhub_logo_straight.png?cache=2020120703">';
-        document.querySelector(".pornhub_logo").appendChild(logo);
-      }
+    const cfg = {
+      logo: () => {
+        // Prevents duplicate
+        if (check.gay) {
+          logo.innerHTML =
+            '<img src="https://ci.phncdn.com/www-static/images/pornhub_logo_gay.png?cache=2020120703">';
+          document.querySelector("#headerContainer > .logoGay").appendChild(logo);
+        } else {
+          logo.innerHTML =
+            '<img src="https://di.phncdn.com/www-static/images/pornhub_logo_straight.png?cache=2020120703">';
+            document.querySelector("#headerContainer > .logo").appendChild(logo);
+        }
+      },
+      nav: () => {
+        let w = document.querySelector(".wrapper"),
+          s = document.querySelector(".sidenav");
+        w.className = "wrapper";
+        s.style = "";
+        pop.style.top = "100%";
+        navbackground.style.width = "0%";
+      },
+      jump: () => {
+        // Opens Jump to
+        jump.onclick = async (e) => {
+          let nav = document.querySelector(".navbackground"),
+          cat = document.querySelector(".magic-popup > #categoriesListSection"),
+          f = document.querySelector(".magic-popup > .favorites"),
+          j = document.querySelector(".magic-popup > .sortBy");
+          cat ? cat.style.display = "none" : false;
+          f ? f.style.display = "none" : false;
+          pop.appendChild(sel);
+          pop.style.top = "25%";
+          nav.setAttribute("style", "width:100%");
+          j.style.display = '';
+          e.preventDefault();
+        };
+        // Trigger & close
+        for (let i = 0; i < jptrigger.length; i++) {
+          jptrigger[i].addEventListener("click", () => {
+            pop.setAttribute("style", "");
+            navbackground.setAttribute("style", "");
+          });
+        }
+      },
     }
     document.querySelector(".magiclogo") ?? cfg.logo();
-    // favs.innerHTML = 'document.querySelector(\'.magic5.favorite\').onclick=()=>{let vidURL=document.location.href,vidThumb=document.querySelector("#videoElementPoster").src,vidTitle=document.querySelector("h1.title span").textContent;console.log(`${vidThumb} ${vidTitle} ${vidURL}`);}';
+    // favs.innerHTML = '';
     navbackground.onclick = async () => {
-      cfg.jump ? cfg.nav() : false;
-    };
-    cfg.nav = () => {
-      let w = document.querySelector(".wrapper"),
-        s = document.querySelector(".sidenav");
-      w.className = "wrapper";
-      s.style = "";
-      pop.style.top = "100%";
-      navbackground.style.width = "0%";
-    };
-    cfg.jump = () => {
-      // Opens Jump to
-      jump.onclick = async (e) => {
-        let nav = document.querySelector(".navbackground");
-        pop.style.top = "25%";
-        pop.appendChild(sel);
-        nav.setAttribute("style", "width:100%");
-        e.preventDefault();
-      };
-      // Trigger & close
-      let i;
-      for (i = 0; i < jptrigger.length; i++) {
-        jptrigger[i].addEventListener("click", () => {
-          pop.setAttribute("style", "");
-          navbackground.setAttribute("style", "");
-        });
-      }
-      return true;
+      return cfg.jump ? cfg.nav() : false;
     };
     wrapper.before(pop);
     wrapper.after(navbackground);
@@ -89,11 +92,16 @@ logo.type = "button";
 logo.className = "magiclogo";
 pop.className = "magic-popup";
 navbackground.className = "navbackground";
-// window.addEventListener("load", () => {
-//   document.head.prepend(s);
-//   callback();
-// });
 document.readyState === "complete" ||
-(document.readyState !== "loading" && !document.documentElement.doScroll)
-  ? callback()
+(document.readyState !== "loading" && !document.documentElement.doScroll) ? callback()
   : document.addEventListener("DOMContentLoaded", callback);
+
+  // const init = { subtree: true, characterData: true, childList: true },
+  //   target = document.getElementById('react-root') ?? console.log(`[MoL] can't find ${target}`),
+  //   callback = (_mutations, observer) => {
+  //       observer.disconnect()
+  //       injectTranslationButton()
+  //       //injectMenu()
+  //       observer.observe(target, init)
+  //   };
+  //   new MutationObserver(callback).observe(target, init)

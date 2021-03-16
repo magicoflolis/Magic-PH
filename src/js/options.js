@@ -1,13 +1,13 @@
 
-browser.storage.local.get((storedConfig) => {
-let $form = document.querySelector('form'),
+browser.storage.local.get(storedConfig => {
+$form = document.querySelector('form') ?? console.log(`[MagicPH] can't find ${target}`),
 config = {
     altplayers: false,
     autoscroll: true,
     blurimg: false,
-    comments: true,
-    topbutton: false,
-    fasttravel: true,
+    comments: false,
+    topbutton: true,
+    sidebar: true,
     header1: 'separate',
     ...storedConfig
   }
@@ -31,6 +31,22 @@ config = {
     else {
       config[$el.name] = $el.value
     }
-    browser.storage.local.set(config)
+    chrome.storage.local.set(config)
+    console.log("Clicked");
   })
 })
+
+
+
+
+
+// config = {
+//   altplayers: false,
+//   autoscroll: true,
+//   blurimg: false,
+//   comments: true,
+//   topbutton: false,
+//   fasttravel: true,
+//   header1: 'separate',
+//   ...storedConfig
+// }

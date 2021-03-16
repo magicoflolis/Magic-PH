@@ -35,11 +35,28 @@
       "exclude_matches": [
         "https://www.pornhub.com/login",
         "https://www.pornhub.com/create_account_select",
+        "https://www.pornhub.com/user/edit",
+        "https://www.pornhubpremium.com/user/edit",
         "https://www.pornhubpremium.com/gift",
         "https://www.pornhubpremium.com/login",
         "https://www.pornhubpremium.com/create_account_select"
       ],
       "run_at": "document_start"
+    },
+    {
+      "all_frames": true,
+      "js": ["/js/sync.js"],
+      "matches": ["https://*.pornhub.com/*", "https://*.pornhubpremium.com/*"],
+      "exclude_matches": [
+        "https://www.pornhub.com/login",
+        "https://www.pornhub.com/create_account_select",
+        "https://www.pornhub.com/user/edit",
+        "https://www.pornhubpremium.com/user/edit",
+        "https://www.pornhubpremium.com/gift",
+        "https://www.pornhubpremium.com/login",
+        "https://www.pornhubpremium.com/create_account_select"
+      ],
+      "run_at": "document_end"
     }
   ],
   "content_security_policy": "script-src 'self'; object-src 'self'",

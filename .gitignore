@@ -1,7 +1,7 @@
 *.bak
 *.code-workspace
+*.env
 node_modules
-dist
 Notes
 /Notes/
 .vscode

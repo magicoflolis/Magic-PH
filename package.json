@@ -20,8 +20,8 @@
   },
   "scripts": {
     "start:firefox": "web-ext run --arg='-devtools' -t firefox-desktop -p debug",
-    "start:chrome": "web-ext run --chromium-binary='./chrome/ungoogled-chromium-portable.exe' -t chromium --chromium-profile='./chrome/data' --keep-profile-changes",
-    "build": "web-ext build --as-needed -o -s ./src -a ./dist"
+    "start:chrome": "web-ext run --chromium-binary='./chrome/chrlauncher.exe' -t chromium --chromium-profile='./chrome/profile' --keep-profile-changes",
+    "build:firefox": "web-ext build --as-needed -o"
   },
   "keywords": [
     "magicph",
