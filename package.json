@@ -2,37 +2,65 @@
   "name": "magicph",
   "version": "1.0.0",
   "description": "Enhances your porn viewing experience. Quick, clean, and easy.",
+  "author": "Magic Of Lolis <magicoflolis@gmail.com> (https://github.com/magicoflolis/Magic-PH)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/magicoflolis/Magic-PH/issues"
+  },
+  "homepage": "https://github.com/magicoflolis/Magic-PH#readme",
   "devDependencies": {
-    "@types/chrome": "^0.0.126",
-    "@types/firefox-webext-browser": "^82.0.0",
-    "@types/jquery": ">=3.5.4",
-    "jquery": ">=3.5.1",
-    "stylelint": "^13.8.0",
-    "web-ext": ">=5.3.0"
+    "@babel/core": "^7.13.13",
+    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
+    "@babel/preset-env": "^7.13.12",
+    "@types/chrome": "latest",
+    "@types/firefox-webext-browser": "latest",
+    "@types/jquery": "^3.5.5",
+    "babel-loader": "^8.2.2",
+    "copy-webpack-plugin": "^8.1.0",
+    "eslint": "^7.21.0",
+    "html-webpack-plugin": "^5.3.1",
+    "jquery": ">=3.6.0",
+    "stylelint": "^13.12.0",
+    "url-loader": "^4.1.1",
+    "web-ext": "latest",
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.5.0"
+  },
+  "dependencies": {
+    "css-loader": "^5.2.0",
+    "sass": "^1.32.8",
+    "sass-loader": "^11.0.1",
+    "style-loader": "^2.0.0",
+    "web-ext-native-msg": "^4.9.2"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/magicoflolis/Magic-PH.git"
   },
   "webExt": {
-    "sourceDir": "./src/",
-    "artifactsDir": "./dist/"
+    "sourceDir": "./dist/",
+    "artifactsDir": "./build/"
   },
   "scripts": {
-    "start:firefox": "web-ext run --arg='-devtools' -t firefox-desktop -p debug",
-    "start:chrome": "web-ext run --chromium-binary='./chrome/chrlauncher.exe' -t chromium --chromium-profile='./chrome/profile' --keep-profile-changes",
-    "build:firefox": "web-ext build --as-needed -o"
+    "dev:build": "webpack --config=webpack.dev.js",
+    "web-ext:build": "web-ext build --as-needed -o",
+    "start:chrome": "web-ext run --chromium-binary='./chrome/chrlauncher.exe' -t chromium --chromium-profile='./chrome/profile' --keep-profile-changes"
+  },
+  "private": true,
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2020": true,
+      "mozilla": true,
+      "chrome": true,
+      "firefox": true,
+      "node": false
+    }
   },
   "keywords": [
     "magicph",
     "ph",
     "pornhub",
     "pornhubpremium"
-  ],
-  "author": "Magic Of Lolis",
-  "license": "GNU",
-  "bugs": {
-    "url": "https://github.com/magicoflolis/Magic-PH/issues"
-  },
-  "homepage": "https://github.com/magicoflolis/Magic-PH#readme"
+  ]
 }

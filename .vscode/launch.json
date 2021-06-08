@@ -19,22 +19,20 @@
             "reAttach": true,
             "reloadOnAttach": true,
             "reloadOnChange": ["${workspaceFolder}/css/mod.css","${workspaceFolder}/js/*.js"],
-            "keepProfileChanges": true,
+            "keepProfileChanges": false,
             "clearConsoleOnReload": true,
             "addonPath": "${workspaceFolder}\\src"
         },
         {
-            "name": "PH Site",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "reloadOnAttach": true,
-            "clearConsoleOnReload": false,
-            "keepProfileChanges": false,
-            "addonPath": "${workspaceFolder}\\src",
-            "internalConsoleOptions": "openOnFirstSessionStart",
-            "url": "https://www.pornhub.com",
-            "webRoot": "https://www.pornhub.com/"
-        }
+          "name": "SF",
+          "type": "firefox",
+          "request": "launch",
+          "reAttach": true,
+          "reloadOnAttach": true,
+          "reloadOnChange": ["${workspaceFolder}/css/mod.css","${workspaceFolder}/js/*.js"],
+          "keepProfileChanges": false,
+          "clearConsoleOnReload": true,
+          "addonPath": "${workspaceFolder}\\dist"
+      }
     ]
 }

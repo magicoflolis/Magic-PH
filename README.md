@@ -1,13 +1,22 @@
-# **MagicPH is still under development!** [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/magicoflolis/Magic-PH/blob/master/LICENSE.txt)
+# MagicPH
+
+**STILL UNDER DEVELOPMENT**
 
 **Enhances your porn viewing experience. Quick, clean, and easy.**
 
 *Currently my [FilterList](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/FilterList/MagicPH.txt) + [uBlock Origin](https://github.com/gorhill/uBlock) are **required!***
 
-* [About](#about)
-* [Installation](#installation)
-  * [Chrome](#chrome)
-  * [Firefox](#firefox)
+<details>
+ <summary><strong>Table of Contents</strong> (click to expand)
+</summary>
+
+- [MagicPH](#magicph)
+  - [About](#about)
+  - [Installation](#installation)
+    - [Chrome](#chrome)
+    - [Firefox](#firefox)
+  - [Build Setup](#build-setup)
+  </details>
 
 ## About
 

@@ -1,0 +1,22 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true,
+    "firefox": true,
+    "node": false
+  },
+  "extends": [
+    "eslint:all"
+  ],
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": false,
+    "ecmaFeatures": {
+      "globalReturn": true,
+      "arrowFunctions": true,
+      "modules": true
+    },
+    "ecmaVersion": 12
+  },
+  "rules": {}
+}

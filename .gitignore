@@ -1,6 +1,7 @@
 *.bak
 *.code-workspace
 *.env
+*.web-extension-id
 node_modules
 Notes
 /Notes/

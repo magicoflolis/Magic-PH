@@ -17,32 +17,36 @@
 $websocket,domain=pornhub.*|pornhubthbh7ap3u.onion
 ||static.trafficjunky.com$all,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
 ||*smallimg.phncdn.com^$image,redirect=noop.gif,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
-||phncdn.com/*/networkbar*.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
-||phncdn.com/*/promo-banner.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+!||phncdn.com/*/networkbar*.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+!||phncdn.com/*/promo-banner.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+||phncdn.com/*promo*^$script,css,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+||phncdn.com/*networkbar*^$script,css,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
 ||phncdn.com/*front*^$script,css,important,domain=pornhub.*
+!||phncdn.com/*lazy*^$script,css,important,domain=pornhub.*
 ||phncdn.com/*/premium/premium-modals.*$script,css,important,domain=pornhub.*
 ||pornhub*/front/menu_livesex*$document,xhr,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
 ||pornhub*/_xa/^$document,xhr,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
-pornhub.*,redtube.*,pornhubthbh7ap3u.onion###main-container > .abovePlayer
-pornhub.*,pornhubpremium.*##head > stylesheet
-pornhub.*,pornhubpremium.*###welcome
-pornhub.*,pornhubpremium.*##.footerContentWrapper
-pornhub.*,pornhubpremium.*##.tooltipPromo
-pornhub.*,pornhubpremium.*##.livesex
-pornhub.*,pornhubpremium.*###popsByTrafficJunky
-pornhub.*,pornhubpremium.*##.headerBtnsWrapper
-pornhub.*,pornhubpremium.*##.pornportal-wrapper
-pornhub.*,pornhubpremium.*##.recommendedPornstarsWrapper
-pornhub.*,pornhubpremium.*##.recommendedCategoriesWrapper
+pornhub.com,redtube.*,pornhubthbh7ap3u.onion###main-container > .abovePlayer
+pornhub.com,pornhubpremium.com##head > stylesheet
+pornhub.com,pornhubpremium.com###welcome
+pornhub.com,pornhubpremium.com##.footerContentWrapper
+pornhub.com,pornhubpremium.com##.tooltipPromo
+pornhub.com,pornhubpremium.com##.livesex
+pornhub.com,pornhubpremium.com###popsByTrafficJunky
+pornhub.com,pornhubpremium.com##.headerBtnsWrapper
+pornhub.com,pornhubpremium.com##.pornportal-wrapper
+pornhub.com,pornhubpremium.com##.recommendedPornstarsWrapper
+pornhub.com,pornhubpremium.com##.recommendedCategoriesWrapper
 
 ! -----------------Pornhub-----------------!
-pornhub.*##[rel="nofollow"]:nth-ancestor(1)
-pornhub.*##.leftPanel > p
-pornhub.*##.leftPanel > .popularSearches
-pornhub.*##.headerSubMenu > .trendingWrapper
-pornhub.*##.headerSubMenu > .popularFilterPhotos
-pornhub.*##.headerSubMenu > .innerHeaderFilters
-pornhub.*###under-player-playlists
+pornhub.com##[rel="nofollow"]:nth-ancestor(1)
+pornhub.com##.leftPanel > p
+pornhub.com##.leftPanel > .popularSearches
+pornhub.com##.headerSubMenu > .trendingWrapper
+pornhub.com##.headerSubMenu > .popularFilterPhotos
+pornhub.com##.headerSubMenu > .innerHeaderFilters
+pornhub.com###under-player-playlists
 
 ! -----------------Premium-----------------!
 ||portalcdn.com$important
+pornhubpremium.com##.sectionCarousel

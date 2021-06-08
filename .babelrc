@@ -1,0 +1,14 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "modules": "commonjs",
+        "targets": {
+          "esmodules": true
+        }
+      }
+    ]
+  ],
+  "plugins": ["@babel/plugin-transform-modules-commonjs"]
+}
