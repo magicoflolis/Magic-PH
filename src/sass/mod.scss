@@ -1,0 +1,285 @@
+@use "overrites";
+
+$theme: #f90;
+$dark: #000;
+$white: #fff;
+$hover: #464646;
+
+@mixin theme {
+  background: $theme;
+  background-color: $dark;
+  border: 2px solid $theme;
+  color: $theme;
+  cursor: pointer;
+}
+
+@mixin taste {
+  background-color: $dark;
+  height: 100%;
+  position: fixed !important;
+  z-index: 10;
+  left: 20%;
+  top: 0px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 0px !important;
+}
+
+.magicFreeze,
+#magicFreeze {
+  overflow: hidden !important;
+  overscroll-behavior-y: none !important;
+}
+.magicDefault {
+  overflow-y: scroll;
+  overscroll-behavior-y: none;
+}
+
+.magicTop {
+  @include theme;
+  border: 3px solid $theme;
+  transition: top 100ms ease-in-out 100ms;
+  -moz-transition: top 100ms ease-in-out 100ms;
+  -webkit-transition: top 100ms ease-in-out 100ms;
+  position: fixed !important;
+  z-index: 1000 !important;
+  top: 100%;
+  left: 90%;
+  width: auto;
+  height: auto;
+  list-style-type: none;
+  white-space: nowrap;
+  font-size: 16px;
+  font-family: inherit;
+  outline: 0 none;
+  text-align: left !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  vertical-align: top;
+  font-weight: 700;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  margin: 0 3px !important;
+  line-height: 48px !important;
+  padding: 0 25px;
+  -webkit-text-decoration-style: solid;
+  text-decoration-style: solid;
+  -webkit-text-decoration-color: currentcolor;
+  text-decoration-color: currentcolor;
+  text-decoration-thickness: auto;
+
+  &:hover {
+    background: $hover;
+    -webkit-text-decoration: 0;
+    text-decoration: 0;
+  }
+}
+
+.sidenav {
+  transition: width 250ms ease-in-out 200ms;
+  -moz-transition: width 250ms ease-in-out 200ms;
+  -webkit-transition: width 250ms ease-in-out 200ms;
+  z-index: 10;
+  height: 100%;
+  width: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: $dark;
+  overflow: hidden;
+  padding-top: 10px;
+  a {
+    z-index: 5;
+    position: relative;
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: $white;
+    display: block;
+
+    &:hover {
+      @include theme;
+    }
+  }
+}
+
+.navbackground {
+  z-index: 2;
+  width: 0;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.magic-popup {
+  transition: top 200ms ease-in-out 200ms;
+  background: transparent;
+  height: auto;
+  width: auto;
+  position: fixed;
+  z-index: 10;
+  overflow-x: auto;
+}
+
+.home > div.frontListingWrapper {
+  @include taste;
+}
+.taste > {
+  div.sectionWrapper {
+    @include taste;
+  } > {
+    .sectionTitle {
+      display: none !important;
+    }
+  }
+}
+.recommend > {
+  ul.recommendedContainerLoseOne {
+    background-color: $dark;
+    height: 100%;
+    position: fixed;
+    z-index: 10;
+    left: 19%;
+    top: 0px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 0px !important;
+  }
+  > {
+    li {
+      width: inherit !important;
+      margin: 1% !important;
+    }
+  }
+}
+.categories > {
+  #categoriesListSection {
+    @include theme;
+    cursor: default !important;
+    height: 100%;
+    position: fixed;
+    z-index: 10;
+    left: 20%;
+    overflow-x: auto;
+  }
+}
+a.customize-header,
+.magiclogo > img {
+  cursor: pointer !important;
+  width: auto !important;
+  height: auto !important;
+}
+.bigp {
+  width: max(99vw, 991px) !important;
+  height: max(92vh, 80vh) !important;
+  margin-left: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+.smolp {
+  height: 360px !important;
+  width: 640px !important;
+  margin-left: 60% !important;
+  position: fixed !important;
+  padding: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 1000 !important;
+}
+.smolnav {
+  z-index: -10 !important;
+  width: 100% !important;
+}
+.sticky {
+  z-index: 10 !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 60% !important;
+}
+.top {
+  top: 90% !important;
+}
+#blur {
+  transition: -webkit-filter 0ms ease-in-out 0ms;
+  transition: filter 0ms ease-in-out 0ms;
+  transition: filter 0ms ease-in-out 0ms, -webkit-filter 0ms ease-in-out 0ms;
+  -webkit-filter: blur(3px) !important;
+          filter: blur(3px) !important;
+}
+.blur {
+  transition: -webkit-filter 250ms ease-in-out 200ms;
+  transition: filter 250ms ease-in-out 200ms;
+  transition: filter 250ms ease-in-out 200ms, -webkit-filter 250ms ease-in-out 200ms;
+  -webkit-filter: blur(10px) !important;
+          filter: blur(10px) !important;
+}
+
+.favlayout,
+.favlayout {
+  div {
+    display: inline-block;
+    margin: 0 0 20px 0;
+    vertical-align: top;
+    margin: 0 0 20px 0;
+    vertical-align: top;
+  }
+}
+.favorite {
+  text-shadow: initial;
+  text-transform: initial;
+  word-spacing: initial;
+  letter-spacing: initial;
+  background: url("https://di.phncdn.com/www-static/images/video_page/favorite.svg"no-repeat);
+  background-color: $dark;
+  background-position-x: 2%;
+  background-position-y: 50%;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-image: url("https://di.phncdn.com/www-static/images/video_page/favorite.svg");
+  background-size: auto;
+  background-origin: padding-box;
+  background-clip: border-box;
+}
+.favorites.sb {
+  height: auto;
+  width: 80%;
+  right: 0px;
+  position: fixed;
+  background-color: $dark;
+  align-content: center;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(4, 1fr);
+  grid-row-gap: 1%;
+  grid-column-gap: 10px;
+}
+.favorites {
+  height: 100%;
+  width: 100%;
+  background-color: $dark;
+  align-content: center;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(4, 1fr);
+  grid-row-gap: 1%;
+  grid-column-gap: 10px;
+  .wrap {
+    width: 100%;
+    margin: 0;
+    .phimage {
+      cursor: pointer;
+      width: 99.7% !important;
+      height: auto;
+      display: block;
+    }
+    .title {
+      font-size: 17px;
+      font-weight: 700;
+      color: $white;
+      word-break: break-word;
+      word-wrap: break-word;
+    }
+  }
+}

@@ -3,12 +3,11 @@
     [
       "@babel/preset-env",
       {
-        "modules": "commonjs",
+        "modules": false,
         "targets": {
           "esmodules": true
         }
       }
     ]
-  ],
-  "plugins": ["@babel/plugin-transform-modules-commonjs"]
+  ]
 }

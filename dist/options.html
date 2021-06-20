@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'" ; charset="utf-8" /> -->
     <title>MagicPH Options</title>
-    <link rel="stylesheet" href="./css/options.css" />
-    <script src="./js/options.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/options.css" />
   </head>
   <body>
-    <a target="_self" href="./favorites.html">Favorites</a>
+    <a target="_blank" href="./favorites.html">Favorites</a>
     <form>
       <section class="checkbox">
         <label>
           <span>Use alternative player</span>
           <div class="switch">
-            <input type="checkbox" name="altplayers" id="altplayers" />
+            <input disabled="" type="checkbox" name="altplayers" id="altplayers" />
             <label for="altplayers"></label>
           </div>
         </label>
@@ -65,7 +64,17 @@
           </div>
         </label>
       </section>
+      <!-- <section class="select">
+        Free Premium Videos
+        <select name="verifiedAccounts">
+          <option value="ignore">Do nothing</option>
+          <option value="hide">Hide</option>
+          <option value="highlight">Highlight</option>
+        </select>
+      </section> -->
+      <button id="phCustomize" type="button">Customize Headers</button>
     </form>
+    <script src="js/options.js"></script>
   </body>
 
 </html>

@@ -1,7 +1,7 @@
 {
   "name": "MagicPH",
   "description": "Enhanced PornHub",
-  "author": "Magic of Lolis",
+  "author": "Magic of Lolis <magicoflolis@gmail.com>",
   "homepage_url": "https://github.com/magicoflolis/Magic-PH",
   "version": "1.0.3",
   "background": {
@@ -29,51 +29,33 @@
   "content_scripts": [
     {
       "all_frames": true,
-      "css": ["/css/mod.css","/css/overrites.css"],
+      "css": ["/css/mod.css"],
       "js": ["/js/magicinject.js"],
       "matches": ["https://*.pornhub.com/*", "https://*.pornhubpremium.com/*"],
       "exclude_matches": [
         "https://www.pornhub.com/login",
         "https://www.pornhub.com/create_account_select",
-        "https://www.pornhub.com/user/edit",
-        "https://www.pornhubpremium.com/user/edit",
-        "https://www.pornhubpremium.com/gift",
         "https://www.pornhubpremium.com/login",
-        "https://www.pornhubpremium.com/create_account_select"
+        "https://www.pornhubpremium.com/create_account_select",
+        "https://www.pornhubpremium.com/gift"
       ],
       "run_at": "document_start"
-    },
-    {
-      "all_frames": true,
-      "js": ["/js/sync.js"],
-      "matches": ["https://*.pornhub.com/*", "https://*.pornhubpremium.com/*"],
-      "exclude_matches": [
-        "https://www.pornhub.com/login",
-        "https://www.pornhub.com/create_account_select",
-        "https://www.pornhub.com/user/edit",
-        "https://www.pornhubpremium.com/user/edit",
-        "https://www.pornhubpremium.com/gift",
-        "https://www.pornhubpremium.com/login",
-        "https://www.pornhubpremium.com/create_account_select"
-      ],
-      "run_at": "document_idle"
     }
   ],
   "content_security_policy": "style-src 'unsafe-inline'; img-src 'https:'; script-src 'self'; object-src 'self'",
   "icons": {
     "128": "img/icon_128.png"
   },
-  "manifest_version": 2,
   "permissions": [
-    "menus",
+    "*://*.pornhub.com/*",
+    "*://*.pornhubpremium.com/*",
+    "activeTab",
     "tabs",
+    "history",
     "storage",
-    "unlimitedStorage",
-    "webNavigation",
-    "webRequest",
-    "webRequestBlocking",
-    "<all_urls>"
+    "unlimitedStorage"
   ],
-  "web_accessible_resources": ["js/*", "libs/*"],
-  "commands": {}
+  "web_accessible_resources": ["js/*"],
+  "commands": {},
+  "manifest_version": 2
 }

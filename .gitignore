@@ -1,10 +1,20 @@
+# Dependency directories
+yarn.lock
+node_modules/
+jspm_packages/
+
+# dotenv environment variables file
+.env
+
+.vscode
+.vs/
+
 *.bak
 *.code-workspace
-*.env
 *.web-extension-id
-node_modules
+
+web-ext-artifacts
 Notes
 /Notes/
-.vscode
 chrome
 /chrome/

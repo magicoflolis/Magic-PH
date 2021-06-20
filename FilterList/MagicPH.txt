@@ -12,41 +12,76 @@
 @@||*/signup$domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
 @@||*/create_account_select$domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
 
-
 ! -----------------General-----------------!
 $websocket,domain=pornhub.*|pornhubthbh7ap3u.onion
+!||phncdn.com/*/js/quality-selector.js^$script,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
 ||static.trafficjunky.com$all,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
 ||*smallimg.phncdn.com^$image,redirect=noop.gif,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion|redtube.*|tube8.*|youporn.com|youporngay.com
-!||phncdn.com/*/networkbar*.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
-!||phncdn.com/*/promo-banner.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
-||phncdn.com/*promo*^$script,css,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
-||phncdn.com/*networkbar*^$script,css,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+!||phncdn.com/*footer*^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+||phncdn.com/*/networkbar*.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+||phncdn.com/*/promo-banner.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+!||phncdn.com/*/widgets-live-popup.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+!||phncdn.com/*/lazy_load-2.0.1.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+!||phncdn.com/head/load-1.0.3.js^$script,redirect=noop.js,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
 ||phncdn.com/*front*^$script,css,important,domain=pornhub.*
-!||phncdn.com/*lazy*^$script,css,important,domain=pornhub.*
+!||phncdn.com/*/video-show*$script,important,domain=pornhub.*
+!||phncdn.com/*/networkbar*.js^$script,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
 ||phncdn.com/*/premium/premium-modals.*$script,css,important,domain=pornhub.*
 ||pornhub*/front/menu_livesex*$document,xhr,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
+!||pornhub*/video/category_tracker*$document,xhr,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
 ||pornhub*/_xa/^$document,xhr,important,domain=pornhub.*|pornhubpremium.*|pornhubthbh7ap3u.onion
-pornhub.com,redtube.*,pornhubthbh7ap3u.onion###main-container > .abovePlayer
-pornhub.com,pornhubpremium.com##head > stylesheet
-pornhub.com,pornhubpremium.com###welcome
-pornhub.com,pornhubpremium.com##.footerContentWrapper
-pornhub.com,pornhubpremium.com##.tooltipPromo
-pornhub.com,pornhubpremium.com##.livesex
-pornhub.com,pornhubpremium.com###popsByTrafficJunky
-pornhub.com,pornhubpremium.com##.headerBtnsWrapper
-pornhub.com,pornhubpremium.com##.pornportal-wrapper
-pornhub.com,pornhubpremium.com##.recommendedPornstarsWrapper
-pornhub.com,pornhubpremium.com##.recommendedCategoriesWrapper
+pornhub.*,redtube.*,pornhubthbh7ap3u.onion###main-container > .abovePlayer
+!pornhub.*,pornhubpremium.*##+js(set, page_params.holiday_promo, falseFunc)
+!pornhub.*,pornhubpremium.*##^script:has-text(page_params.networkBar)
+pornhub.*,pornhubpremium.*##head > stylesheet
+pornhub.*,pornhubpremium.*###welcome
+pornhub.*,pornhubpremium.*##.footerContentWrapper
+pornhub.*,pornhubpremium.*##.tooltipPromo
+pornhub.*,pornhubpremium.*##.realsex
+pornhub.*,pornhubpremium.*##.livesex
+pornhub.*,pornhubpremium.*###popsByTrafficJunky
+pornhub.*,pornhubpremium.*##.headerBtnsWrapper
+pornhub.*,pornhubpremium.*##.pornportal-wrapper
+!pornhub.*,pornhubpremium.*###paidItems
+pornhub.*,pornhubpremium.*##.recommendedPornstarsWrapper
+pornhub.*,pornhubpremium.*##.recommendedCategoriesWrapper
 
 ! -----------------Pornhub-----------------!
-pornhub.com##[rel="nofollow"]:nth-ancestor(1)
-pornhub.com##.leftPanel > p
-pornhub.com##.leftPanel > .popularSearches
-pornhub.com##.headerSubMenu > .trendingWrapper
-pornhub.com##.headerSubMenu > .popularFilterPhotos
-pornhub.com##.headerSubMenu > .innerHeaderFilters
-pornhub.com###under-player-playlists
+pornhub.*##li.mgp_upsell
+pornhub.*##[rel="nofollow"]:nth-ancestor(1)
+pornhub.*##.leftPanel > p
+pornhub.*##.leftPanel > .popularSearches
+pornhub.*##.headerSubMenu > .trendingWrapper
+pornhub.*##.headerSubMenu > .popularFilterPhotos
+pornhub.*##.headerSubMenu > .innerHeaderFilters
+pornhub.*###under-player-playlists
+!pornhub.*###hd-rightColVideoPage > .clearfix:first-child
+!pornhub.*##.nonesuch
+!pornhub.*##.premium-videos
+!pornhub.*##.tasteLogin
+!pornhub.*##[href="javascript:void(0)"]
 
 ! -----------------Premium-----------------!
 ||portalcdn.com$important
-pornhubpremium.com##.sectionCarousel
+pornhubpremium.*###welcomePremium
+
+! -----------------WIP-----------------!
+!||static.trafficjunky.*$document,xhr,important,domain=pornhub.*|pornhubpremium.*
+!||phncdn.com/www-static/js/lib/generated/video-show_carousels.js^$script,important,domain=pornhub.*
+!pornhub.*,pornhubpremium.*##+js(set, userABMessage, falseFunc)
+!pornhubthbh7ap3u.onion
+!||phncdn.com/www-static/js/lib/utils/mg_utils-1.0.0.js^$script,important,domain=pornhub.*
+!pornhub##+js(json-prune, user_exists)
+!pornhub.*##+js(set, signinbox, trueFunc)
+!pornhub.*##+js(set, loginClickFunction, trueFunc)
+!pornhub.*##+js(set, showSigninBox, false)
+!pornhub.*,pornhubpremium.*###cmtWrapper
+!||phncdn.com/www-static/js/phub.js^$script,important,domain=pornhub.*
+!||phncdn.com/head/load-1.0.3.js^$script,important,domain=pornhub.*
+!pornhub.*,pornhubpremium.*###headerUpgradePremiumBtn
+!pornhub.*,pornhubpremium.*##+js(set, networkbar, falseFunc)
+!pornhub.*,pornhubpremium.*##^script:has-text(jsFileList.site_Js)
+!pornhub.*##*[promo]
+!pornhub.*,pornhubpremium.*##+js(set, window.zone_5, '')
+!pornhub.*,pornhubpremium.*##^script:has-text(page_params.holiday_promo)
+!pornhub.*,pornhubpremium.*##^script:has-text(aHR0cHM6Ly93d3cucG9ybmh1Yi5jb20=)

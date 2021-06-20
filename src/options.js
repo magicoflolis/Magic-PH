@@ -1,4 +1,3 @@
-
 const brws = (typeof browser=="undefined"?chrome:browser)
 brws.storage.local.get(storedConfig => {
 $form = document.querySelector('form') ?? console.log(`[MagicPH] can't find ${target}`),

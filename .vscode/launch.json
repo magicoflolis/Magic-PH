@@ -3,7 +3,7 @@
     "compounds": [
         {
           "name": "Attach/Launch",
-          "configurations": ["Attach:Firefox", "Start:Firefox"]
+          "configurations": ["Attach:Firefox", "SF"]
         }
       ],
     "configurations": [
@@ -13,25 +13,14 @@
             "request": "attach",
         },
         {
-            "name": "Start:Firefox",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "reloadOnAttach": true,
-            "reloadOnChange": ["${workspaceFolder}/css/mod.css","${workspaceFolder}/js/*.js"],
-            "keepProfileChanges": false,
-            "clearConsoleOnReload": true,
-            "addonPath": "${workspaceFolder}\\src"
-        },
-        {
           "name": "SF",
           "type": "firefox",
           "request": "launch",
           "reAttach": true,
           "reloadOnAttach": true,
-          "reloadOnChange": ["${workspaceFolder}/css/mod.css","${workspaceFolder}/js/*.js"],
           "keepProfileChanges": false,
           "clearConsoleOnReload": true,
+          "url": "https://pornhub.com/",
           "addonPath": "${workspaceFolder}\\dist"
       }
     ]

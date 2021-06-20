@@ -1,0 +1,353 @@
+@mixin remover {
+  content: "";
+  display: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  width: 0px !important;
+  min-width: 0px !important;
+  height: 0px !important;
+  min-height: 0px !important;
+}
+
+@mixin container {
+  max-width: 96vw !important;
+  min-width: 991px !important;
+  width: 100vw !important;
+  height: 86vh !important;
+  padding: 0 !important;
+}
+
+html,
+body {
+  width: 45% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  > .frontListingWrapper {
+    @include container;
+  }
+}
+
+.rm,
+.menu.item-7.community,
+li#profileHome,
+#js-networkBar,
+.mgp_videoPoster,
+.tasteLogin,
+.upgradeToPremium,
+#profileMenuDropdown > .alpha,
+.logoWrapper,
+.mgp_cinema,
+#under-player-playlists,
+#loadMoreRelatedVideosCenter,
+#hd-rightColVideoPage,
+#customSkin,
+#customSkinCTA {
+  @include remover;
+}
+
+.pagination3 > {
+  ul {
+    transition: top 100ms ease-in-out 100ms;
+    z-index: 10 !important;
+    position: fixed !important;
+    display: block !important;
+    top: 100%;
+    left: 20%;
+  }
+}
+#relatedVideosCenter {
+  display: grid;
+}
+.title-container,
+.video-actions-menu,
+.video-actions-container,
+.relatedVideos {
+  margin: 0 !important;
+  padding: 5px 0 5px !important;
+  width: 98vw;
+}
+.container {
+  width: max(96vw, 96vw) !important;
+  height: 86vh !important;
+  margin: 1% 6% 10px auto !important;
+  padding: 0 !important;
+  > .frontListingWrapper {
+    @include container;
+  }
+}
+#main-container,
+.gridWrapper,
+.section_wrapper,
+#gifWebmPlayer {
+  @include container;
+}
+.mgp_videoPoster {
+  height: 98vh !important;
+  width: 86% !important;
+  top: 0 !important;
+  left: 10% !important;
+}
+.gifWebMWrapper {
+  margin-bottom: 0 !important;
+}
+.nf-videos > {
+  .sectionWrapper {
+    max-width: 80vw !important;
+    min-width: 991px !important;
+    width: 80vw !important;
+  }
+}
+.video-wrapper,
+#player,
+#player.wide {
+  transition: all 0s !important;
+}
+.video-wrapper.js-relatedRecommended {
+  margin-top: 13% !important;
+  margin-bottom: 0 !important;
+}
+/* margin-top: 6% !important; */
+#cmtWrapper {
+  display: none;
+  width: 30vw !important;
+}
+header#header,
+#headerWrapper {
+  width: 99vw !important;
+}
+
+.pcVideoListItem {
+  display: flex;
+}
+
+.show-more-btn {
+  left: 60% !important;
+}
+
+ul.videos.user-playlist {
+  display: grid !important;
+  justify-content: center;
+  align-content: center;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(4, 1fr);
+  grid-row-gap: 15px;
+  grid-column-gap: 10px;
+  padding: 20px 10px;
+}
+
+.video-detailed-info {
+  float: none !important;
+}
+
+.mgp_autoplay {
+  display: block !important;
+}
+.mph1,
+.mph2,
+#vb,
+#vr,
+#under-player-comments {
+  display: none;
+  color: #4080fb;
+}
+// @media only screen and (min-width:1300px) {
+//   .recommendedContainerLoseOne.videos li.videoBox {
+//     margin-bottom: 15px !important;
+//     margin-right: 9px !important;
+//     width: 23.8% !important;
+//   }
+// }
+#profileContent,
+#recommendations ul.recommendedContainerLoseOne {
+  margin-left: 1% !important;
+  width: 96vw !important;
+}
+
+li > {
+  .wrap > {
+    .phimage {
+      max-width: -webkit-max-content !important;
+      max-width: -moz-max-content !important;
+      max-width: max-content !important;
+      width: 100% !important;
+    }
+  }
+}
+
+/* Recommended tastes --------------------------------------------------------------- */
+.displayFlex {
+  display: flex;
+}
+.flexWrap {
+  -o-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+.button {
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  vertical-align: top;
+  text-align: center;
+}
+.orangeButton {
+  border: 0;
+  background: #f90;
+  color: #000;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+.noLinkBtn {
+  cursor: default !important;
+}
+.GreyBottomContainer {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0,
+    rgba(3, 3, 3, 0) 10%,
+    rgba(13, 13, 13, 0.93) 42%,
+    rgba(30, 30, 30, 0.93) 100%
+  );
+}
+.ProfileMainMenu {
+  background: #282828;
+  background: linear-gradient(to bottom, #323232 0, #1c1c1c 100%);
+}
+.arrow {
+  content: "";
+  width: 0;
+  height: 0;
+  font-size: 0;
+}
+.ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.wrapLongTitle {
+  word-break: break-word;
+  word-wrap: break-word;
+}
+.sectionWrapper {
+  .sectionTitle {
+    padding: 12px 11px 0;
+  }
+  > {
+    a {
+      float: right;
+      text-transform: capitalize;
+      font-weight: 700;
+      padding: 0 10px;
+      text-decoration: none;
+    }
+  }
+}
+.nav {
+  float: left;
+}
+.nav {
+  a {
+    color: #fff;
+    display: inline-block;
+    margin-right: 30px;
+    padding: 0 10px 10px;
+    text-transform: capitalize;
+    .active {
+      border-bottom: 1px solid #f90;
+    }
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+.tasteLogin {
+  background-color: #2f2f2f;
+  padding: 1rem;
+  text-align: center;
+  .tasteLoginLinks {
+    font-weight: 700;
+  }
+  .tasteLoginMessage {
+    display: inline-block;
+    font-size: 1rem;
+    margin: 0;
+    &:before {
+      content: "";
+      display: inline-block;
+      width: 24px;
+      height: 22px;
+      vertical-align: middle;
+    }
+  }
+  .tasteLoginText {
+    color: #bbb;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+    width: 96.999%;
+  }
+}
+.taste-instruction {
+  padding: 20px;
+  margin: 0;
+  color: #fff;
+}
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin: 0 0 40px 0;
+  border-top: 1px #2d2d2d solid;
+  td,
+  th {
+    width: 16%;
+    text-align: center;
+  }
+  td:first-child,
+  th:first-child {
+    padding: 10px 0 10px 20px;
+    width: 25%;
+    text-align: left;
+  }
+  td:last-child,
+  th:last-child {
+    width: 27%;
+    color: #ababab;
+  }
+  thead {
+    background: #1d1d1d;
+    border-bottom: 1px solid #000;
+    font-size: 1.5em;
+  }
+  thead th {
+    font-weight: 400;
+  }
+  tr:nth-child(even) {
+    background: #1d1d1d;
+    border-bottom: 1px solid #000;
+  }
+  tbody {
+    font-size: 1.4em;
+  }
+  input[type="radio"] {
+    display: none;
+  }
+  input[type="radio"] + label {
+    display: inline-block;
+    padding: 0;
+    width: 25px;
+    height: 25px;
+    background: 0 0;
+    border-radius: 50%;
+    border: 2px solid #b4b4b4;
+  }
+  input[type="radio"]:checked + label {
+    background: #f90;
+    width: 27px;
+    height: 27px;
+    border: none;
+  }
+}
