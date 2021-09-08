@@ -1,3 +1,15 @@
+$theme: #f90;
+$dark: #000;
+$white: #fff;
+$hover: #464646;
+
+@mixin prefix($property, $value, $prefixes) {
+  @each $prefix in $prefixes {
+    -#{$prefix}-#{$property}: $value;
+  }
+  #{$property}: $value;
+}
+
 @mixin remover {
   content: "";
   display: none !important;
@@ -17,11 +29,37 @@
   padding: 0 !important;
 }
 
+*:not(select) {
+  scrollbar-color: rgba(255, 153, 0, 0.842) $dark !important;
+  scrollbar-width: thin !important;
+}
+/* Chrome and derivatives*/
+::-webkit-scrollbar {
+  max-width: 4px !important;
+  max-height: 4px !important;
+  background: $dark !important;
+}
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-track-piece {
+  background: $dark !important;
+
+  &:hover {
+    background: $dark !important;
+  }
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 153, 0, 0.842) !important;
+  border: 0 !important;
+
+  &:hover {
+    background: rgba(255, 153, 0, 0.842) !important;
+  }
+}
+
 html,
 body {
-  width: 45% !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  width: 100% !important;
   > .frontListingWrapper {
     @include container;
   }
@@ -47,7 +85,7 @@ li#profileHome,
 
 .pagination3 > {
   ul {
-    transition: top 100ms ease-in-out 100ms;
+    @include prefix(transition, top 100ms ease-in-out 100ms, moz webkit);
     z-index: 10 !important;
     position: fixed !important;
     display: block !important;
@@ -67,7 +105,9 @@ li#profileHome,
   width: 98vw;
 }
 .container {
-  width: max(96vw, 96vw) !important;
+  width: 96vw !important;
+  min-width: 96vw !important;
+  max-width: 96vw !important;
   height: 86vh !important;
   margin: 1% 6% 10px auto !important;
   padding: 0 !important;
@@ -100,7 +140,7 @@ li#profileHome,
 .video-wrapper,
 #player,
 #player.wide {
-  transition: all 0s !important;
+  @include prefix(transition, all 0s !important, moz webkit);
 }
 .video-wrapper.js-relatedRecommended {
   margin-top: 13% !important;
@@ -108,12 +148,15 @@ li#profileHome,
 }
 /* margin-top: 6% !important; */
 #cmtWrapper {
-  display: none;
-  width: 30vw !important;
+  width: 96vw !important;
 }
 header#header,
 #headerWrapper {
-  width: 99vw !important;
+  width: max(99vw, 80vw) !important;
+}
+
+#header #headerMenuContainer {
+  border-top: 0px !important;
 }
 
 .pcVideoListItem {
@@ -144,19 +187,13 @@ ul.videos.user-playlist {
 }
 .mph1,
 .mph2,
+.mph3,
 #vb,
 #vr,
 #under-player-comments {
   display: none;
   color: #4080fb;
 }
-// @media only screen and (min-width:1300px) {
-//   .recommendedContainerLoseOne.videos li.videoBox {
-//     margin-bottom: 15px !important;
-//     margin-right: 9px !important;
-//     width: 23.8% !important;
-//   }
-// }
 #profileContent,
 #recommendations ul.recommendedContainerLoseOne {
   margin-left: 1% !important;
@@ -166,9 +203,7 @@ ul.videos.user-playlist {
 li > {
   .wrap > {
     .phimage {
-      max-width: -webkit-max-content !important;
-      max-width: -moz-max-content !important;
-      max-width: max-content !important;
+      @include prefix(max-width, max-content, moz webkit);
       width: 100% !important;
     }
   }
@@ -179,8 +214,7 @@ li > {
   display: flex;
 }
 .flexWrap {
-  -o-flex-wrap: wrap;
-  flex-wrap: wrap;
+  @include prefix(flex-wrap, wrap, o);
 }
 .button {
   display: inline-block;
@@ -191,14 +225,10 @@ li > {
   text-align: center;
 }
 .orangeButton {
+  @include prefix(border-radius, 5px, moz webkit ms o);
   border: 0;
-  background: #f90;
-  color: #000;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  background: $theme;
+  color: $dark;
 }
 .noLinkBtn {
   cursor: default !important;
@@ -250,13 +280,13 @@ li > {
 }
 .nav {
   a {
-    color: #fff;
+    color: $white;
     display: inline-block;
     margin-right: 30px;
     padding: 0 10px 10px;
     text-transform: capitalize;
     .active {
-      border-bottom: 1px solid #f90;
+      border-bottom: 1px solid $theme;
     }
     &:hover {
       text-decoration: none;
@@ -293,7 +323,7 @@ li > {
 .taste-instruction {
   padding: 20px;
   margin: 0;
-  color: #fff;
+  color: $white;
 }
 table {
   width: 100%;
@@ -305,21 +335,21 @@ table {
   th {
     width: 16%;
     text-align: center;
-  }
-  td:first-child,
-  th:first-child {
-    padding: 10px 0 10px 20px;
-    width: 25%;
-    text-align: left;
-  }
-  td:last-child,
-  th:last-child {
-    width: 27%;
-    color: #ababab;
+
+    &:first-child {
+      padding: 10px 0 10px 20px;
+      width: 25%;
+      text-align: left;
+    }
+
+    &:last-child {
+      width: 27%;
+      color: #ababab;
+    }
   }
   thead {
     background: #1d1d1d;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid $dark;
     font-size: 1.5em;
   }
   thead th {
@@ -327,7 +357,7 @@ table {
   }
   tr:nth-child(even) {
     background: #1d1d1d;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid $dark;
   }
   tbody {
     font-size: 1.4em;
@@ -345,7 +375,7 @@ table {
     border: 2px solid #b4b4b4;
   }
   input[type="radio"]:checked + label {
-    background: #f90;
+    background: $theme;
     width: 27px;
     height: 27px;
     border: none;

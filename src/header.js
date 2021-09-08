@@ -34,10 +34,11 @@ let mod = {
     GPhoto: $('.photos > a[href^="/albums/gay"]'),
     GPremium: $('.premium > a[href="/gay/premium"]'),
   };
-export const hInit = () => {
+export default function hInit() {
   try {
-    let selA = check.gay ? `<a href="/gay/recommended" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Recommended</span><span class="activeLine"></span></span></a>` : `<a href="/recommended" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Recommended</span><span class="activeLine"></span></span></a>`,
-    selB = check.gay ? '<a href="/gay/recommended" class="js-topMenuLink"><span class="itemName">recommended</span></a>' : '<a href="/recommended" class="js-topMenuLink"><span class="itemName">recommended</span></a>',
+    let find = !check.gay ? '/recommended' : '/gay/recommended',
+    selA = `<a href="${find}" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Recommended</span><span class="activeLine"></span></span></a>`,
+    selB = `<a href="${find}" class="js-topMenuLink"><span class="itemName">recommended</span></a>`,
     recommended = $(`<li class="menu recommended" data-hover="0">${(check.recommended) ? selA : selB}</li>`),
     custom = $(`<li class="menu customize"><a title="Customize Header" type="button" class="customize-header js-topMenuLink"><span class="itemName">customize</span></a></li>`);
     $("ul#headerMainMenu").append(recommended,custom)

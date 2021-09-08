@@ -1,11 +1,11 @@
 import { check, create, log, qs } from "./general";
-import { hInit } from "./header";
-
+import hInit from "./header";
+import ph_player from "./player";
 log("Loading inline script...");
 let scrollnumber = 110,
   p = qs(".magic-popup"),
   load = async (url, selElement, name, target) => {
-    await new Promise((resolve, reject) => {
+    await new Promise((reject) => {
       try {
         fetch(url)
           .then((res) => res.text())
@@ -29,7 +29,8 @@ function menu(item) {
     f = qs(".magic-popup > div.favorites"),
     front = qs(".magic-popup > div.home"),
     rec = qs(".magic-popup > div.recommend"),
-    t = qs(".magic-popup > div.taste");
+    t = qs(".magic-popup > div.taste"),
+    find = !check.gay ? '/' : '/gay/';
   if (item == "exit") {
     cat ? (cat.style.display = "none") : false;
     t ? (t.style.display = "none") : false;
@@ -49,9 +50,7 @@ function menu(item) {
     rec ? (rec.style.display = "none") : false;
     p.style.top = "0px";
     nav.attr("style", "width: 100%;");
-    front
-      ? (front.style.display = "block")
-      : load(`/`, ".frontListingWrapper", "home");
+    front ? (front.style.display = "block") : load(`/`, ".frontListingWrapper", "home");
   }
   if (item == "catagories") {
     f.style.display = "none";
@@ -60,11 +59,7 @@ function menu(item) {
     rec ? (rec.style.display = "none") : false;
     p.style.top = "0px";
     nav.attr("style", "width: 100%;");
-    cat
-      ? (cat.style = "block")
-      : !check.gay
-      ? load(`/categories`, "ul#categoriesListSection", "categories")
-      : load(`/gay/categories`, "ul#categoriesListSection", "categories");
+    cat ? (cat.style = "block") : load(`${find}categories`, "ul#categoriesListSection", "categories");
   }
   if (item == "recommended") {
     cat ? (cat.style.display = "none") : false;
@@ -73,9 +68,7 @@ function menu(item) {
     t ? (t.style.display = "none") : false;
     p.style.top = "0px";
     nav.attr("style", "width: 100%;");
-    rec
-      ? (rec.style.display = "block")
-      : load(`/recommended`, "ul.recommendedContainerLoseOne", "recommend");
+    rec ? (rec.style.display = "block") : load(`${find}recommended`, "ul.recommendedContainerLoseOne", "recommend");
   }
   if (item == "taste") {
     cat ? (cat.style.display = "none") : false;
@@ -109,6 +102,7 @@ check.home
 /view_video.php/.test(window.location.href)
   ? (log("Video page"),
     (scrollnumber = 400),
+    $(".mainPlayerDiv").addClass("bigp"),
     (qs(".mgp_options").onclick = async () => {
       if (!$("div.mgp_optionsMenu.mgp_visible.mgp_level2").length) {
         $("div.mgp_header").text("Quality");
@@ -118,6 +112,13 @@ check.home
           .addClass("mgp_animated")
           .attr("style", "width: 110px; height: 194px;");
         $("ul.mgp_quality.mgp_optionsList").attr("style", "display:block;");
+      } else {
+        $("div.mgp_optionsMenu")
+          .removeClass("mgp_visible mgp_level2")
+          .find(".mgp_background")
+          .removeClass("mgp_animated")
+          .attr("style", "width: 165px; height: 136px;");
+      $("ul.mgp_quality.mgp_optionsList").attr("style", "display:none;");
       }
     }),
     (qs(".mgp_clickHandler").onclick = async () => {
@@ -134,7 +135,7 @@ check.home
         .find(".mgp_background")
         .attr("style", "width: 165px; height: 136px;");
     }),
-    $(".mainPlayerDiv").addClass("bigp"),
+    $("html").attr("style", "scrollbar-color: #4646463d #000 !important;"),
     $(".relatedVideos").addClass(
       "mph1 video-info-row showLess allRelatedVideos"
     ),
@@ -142,23 +143,14 @@ check.home
     $(".mph1").appendTo(".video-actions-tabs"),
     $(".videos-list").addClass("mph2 video-info-row showLess"),
     $(".mph2").appendTo(".mph1"),
-    $("#cmtWrapper").addClass("mph3 video-info-row showLess rm"),
+    $("#cmtWrapper").addClass("mph3 video-info-row showLess"),
     qs(".js-relatedRecommended").append(qs(".mph3")),
     $(".mph2 > .user-playlist").attr("id", "relatedVideosCenter"),
-    $("ul.mgp_quality.mgp_optionsList")
-      .find(".mgp_active")
-      .removeClass("mgp_active")
-      .find("li")
-      .eq(0)
-      .addClass("mhp1138_active"),
+    $("ul.mgp_quality.mgp_optionsList").find(".mgp_active").removeClass("mgp_active").find("li").eq(0).addClass("mhp1138_active"),
     localStorage.setItem("mgp_player", '{"quality":"1080"}'),
-    check.lo ? ($(".votes-fav-wrap").hide(), $(".userActions").hide()) : false,
-    (window.onload = () => {
-      let uName = $("span.usernameBadgesWrapper > a");
-      for (let i = 0; i < uName.attr("href").length; i++) {
-        uName.eq(i).attr("href", `${uName.eq(i).attr("href")}/videos`);
-      }
-    }))
+    check.lo ? ($(".votes-fav-wrap").hide(), $(".userActions").hide(),
+    ph_player()
+    ) : false)
   : false;
 check.cv ? log(`Categories`) : false;
 check.user ? log(`User Profile`) : false;
@@ -203,19 +195,20 @@ qs(".magic999").onclick = async () => {
   menu("exit");
 };
 let favs = create("div", null, "favorites"),
-  // pReplace = $("li.profile > a"),
   a = $("div.usernameWrap > a");
+  // pReplace = $("li.profile > a"),
 $(".magic-popup").prepend(favs);
 for (let i = 0; i < a.attr("href").length; i++) {
   a.eq(i).attr("href", `${a.eq(i).attr("href")}/videos`);
 }
 //(!check.lo) ? (pReplace.attr('href', `${pReplace.attr("href")}/videos`)) : false;
 
+
 window.onscroll = async () => {
   const search = $(".headerSearchWrapper"),
     pgnav = $(".pagination3 > ul"),
-    sma = $(".mph1"),
-    smb = $(".mph2"),
+    mph1 = $(".mph1"),
+    mph2 = $(".mph2"),
     smol = $(".mainPlayerDiv");
   // sma = $("#vb"),
   // smb = $("#vr"),
@@ -223,19 +216,16 @@ window.onscroll = async () => {
     ? ($(".magicTop").addClass("top"),
       search.addClass("sticky"),
       pgnav.addClass("top"),
-      sma.attr("style", "display: block;"),
-      smb.attr("style", "display: block;"),
-      smol.removeClass("bigp"),
-      // $(".navbackground").addClass("smolnav"),
-      // smol.prependTo(".navbackground"),
-      smol.addClass("smolp"))
-    : ($(".magicTop").removeClass("top"),
+      mph1.attr("style", "display: block;"),
+      mph2.attr("style", "display: block;")
+      // smol.removeClass("bigp"),
+      // smol.addClass("smolp")
+      ) : ($(".magicTop").removeClass("top"),
       search.removeClass("sticky"),
       pgnav.removeClass("top"),
-      sma.attr("style", "display: none;"),
-      smb.attr("style", "display: none;"),
-      smol.addClass("bigp"),
-      //$(".navbackground").removeClass("smolnav"),
-      //smol.prependTo(".video-wrapper"),
-      smol.removeClass("smolp"));
+      mph1.attr("style", "display: none;"),
+      mph2.attr("style", "display: none;")
+      // smol.addClass("bigp"),
+      // smol.removeClass("smolp")
+      );
 };

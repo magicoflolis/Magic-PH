@@ -8,20 +8,18 @@
     <link rel="stylesheet" type="text/css" href="css/options.css" />
   </head>
   <body>
-    <a target="_blank" href="./favorites.html">Favorites</a>
+    <!-- <a target="_blank" href="./favorites.html">Favorites</a> -->
     <form>
-      <section class="checkbox">
-        <label>
-          <span>Use alternative player</span>
-          <div class="switch">
-            <input disabled="" type="checkbox" name="altplayers" id="altplayers" />
-            <label for="altplayers"></label>
-          </div>
-        </label>
+      <section class="select">
+        Alternative player
+        <select name="altplayers">
+          <option value="none">None</option>
+          <option value="plyr">Plyr</option>
+        </select>
       </section>
       <section class="checkbox">
         <label>
-          <span>Autoscroll on load</span>
+          <span>Scroll on load</span>
           <div class="switch">
             <input type="checkbox" name="autoscroll" id="autoscroll" />
             <label for="autoscroll"></label>
@@ -39,7 +37,7 @@
       </section>
       <section class="checkbox">
         <label>
-          <span>Show comments</span>
+          <span>Enable comments</span>
           <div class="switch">
             <input type="checkbox" name="comments" id="comments" />
             <label for="comments"></label>
@@ -48,7 +46,7 @@
       </section>
       <section class="checkbox">
         <label>
-          <span>Hide "Top" button</span>
+          <span>Disable "Top" button</span>
           <div class="switch">
             <input type="checkbox" name="topbutton" id="topbutton" />
             <label for="topbutton"></label>
@@ -57,7 +55,7 @@
       </section>
       <section class="checkbox">
         <label>
-          <span>Hide Sidebar</span>
+          <span>Disable Sidebar</span>
           <div class="switch">
             <input type="checkbox" name="sidebar" id="sidebar" />
             <label for="sidebar"></label>
@@ -72,9 +70,9 @@
           <option value="highlight">Highlight</option>
         </select>
       </section> -->
-      <button id="phCustomize" type="button">Customize Headers</button>
+      <!-- <button id="phCustomize" type="button">Customize Headers</button> -->
     </form>
-    <script src="js/options.js"></script>
+    <script src="./js/options.js"></script>
   </body>
 
 </html>

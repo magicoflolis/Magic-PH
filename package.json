@@ -1,6 +1,6 @@
 {
   "name": "magicph",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Enhances your porn viewing experience. Quick, clean, and easy.",
   "author": "Magic Of Lolis <magicoflolis@gmail.com> (https://github.com/magicoflolis)",
   "private": true,
@@ -18,17 +18,20 @@
     "@types/chrome": "^0.0.145",
     "@types/firefox-webext-browser": "latest",
     "@types/jquery": "^3.5.5",
+    "@types/sass": "^1.16.0",
     "babel-loader": "^8.2.2",
     "eslint": "^7.29.0",
+    "html-loader": "^2.1.2",
     "mini-css-extract-plugin": "^1.6.0",
-    "web-ext": ">=6.1.0",
+    "plyr": "^3.6.8",
+    "web-ext": "^6.2.0",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.0"
   },
   "dependencies": {
-    "css-loader": "^5.2.4",
+    "css-loader": "^5.2.6",
     "jquery": ">=3.6.0",
-    "sass": "^1.34.1",
+    "sass": "^1.35.1",
     "sass-loader": "^12.1.0",
     "style-loader": "^2.0.0",
     "web-ext-native-msg": "^4.10.1"
@@ -43,19 +46,32 @@
     "run:Firefox": "web-ext -c=web-ext.js run",
     "run:Chrome": "web-ext -c=web-ext.js run -t chromium --keep-profile-changes",
     "build:web-ext": "web-ext -c=web-ext.js build",
-    "build:webpack": "webpack --mode=production --config=webpackConfig/webpack.config.js",
-    "test:cfg": "webpack --progress --config=webpackConfig/webpack.config.js",
-    "test:sass": "sass ./src/sass/mod.scss:./dist/css/mod.css ./src/sass/options.scss:./dist/css/options.css -s compressed"
+    "build:webpack": "webpack --mode=production --config=webpackConfig/webpack.config.js"
   },
   "eslintConfig": {
     "env": {
       "browser": true,
-      "es2020": true,
-      "mozilla": true,
       "chrome": true,
+      "es2021": true,
       "firefox": true,
+      "jquery": true,
+      "mozilla": true,
       "node": false
-    }
+    },
+    "extends": [
+      "eslint:all"
+    ],
+    "parserOptions": {
+      "sourceType": "module",
+      "allowImportExportEverywhere": false,
+      "ecmaFeatures": {
+        "globalReturn": true,
+        "arrowFunctions": true,
+        "modules": true
+      },
+      "ecmaVersion": 12
+    },
+    "rules": {}
   },
   "keywords": [
     "magicph",

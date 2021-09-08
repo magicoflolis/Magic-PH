@@ -91,7 +91,7 @@ section.checkboxlist p {
 }
 
 @media (prefers-color-scheme: dark) {
-  body {
+  :root {
     background-color: #202023;
     color: #e8eaed;
   }
