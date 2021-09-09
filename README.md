@@ -6,25 +6,20 @@
 
 ***
 
-> Both can be installed via [Releases](https://github.com/magicoflolis/Magic-PH/releases)
+| Version | Link | Note | Alternative |
+|:----------:|:----------:|:----------:|:----------:|
+Chrome | - | WIP | [Releases](https://github.com/magicoflolis/Magic-PH/releases)
+Firefox | [Add-ons page](https://addons.mozilla.org/addon/magicph) | Add-ons page for stable updates, GitHub for unstable updates. | [Releases](https://github.com/magicoflolis/Magic-PH/releases)
 
-**Chrome:**
-
-* [Visit Releases](https://github.com/magicoflolis/Magic-PH/releases)
-
-**Firefox:**
-
-* [Firefox Add-ons site](https://addons.mozilla.org/addon/magicph)
+| Preview |
+|:----------:|
+![MagicPH Preview]()|
 
 ***
 
 ## About
 
 MagicPH is a browser extension with the goal of *reducing distractions* & improving upon *site navigation.*
-
- | Preview |
-:----------:
-|![Preview]()|
 
 ## **Features**
 
@@ -47,7 +42,11 @@ MagicPH is a browser extension with the goal of *reducing distractions* & improv
 
 ### Build Setup
 
-> [web-ext documentation](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/)
+> Developed using [VSCodium](https://vscodium.com).
+
+| Help Links |
+|:----------:|
+[web-ext documentation](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/) |
 
 ```bash
 # Install developer dependencies

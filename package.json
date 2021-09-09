@@ -43,9 +43,9 @@
   "scripts": {
     "dev:cfg": "webpack --watch --progress --config=webpackConfig/webpack.config.js",
     "dev:sass": "sass -w ./src/sass/mod.scss:./dist/css/mod.css ./src/sass/options.scss:./dist/css/options.css -s compressed",
-    "run:Firefox": "web-ext -c=web-ext.js run",
-    "run:Chrome": "web-ext -c=web-ext.js run -t chromium --keep-profile-changes",
-    "build:web-ext": "web-ext -c=web-ext.js build",
+    "run:Firefox": "web-ext -c=web-ext-config.js run",
+    "run:Chrome": "web-ext -c=web-ext-config.js run -t chromium --keep-profile-changes",
+    "build:web-ext": "web-ext -c=web-ext-config.js build",
     "build:webpack": "webpack --mode=production --config=webpackConfig/webpack.config.js"
   },
   "eslintConfig": {
