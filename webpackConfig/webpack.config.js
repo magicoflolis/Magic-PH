@@ -9,31 +9,29 @@ const webpack = require("webpack"),
       magicinject: "./magicinject.js",
       magicph: "./magicph.js",
       options: "./options.js",
+      player: "./player.js",
     },
     output: {
       path: path.resolve(root, "dist/js"),
       filename: "[name].js",
     },
     resolve: {
-      extensions: [".js"],
+      extensions: [".js",".mjs"],
+      // fallback: {
+      //   path: require.resolve('path-browserify'),
+      //   stream: require.resolve('stream-browserify'),
+      //   url: require.resolve('url'),
+      // },
     },
-    // optimization: {
-    //   removeAvailableModules: false,
-    //   removeEmptyChunks: true,
-    //   mergeDuplicateChunks: true,
-    //   splitChunks: false,
-    // },
     module: {
-      rules: [
-        {
+      rules: [{
           test: /\.m?js$/,
           exclude: /node_modules/,
           use: {
             loader: "babel-loader",
             options: {
               presets: [
-                [
-                  "@babel/preset-env",
+                ["@babel/preset-env",
                   {
                     modules: false,
                     targets: {
@@ -77,13 +75,21 @@ const webpack = require("webpack"),
         maxChunks: 1,
       }),
     ],
+    experiments: {
+      topLevelAwait: true,
+    },
+    // optimization: {
+    //   removeAvailableModules: false,
+    //   removeEmptyChunks: true,
+    //   mergeDuplicateChunks: true,
+    //   splitChunks: false,
+    // },
     watchOptions: {
       poll: 1000,
       aggregateTimeout: 500,
       ignored: /node_modules/,
     },
   };
-
 module.exports = (env, argv) => {
   //(argv.mode === "development") ? ((config.mode = "development")) : false;
   (argv.mode === "production") ? ((config.mode = "production")) : false;

@@ -1,42 +1,50 @@
 import jQuery from "jquery";
-window.$ = window.jQuery = jQuery;
-export const log = (msg) => {
-    return console.log("[MagicPH]", msg);
-  },
-  err = (msg) => {
-    return console.error("[MagicPH]", msg);
-  },
-  qs = (element) => {
-    return document.querySelector(element);
-  },
-  create = (element, type, name) => {
-    let el = document.createElement(element);
-    type ? (el.type = type) : false;
-    name ? (el.className = name) : false;
-    return el;
-  },
-  // preventDefault = (ev) => {
-  //   ev.preventDefault();
-  //   return true;
-  // },
-  check = {
-    recommended: $("div#recommendations").length,
-    community: document.location.pathname == "/user/discover" ? true : false,
-    channel: $("#channelsProfile").length,
-    cv: $(".gridWrapper").length,
-    home: $(".frontListingWrapper").length,
-    gay: $(".gayLayout").length,
-    gif: $("#gifWrap").length,
-    lo: $(".logged-out").length,
-    model: $("div.amateurModel").length,
-    new: $("#headerSearchWrapperFree").length,
-    premium: $(".premiumUser").length,
-    pstar: $(".claimed").length,
-    user: $("#profileContent").length,
-    video: $("#player").length,
-  };
 
-export let config = {
+window.$ = window.jQuery = jQuery;
+
+const log = (msg) => {
+  return console.log("[MagicPH]", msg);
+},
+err = (msg) => {
+  return console.log("[MagicPH] YOU FUCKED IT"),console.error("[MagicPH]", msg);
+},
+qs = (element) => {
+  return document.querySelector(element);
+},
+/**
+ * Can create various elements.
+ */
+create = (element, type, name) => {
+  let el = document.createElement(element);
+  type ? (el.type = type) : false;
+  name ? (el.className = name) : false;
+  return el;
+},
+/**
+ * Finds which subpage the user is currently on.
+ */
+// fpg = (url) => {
+//   return url.test(document.location.href);
+// },
+locate = document.location.href,
+check = {
+  recommended: $("div#recommendations").length,
+  community: document.location.pathname == "/user/discover" ? true : false,
+  channel: $("#channelsProfile").length,
+  cv: $(".gridWrapper").length,
+  home: $(".frontListingWrapper").length,
+  gay: $(".gayLayout").length,
+  gif: $("#gifWrap").length,
+  lo: $(".logged-out").length,
+  model: $("div.amateurModel").length,
+  new: $("#headerSearchWrapperFree").length,
+  premium: $(".premiumUser").length,
+  pstar: $(".claimed").length,
+  user: $("#profileContent").length,
+  video: $("#player").length
+}
+
+let config = {
   altplayers: "none",
   autoscroll: true,
   blurimg: false,
@@ -65,7 +73,18 @@ export let config = {
     "videos",
     "categories",
     "pornstar",
+    "realsex",
     "photos",
     "customize",
-  ],
+  ]
+};
+
+export {
+  locate,
+  log,
+  err,
+  qs,
+  create,
+  check,
+  config
 };

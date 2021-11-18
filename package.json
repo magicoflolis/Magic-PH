@@ -1,52 +1,61 @@
 {
   "name": "magicph",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Enhances your porn viewing experience. Quick, clean, and easy.",
-  "author": "Magic Of Lolis <magicoflolis@gmail.com> (https://github.com/magicoflolis)",
+  "scripts": {
+    "dev:Firefox": "webpack --watch --progress --config=webpackConfig/webpack.config.js",
+    "dev:sass": "sass -w ./src/sass/mod.scss:./dist/css/mod.css ./src/sass/options.scss:./dist/css/options.css -s compressed",
+    "dev:Chrome": "webpack --watch --progress --config=webpackConfig/webpack_ch.config.js",
+    "run:Chrome": "web-ext -c=webpackConfig/web-ext-chrome.js run -t chromium --keep-profile-changes",
+    "run:Firefox": "web-ext -c=webpackConfig/web-ext-firefox.js run",
+    "http-server": "http-server ./dist -c5",
+    "build:web-ext": "web-ext -c=webpackConfig/web-ext-firefox.js build",
+    "build:webpack": "webpack --mode=production --config=webpackConfig/webpack.config.js"
+  },
+  "author": "Magic Of Lolis <magicoflolis@tuta.io> (https://github.com/magicoflolis)",
   "private": true,
   "license": "GPL-3.0-only",
   "bugs": {
-    "url": "https://github.com/magicoflolis/Magic-PH/issues/new"
+    "url": "https://github.com/magicoflolis/Magic-PH/issues"
   },
   "homepage": "https://github.com/magicoflolis/Magic-PH#readme",
   "devDependencies": {
-    "@babel/cli": "^7.14.5",
-    "@babel/core": "^7.14.5",
-    "@babel/eslint-parser": "^7.14.5",
-    "@babel/preset-env": "^7.14.5",
-    "@types/babel__core": "^7.1.14",
-    "@types/chrome": "^0.0.145",
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/eslint-parser": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@types/babel__core": "^7.1.16",
+    "@types/chrome": "^0.0.163",
     "@types/firefox-webext-browser": "latest",
-    "@types/jquery": "^3.5.5",
-    "@types/sass": "^1.16.0",
-    "babel-loader": "^8.2.2",
-    "eslint": "^7.29.0",
+    "@types/jquery": "^3.5.8",
+    "@types/sass": "^1.43.0",
+    "babel-loader": "^8.2.3",
+    "eslint": "^8.2.0",
     "html-loader": "^2.1.2",
-    "mini-css-extract-plugin": "^1.6.0",
-    "plyr": "^3.6.8",
-    "web-ext": "^6.2.0",
-    "webpack": "^5.38.1",
-    "webpack-cli": "^4.7.0"
+    "mini-css-extract-plugin": "^2.4.4",
+    "plyr": "^3.6.9",
+    "web-ext": "^6.5.0",
+    "webpack": "^5.62.1",
+    "webpack-cli": "^4.9.1",
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "css-loader": "^5.2.6",
+    "@gorhill/ubo-core": "^0.1.11",
+    "css-loader": "^6.5.1",
+    "http-server": "^14.0.0",
     "jquery": ">=3.6.0",
-    "sass": "^1.35.1",
-    "sass-loader": "^12.1.0",
-    "style-loader": "^2.0.0",
-    "web-ext-native-msg": "^4.10.1"
+    "module": "^1.2.5",
+    "path-browserify": "^1.0.1",
+    "sass": "^1.43.4",
+    "sass-loader": "^12.3.0",
+    "stream-browserify": "^3.0.0",
+    "style-loader": "^3.3.1",
+    "url": "^0.11.0",
+    "web-ext-native-msg": "^5.1.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/magicoflolis/Magic-PH.git"
-  },
-  "scripts": {
-    "dev:cfg": "webpack --watch --progress --config=webpackConfig/webpack.config.js",
-    "dev:sass": "sass -w ./src/sass/mod.scss:./dist/css/mod.css ./src/sass/options.scss:./dist/css/options.css -s compressed",
-    "run:Firefox": "web-ext -c=web-ext-config.js run",
-    "run:Chrome": "web-ext -c=web-ext-config.js run -t chromium --keep-profile-changes",
-    "build:web-ext": "web-ext -c=web-ext-config.js build",
-    "build:webpack": "webpack --mode=production --config=webpackConfig/webpack.config.js"
   },
   "eslintConfig": {
     "env": {

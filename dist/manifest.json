@@ -1,9 +1,9 @@
 {
   "name": "MagicPH",
   "description": "Enhanced PornHub",
-  "author": "Magic of Lolis <magicoflolis@gmail.com>",
+  "author": "Magic <magicoflolis@tuta.io>",
   "homepage_url": "https://github.com/magicoflolis/Magic-PH",
-  "version": "1.0.4",
+  "version": "1.0.4c",
   "background": {
     "page": "background.html"
   },
@@ -21,7 +21,8 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "magicph@magicoflolis.com",
-      "strict_min_version": "57.0"
+      "strict_min_version": "68.0",
+      "update_url": "https://github.com/magicoflolis/Magic-PH/version/updates.json"
     }
   },
   "content_scripts": [
@@ -53,7 +54,7 @@
     "storage",
     "unlimitedStorage"
   ],
-  "web_accessible_resources": ["js/*"],
+  "web_accessible_resources": ["web_accessible_resources/*", "js/*", "css/plyr.css"],
   "commands": {},
   "manifest_version": 2
 }

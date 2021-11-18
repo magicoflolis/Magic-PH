@@ -1,7 +1,7 @@
 const brws = typeof browser == "undefined" ? chrome : browser;
 brws.storage.local.get((storedConfig) => {
   ($form =
-    document.querySelector("form") ??
+    document.querySelector("form.magicph_cfg") ??
     console.log(`[MagicPH] can't find ${target}`)),
     (config = {
       altplayers: "none",
@@ -9,7 +9,7 @@ brws.storage.local.get((storedConfig) => {
       blurimg: false,
       comments: false,
       topbutton: false,
-      sidebar: true,
+      sidebar: false,
       headerLinks: {
         Home: "/",
         Video: "/video?o=tr&hd=1",
@@ -38,7 +38,6 @@ brws.storage.local.get((storedConfig) => {
       ],
       ...storedConfig,
     });
-
   for (let prop in config) {
     prop in $form.elements
       ? $form.elements[prop].type == "checkbox"

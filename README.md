@@ -2,18 +2,14 @@
 
 > Enhances your porn viewing experience. Quick, clean, and easy.
 
-*For optimal experience, please use my [Filter List:](https://github.com/magicoflolis/Magic-PH/blame/master/FilterList/MagicPH.txt) + [uBlock Origin](https://github.com/gorhill/uBlock#readme). Additional help [Filter Guide](https://github.com/gorhill/uBlock/wiki/Filter-lists-from-around-the-web)*
+*For best experience, please use an adblock([uBlock Origin](https://github.com/gorhill/uBlock#readme)) along with my [Filter List](https://github.com/magicoflolis/Magic-PH/blame/master/FilterList/MagicPH.txt). Additional help [Filter Guide](https://github.com/gorhill/uBlock/wiki/Filter-lists-from-around-the-web)*
 
 ***
 
-| Version | Link | Note | Alternative |
+| Version | Link | Build | Note |
 |:----------:|:----------:|:----------:|:----------:|
-Chrome | - | WIP | [Releases](https://github.com/magicoflolis/Magic-PH/releases)
-Firefox | [Add-ons page](https://addons.mozilla.org/addon/magicph) | Add-ons page for stable updates, GitHub for unstable updates. | [Releases](https://github.com/magicoflolis/Magic-PH/releases)
-
-| Preview |
-|:----------:|
-![MagicPH Preview]()|
+Chrome | ~~[Releases](https://github.com/magicoflolis/Magic-PH/releases)~~ | ~~[Extension](#build-setup)~~ | Work in porgress
+Firefox | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Add-on](#build-setup) | -
 
 ***
 
@@ -21,8 +17,9 @@ Firefox | [Add-ons page](https://addons.mozilla.org/addon/magicph) | Add-ons pag
 
 MagicPH is a browser extension with the goal of *reducing distractions* & improving upon *site navigation.*
 
-## **Features**
+**Features:**
 
+* Alternative video player support.
 * Various UI tweaks.
 * Enlarges video player automatically.
 * Config menu.
@@ -32,11 +29,14 @@ MagicPH is a browser extension with the goal of *reducing distractions* & improv
 * Scroll To Top button.
 * Page numbers appear on scroll.
 
+| Previews |
+|:----------:|
+![MagicPH Preview](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/assets/preview_addon.png)|
+
 ## Roadmap
 
 * Fix any bugs along the way.
 * Add Favorites List for un-signin users.
-* Alternative video player support.
 * Customize headers.
 * Support PH Network sites.
 
@@ -56,6 +56,11 @@ web-ext run -s ./dist/
 # Recommended to create additional profile about:profiles
 web-ext run -p <profile> -s ./dist/
 ```
+
+### External Libraries
+
+* [jQuery](https://jquery.com/)
+* [Plyr](https://github.com/sampotts/plyr#readme)
 
 ### Contacts
 

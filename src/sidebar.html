@@ -8,3 +8,96 @@
   <a class="magic7"></a>
   <a class="magic999">Exit ⟵</a>
 </div>
+
+<form class="magicph_cfg">
+  <section class="select">
+    Alternative player
+    <select name="altplayers">
+      <option value="none">None</option>
+      <option value="plyr">Plyr</option>
+    </select>
+  </section>
+  <section class="checkbox">
+    <label>
+      <span>Scroll on load</span>
+      <div class="switch">
+        <input type="checkbox" name="autoscroll" id="autoscroll" />
+        <label for="autoscroll"></label>
+      </div>
+    </label>
+  </section>
+  <section class="checkbox">
+    <label>
+      <span>Blur thumbnails</span>
+      <div class="switch">
+        <input type="checkbox" name="blurimg" id="blurimg" />
+        <label for="blurimg"></label>
+      </div>
+    </label>
+  </section>
+  <section class="checkbox">
+    <label>
+      <span>Enable comments</span>
+      <div class="switch">
+        <input type="checkbox" name="comments" id="comments" />
+        <label for="comments"></label>
+      </div>
+    </label>
+  </section>
+  <section class="checkbox">
+    <label>
+      <span>Disable "Top" button</span>
+      <div class="switch">
+        <input type="checkbox" name="topbutton" id="topbutton" />
+        <label for="topbutton"></label>
+      </div>
+    </label>
+  </section>
+  <section class="checkbox">
+    <label>
+      <span>Disable Sidebar</span>
+      <div class="switch">
+        <input type="checkbox" name="sidebar" id="sidebar" />
+        <label for="sidebar"></label>
+      </div>
+    </label>
+  </section>
+</form>
+<script src="./js/options.js">
+
+</script>
+
+
+<div class="pagination3">
+  <ul class="firstPage">
+    <li class="page_current alpha"><span class="greyButton">1</span></li>
+    <li class="page_number">
+      <a class="greyButton" href="/video?page=2">2</a>
+    </li>
+    <li class="page_number">
+      <a class="greyButton" href="/video?page=3">3</a>
+    </li>
+    <li class="page_number">
+      <a class="greyButton" href="/video?page=4">4</a>
+    </li>
+    <li class="page_number">
+      <a class="greyButton" href="/video?page=5">5</a>
+    </li>
+    <li class="page_next_set">
+      <a class="greyButton" href="/video?page=10">10</a>
+    </li>
+    <li class="page_next omega">
+      <a href="/video?page=2" class="orangeButton"
+        >Next
+        <img
+          class="pagination_arrow_right lazy"
+          src="https://ei.phncdn.com/www-static/images/rightArrow.png"
+          alt="Right Arrow"
+          data-src="https://ei.phncdn.com/www-static/images/rightArrow.png"
+          data-title=""
+          title=""
+          data-img_type="image"
+      /></a>
+    </li>
+  </ul>
+</div>
