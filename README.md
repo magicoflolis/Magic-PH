@@ -2,13 +2,13 @@
 
 > Enhances your porn viewing experience. Quick, clean, and easy.
 
-*For best experience, please use an adblock([uBlock Origin](https://github.com/gorhill/uBlock#readme)) along with my [Filter List](https://github.com/magicoflolis/Magic-PH/blame/master/FilterList/MagicPH.txt). Additional help [Filter Guide](https://github.com/gorhill/uBlock/wiki/Filter-lists-from-around-the-web)*
+*For best experience, please use an adblock([uBlock Origin](https://github.com/gorhill/uBlock#readme)) along with my [Filter List](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/FilterList/MagicPH.txt). Additional help [Filter Guide](https://github.com/gorhill/uBlock/wiki/Filter-lists-from-around-the-web)*
 
 ***
 
 | Version | Link | Build | Note |
 |:----------:|:----------:|:----------:|:----------:|
-Chrome | ~~[Releases](https://github.com/magicoflolis/Magic-PH/releases)~~ | ~~[Extension](#build-setup)~~ | Work in porgress
+Chrome | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | ~~[Extension](#build-setup)~~ | Work in porgress
 Firefox | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Add-on](#build-setup) | -
 
 ***
