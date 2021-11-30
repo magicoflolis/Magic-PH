@@ -220,10 +220,10 @@ a.customize-header,
   // top: 0 !important;
   // position: relative !important;
 }
-.plyr__video-wrapper > video {
-  width: max(100vw, 80vw) !important;
-  height: max(92vh, 80vh) !important;
-  position: relative !important;
+
+.plyr__video-wrapper > video{
+  width: max(100vw, 80vw);
+  height: max(92vh, 80vh);
 }
 .biga {
   width: max(80vw, 50vw) !important;

@@ -4,21 +4,21 @@
   "description": "Enhances your porn viewing experience. Quick, clean, and easy.",
   "scripts": {
     "dev:Firefox": "webpack --watch --progress --config=webpackConfig/webpack.config.js",
-    "dev:sass": "sass -w ./src/sass/mod.scss:./dist/css/mod.css ./src/sass/options.scss:./dist/css/options.css -s compressed",
     "dev:Chrome": "webpack --watch --progress --config=webpackConfig/webpack_ch.config.js",
-    "run:Chrome": "web-ext -c=webpackConfig/web-ext-chrome.js run -t chromium --keep-profile-changes",
-    "run:Firefox": "web-ext -c=webpackConfig/web-ext-firefox.js run",
-    "http-server": "http-server ./dist -c5",
+    "dev:Sass": "sass -w ./src/sass/mod.scss:./dist/css/mod.css ./src/sass/plyr/plyr.scss:./dist/css/plyr.css -s compressed",
     "build:web-ext": "web-ext -c=webpackConfig/web-ext-firefox.js build",
-    "build:webpack": "webpack --mode=production --config=webpackConfig/webpack.config.js"
+    "build:Firefox": "webpack --mode=production --config=webpackConfig/webpack.config.js",
+    "build:Chrome": "webpack --mode=production --config=webpackConfig/webpack_ch.config.js",
+    "build:Browsers": "npm run build:Firefox && npm run build:Chrome",
+    "http-server": "http-server ./dist -c5",
+    "cors-anywhere": "node ./src/cors-anywhere/server.js"
   },
-  "author": "Magic Of Lolis <magicoflolis@tuta.io> (https://github.com/magicoflolis)",
-  "private": true,
+  "author": "Magic <magicoflolis@tuta.io>",
   "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/magicoflolis/Magic-PH/issues"
   },
-  "homepage": "https://github.com/magicoflolis/Magic-PH#readme",
+  "homepage": "https://github.com/magicoflolis/Magic-PH",
   "devDependencies": {
     "@babel/cli": "^7.16.0",
     "@babel/core": "^7.16.0",
@@ -27,30 +27,26 @@
     "@types/babel__core": "^7.1.16",
     "@types/chrome": "^0.0.163",
     "@types/firefox-webext-browser": "latest",
-    "@types/jquery": "^3.5.8",
+    "@types/jquery": "^3.5.9",
     "@types/sass": "^1.43.0",
     "babel-loader": "^8.2.3",
+    "copy-webpack-plugin": "^10.0.0",
+    "css-loader": "^6.5.1",
     "eslint": "^8.2.0",
     "html-loader": "^2.1.2",
-    "mini-css-extract-plugin": "^2.4.4",
-    "plyr": "^3.6.9",
+    "http-server": "^14.0.0",
+    "json-loader": "^0.5.7",
+    "sass-loader": "^12.3.0",
+    "style-loader": "^3.3.1",
     "web-ext": "^6.5.0",
     "webpack": "^5.62.1",
     "webpack-cli": "^4.9.1",
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@gorhill/ubo-core": "^0.1.11",
-    "css-loader": "^6.5.1",
-    "http-server": "^14.0.0",
-    "jquery": ">=3.6.0",
-    "module": "^1.2.5",
-    "path-browserify": "^1.0.1",
+    "http-proxy": "1.11.1",
+    "proxy-from-env": "0.0.1",
     "sass": "^1.43.4",
-    "sass-loader": "^12.3.0",
-    "stream-browserify": "^3.0.0",
-    "style-loader": "^3.3.1",
-    "url": "^0.11.0",
     "web-ext-native-msg": "^5.1.0"
   },
   "repository": {
@@ -87,5 +83,6 @@
     "ph",
     "pornhub",
     "pornhubpremium"
-  ]
+  ],
+  "private": true
 }

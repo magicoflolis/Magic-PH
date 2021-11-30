@@ -1,4 +1,5 @@
 const webpack = require("webpack"),
+  CopyPlugin = require('copy-webpack-plugin'),
   path = require("path"),
   root = path.resolve(__dirname, ".."),
   config = {
@@ -6,22 +7,18 @@ const webpack = require("webpack"),
     devtool: "source-map",
     context: path.resolve(root, "src"),
     entry: {
-      magicinject: "./magicinject.js",
-      magicph: "./magicph.js",
-      options: "./options.js",
-      player: "./player.js",
+      magicinject: "./js/magicinject.js",
+      magicph: "./js/magicph.js",
+      options: "./js/options.js",
+      player: "./js/player.js",
+      // cors: "./js/cors-server.js",
     },
     output: {
       path: path.resolve(root, "dist/js"),
       filename: "[name].js",
     },
     resolve: {
-      extensions: [".js",".mjs"],
-      // fallback: {
-      //   path: require.resolve('path-browserify'),
-      //   stream: require.resolve('stream-browserify'),
-      //   url: require.resolve('url'),
-      // },
+      extensions: [".js"],
     },
     module: {
       rules: [{
@@ -44,27 +41,6 @@ const webpack = require("webpack"),
           },
         },
         {
-          test: /\.s[ac]ss$/i,
-          use: [
-            "style-loader",
-            {
-              loader: "css-loader", // translates CSS into CommonJS
-              options: {
-                importLoaders: 1,
-                sourceMap: true,
-              },
-            },
-            {
-              loader: "sass-loader",
-              options: {
-                // Prefer `dart-sass`
-                implementation: require("sass"),
-                sourceMap: true,
-              },
-            },
-          ],
-        },
-        {
           test: /\.html$/i,
           loader: "html-loader",
         },
@@ -73,6 +49,22 @@ const webpack = require("webpack"),
     plugins: [
       new webpack.optimize.LimitChunkCountPlugin({
         maxChunks: 1,
+      }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.resolve(root, "src/firefox_manifest.json"),
+            to: path.resolve(root, "dist/manifest.json"),
+          },
+          {
+            from: path.resolve(root, "src/background.html"),
+            to: path.resolve(root, "dist/background.html"),
+          },
+          {
+            from: path.resolve(root, "src/options.html"),
+            to: path.resolve(root, "dist/options.html"),
+          },
+        ],
       }),
     ],
     experiments: {
@@ -92,7 +84,7 @@ const webpack = require("webpack"),
   };
 module.exports = (env, argv) => {
   //(argv.mode === "development") ? ((config.mode = "development")) : false;
-  (argv.mode === "production") ? ((config.mode = "production")) : false;
+  (argv.mode === "production") ? (config.mode = "production", config.devtool = "source-map") : false;
   console.log(config.mode);
   return config;
 };

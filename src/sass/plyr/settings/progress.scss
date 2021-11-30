@@ -1,0 +1,14 @@
+// ==========================================================================
+// Progress
+// ==========================================================================
+
+// Loading
+$plyr-progress-loading-size: var(--plyr-progress-loading-size, 25px) !default;
+$plyr-progress-loading-background: var(--plyr-progress-loading-background, rgba(hsl(0, 0%, 0%), 0.6)) !default;
+
+// Buffered
+$plyr-video-progress-buffered-background: var(--plyr-video-progress-buffered-background, rgba(#fff, 0.25)) !default;
+$plyr-audio-progress-buffered-background: var(
+  --plyr-audio-progress-buffered-background,
+  rgba($plyr-color-gray-200, 0.6)
+) !default;

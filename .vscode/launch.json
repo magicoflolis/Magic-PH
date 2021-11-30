@@ -3,7 +3,7 @@
   "compounds": [
       {
         "name": "Attach/Launch",
-        "configurations": ["Attach:Firefox", "SF"]
+        "configurations": ["SF","Attach:Firefox"]
       }
     ],
   "configurations": [
@@ -22,6 +22,20 @@
         "clearConsoleOnReload": true,
         "url": "https://pornhub.com/",
         "addonPath": "${workspaceFolder}\\dist"
+    },
+    {
+      "type": "pwa-chrome",
+      "request": "attach",
+      "name": "Attach to browser",
+      "port": 9222
+    },
+    {
+      "name": "SC",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "runtimeExecutable": "D:\\Docs\\Github\\Magic-PH\\chrome\\bin\\chrome.exe",
+      "userDataDir": "${workspaceFolder}/chrome/profile",
+      "url": "https://pornhub.com/"
     }
   ]
 }

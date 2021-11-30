@@ -1,0 +1,54 @@
+{
+  "name": "MagicPH",
+  "description": "Enhanced PornHub",
+  "author": "Magic <magicoflolis@tuta.io>",
+  "homepage_url": "https://github.com/magicoflolis/Magic-PH",
+  "version": "1.0.5",
+  "background": {
+    "page": "background.html"
+  },
+  "browser_action": {
+    "browser_style": false,
+    "default_icon": "icons/icon_128.png",
+    "default_popup": "options.html",
+    "default_title": "MagicPH"
+  },
+  "options_ui": {
+    "browser_style": false,
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "css": ["/css/mod.css"],
+      "js": ["/js/magicinject.js"],
+      "matches": ["https://*.pornhub.com/*", "https://*.pornhubpremium.com/*"],
+      "exclude_matches": [
+        "https://www.pornhub.com/login",
+        "https://www.pornhub.com/create_account_select",
+        "https://www.pornhubpremium.com/login",
+        "https://www.pornhubpremium.com/create_account_select",
+        "https://www.pornhubpremium.com/gift"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "content_security_policy": "style-src 'unsafe-inline'; img-src 'https:'; script-src 'self'; object-src 'self'",
+  "icons": {
+    "64": "icons/icon_64.png",
+    "128": "icons/icon_128.png"
+  },
+  "permissions": [
+    "https://*.pornhub.com/*",
+    "https://*.pornhubpremium.com/*",
+    "activeTab",
+    "tabs",
+    "storage",
+    "unlimitedStorage"
+  ],
+  "update_url": "https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/version/updates.xml",
+  "web_accessible_resources": ["web_accessible_resources/*", "js/*", "css/plyr.css"],
+  "commands": {},
+  "manifest_version": 2
+}
