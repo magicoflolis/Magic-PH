@@ -1,0 +1,53 @@
+$theme: #f90;
+$theme-alt: rgba(255, 153, 0, 0.842);
+$dark: #000;
+$white: #fff;
+$hover: #464646;
+
+@mixin theme {
+  background: $theme;
+  background-color: $dark;
+  border: 2px solid $theme;
+  color: $theme;
+}
+
+@mixin taste {
+  background-color: $dark;
+  height: 100%;
+  position: fixed !important;
+  z-index: 10;
+  left: 20%;
+  top: 0px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 0px !important;
+}
+
+@mixin prefix($property, $value, $prefixes) {
+  @each $prefix in $prefixes {
+    -#{$prefix}-#{$property}: $value;
+  }
+  #{$property}: $value;
+}
+
+@mixin remover() {
+  content: "";
+  display: none !important;
+  visibility: hidden !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  width: 0px !important;
+  max-width: 0px !important;
+  min-width: 0px !important;
+  height: 0px !important;
+  max-height: 0px !important;
+  min-height: 0px !important;
+}
+
+@mixin container {
+  max-width: 96vw !important;
+  min-width: 991px !important;
+  width: 100vw !important;
+  height: 86vh !important;
+  padding: 0 !important;
+}

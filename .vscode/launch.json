@@ -33,7 +33,7 @@
       "name": "SC",
       "type": "pwa-chrome",
       "request": "launch",
-      "runtimeExecutable": "D:\\Docs\\Github\\Magic-PH\\chrome\\bin\\chrome.exe",
+      "runtimeExecutable": "${workspaceFolder}\\chrome\\bin\\chrome.exe",
       "userDataDir": "${workspaceFolder}/chrome/profile",
       "url": "https://pornhub.com/"
     }

@@ -1,36 +1,9 @@
-$theme: #f90;
-$dark: #000;
-$white: #fff;
-$hover: #464646;
-
-@mixin prefix($property, $value, $prefixes) {
-  @each $prefix in $prefixes {
-    -#{$prefix}-#{$property}: $value;
-  }
-  #{$property}: $value;
-}
-
-@mixin remover {
-  content: "";
-  display: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  width: 0px !important;
-  min-width: 0px !important;
-  height: 0px !important;
-  min-height: 0px !important;
-}
-
-@mixin container {
-  max-width: 96vw !important;
-  min-width: 991px !important;
-  width: 100vw !important;
-  height: 86vh !important;
-  padding: 0 !important;
+html {
+  scroll-behavior: smooth
 }
 
 *:not(select) {
-  scrollbar-color: rgba(255, 153, 0, 0.842) $dark !important;
+  scrollbar-color: $theme-alt $dark !important;
   scrollbar-width: thin !important;
 }
 /* Chrome and derivatives*/
@@ -49,49 +22,65 @@ $hover: #464646;
   }
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 153, 0, 0.842) !important;
+  background:  !important;
   border: 0 !important;
 
   &:hover {
-    background: rgba(255, 153, 0, 0.842) !important;
+    background: $theme-alt !important;
   }
 }
 
 html,
 body {
-  width: 100% !important;
+  width: 100%;
+  height: 100%;
   > .frontListingWrapper {
     @include container;
   }
 }
 
 .rm,
+.footerContentWrapper,
+.premiumPromoBannerWrapper,
+li.mgp_upsell,
+.leftPanel > p,
+.leftPanel > .popularSearches,
+.popularFilterPhotos,
+.popularFiltersWrapper,
+.innerHeaderSubMenu.trendingWrapper,
+.headerSubMenu > .innerHeaderFilters,
+#recommendations > .recommendedPornstarsWrapper,
+#recommendations > .recommendedCategoriesWrapper,
+#under-player-playlists,
+.pornportal-wrapper,
+#popsByTrafficJunky,
 .menu.item-7.community,
 li#profileHome,
-#js-networkBar,
 .mgp_videoPoster,
 .tasteLogin,
 .upgradeToPremium,
 #profileMenuDropdown > .alpha,
+#main-container > .abovePlayer,
+[data-entrycode="DiscoverPremium"],
+[data-mxptext="Live Cams"],
+head > stylesheet,
 .logoWrapper,
 .mgp_cinema,
-#under-player-playlists,
 #loadMoreRelatedVideosCenter,
 #hd-rightColVideoPage,
 #customSkin,
 #customSkinCTA {
-  @include remover;
-}
-
-.pagination3 > {
-  ul {
-    @include prefix(transition, top 100ms ease-in-out 100ms, moz webkit);
-    z-index: 10 !important;
-    position: fixed !important;
-    display: block !important;
-    top: 100%;
-    left: 20%;
-  }
+  content: "";
+  display: none !important;
+  visibility: hidden !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  width: 0px !important;
+  max-width: 0px !important;
+  min-width: 0px !important;
+  height: 0px !important;
+  max-height: 0px !important;
+  min-height: 0px !important;
 }
 #relatedVideosCenter {
   display: grid;
@@ -103,23 +92,6 @@ li#profileHome,
   margin: 0 !important;
   padding: 5px 0 5px !important;
   width: 98vw;
-}
-.container {
-  width: 96vw !important;
-  min-width: 96vw !important;
-  max-width: 96vw !important;
-  height: 86vh !important;
-  margin: 1% 6% 10px auto !important;
-  padding: 0 !important;
-  > .frontListingWrapper {
-    @include container;
-  }
-}
-#main-container,
-.gridWrapper,
-.section_wrapper,
-#gifWebmPlayer {
-  @include container;
 }
 .mgp_videoPoster {
   height: 98vh !important;
@@ -146,17 +118,8 @@ li#profileHome,
   margin-top: 13% !important;
   margin-bottom: 0 !important;
 }
-/* margin-top: 6% !important; */
-// #cmtWrapper {
-//   width: 96vw !important;
-// }
-// header#header,
-// #headerWrapper {
-//   width: max(99vw, 80vw) !important;
-// }
-
-#header #headerMenuContainer {
-  border-top: 0px !important;
+.leftPanel ul.discover:after {
+  background: none !important;
 }
 
 .pcVideoListItem {
@@ -379,5 +342,77 @@ table {
     width: 27px;
     height: 27px;
     border: none;
+  }
+}
+
+
+.mgp_download {
+  border-bottom: 1px solid rgba(255,255,255,.2) !important;
+}
+
+.mgp_downloadInfo {
+  background: rgba(0,0,0,.75);
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transition: opacity .2s linear;
+  width: 50%;
+  max-width: 550px;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  opacity: 0;
+  visibility: hidden;
+  > .mgp_copyCloseDiv {
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    overflow: hidden;
+    padding: 2px 4px;
+    > .mgp_title {
+      font-size: 16px;
+      line-height: 30px;
+      padding: 0 0 0 5px;
+      float: left;
+    }
+    > .mgp_hideMenu {
+      font-size: 25px;
+      float: right;
+      cursor: pointer;
+      pointer-events: auto;
+      padding: 5px;
+    }
+  }
+  ul {
+    padding: 2px 4px;
+  }
+  li {
+    span {
+      padding-right: 10%;
+      width: 1%;
+      display: inline-block;
+      margin-left: 1%;
+    }
+    input {
+      margin: 1% 0px 1%;
+      text-align: center;
+      outline: 0 none;
+      background: transparent;
+      border: none;
+    }
+    input[value="[Error] Not Found"] {
+      visibility: hidden;
+    }
+    a.suggestToggleAlt {
+      margin: 1% 1% 1% 0px;
+      float: inline-end;
+      cursor: pointer;
+      color: #ccc;
+      &:hover {
+        color: #f90;
+        @include prefix(text-decoration, 0, webkit);
+      }
+    }
+  }
+  &.mgp_active {
+    opacity: 1;
+    visibility: visible;
   }
 }
