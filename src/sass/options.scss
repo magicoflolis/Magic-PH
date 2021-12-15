@@ -1,8 +1,3 @@
-$theme: #f90;
-$dark: #000;
-$white: #fff;
-$hover: #464646;
-
 body.magicph_cfg,
 html.magicph_cfg {
   padding: 0;
@@ -16,7 +11,7 @@ form.magicph_cfg {
   section {
     border: 1px solid $hover;
   }
-  
+
   section.checkbox>label,
   section.checkboxlist>label,
   section.select {
@@ -24,26 +19,26 @@ form.magicph_cfg {
     justify-content: space-between;
     padding: .825em;
   }
-  
+
   section.checkbox>label,
   section.checkboxlist>label {
     cursor: pointer;
   }
-  
+
   section.checkboxlist {
     padding-left: .825em;
     padding-bottom: .5em;
   }
-  
+
   section.checkboxlist>label {
     padding-top: .5em;
     padding-bottom: .5em;
   }
-  
+
   section.checkboxlist p {
     margin-bottom: .5em;
   }
-  
+
   .switch {
     position: relative;
     width: 38px;

@@ -1,6 +1,8 @@
-import Plyr from '../web_accessible_resources/plyr.js';
+import Plyr from '../web_accessible_resources/plyr.min.js';
+import { ael, qs } from "./general";
 // window.media_5 or media_0
 // MGP.destroyPlayer()
+// Add "&?mgp_debug=true" in URL to enable debugging.
 let quality_error = "[Error] Not Found",
 quality_240p = quality_error,
 quality_480p = quality_error,
@@ -9,16 +11,27 @@ quality_1080p = quality_error,
 quality_1440p = quality_error,
 quality_2160p = quality_error,
 quality_best = quality_error,
+video = $(".mainPlayerDiv").attr('data-video-id'),
+pid = `playerDiv_${video}`,
+flashvarsId = `flashvars_${video}`,
+getMediaUrl = quality_error,
 ph_player = async () => {
 // let vurl = window.location.toString();
 // document.location.search != `${document.location.search}&t=3` ? (window.location = vurl.replace(document.location.search, `${document.location.search}&t=3`)) : false
-let flashvarsId = `flashvars_${WIDGET_RATINGS_LIKE_FAV.itemId}`,
-  flashvarsObject = eval(flashvarsId),
-  getMediaUrl = quality_error;
-  $.each(flashvarsObject.mediaDefinitions, function (i, item) {
-    (item.format == 'mp4') ? (getMediaUrl = item.videoUrl) : false;
+  for (let i = 0; i < window[flashvarsId].mediaDefinitions.length; i++) {
+    window[flashvarsId].mediaDefinitions[i].format === "mp4" ? (getMediaUrl = window[flashvarsId].mediaDefinitions[i].videoUrl) : false;
+  };
+  await getVideoUrl(getMediaUrl).then(r => {
+    for (let i = 0; i < r.length; i++) {
+      let item = r[i];
+      (item.quality == '240') ? (quality_240p = item.videoUrl, quality_best = item.videoUrl) :
+      (item.quality == '480') ? (quality_480p = item.videoUrl, quality_best = item.videoUrl) :
+      (item.quality == '720') ? (quality_720p = item.videoUrl, quality_best = item.videoUrl) :
+      (item.quality == '1080') ? (quality_1080p = item.videoUrl, quality_best = item.videoUrl, localStorage.setItem("mgp_player", '{"quality":1080}')) :
+      (item.quality == '1440') ? (quality_1440p = item.videoUrl, localStorage.setItem("mgp_player", '{"quality":1440}')) :
+      (item.quality == '2160') ? (quality_2160p = item.videoUrl, localStorage.setItem("mgp_player", '{"quality":2160}')) : false
+    };
   })
-  await getVideoUrl(getMediaUrl)
   let button = `<div class="mgp_download">Video Quality(s)</div>`,
   layout = `
   <div class="mgp_downloadInfo">
@@ -50,34 +63,23 @@ let flashvarsId = `flashvars_${WIDGET_RATINGS_LIKE_FAV.itemId}`,
     }
   }
   </script>`;
-  $(button).prependTo("div.mgp_contextMenu > div.mgp_content")
-  $(layout).appendTo(".playerFlvContainer")
-  document.querySelector(".mgp_download").addEventListener('click', async () => {
+  $(button).prependTo("div.mgp_contextMenu > div.mgp_content");
+  $(layout).appendTo(".playerFlvContainer");
+  ael(qs(".mgp_download"),"click", () =>{
     return $('.mgp_contextMenu').addClass('mgp_hidden'),$('.mgp_downloadInfo').addClass('mgp_active');
-  })
-  document.querySelector(".mgp_hideMenu").addEventListener('click', async () => {
+  });
+  ael(qs(".mgp_hideMenu"),"click", () =>{
     return $('.mgp_downloadInfo').removeClass('mgp_active');
-  })
+  });
 
 function getVideoUrl(link) {
   return new Promise((resolve) => {
     $.ajax({
       type: "GET",
       url: link,
-      success: (data, status) => {
-        if (status == "success") {
-          $.each(data, function (i, item) {
-            // let m = console.log(`[MagicPH] ${item.videoUrl}`);
-            (item.quality == '240') ? (quality_240p = item.videoUrl, quality_best = item.videoUrl) :
-            (item.quality == '480') ? (quality_480p = item.videoUrl, quality_best = item.videoUrl) :
-            (item.quality == '720') ? (quality_720p = item.videoUrl, quality_best = item.videoUrl) :
-            (item.quality == '1080') ? (quality_1080p = item.videoUrl, quality_best = item.videoUrl, localStorage.setItem("mgp_player", '{"quality":1080}')) : 
-            (item.quality == '1440') ? (quality_1440p = item.videoUrl, localStorage.setItem("mgp_player", '{"quality":1440}')) : 
-            (item.quality == '2160') ? (quality_2160p = item.videoUrl, localStorage.setItem("mgp_player", '{"quality":2160}')) : false
-          });
-          resolve("We loaded")
-        }
-    }
+      success: (data) => {
+        resolve(data);
+      }
     })
   });
 };
@@ -133,9 +135,11 @@ let altplayer = () => {
   pframe = `<div id="playerframe" class="altframe bigp">
   <video id="altplayer" class="biga" controls></video>
   </div>`;
+  window.MGP.players[pid].mute();
+  window.MGP.players[pid].pause();
   $(pframe).prependTo($("div.video-wrapper").eq(0));
   new Plyr(document.getElementById("altplayer"), options);
-  document.getElementById("altplayer").addEventListener('ready', event => {
+  ael(document.getElementById("altplayer"),"ready", event => {
     const player = event.detail.plyr;
     player.source = {
       type: 'video',
@@ -181,23 +185,25 @@ let altplayer = () => {
         src: document.querySelector('img.mgp_image').src,
       },
     };
+    $('head > script[src="cdn1d-static-shared.phncdn.com/html5player/videoPlayer/es6player/6.1.6/desktop-player-adaptive-hls.min.js"]').remove();
     MGP.destroyPlayer(MGP.getPlayerIds());
-    $(".mainPlayerDiv").remove();
-    $("video-element").remove();
-    // player.volume = 0;
+    $(".mainPlayerDiv").empty().remove();
     player.on('loadeddata', () => {
-      player.currentTime = 3;
+      player.currentTime = $(".mainPlayerDiv").attr("magicph-seek");
       player.play();
       // player.volume = 1;
-    })
-    // console.log(player);
-    // console.log(player.currentTime);
+    });
+    // $("video-element").remove();
+    // player.volume = 0;
   });
-}
+};
 
 if(document.readyState === "complete") {
-  $(".video-wrapper > div.mainPlayerDiv.ap").length ? altplayer() : false
-}
+  $(".video-wrapper > div.mainPlayerDiv.ap").length ? (altplayer()) : (
+    await new Promise((resolve) => setTimeout(resolve, 1000)),
+    window.MGP.players[pid].seek($(".mainPlayerDiv").attr("magicph-seek"))
+  )
+};
 
 };
 export { ph_player }

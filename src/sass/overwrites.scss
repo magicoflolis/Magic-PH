@@ -36,12 +36,47 @@ body {
   height: 100%;
   > .frontListingWrapper {
     @include container;
+  };
+}
+
+body.logged-out {
+  .votes-fav-wrap,
+  .userActions,
+  .userWidgetbuttons,
+  #communityMenuWrap {
+    @include remover();
   }
 }
 
+.container {
+  width: 96vw !important;
+  min-width: 96vw !important;
+  max-width: 96vw !important;
+  height: 86vh !important;
+  margin: 1% 6% 10px auto !important;
+  padding: 0 !important;
+}
+.container > .frontListingWrapper,
+#main-container,
+.gridWrapper,
+.section_wrapper,
+#gifWebmPlayer {
+  @include container;
+}
+
 .rm,
+#welcome,
+#headerUpgradePremiumBtn,
+.livesex,
+.realsex,
+.headerBtnsWrapper,
+#paidItems,
+.abovePlayer,
 .footerContentWrapper,
+.adsbytrafficjunky,
+.ad-link,
 .premiumPromoBannerWrapper,
+.sniperModeEngaged,
 li.mgp_upsell,
 .leftPanel > p,
 .leftPanel > .popularSearches,
@@ -70,18 +105,49 @@ head > stylesheet,
 #hd-rightColVideoPage,
 #customSkin,
 #customSkinCTA {
-  content: "";
-  display: none !important;
-  visibility: hidden !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  width: 0px !important;
-  max-width: 0px !important;
-  min-width: 0px !important;
-  height: 0px !important;
-  max-height: 0px !important;
-  min-height: 0px !important;
+  @include remover();
 }
+
+
+.pagination3 {
+  clear: both;
+  margin: 20px 0 0 0;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  .pjump,
+  ul {
+    @include prefix(transition, top 100ms ease-in-out 100ms, moz webkit);
+    z-index: 10 !important;
+    position: fixed !important;
+    display: block !important;
+    top: 100%;
+    left: 20%;
+    margin: auto;
+    overflow: hidden;
+    width: auto;
+  }
+  .pjump {
+    left: 5%;
+    > input {
+    display: inline-block;
+    font-size: 20px;
+    line-height: 48px;
+    margin-right: 0;
+    padding: 0 25px;
+    width: fit-content;
+    white-space: nowrap;
+    border: none;
+    border-radius: 99px;
+    color: #cacaca;
+    background-color: #363636;
+    outline: 0;
+    vertical-align: top;
+  }
+}
+}
+
 #relatedVideosCenter {
   display: grid;
 }

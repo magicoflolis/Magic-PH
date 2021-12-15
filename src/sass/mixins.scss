@@ -4,6 +4,13 @@ $dark: #000;
 $white: #fff;
 $hover: #464646;
 
+@mixin prefix($property, $value, $prefixes) {
+  @each $prefix in $prefixes {
+    -#{$prefix}-#{$property}: $value;
+  }
+  #{$property}: $value;
+}
+
 @mixin theme {
   background: $theme;
   background-color: $dark;
@@ -23,15 +30,8 @@ $hover: #464646;
   padding: 0px !important;
 }
 
-@mixin prefix($property, $value, $prefixes) {
-  @each $prefix in $prefixes {
-    -#{$prefix}-#{$property}: $value;
-  }
-  #{$property}: $value;
-}
-
 @mixin remover() {
-  content: "";
+  content: "" !important;
   display: none !important;
   visibility: hidden !important;
   margin: 0px 0px 0px 0px !important;

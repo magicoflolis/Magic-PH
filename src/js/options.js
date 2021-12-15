@@ -2,7 +2,7 @@ const brws = typeof browser == "undefined" ? chrome : browser;
 brws.storage.local.get((storedConfig) => {
   ($form =
     document.querySelector("form.magicph_cfg") ??
-    console.log(`[MagicPH] can't find ${target}`)),
+    console.log(`[MagicPH] Can't find ${target}`)),
     (config = {
       altplayers: "none",
       autoscroll: true,
@@ -10,6 +10,7 @@ brws.storage.local.get((storedConfig) => {
       comments: false,
       topbutton: false,
       sidebar: false,
+      seektime: 4,
       headerOrder: [
         "home",
         "videos",

@@ -1,9 +1,9 @@
 import custom_layout from "../header.html";
+import log from "./logger";
 import {
   check,
   config,
   locate,
-  log,
   qs,
 } from "./general";
 
@@ -27,15 +27,15 @@ function loadHeader() {
   let selA = `<a href="${gCheck}recommended" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Recommended</span><span class="activeLine"></span></span></a>`,
   selB = `<a href="${gCheck}recommended" class="js-topMenuLink"><span class="itemName">Recommended</span></a>`,
   headerBtns = {
-    Home: $(`<li itemprop="name" class="menu item-1 home alpha" data-hover="0">
+    home: $(`<li itemprop="name" class="menu item-1 home alpha" data-hover="0">
     <a href="${gCheck}" class="js-topMenuLink">
     <span class="itemName">Home</span></a>
     </li>`),
-    Video: $(`<li itemprop="name" class="menu item-2 videos" data-hover="0">
+    videos: $(`<li itemprop="name" class="menu item-2 videos" data-hover="0">
     <a href="${gCheck}video?o=tr&hd=1" class="js-topMenuLink">
     <span class="itemName">Porn Videos</span></a>
     </li>`),
-    Category: $(`<li itemprop="name" class="menu item-3 categories" data-hover="0">
+    categories: $(`<li itemprop="name" class="menu item-3 categories" data-hover="0">
     <a href="${gCheck}categories?o=al" class="js-topMenuLink">
     <span class="itemName">Categories</span></a>
     <div class="wideDropdown categories js-dropdown" data-submenu-type="categories" style="display: none;">
@@ -194,33 +194,33 @@ function loadHeader() {
   </div>
 </div>
     </li>`),
-    Pornstar: $(`<li itemprop="name" class="menu item-4 pornstar" data-hover="0">
+    pornstars: $(`<li itemprop="name" class="menu item-4 pornstar" data-hover="0">
     <a href="${gCheck}pornstars?performerType=pornstar" class="js-topMenuLink">
     <span class="itemName">Pornstars</span></a>
     </li>`),
-    Photo: $(`<li itemprop="name" class="menu item-5 photos" data-hover="0">
+    gifs: $(`<li itemprop="name" class="menu item-5 photos" data-hover="0">
     <a href="${gCheck}gifs?o=tr" class="js-topMenuLink">
     <span class="itemName">Photos & Gifs</span></a>
     </li>`),
-    Community: $(`<li itemprop="name" class="menu item-6 empty" data-hover="0">
+    community: $(`<li itemprop="name" class="menu item-6 empty" data-hover="0">
     <a href="/user/discover${gCheck}" class="js-topMenuLink">
     <span class="itemName">Empty</span></a>
     </li>`),
-    Recommended: $(`<li id="menuItem9" class="menu recommended" data-hover="0">${(check.recommended) ? selA : selB}</li>`),
-    Custom: $(`<li id="menuItem99" class="menu customize"><a title="Customize Header" type="button" class="customize-header js-topMenuLink"><span class="itemName">customize (wip)</span></a></li>`),
+    recommended: $(`<li id="menuItem9" class="menu recommended" data-hover="0">${(check.recommended) ? selA : selB}</li>`),
+    custom: $(`<li id="menuItem99" class="menu customize"><a title="Customize Header" type="button" class="customize-header js-topMenuLink"><span class="itemName">customize (wip)</span></a></li>`),
   };
   if(document.readyState === "complete") {
     brws.storage.local.get((storedConfig) => {
       Object.assign(config, storedConfig);
       // menu.html("")
       menu.append(
-        // headerBtns.Home,
-        // headerBtns.Video,
-        // headerBtns.Category,
-        // headerBtns.Pornstar,
-        // headerBtns.Photo,
-        headerBtns.Recommended,
-        headerBtns.Custom
+        // headerBtns.home,
+        // headerBtns.videos,
+        // headerBtns.categories,
+        // headerBtns.pornstars,
+        // headerBtns.gifs,
+        headerBtns.recommended,
+        headerBtns.custom
         )
       $(".magic-customize").append($(custom_layout))
       let fd = qs("form.magicph_customize");
@@ -248,28 +248,8 @@ function loadHeader() {
       function hChange(elm, v) {
         let e = elm.className;
         $(`ul#headerMainMenu > li#${e}`).remove();
-        if(v == "gifs") {
-          headerBtns.Photo.appendTo($("ul#headerMainMenu"))
-        }
-        if(v == "home") {
-          headerBtns.Home.appendTo($("ul#headerMainMenu"))
-        }
-        if(v == "videos") {
-          headerBtns.Video.appendTo($("ul#headerMainMenu"))
-        }
-        if(v == "categories") {
-          headerBtns.Category.appendTo($("ul#headerMainMenu"))
-        }
-        if(v == "pornstars") {
-          headerBtns.Pornstar.appendTo($("ul#headerMainMenu"))
-        }
-        if(v == "recommended") {
-          headerBtns.Recommended.appendTo($("ul#headerMainMenu"))
-        }
-        // if(v == "") {
-        //   headerBtns.Photo.appendTo($("ul#headerMainMenu"))
-        // }
-        // headerBtns.Custom.appendTo($("ul#headerMainMenu"))
+        headerBtns[v].appendTo($("ul#headerMainMenu"));
+        // headerBtns.custom.appendTo($("ul#headerMainMenu"))
         // if(config.headerOrder[0] !== "home") {
         //   $("ul#headerMainMenu").html("")
         //   headerBtns.appendTo($("ul#headerMainMenu"))
@@ -293,7 +273,7 @@ function loadHeader() {
         $("html").toggleClass("magicFreeze");
         $(".navbackground").attr("style", "width: 100%");
       });
-      // qs("li.categories").addEventListener("focus", (e) => { 
+      // qs("li.categories").addEventListener("focus", (e) => {
       // });
       // qs("li.categories").addEventListener("mouseenter", (e) => {
       // });

@@ -1,10 +1,10 @@
 import magicpopup from "../magicpopup.html";
+import log from "./logger";
 import {
-  config, 
-  create, 
-  err, 
-  locate, 
-  log, 
+  ael,
+  config,
+  create,
+  locate,
   qs,
   scrollnumber
 } from "./general";
@@ -19,7 +19,7 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
     c.rel="stylesheet";
     c.href = brws.runtime.getURL(src);
     c.onload = () => log(`Loaded ${src}`);
-    c.onerror = () => err(`CSS load error for ${src}`);
+    c.onerror = () => log(`CSS load error for ${src}`);
     document.head.prepend(c);
   },
   loadScript = (src) => {
@@ -28,7 +28,7 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
     s.src = brws.runtime.getURL(src);
     s.crossOrigin = "anonymous";
     s.onload = () => log(`Loaded ${src}`);
-    s.onerror = () => err(`Script load error for ${src}`);
+    s.onerror = () => log(`Script load error for ${src}`);
     document.head.prepend(s);
   },
   loadConfig = () => {
@@ -65,7 +65,7 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
         topBTN = () => {
           magictop.value = "Top";
           magictop.addEventListener('click', () => {
-            return window.scrollTo(0, 110);
+            return window.scrollTo(0, 101);
           });
           return document.body.prepend(magictop);
         },
@@ -75,38 +75,66 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
           lognav = create("div", null, "sidenav"),
           logo = create("a", "button", "magiclogo"),
           nav = create("div", null, "navbackground"),
-          load = async (url, selElement, name, target) => {
+          loadPage = (url, type) => {
+            let pagination = $(".pagination3 > ul").eq(0).children(),
+            pageInput = $(".pagination3 > .pjump > input");
+            for (let i = 0; i < pagination.length; i++) {
+              pagination.eq(i).on("click", function (e) {
+                e.preventDefault();
+                return load(`${url}${pagination.children().eq(i).attr("href")}`,".sectionWrapper","home");
+              })
+            };
+            pageInput.on("change", function (e) {
+              e.preventDefault();
+              let link = `${url}/video?page=${e.target.value}`;
+              if(type === "home") {
+                $(".magic-popup > div.home").html("");
+                link = `${url}/video?page=${e.target.value}`;
+                return load(`${link}`,".sectionWrapper","home");
+              } else {
+                $(".magic-popup > div.recommend").html("");
+                link = `${url}?page=${e.target.value}`;
+                return load(`${link}`,"ul#recommendedListings","recommend");
+              };
+            });
+          },
+          load = async (url, selElement, name) => {
             await new Promise(() => {
               try {
                 fetch(`https://${url}`).then((res) => res.text())
                   .then((text) => {
                     let parser = new DOMParser(),
-                      div = create("div", null, name),
-                      htmlDocument = parser.parseFromString(text, "text/html"),
-                      selected = htmlDocument.documentElement,
-                      section = selected.querySelector(selElement),
-                      thumb = "none";
-                    target ? target.prepend(div) : $(".magic-popup").prepend(div);
-                    div.prepend(section);
+                    htmlDocument = parser.parseFromString(text, "text/html"),
+                    selected = htmlDocument.documentElement,
+                    section = selected.querySelector(selElement),
+                    thumb = "none";
+                    if(!$(`.magic-popup > .${name} > ${selElement}`).length) {
+                      $(`.magic-popup > .${name}`).html(section);
+                    };
                     (name == "home") ? (thumb = $(".home").find("img")) :
                     (name == "recommend") ? (thumb = $(".recommend").find("img")) :
-                    (name == "categories") ? (thumb = $(".categories").find("img")) : false;
+                    (name == "categories") ? (thumb = $(".categories").find("img")) :
+                    (name == "taste") ? loadScript("js/recommended-taste.js") : false;
                     if(thumb !== "none") {
                       for (let i = 0; i < thumb.length; i++) {
                         thumb.eq(i).attr("src", thumb.eq(i).attr("data-thumb_url"));
-                      }
-                      qs(`.${name} > ${selElement}`).addEventListener('scroll', async () => {
+                      };
+                      let scroller = $(`.${name} > ${selElement}`);
+                      scroller.on("scroll", function (e) {
                         let pgnav = $(".pagination3 > ul").eq(0);
-                        if($(".home > div.frontListingWrapper").scrollTop() > scrollnumber) {
-                          pgnav.addClass("top")
+                        if($(this).scrollTop() > scrollnumber) {
+                          $(".pagination3 > .pjump").eq(0).addClass("top");
+                          pgnav.addClass("top");
                         } else {
-                          pgnav.removeClass("top")
+                          $(".pagination3 > .pjump").eq(0).removeClass("top");
+                          pgnav.removeClass("top");
                         }
-                      })
+                      });
+                      loadPage(url, name);
                     }
-                });
+                  });
               } catch (error) {
-                log(error);
+                log(error, "err");
               }
             });
           };
@@ -117,7 +145,15 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
           $(magicpopup).prependTo(document.body)
           document.body.prepend(lognav, header);
           document.body.append(nav);
-          logo.addEventListener('click', async () => {
+          let ff = qs("form.magicph_cfg");
+          for (let prop in config) {
+            prop in ff.elements
+              ? ff.elements[prop].type == "checkbox"
+                ? (ff.elements[prop].checked = config[prop])
+                : (ff.elements[prop].value = config[prop])
+              : false;
+          }
+          ael(logo,"click", () => {
             nav.style.width = "100%";
             // lognav.style.width = "20% !important";
             $(".sidenav").attr("style", "width: 20% !important;");
@@ -126,7 +162,7 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             // p.style.visibility = "visible";
             $("html").toggleClass("magicFreeze");
           });
-          nav.addEventListener('click', async () => {
+          ael(nav,"click", () => {
             $("form.magicph_customize") ? $("form.magicph_customize").attr("style", "display: none;") : false
             $(".wrapper").toggleClass("blur");
             lognav.style.width = "0%";
@@ -139,9 +175,13 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
             $(".magic-popup > div.recommend").attr("style", "display: none;");
             $(".pagination3 > ul").eq(0).removeClass("top");
+            $(".pagination3 > .pjump").eq(0).removeClass("top");
+            qs(".pjump > input").value = "";
             $("html").toggleClass("magicFreeze");
+            brws.storage.local.set(config);
+            // window.location.reload();
           });
-          qs(".magic1").addEventListener('click', async () => {
+          ael(qs(".magic1"),"click", () => {
             $(".magic-popup > div.categories").attr("style", "display: none;");
             //$(".magic-popup > div.favorites").attr("style", "display: none;");
             $(".magic-popup > div.taste").attr("style", "display: none;");
@@ -149,9 +189,10 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
             $(".magic-popup").addClass("open")
             nav.style.width = "100%";
-            $(".magic-popup > div.home").length ? ($(".magic-popup > div.home").attr("style", "display: block;")) : load(`${document.location.host}`, ".frontListingWrapper", "home");
+            $(".magic-popup > div.home").attr("style", "display: block;")
+            load(`${document.location.host}`, ".frontListingWrapper", "home");
           });
-          qs(".magic2").addEventListener("click", async () => {
+          ael(qs(".magic2"),"click", () => {
             //$(".magic-popup > div.favorites").attr("style", "display: none;");
             $(".magic-popup > div.home").attr("style", "display: none;");
             $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
@@ -159,9 +200,10 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             $(".magic-popup > div.recommend").attr("style", "display: none;");
             $(".magic-popup").addClass("open")
             nav.style.width = "100%";
-            $(".magic-popup > div.categories").length ? ($(".magic-popup > div.categories").attr("style", "display: block;")) : load(`${document.location.host}${find}categories`, "ul#categoriesListSection", "categories");
+            $(".magic-popup > div.categories").attr("style", "display: block;");
+            load(`${document.location.host}${find}categories`, "ul#categoriesListSection", "categories");
           });
-          qs(".magic3").addEventListener('click', async () => {
+          ael(qs(".magic3"),"click", () => {
             $(".magic-popup > div.categories").attr("style", "display: none;");
             //$(".magic-popup > div.favorites").attr("style", "display: none;");
             $(".magic-popup > div.home").attr("style", "display: none;");
@@ -169,9 +211,10 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             $(".magic-popup > div.taste").attr("style", "display: none;");
             $(".magic-popup").addClass("open")
             nav.style.width = "100%";
-            $(".magic-popup > div.recommend").length ? ($(".magic-popup > div.recommend").attr("style", "display: block;")) : load(`${document.location.host}${find}recommended`, "ul.recommendedContainerLoseOne", "recommend");
+            $(".magic-popup > div.recommend").attr("style", "display: block;");
+            load(`${document.location.host}${find}recommended`, "ul.recommendedContainerLoseOne", "recommend");
           });
-          qs(".magic4").addEventListener('click', async () => {
+          ael(qs(".magic4"),"click", () => {
             $(".magic-popup > div.categories").attr("style", "display: none;");
             //$(".magic-popup > div.favorites").attr("style", "display: none;");
             $(".magic-popup > div.home").attr("style", "display: none;");
@@ -179,11 +222,10 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             $(".magic-popup > div.recommend").attr("style", "display: none;");
             $(".magic-popup").addClass("open")
             nav.style.width = "100%";
-            $(".magic-popup > div.taste").length ? ($(".magic-popup > div.taste").attr("style", "display: block;")) : (
-              load(`${document.location.host}/recommended/taste`, ".sectionWrapper", "taste"),
-              loadScript("js/recommended-taste.js"));
+            $(".magic-popup > div.taste").attr("style", "display: block;");
+            load(`${document.location.host}/recommended/taste`, ".sectionWrapper", "taste");
           });
-          qs(".magic5").addEventListener('click', async () => {
+          ael(qs(".magic5"),"click", () => {
             $(".magic-popup > div.categories").attr("style", "display: none;");
             $(".magic-popup > div.home").attr("style", "display: none;");
             $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
@@ -196,7 +238,7 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             $(".magic-popup").addClass("open")
             nav.style.width = "100%";
           });
-          qs(".magic6").addEventListener('click', async () => {
+          ael(qs(".magic6"),"click", () => {
             $(".magic-popup > div.categories").attr("style", "display: none;");
             $(".magic-popup > div.home").attr("style", "display: none;");
             $(".magic-popup > div.taste").attr("style", "display: none;");
@@ -204,9 +246,9 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             $(".magic-popup > div.recommend").attr("style", "display: none;");
             $(".magic-popup").addClass("open")
             nav.style.width = "100%";
-            $(".magic-popup > div.brws_cfg").attr("style", "display: block;")
+            $(".magic-popup > div.brws_cfg").attr("style", "display: block !important;")
           });
-          qs(".magic999").addEventListener('click', async () => {
+          ael(qs(".magic999"),"click", () => {
             $(".magic-popup > div.categories").attr("style", "display: none;");
             $(".magic-popup > div.home").attr("style", "display: none;");
             $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
@@ -215,26 +257,20 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
             $(".magic-popup > div.recommend").attr("style", "display: none;");
             $(".wrapper").toggleClass("blur");
             lognav.style.width = "0%";
-            $(".magic-popup").removeClass("open")
+            $(".magic-popup").removeClass("open");
             nav.style.width = "0%";
             $(".pagination3 > ul").eq(0).removeClass("top");
+            $(".pagination3 > .pjump").eq(0).removeClass("top");
+            qs(".pjump > input").value = "";
             $("html").toggleClass("magicFreeze");
+            brws.storage.local.set(config);
+            // window.location.reload();
           });
-          let ff = document.querySelector("form.magicph_cfg");
-          for (let prop in config) {
-            prop in ff.elements
-              ? ff.elements[prop].type == "checkbox"
-                ? (ff.elements[prop].checked = config[prop])
-                : (ff.elements[prop].value = config[prop])
-              : false;
-          }
-          ff.addEventListener("change", (e) => {
+          ael(ff,"change", (e) => {
             let $el = /** @type {HTMLInputElement} */ (e.target);
             $el.type == "checkbox"
               ? (config[$el.name] = $el.checked)
               : (config[$el.name] = $el.value);
-            brws.storage.local.set(config);
-            window.location.reload();
           });
         };
         config.blurimg ? blurMO.observe(document.body, { subtree: true, childList: true }) : false;
@@ -242,10 +278,13 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
         config.comments ? $("#cmtWrapper").removeClass("rm") : $("#cmtWrapper").addClass("rm");
         !config.sidebar ? phLogo() : false;
         !config.topbutton ? topBTN() : false;
-        if(config.altplayers !== "none" && /view_video.php/.test(locate)) {
-          loadCSS("css/plyr.css");
-          // loadScript("js/plyr.min.js");
-          $(".mainPlayerDiv").addClass("ap");
+        if(/view_video.php/.test(locate)) {
+          if(config.altplayers !== "none") {
+            loadCSS("css/plyr.css");
+            // loadScript("js/plyr.min.js");
+            $(".mainPlayerDiv").addClass("ap");
+          }
+          $(".mainPlayerDiv").attr("magicph-seek", config.seektime);
         }
         blurFrame.appendTo($("div.wrap"));
         $("div.wrap").hover(
@@ -269,7 +308,7 @@ const brws = (typeof browser == "undefined") ? chrome : browser,
         })
       });
     } catch (error) {
-      err(error);
+      log(error);
     }
   };
 // window.readyState == "loading" ? loadConfig() : false;

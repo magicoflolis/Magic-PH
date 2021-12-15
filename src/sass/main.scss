@@ -123,6 +123,7 @@
       @include remover;
     }
   }
+  .home > div.sectionWrapper,
   .home > div.frontListingWrapper {
     @include taste;
   }
@@ -148,11 +149,9 @@
       overflow-y: scroll;
       padding: 0px !important;
     }
-    > {
-      li {
-        width: inherit !important;
-        margin: 1% !important;
-      }
+    > li {
+      width: inherit !important;
+      margin: 1% !important;
     }
   }
   .categories > {
@@ -175,9 +174,12 @@
       overflow-x: auto;
     }
   }
-  .pagination3 > {
-    ul {
+  > .pagination3 {
+    > ul {
       left: 25%;
+    }
+    > .pjump {
+      left: 52%;
     }
   }
   &.open {

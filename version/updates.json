@@ -3,10 +3,9 @@
   "magicph@magicoflolis.com": {
    "updates": [
     {
-     "version": "1.0.4c",
-     "browser_specific_settings": { "gecko": { "strict_min_version": "68" } },
-     "update_link": "https://github.com/magicoflolis/Magic-PH/releases/latest/download/magicph-1.0.5-an+fx.xpi"
-    }
+      "version": "1.0.4c",
+      "update_link": "https://github.com/magicoflolis/Magic-PH/releases/download/1.0.4d/magicph-1.0.4d-an+fx.xpi"
+		}
    ]
   }
  }

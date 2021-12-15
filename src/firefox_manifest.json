@@ -1,15 +1,21 @@
 {
   "name": "MagicPH",
+  "short_name": "MagPH",
   "description": "Enhanced PornHub",
   "author": "Magic <magicoflolis@tuta.io>",
   "homepage_url": "https://github.com/magicoflolis/Magic-PH",
-  "version": "1.0.4e",
+  "manifest_version": 2,
+  "version": "1.0.4d",
   "background": {
-    "page": "background.html"
+    "scripts": [
+      "/js/background.js"
+    ]
   },
   "browser_action": {
     "browser_style": false,
-    "default_icon": "icons/icon_128.png",
+    "default_icon": {
+      "128": "icons/icon_128.png"
+    },
     "default_popup": "options.html",
     "default_title": "MagicPH"
   },
@@ -18,17 +24,10 @@
     "page": "options.html",
     "open_in_tab": true
   },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "magicph@magicoflolis.com",
-      "strict_min_version": "68.0",
-      "update_url": "https://github.com/magicoflolis/Magic-PH/version/updates.json"
-    }
-  },
   "content_scripts": [
     {
       "all_frames": true,
-      "css": ["/css/mod.css"],
+      "css": ["/css/magicph.css"],
       "js": ["/js/magicinject.js"],
       "matches": ["https://*.pornhub.com/*", "https://*.pornhubpremium.com/*"],
       "exclude_matches": [
@@ -47,14 +46,24 @@
     "128": "icons/icon_128.png"
   },
   "permissions": [
-    "https://*.pornhub.com/*",
-    "https://*.pornhubpremium.com/*",
+    "cookies",
+    "webRequest",
+    "webRequestBlocking",
     "activeTab",
     "tabs",
     "storage",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "*://static.trafficjunky.com/*",
+    "*://*.phncdn.com/*",
+    "*://*.pornhub.com/*",
+    "*://*.pornhubpremium.com/*"
   ],
-  "web_accessible_resources": ["web_accessible_resources/*", "js/*", "css/plyr.css"],
+  "web_accessible_resources": ["/web_accessible_resources/*", "js/*", "css/plyr.css"],
   "commands": {},
-  "manifest_version": 2
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "magicph@magicoflolis.com",
+      "update_url": "https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/version/updates.json"
+    }
+  }
 }

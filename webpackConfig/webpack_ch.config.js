@@ -11,10 +11,10 @@ const webpack = require("webpack"),
       magicph: "./js/magicph.js",
       options: "./js/options.js",
       player: "./js/player.js",
-      background: "./js/background.js",
+      // cors: "./js/cors-server.js",
     },
     output: {
-      path: path.resolve(root, "dist/js"),
+      path: path.resolve(root, "chrome_dist/js"),
       filename: "[name].js",
     },
     resolve: {
@@ -53,16 +53,16 @@ const webpack = require("webpack"),
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(root, "src/firefox_manifest.json"),
-            to: path.resolve(root, "dist/manifest.json"),
+            from: path.resolve(root, "src/chrome_manifest.json"),
+            to: path.resolve(root, "chrome_dist/manifest.json"),
           },
           {
             from: path.resolve(root, "src/background.html"),
-            to: path.resolve(root, "dist/background.html"),
+            to: path.resolve(root, "chrome_dist/background.html"),
           },
           {
             from: path.resolve(root, "src/options.html"),
-            to: path.resolve(root, "dist/options.html"),
+            to: path.resolve(root, "chrome_dist/options.html"),
           },
         ],
       }),
@@ -70,12 +70,6 @@ const webpack = require("webpack"),
     experiments: {
       topLevelAwait: true,
     },
-    // optimization: {
-    //   removeAvailableModules: false,
-    //   removeEmptyChunks: true,
-    //   mergeDuplicateChunks: true,
-    //   splitChunks: false,
-    // },
     watchOptions: {
       poll: 1000,
       aggregateTimeout: 500,

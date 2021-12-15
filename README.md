@@ -46,15 +46,22 @@ MagicPH is a browser extension with the goal of *reducing distractions* & improv
 
 | Help Links |
 |:----------:|
-[web-ext documentation](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/) |
+[web-ext Documentation](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/) |
+[key.pem for Chrome](https://stackoverflow.com/a/46739698/9872174)|
 
 ```bash
-# Install developer dependencies
-npm i -D
-# Run
-web-ext run -s ./dist/
-# Recommended to create additional profile about:profiles
-web-ext run -p <profile> -s ./dist/
+# Install dependencies
+npm i
+
+# [ Build ] All
+npm run build:Browsers
+# [ Build ] Individual
+npm run build:Firefox
+npm run build:Chrome
+
+# [ Testing ] Browsers can be launched via "Run and Debug" in VSCode.
+# Edit runtimeExecutable in ".vscode/launch.json" to your Chrome executable.
+# Recommended to create an additional profile "about:profiles" for Firefox.
 ```
 
 ### External Libraries

@@ -1,5 +1,9 @@
 <div class="magic-popup">
-  <div class="brws_cfg">
+  <div class="home" style="display: none;"></div>
+  <div class="categories" style="display: none;"></div>
+  <div class="recommend" style="display: none;"></div>
+  <div class="taste" style="display: none;"></div>
+  <div class="brws_cfg" style="display: none;">
     <form class="magicph_cfg">
       <section class="select">
         Alternative player
@@ -7,6 +11,12 @@
           <option value="none">Default</option>
           <option value="plyr">Plyr</option>
         </select>
+      </section>
+      <section class="select">
+        <label>
+          <span>Player seek time</span>
+          <input type="number" name="seektime" id="seektime" placeholder="Player Seek Time" />
+        </label>
       </section>
       <section class="checkbox">
         <label>
@@ -87,5 +97,9 @@
         /></a>
       </li>
     </ul>
+    <div class="pjump">
+      <input id="pageInput" type="number" name="pageJump" placeholder="Jump to page" value="">
+    </div>
+
   </div>
 </div>
