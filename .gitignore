@@ -12,7 +12,7 @@ Notes
 chrome
 /chrome/
 
-# dotenv environment variables file
+# dotenv environment variable file
 .env
 *.bak
 *.web-extension-id

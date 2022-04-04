@@ -3,12 +3,12 @@
   "version": "1.0.5",
   "description": "Enhances your porn viewing experience. Quick, clean, and easy.",
   "scripts": {
-    "dev:Firefox": "webpack --watch --progress --config=webpackConfig/webpack.config.js",
-    "dev:Chrome": "webpack --watch --progress --config=webpackConfig/webpack_ch.config.js",
-    "dev:Userscript": "node tools/build-userscript.js",
+    "dev:Firefox": "webpack --progress --mode development --config=webpackConfig/webpack.config.js",
+    "dev:Chrome": "webpack --progress --mode development --config=webpackConfig/webpack_ch.config.js",
     "dev:Sass": "sass -w ./src/sass/magicph.scss:./dist/css/magicph.css ./src/sass/plyr/plyr.scss:./dist/css/plyr.css ./userscript/src/sass/style.scss:./userscript/dist/style.css -s compressed",
-    "build:Firefox": "webpack --mode=production --config=webpackConfig/webpack.config.js",
-    "build:Chrome": "webpack --mode=production --config=webpackConfig/webpack_ch.config.js",
+    "analyse-bundle": "ANALYSE= webpack --mode production --config=webpackConfig/webpack.config.js",
+    "build:Firefox": "webpack --mode production --config=webpackConfig/webpack.config.js",
+    "build:Chrome": "webpack --mode production --config=webpackConfig/webpack_ch.config.js",
     "build:Crx": "node webpackConfig/buildChrome.js",
     "build:Browsers": "npm run build:Sass && npm run build:Firefox && npm run build:Chrome && npm run build:Crx"
   },
@@ -19,32 +19,40 @@
   },
   "homepage": "https://github.com/magicoflolis/Magic-PH",
   "devDependencies": {
-    "@babel/cli": "^7.16.0",
-    "@babel/core": "^7.16.0",
-    "@babel/eslint-parser": "^7.16.3",
-    "@babel/preset-env": "^7.16.4",
-    "@types/babel__core": "^7.1.17",
-    "@types/chrome": "^0.0.170",
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.8",
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.163",
+    "@types/babel__core": "^7.1.19",
+    "@types/chrome": "^0.0.180",
     "@types/firefox-webext-browser": "latest",
-    "@types/jquery": "^3.5.10",
+    "@types/jquery": "^3.5.14",
     "@types/sass": "^1.43.1",
-    "babel-loader": "^8.2.3",
-    "copy-webpack-plugin": "^10.1.0",
-    "css-loader": "^6.5.1",
-    "eslint": "^8.4.1",
+    "autoprefixer": "^10.4.4",
+    "babel-loader": "^8.2.4",
+    "copy-webpack-plugin": "^10.2.4",
+    "dotenv": "^16.0.0",
+    "dotenv-webpack": "^7.1.0",
+    "eslint": "^8.12.0",
     "eslint-config-prettier": "^8.3.0",
-    "html-loader": "^3.0.1",
-    "sass-loader": "^12.4.0",
-    "style-loader": "^3.3.1",
-    "web-ext": "^6.6.0",
-    "webpack": "^5.65.0",
-    "webpack-cli": "^4.9.1",
+    "html-loader": "^3.1.0",
+    "swc-loader": "^0.1.15",
+    "terser-webpack-plugin": "^5.3.1",
+    "web-ext": "^6.8.0",
+    "webpack": "^5.71.0",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-cli": "^4.9.2",
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "browserslist": "^4.20.2",
     "crx": "^5.0.1",
-    "node-watch": "^0.7.2",
-    "sass": "^1.45.0"
+    "globby": "^13.1.1",
+    "jquery": "^3.6.0",
+    "node-watch": "^0.7.3",
+    "sass": "^1.49.11"
   },
   "repository": {
     "type": "git",
@@ -53,15 +61,13 @@
   "eslintConfig": {
     "env": {
       "browser": true,
-      "chrome": true,
       "es2021": true,
-      "firefox": true,
       "jquery": true,
-      "mozilla": true,
-      "node": false
+      "node": false,
+      "webextensions": true
     },
     "extends": [
-      "eslint:all",
+      "eslint:recommended",
       "prettier"
     ],
     "parserOptions": {
@@ -72,7 +78,7 @@
         "arrowFunctions": true,
         "modules": true
       },
-      "ecmaVersion": 12
+      "ecmaVersion": "latest"
     },
     "rules": {}
   },

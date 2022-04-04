@@ -9,6 +9,7 @@
 | Version | Link | Build | Note |
 |:----------:|:----------:|:----------:|:----------:|
 Chrome | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | ~~[Extension](#build-setup)~~ | Work in porgress
+Edge | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | ~~[Extension](#build-setup)~~ | Work in porgress
 Firefox | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Add-on](#build-setup) | -
 
 ***

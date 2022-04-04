@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" class="magicph_cfg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'" ; charset="utf-8" /> -->
+<title>MagicPH - Popup Settings</title>
+<link rel="stylesheet" type="text/css" href="css/magicph.css">
+</head>
+<body class="magicph_cfg">
+  <!-- <a target="_blank" href="./favorites.html">Favorites</a> -->
+  <form class="magicph_cfg">
+      <section class="select">
+        Alternative player
+        <select name="altplayers">
+          <option value="none">Default</option>
+          <option value="plyr">Plyr</option>
+        </select>
+      </section>
+      <section class="select">
+        <label>
+          <span>Player seek time</span>
+          <input type="number" name="seektime" id="seektime" placeholder="Player Seek Time" />
+        </label>
+      </section>
+      <section class="checkbox">
+        <label>
+          <span>Auto "Jump to"</span>
+          <div class="switch">
+            <input type="checkbox" name="autojump" id="autojump" />
+            <label for="autojump"></label>
+          </div>
+        </label>
+      </section>
+      <section class="checkbox">
+        <label>
+          <span>Scroll on load</span>
+          <div class="switch">
+            <input type="checkbox" name="autoscroll" id="autoscroll" />
+            <label for="autoscroll"></label>
+          </div>
+        </label>
+      </section>
+      <section class="checkbox">
+        <label>
+          <span>Blur thumbnails</span>
+          <div class="switch">
+            <input type="checkbox" name="blurimg" id="blurimg" />
+            <label for="blurimg"></label>
+          </div>
+        </label>
+      </section>
+      <section class="checkbox">
+        <label>
+          <span>Enable comments</span>
+          <div class="switch">
+            <input type="checkbox" name="comments" id="comments" />
+            <label for="comments"></label>
+          </div>
+        </label>
+      </section>
+      <section class="checkbox">
+        <label>
+          <span>Disable "Top" button</span>
+          <div class="switch">
+            <input type="checkbox" name="topbutton" id="topbutton" />
+            <label for="topbutton"></label>
+          </div>
+        </label>
+      </section>
+      <section class="checkbox">
+        <label>
+          <span>Disable Sidebar</span>
+          <div class="switch">
+            <input type="checkbox" name="sidebar" id="sidebar" />
+            <label for="sidebar"></label>
+          </div>
+        </label>
+      </section>
+  </form>
+  <!-- <script src="js/options.js"></script> -->
+	<script src="js/popup.js" type="module"></script>
+</body>
+
+</html>

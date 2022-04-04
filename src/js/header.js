@@ -1,17 +1,12 @@
-import custom_layout from "../header.html";
-import log from "./logger";
-import {
-  check,
-  config,
-  locate,
-  qs,
-} from "./general";
-
-const brws = (typeof browser == "undefined") ? chrome : browser;
+import custom_layout from "../html/header.html";
+import mph from './api.js';
+import {check} from "./general.js";
+import webext from './api-webext.js';
+// import qs from "./querySelector.js";
 
 function loadHeader() {
   try {
-  const gCheck = /gay/.test(locate) ? "/gay/" : "/",
+  const gCheck = check.gay ? "/gay/" : "/",
   menu = $("ul#headerMainMenu"),
   dConfig = {
     headerOrder: [
@@ -21,22 +16,49 @@ function loadHeader() {
       "pornstars",
       "gifs",
       "recommended",
-      "custom",
+      "favorites",
     ],
   };
-  let selA = `<a href="${gCheck}recommended" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Recommended</span><span class="activeLine"></span></span></a>`,
-  selB = `<a href="${gCheck}recommended" class="js-topMenuLink"><span class="itemName">Recommended</span></a>`,
+  let custombtn = mph.create("menu customize","li"),
+  config = webext.config,
+  hl = {
+    homA: `<a href="${gCheck}" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Home</span><span class="activeLine"></span></span></a>`,
+    homB: `<a href="${gCheck}" class="js-topMenuLink"><span class="itemName">Home</span></a>`,
+    vidA: `<a href="${gCheck}video?o=tr&hd=1" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Porn Videos</span><span class="activeLine"></span></span></a>`,
+    vidB: `<a href="${gCheck}video?o=tr&hd=1" class="js-topMenuLink"><span class="itemName">Porn Videos</span></a>`,
+    catA: `<a href="${gCheck}categories?o=al" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Categories</span><span class="activeLine"></span></span></a>`,
+    catB: `<a href="${gCheck}categories?o=al" class="js-topMenuLink"><span class="itemName">Categories</span></a>`,
+    porA: `<a href="${gCheck}pornstars?performerType=pornstar" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Pornstars</span><span class="activeLine"></span></span></a>`,
+    porB: `<a href="${gCheck}pornstars?performerType=pornstar" class="js-topMenuLink"><span class="itemName">Pornstars</span></a>`,
+    gifA: `<a href="${gCheck}gifs?o=tr" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Photos & Gifs</span><span class="activeLine"></span></span></a>`,
+    gifB: `<a href="${gCheck}gifs?o=tr" class="js-topMenuLink"><span class="itemName">Photos & Gifs</span></a>`,
+    comA: `<a href="/user/discover${gCheck}" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Community</span><span class="activeLine"></span></span></a>`,
+    comB: `<a href="/user/discover${gCheck}" class="js-topMenuLink"><span class="itemName">Community</span></a>`,
+    recA: `<a href="${gCheck}recommended" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Recommended</span><span class="activeLine"></span></span></a>`,
+    recB: `<a href="${gCheck}recommended" class="js-topMenuLink"><span class="itemName">Recommended</span></a>`,
+    favA: `<a href="/magicph-favorites" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Favorites</span><span class="activeLine"></span></span></a>`,
+    favB: `<a href="/magicph-favorites" class="js-topMenuLink"><span class="itemName">Favorites</span></a>`,
+  },
+  headin = {
+    home: (check.home) ? hl.homA : hl.homB,
+    videos: (/video/.test(document.location.href)) ? hl.vidA : hl.vidB,
+    categories: (check.category) ? hl.catA : hl.catB,
+    pornstars: (check.pstar) ? hl.porA : hl.porB,
+    gifs: (check.gif) ? hl.gifA : hl.gifB,
+    community: (check.community) ? hl.comA : hl.comB,
+    recommended: (check.recommended) ? hl.recA : hl.recB,
+    favorites: (check.favorites) ? hl.favA : hl.favB,
+    custom: `<a href="" class="js-topMenuLink"><span class="itemName">custom url</span></a>`,
+  },
   headerBtns = {
-    home: $(`<li itemprop="name" class="menu item-1 home alpha" data-hover="0">
-    <a href="${gCheck}" class="js-topMenuLink">
-    <span class="itemName">Home</span></a>
+    home: $(`<li itemprop="name" id="menuItem1" class="menu js-menu item-1 home" data-hover="0">
+    ${headin.home}
     </li>`),
-    videos: $(`<li itemprop="name" class="menu item-2 videos" data-hover="0">
-    <a href="${gCheck}video?o=tr&hd=1" class="js-topMenuLink">
-    <span class="itemName">Porn Videos</span></a>
+    videos: $(`<li itemprop="name" id="menuItem2" class="menu js-menu item-2 videos" data-hover="0">
+    ${headin.videos}
     </li>`),
-    categories: $(`<li itemprop="name" class="menu item-3 categories" data-hover="0">
-    <a href="${gCheck}categories?o=al" class="js-topMenuLink">
+    categories: $(`<li itemprop="name" id="menuItem3" class="menu js-menu item-3 categories" data-hover="0">
+    <a class="js-topMenuLink">
     <span class="itemName">Categories</span></a>
     <div class="wideDropdown categories js-dropdown" data-submenu-type="categories" style="display: none;">
   <div class="innerDropdown clearfix js-submenu"><div class="leftPanel">
@@ -194,131 +216,157 @@ function loadHeader() {
   </div>
 </div>
     </li>`),
-    pornstars: $(`<li itemprop="name" class="menu item-4 pornstar" data-hover="0">
-    <a href="${gCheck}pornstars?performerType=pornstar" class="js-topMenuLink">
-    <span class="itemName">Pornstars</span></a>
+    pornstars: $(`<li itemprop="name" id="menuItem4" class="menu js-menu item-4 pornstar" data-hover="0">
+    ${headin.pornstars}
     </li>`),
-    gifs: $(`<li itemprop="name" class="menu item-5 photos" data-hover="0">
-    <a href="${gCheck}gifs?o=tr" class="js-topMenuLink">
-    <span class="itemName">Photos & Gifs</span></a>
+    gifs: $(`<li itemprop="name" id="menuItem5" class="menu js-menu item-5 photos" data-hover="0">
+    ${headin.gifs}
     </li>`),
-    community: $(`<li itemprop="name" class="menu item-6 empty" data-hover="0">
-    <a href="/user/discover${gCheck}" class="js-topMenuLink">
-    <span class="itemName">Empty</span></a>
+    community: $(`<li itemprop="name" id="menuItem6" class="menu js-menu item-6 community" data-hover="0">
+    ${headin.community}
     </li>`),
-    recommended: $(`<li id="menuItem9" class="menu recommended" data-hover="0">${(check.recommended) ? selA : selB}</li>`),
-    custom: $(`<li id="menuItem99" class="menu customize"><a title="Customize Header" type="button" class="customize-header js-topMenuLink"><span class="itemName">customize (wip)</span></a></li>`),
+    recommended: $(`<li id="menuItem7" class="menu js-menu item-7 recommended" data-hover="0">${headin.recommended}</li>`),
+    favorites: $(`<li id="menuItem8" class="menu js-menu item-8 fav">${headin.favorites}</li>`),
+    custom: $(`<li id="menuItem9" class="menu js-menu item-9">${headin.custom}</li>`),
   };
-  if(document.readyState === "complete") {
-    brws.storage.local.get((storedConfig) => {
-      Object.assign(config, storedConfig);
-      // menu.html("")
-      menu.append(
-        // headerBtns.home,
-        // headerBtns.videos,
-        // headerBtns.categories,
-        // headerBtns.pornstars,
-        // headerBtns.gifs,
-        headerBtns.recommended,
-        headerBtns.custom
-        )
-      $(".magic-customize").append($(custom_layout))
-      let fd = qs("form.magicph_customize");
-      for (let prop in config) {
-        prop in fd.elements ? (fd.elements[prop].value = config[prop]) : false;
-      }
-      fd.addEventListener("change", (e) => {
-        let $el = /** @type {HTMLInputElement} */ (e.target);
-        config[$el.name] = $el.value;
-        brws.storage.local.set(config);
-        hChange($el, $el.value)
-        // window.location.reload();
+  webext.getItem((storedConfig)=>{
+    Object.assign(config, storedConfig);
+    mph.query("body").then(() => {
+      try {
+      menu.html("");
+      $(".magic-customize").append($(custom_layout));
+      let formBTN = () => {
+        custombtn.id = "menuItem99";
+        custombtn.innerHTML = '<a title="Customize Header" type="button" class="customize-header js-topMenuLink"><span class="itemName">customize (wip)</span></a>';
+        mph.query("ul#headerMainMenu").then((e) => {
+          e.appendChild(custombtn);
+          // mph.ael(qs("li#menuItem99 > a"),"click", () => {
+          //   $(".wrapper").toggleClass("blur");
+          //   $("html").toggleClass("magicFreeze");
+          //   $(".navbackground").attr("style","width: 100%");
+          //   $(".magic-customize").attr("style","display: grid;");
+          // });
+          mph.query("li#menuItem99 > a").then((e) => {
+            mph.ael(e,"click", () => {
+              $(".wrapper").toggleClass("blur");
+              $("html").toggleClass("magicFreeze");
+              $(".navbackground").attr("style","width: 100%");
+              $(".magic-customize").attr("style","display: grid;");
+            });
+          });
+        });
+      },
+      customize = mph.queryAll('section.head-select > select');
+      customize.forEach((item, i) => {
+        customize[i].value = config.headerOrder[i];
+        if(customize[i].value === "custom") {
+          $(".magicph-name").eq(i).removeClass("rm");
+          $(".magicph-url").eq(i).removeClass("rm");
+        };
+        for (let key in config.headerOrder) {
+          menu.append(headerBtns[config.headerOrder[key, i]])
+        };
+        mph.ael(customize[i],"change", (e) => {
+          try {
+            let target = e.target,
+            cname = target.className;
+            if(target.value !== "custom") {
+              $(".magicph-name").addClass("rm");
+              $(".magicph-url").addClass("rm");
+            }
+            $(`#headerMainMenu > .${cname}`).html($(headin[target.value]));
+            config.headerOrder.splice(i, i, target.value);
+            mph.log(config.headerOrder);
+            webext.setItem(config);
+          } catch(err) {
+            mph.err(err);
+          }
+        });
       });
-      let hd = $('section.head-select > select'),
-        hd1 = qs('select[name="head1"]'),
-        hd2 = qs('select[name="head2"]'),
-        hd3 = qs('select[name="head3"]'),
-        hd4 = qs('select[name="head4"]'),
-        hd5 = qs('select[name="head5"]'),
-        hd6 = qs('select[name="head6"]');
-      for (let i = 0; i < hd.length; i++) {
-        hd[i].value = config.headerOrder[i]
-        // hChange(hd[i], hd[i].value)
-      }
-      function hChange(elm, v) {
-        let e = elm.className;
-        $(`ul#headerMainMenu > li#${e}`).remove();
-        headerBtns[v].appendTo($("ul#headerMainMenu"));
-        // headerBtns.custom.appendTo($("ul#headerMainMenu"))
-        // if(config.headerOrder[0] !== "home") {
-        //   $("ul#headerMainMenu").html("")
-        //   headerBtns.appendTo($("ul#headerMainMenu"))
-        // }
-        log(v)
-        log(elm)
-        //$("ul#headerMainMenu").html("");
-      }
-      qs("button.header_reset").addEventListener("click", () => {
-        for (let i = 0; i < hd.length; i++) {
-          config.headerOrder[i] = dConfig.headerOrder[i]
-          hd[i].value = config.headerOrder[i]
-        }
-        brws.storage.local.set(config);
-        // hChange($el.name)
-        // window.location.reload();
+      formBTN();
+      mph.query("button.header_reset").then((e) => {
+        mph.ael(e,"click", () => {
+          config.headerOrder = dConfig.headerOrder;
+          webext.setItem(config);
+          config.headerOrder.forEach((item, index) => {
+            $(`#headerMainMenu > .${customize[index].className}`).html($(headin[item]));
+            customize[index].value = dConfig.headerOrder[index];
+          });
+          formBTN();
+        });
       });
-      $("a.customize-header").on("click", function () {
-        $("form.magicph_customize").attr("style", "display: grid;");
-        $(".wrapper").toggleClass("blur");
-        $("html").toggleClass("magicFreeze");
-        $(".navbackground").attr("style", "width: 100%");
-      });
-      // qs("li.categories").addEventListener("focus", (e) => {
+      // mph.ael(qs("button.header_reset"),"click", () => {
+      //   config.headerOrder = dConfig.headerOrder;
+      //   webext.setItem(config);
+      //   config.headerOrder.forEach((item, index) => {
+      //     $(`#headerMainMenu > .${customize[index].className}`).html($(headin[item]));
+      //     customize[index].value = dConfig.headerOrder[index];
+      //   });
+      //   formBTN();
       // });
-      // qs("li.categories").addEventListener("mouseenter", (e) => {
-      // });
-      // qs("li.categories").addEventListener("mouseleave", (e) => {
-      // });
-    })
-  }
+    } catch (error) {
+      mph.err(error);
+    }
+    });
+  });
 } catch (err) {
-  log(err)
-}
-}
+  mph.err(err);
+};
+};
+
+export default loadHeader
+
+// const map1 = [...customize].map(item => item.className);
+// const map1 = Array.from(dConfig.headerOrder).map(item => item);
 
 
-        // let mod = config.headerLinks,
-        //   src = {
-        //     Home: $('.home > a[href="/"]'),
-        //     Video: $('.videos > a[href="/video"]'),
-        //     Category: $('.categories > a[href="/categories"]'),
-        //     Pornstar: $('.pornstar > a[href="/pornstars"]'),
-        //     Community: $('.community > a[href^="/community"]'),
-        //     Photo: $('.photos > a[href^="/albums"]'),
-        //     Premium: $('.premium > a[href="/premium"]'),
-        //     Gift: $('#giftingEntry[href="/gift?type=GiftCard-Purchase"]'),
-        //     GHome: $('.home > a[href="/"]'),
-        //     GVideo: $('.videos > a[href="/gayporn"]'),
-        //     GCategory: $('.categories > a[href="/gay/categories"]'),
-        //     GPornstar: $('.pornstar > a[href="/gay/pornstars"]'),
-        //     GCommunity: $('.community > a[href^="/community?section=gay"]'),
-        //     GPhoto: $('.photos > a[href^="/albums/gay"]'),
-        //     GPremium: $('.premium > a[href="/gay/premium"]'),
-        //   };
-        // !check.gay ? (
-        //   // src.Home.attr("href", mod.Home)
-        //   src.Video.attr("href", mod.Video),
-        //   src.Category.attr("href", mod.Category),
-        //   src.Pornstar.attr("href", mod.Pornstar),
-        //   src.Community.attr("href", mod.Community),
-        //   src.Photo.attr("href", mod.Photo)
-        // ) : (
-        //   // src.GHome.attr("href", mod.GHome)
-        //   src.GVideo.attr("href", mod.GVideo),
-        //   src.GCategory.attr("href", mod.GCategory),
-        //   src.GPornstar.attr("href", mod.GPornstar),
-        //   src.GCommunity.attr("href", mod.GCommunity),
-        //   src.GPhoto.attr("href", mod.GPhoto)
-        // );
-
-export { loadHeader }
+// headerLinks: {
+//   Home: "/",
+//   Video: "/video?o=tr&hd=1",
+//   Category: "/categories?o=al",
+//   Pornstar: "/pornstars?performerType=pornstar",
+//   Community: "/user/discover",
+//   Photo: "/gifs",
+//   Premium: "/premium",
+//   Gift: "/premium",
+//   GPremium: "/gay/premium",
+//   GHome: "/gay",
+//   GVideo: "/gay/video?o=tr&hd=1",
+//   GCategory: "/gay/categories?o=al",
+//   GPornstar: "/gay/pornstars?performerType=pornstar",
+//   GCommunity: "/user/discover/gay",
+//   GPhoto: "/gay/gifs?o=tr",
+// },
+// let mod = config.headerLinks,
+//   src = {
+//     Home: $('.home > a[href="/"]'),
+//     Video: $('.videos > a[href="/video"]'),
+//     Category: $('.categories > a[href="/categories"]'),
+//     Pornstar: $('.pornstar > a[href="/pornstars"]'),
+//     Community: $('.community > a[href^="/community"]'),
+//     Photo: $('.photos > a[href^="/albums"]'),
+//     Premium: $('.premium > a[href="/premium"]'),
+//     Gift: $('#giftingEntry[href="/gift?type=GiftCard-Purchase"]'),
+//     GHome: $('.home > a[href="/"]'),
+//     GVideo: $('.videos > a[href="/gayporn"]'),
+//     GCategory: $('.categories > a[href="/gay/categories"]'),
+//     GPornstar: $('.pornstar > a[href="/gay/pornstars"]'),
+//     GCommunity: $('.community > a[href^="/community?section=gay"]'),
+//     GPhoto: $('.photos > a[href^="/albums/gay"]'),
+//     GPremium: $('.premium > a[href="/gay/premium"]'),
+//   };
+// !check.gay ? (
+//   // src.Home.attr("href", mod.Home)
+//   src.Video.attr("href", mod.Video),
+//   src.Category.attr("href", mod.Category),
+//   src.Pornstar.attr("href", mod.Pornstar),
+//   src.Community.attr("href", mod.Community),
+//   src.Photo.attr("href", mod.Photo)
+// ) : (
+//   // src.GHome.attr("href", mod.GHome)
+//   src.GVideo.attr("href", mod.GVideo),
+//   src.GCategory.attr("href", mod.GCategory),
+//   src.GPornstar.attr("href", mod.GPornstar),
+//   src.GCommunity.attr("href", mod.GCommunity),
+//   src.GPhoto.attr("href", mod.GPhoto)
+// );

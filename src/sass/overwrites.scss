@@ -66,6 +66,7 @@ body.logged-out {
 
 .rm,
 #welcome,
+.mgp_embedded > .mgp_gridMenu,
 #headerUpgradePremiumBtn,
 .livesex,
 .realsex,
@@ -109,6 +110,10 @@ head > stylesheet,
 }
 
 
+ul#headerMainMenu {
+  grid-template-columns: repeat(9,1fr) !important;
+}
+
 .pagination3 {
   clear: both;
   margin: 20px 0 0 0;
@@ -118,7 +123,7 @@ head > stylesheet,
   width: 100%;
   .pjump,
   ul {
-    @include prefix(transition, top 100ms ease-in-out 100ms, moz webkit);
+    transition: top 100ms ease-in-out 100ms;
     z-index: 10 !important;
     position: fixed !important;
     display: block !important;
@@ -136,6 +141,8 @@ head > stylesheet,
     line-height: 48px;
     margin-right: 0;
     padding: 0 25px;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
     width: fit-content;
     white-space: nowrap;
     border: none;
@@ -178,12 +185,12 @@ head > stylesheet,
 .video-wrapper,
 #player,
 #player.wide {
-  @include prefix(transition, all 0s !important, moz webkit);
+  transition: all 0s !important;
 }
-.video-wrapper.js-relatedRecommended {
-  margin-top: 13% !important;
-  margin-bottom: 0 !important;
-}
+// .video-wrapper.js-relatedRecommended {
+//   margin-top: 13% !important;
+//   margin-bottom: 0 !important;
+// }
 .leftPanel ul.discover:after {
   background: none !important;
 }
@@ -232,7 +239,9 @@ ul.videos.user-playlist {
 li > {
   .wrap > {
     .phimage {
-      @include prefix(max-width, max-content, moz webkit);
+      max-width: -webkit-max-content !important;
+      max-width: -moz-max-content !important;
+      max-width: max-content !important;
       width: 100% !important;
     }
   }
@@ -243,7 +252,7 @@ li > {
   display: flex;
 }
 .flexWrap {
-  @include prefix(flex-wrap, wrap, o);
+  flex-wrap: wrap;
 }
 .button {
   display: inline-block;
@@ -254,7 +263,7 @@ li > {
   text-align: center;
 }
 .orangeButton {
-  @include prefix(border-radius, 5px, moz webkit ms o);
+  border-radius: 5px;
   border: 0;
   background: $theme;
   color: $dark;
@@ -473,12 +482,29 @@ table {
       color: #ccc;
       &:hover {
         color: #f90;
-        @include prefix(text-decoration, 0, webkit);
+        -webkit-text-decoration: 0;
+                text-decoration: 0;
       }
     }
   }
   &.mgp_active {
     opacity: 1;
     visibility: visible;
+  }
+}
+.headerSearchWrapper.sticky > form > fieldset > #searchBarContainer {
+  #searchSuggestions {
+    margin-top: 0px !important;
+  }
+  #searchesWrapper {
+    display: none !important;
+    margin-top: 25px !important;
+  }
+  width: 25% !important;
+  &.active {
+    width: 100% !important;
+    #searchesWrapper {
+      display: block !important;
+    }
   }
 }

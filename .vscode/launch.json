@@ -1,27 +1,32 @@
 {
   "version": "0.2.0",
   "compounds": [
-      {
-        "name": "Attach/Launch",
-        "configurations": ["SF","Attach:Firefox"]
-      }
+    {
+      "name": "Attach/Launch",
+      "configurations": ["SF","Attach:Firefox"]
+    }
     ],
   "configurations": [
-      {
-        "name": "Attach:Firefox",
-        "type": "firefox",
-        "request": "attach",
+    {
+      "name": "Attach:Firefox",
+      "type": "firefox",
+      "request": "attach",
+    },
+    {
+      "name": "SF",
+      "type": "firefox",
+      "request": "launch",
+      "clearConsoleOnReload": true,
+      "profile": "debug",
+      "keepProfileChanges": false,
+      "reAttach": true,
+      "reloadOnAttach": true,
+      "reloadOnChange": {
+        "watch": "${workspaceFolder}/src/**",
+        "ignore": "**/node_modules/**"
       },
-      {
-        "name": "SF",
-        "type": "firefox",
-        "request": "launch",
-        "reAttach": true,
-        "reloadOnAttach": true,
-        "keepProfileChanges": false,
-        "clearConsoleOnReload": true,
-        "url": "https://pornhub.com/",
-        "addonPath": "${workspaceFolder}\\dist"
+      "url": "https://pornhub.com/",
+      "addonPath": "${workspaceFolder}\\dist"
     },
     {
       "type": "pwa-chrome",

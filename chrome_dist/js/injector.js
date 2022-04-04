@@ -1,0 +1,2 @@
+(()=>{const e="undefined"==typeof browser?chrome:browser,n=n=>{let o,t=document;o=t.createElement("script"),o.async=!0,o.src=e.runtime.getURL(n),o.crossOrigin="anonymous",(t.head||t.documentElement||t).appendChild(o),o&&o.remove()};window.addEventListener("load",(()=>{n("js/magicph.js"),/view_video.php/.test(document.location.href)&&n("js/player.js")}))})();
+//# sourceMappingURL=injector.js.map
