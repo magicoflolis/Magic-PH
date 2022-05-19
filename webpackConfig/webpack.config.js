@@ -48,7 +48,6 @@ commonConfig = {
   context: path.resolve(root, "src"),
   entry: {
     start: "./js/start.js",
-    background: "./js/background.js",
     favorites: "./js/favorites.js",
     injector: "./js/injector.js",
     magicph: "./js/magicph.js",
@@ -72,7 +71,10 @@ commonConfig = {
       },
     ],
   },
-  resolve: { extensions: [".js"] },
+  resolve: {
+    extensions: [".js"],
+    fallback: { "path": require.resolve("path-browserify") }
+  },
   optimization: {
     minimize: true,
     minimizer: [
@@ -104,10 +106,6 @@ productionConfig = {
           to: path.resolve(root, "dist"),
         },
         {
-          from: path.resolve(root, "src/html/favorites.html"),
-          to: path.resolve(root, "dist"),
-        },
-        {
           from: path.resolve(root, "src/html/popup.html"),
           to: path.resolve(root, "dist"),
         },
@@ -125,6 +123,18 @@ developmentConfig = {
         {
           from: path.resolve(root, "src/html"),
           to: path.resolve(root, "dist"),
+        },
+        {
+          from: path.resolve(root, "src/js/webext.js"),
+          to: path.resolve(root, "dist/js"),
+        },
+        {
+          from: path.resolve(root, "src/js/block-traffic.js"),
+          to: path.resolve(root, "dist/js"),
+        },
+        {
+          from: path.resolve(root, "src/js/background.js"),
+          to: path.resolve(root, "dist/js"),
         },
       ],
     }),

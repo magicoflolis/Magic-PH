@@ -2,7 +2,7 @@
 
 > Enhances your porn viewing experience. Quick, clean, and easy.
 
-*For best experience, please use an adblock([uBlock Origin](https://github.com/gorhill/uBlock#readme)) along with my [Filter List](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/FilterList/MagicPH.txt). Additional help [Filter Guide](https://github.com/gorhill/uBlock/wiki/Filter-lists-from-around-the-web)*
+*For the best experience, please use an "adblocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme))*
 
 ***
 

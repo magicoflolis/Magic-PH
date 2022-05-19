@@ -1,9 +1,8 @@
-import brws from './webext.js';
+'use strict';
+
+let brws = chrome ?? browser;
 
 const block = {
-  fn: () => {
-    return { cancel: true };
-  },
   urls: [
     "https://static.trafficjunky.com/*",
     "https://hubt.pornhub.com/*",
@@ -14,10 +13,12 @@ const block = {
     "https://*.phncdn.com/www-static/*/premium/premium-modals.*",
     "https://*.phncdn.com/www-static/js/ph-*",
     "https://*.phncdn.com/www-static/js/promo-*",
-    "https://*.pornhub.com/_xa/ads_*"
+    "https://*.pornhub.com/_xa/ads_*",
+    "https://*.pornhub.com/front/menu_livesex?segment=*",
+    "https://www.etahub.com/*"
   ],
   start: () => {
-    return brws.webRequest.onBeforeRequest.addListener(block.fn, {
+    brws.webRequest.onBeforeRequest.addListener(() => {return { cancel: true };}, {
       urls: block.urls,
       types: ["image", "script", "stylesheet"]
     }, ['blocking'] );

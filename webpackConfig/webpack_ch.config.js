@@ -43,7 +43,6 @@ commonConfig = {
   context: path.resolve(root, "src"),
   entry: {
     start: "./js/start.js",
-    background: "./js/background.js",
     favorites: "./js/favorites.js",
     injector: "./js/injector.js",
     magicph: "./js/magicph.js",
@@ -92,19 +91,27 @@ productionConfig = {
       patterns: [
         {
           from: path.resolve(root, "src/html/background.html"),
-          to: path.resolve(root, "chrome_dist"),
+          to: path.resolve(root, "dist"),
         },
         {
           from: path.resolve(root, "src/html/options.html"),
-          to: path.resolve(root, "chrome_dist"),
-        },
-        {
-          from: path.resolve(root, "src/html/favorites.html"),
-          to: path.resolve(root, "chrome_dist"),
+          to: path.resolve(root, "dist"),
         },
         {
           from: path.resolve(root, "src/html/popup.html"),
-          to: path.resolve(root, "chrome_dist"),
+          to: path.resolve(root, "dist"),
+        },
+        {
+          from: path.resolve(root, "src/js/webext.js"),
+          to: path.resolve(root, "dist/js"),
+        },
+        {
+          from: path.resolve(root, "src/js/block-traffic.js"),
+          to: path.resolve(root, "dist/js"),
+        },
+        {
+          from: path.resolve(root, "src/js/background.js"),
+          to: path.resolve(root, "dist/js"),
         },
       ],
     }),
@@ -119,7 +126,19 @@ developmentConfig = {
       patterns: [
         {
           from: path.resolve(root, "src/html"),
-          to: path.resolve(root, "chrome_dist"),
+          to: path.resolve(root, "dist"),
+        },
+        {
+          from: path.resolve(root, "src/js/webext.js"),
+          to: path.resolve(root, "dist/js"),
+        },
+        {
+          from: path.resolve(root, "src/js/block-traffic.js"),
+          to: path.resolve(root, "dist/js"),
+        },
+        {
+          from: path.resolve(root, "src/js/background.js"),
+          to: path.resolve(root, "dist/js"),
         },
       ],
     }),

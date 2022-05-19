@@ -42,13 +42,13 @@
       "run_at": "document_end"
     }
   ],
-  "content_security_policy": "style-src 'self'; img-src 'self'; script-src 'self'; object-src 'self'",
   "icons": {
     "64": "img/icon_64.png",
     "128": "img/icon_128.png"
   },
   "permissions": [
     "cookies",
+		"webNavigation",
     "webRequest",
     "webRequestBlocking",
     "activeTab",
@@ -60,6 +60,9 @@
     "*://*.pornhub.com/*",
     "*://*.pornhubpremium.com/*"
   ],
+  "storage": {
+    "managed_schema": "managed_storage.json"
+  },
   "web_accessible_resources": ["/web_accessible_resources/*", "js/*", "css/plyr.css"],
   "commands": {},
   "browser_specific_settings": {

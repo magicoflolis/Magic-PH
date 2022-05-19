@@ -1,5 +1,5 @@
-import jQuery from "../web_accessible_resources/jquery.js";
-// import jQuery from "../web_accessible_resources/jquery.min.js";
+// import jQuery from "../web_accessible_resources/jquery.js";
+import jQuery from "../web_accessible_resources/jquery.min.js";
 
 window.$ = window.jQuery = jQuery;
 

@@ -1,3 +1,5 @@
+'use strict';
+
 import mph from './api.js';
 import qs from "./querySelector.js";
 import { check, userInfo } from "./general.js";
@@ -6,7 +8,7 @@ import { check, userInfo } from "./general.js";
 
 check.channel ? mph.log("Channel page") : false;
 check.home
-  ? (mph.log("Homepage page"),
+  ? (mph.info("Homepage page"),
   //$(pginput).prependTo(".container > .pagination3"),
   $("#recommended-category-videos").parent().prependTo(".frontListingWrapper"),
   $("#recommended-videos").parent().prependTo(".frontListingWrapper"))
@@ -14,7 +16,7 @@ check.home
 //window.PH_Storage.getItem("watchedVideoIds") // stored videos
 //window.PH_Storage.saveItem("watchedVideoStorage")
 if(check.video) {
-  mph.log("Video page");
+  mph.info("Video page");
   $("html").attr("style", "scrollbar-color: #4646463d #000 !important;")
   localStorage.setItem("mgp_player", '{"quality":1080}')
   userInfo("video");
@@ -62,21 +64,21 @@ if(check.video) {
       .attr("style", "width: 165px; height: 136px;");
   });
 };
-check.category ? mph.log(`Categories`) : false;
-check.user ? mph.log(`User Profile`) : false;
-if (check.model) {
-  mph.log(`Model`);
+check.category ? mph.info("Categories") : false;
+check.user ? mph.info("User Profile") : false;
+if(check.model) {
+  mph.info(`Model`);
   userInfo("model");
 }
 // check.community
-//   ? (mph.log(`Community`),
+//   ? (mph.info(`Community`),
 //     check.lo
 //       ? ($(".userWidgetbuttons").remove(), $("#communityMenuWrap").remove())
 //       : false)
 //   : false;
-check.pstar ? mph.log(`Pornstar`) : false;
+check.pstar ? mph.info(`Pornstar`) : false;
 if (check.gif) {
-  mph.log(`Gifs`);
+  mph.info(`Gifs`);
   check.lo ? $(".float-right").remove() : false;
 }
 check.recommended
@@ -88,9 +90,9 @@ check.recommended
 userInfo();
 
 if(check.lo) {
-  mph.log("Logged out");
-  window.disablePlaylistPlusButon = true;
-}
+  mph.info("Logged out");
+  mph.inject(`disablePlaylistPlusButon = true`);
+};
 
 // pginput.on("change", async function (e) {
 //   e.preventDefault();
@@ -114,13 +116,21 @@ mph.ael(document,"scroll", () => {
     // smol = $(".mainPlayerDiv");
   // sma = $("#vb"),
   // smb = $("#vr"),
-  if($(window).scrollTop() > mph.scrollnumber) {
+  if(check.video) {
+    if(document.documentElement.scrollTop > 300) {
+      $(".magicCenter").addClass("top");
+    } else {
+      $(".magicCenter").removeClass("top");
+    };
+  };
+  if(document.documentElement.scrollTop > mph.scrollnumber) {
     $(".magicTop").addClass("top");
     search.addClass("sticky");
     pgnav.addClass("top");
     pgInput.addClass("top");
     mph1.attr("style", "display: block;");
     mph2.attr("style", "display: block;");
+    $(".magicCenter").removeClass("top");
     //smol.removeClass("bigp");
     //smol.addClass("smolp");
   } else {

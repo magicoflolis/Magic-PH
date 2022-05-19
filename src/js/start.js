@@ -1,48 +1,39 @@
-import magicpopup from "../html/magicpopup.html";
-import sidebar from "../html/sidebar.html";
+'use strict';
+
 import loadHeader from "./header.js";
 import mph from './api.js';
 import { check, getVideoUrl } from "./general.js";
 import qs from "./querySelector.js";
 import webext from './api-webext.js';
+// import sidebar from "../html/sidebar.html";
+// import magicpopup from "../html/magicpopup.html";
 
-let config = webext.config;
-
-const header = mph.create("magic-customize","div"),
-  loadCSS = (src) => {
-    const c = mph.create("","link");
-    c.rel="stylesheet";
-    c.href = webext.getURL(src);
-    c.onload = () => mph.log(`Loaded ${src}`);
-    c.onerror = () => mph.log(`CSS load error for ${src}`);
-    document.head.prepend(c);
-  },
-  loadScript = (src) => {
-    const s = mph.create("","script","module");
-    s.async = true;
-    s.src = webext.getURL(src);
-    s.crossOrigin = "anonymous";
-    s.onload = () => mph.log(`Loaded ${src}`);
-    s.onerror = () => mph.log(`Script load error for ${src}`);
-  },
+const header = mph.create("div","magic-customize"),
+pagination = mph.queryAll(".pagination3")[0],
   loadPage = (url, type) => {
-    let pagination = $(".pagination3 > ul").eq(0).children(),
-    pageInput = $(".pagination3 > .pjump > input");
-    for (let i = 0; i < pagination.length; i++) {
-      pagination.eq(i).on("click", function (e) {
-        e.preventDefault();
-        return load(`${url}${pagination.children().eq(i).attr("href")}`,".sectionWrapper","home");
-      })
-    };
-    pageInput.on("change", function (e) {
-      e.preventDefault();
+    let pageInput = qs(".pagination3 > .pjump > input");
+    //mph.queryAll(".pagination3")[0]
+    // pagination.childNodes.forEach((c) => {
+    //   mph.ael(c,"click",(e) => {
+    //     mph.halt(e);
+    //     return load(`${url}${e.target.href}`,".sectionWrapper","home");
+    //   })
+    // })
+    // for (let i = 0; i < pagination.length; i++) {
+    //   pagination.eq(i).on("click", function (e) {
+    //     mph.halt(e);
+    //     return load(`${url}${pagination.children().eq(i).attr("href")}`,".sectionWrapper","home");
+    //   })
+    // };
+    mph.ael(pageInput,"change", (e) => {
+      mph.halt(e);
       let link = `${url}/video?page=${e.target.value}`;
       if(type === "home") {
-        $(".magic-popup > div.home").html("");
+        qs(".magic-popup > div.home").innerHTML = "";
         link = `${url}/video?page=${e.target.value}`;
         return load(`${link}`,".sectionWrapper","home");
       } else {
-        $(".magic-popup > div.recommend").html("");
+        qs(".magic-popup > div.recommend").innerHTML = "";
         link = `${url}?page=${e.target.value}`;
         return load(`${link}`,"ul#recommendedListings","recommend");
       };
@@ -55,124 +46,275 @@ const header = mph.create("magic-customize","div"),
       selected = htmlDocument.documentElement,
       section = qs(selElement, selected),
       thumb = "none";
-      if(!$(`.magic-popup > .${name} > ${selElement}`).length) {
-        $(`.magic-popup > .${name}`).html(section);
+      if(!qs(`.magic-popup > .${name} > ${selElement}`)) {
+        qs(`.magic-popup > .${name}`).innerHTML = section.outerHTML;
       };
-      (name == "home") ? (thumb = $(".home").find("img")) :
-      (name == "recommend") ? (thumb = $(".recommend").find("img")) :
-      (name == "categories") ? (thumb = $(".categories").find("img")) :
-      (name == "taste") ? loadScript("js/recommended-taste.js") : false;
+      (name == "home" || name == "categories" || name == "recommend") ? (thumb = "true") : false;
       if(thumb !== "none") {
-        for (let i = 0; i < thumb.length; i++) {
-          thumb.eq(i).attr("src", thumb.eq(i).attr("data-thumb_url"));
-        };
+        mph.queryAll("img.lazy").forEach((i) => {
+          if(i.src.includes("data:image/gif;base64,")) {
+            i.src = i.dataset.thumb_url;
+          }
+        });
       };
       if(name !== "categories") {
         let scroller = qs(`.${name} > ${selElement}`),
         scrollfn = () => {
-          let pg = $(`.${name} > ${selElement}`),
-          pgnav = $(".pagination3 > ul").eq(0);
-          if(pg.scrollTop() > mph.scrollnumber) {
-            $(".pagination3 > .pjump").eq(0).addClass("top");
-            pgnav.addClass("top");
+          if(scroller.scrollTop > mph.scrollnumber) {
+            mph.queryAll(".pagination3")[0].children[0].classList.add("top");
+            mph.queryAll(".pagination3")[0].children[1].classList.add("top");
           } else {
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
-            pgnav.removeClass("top");
+            mph.queryAll(".pagination3")[0].children[0].classList.remove("top");
+            mph.queryAll(".pagination3")[0].children[1].classList.remove("top");
           }
         };
-        scroller.removeEventListener("scroll", scrollfn)
-        mph.ael(scroller,"scroll", scrollfn)
+        scroller.removeEventListener("scroll", scrollfn);
+        mph.ael(scroller,"scroll", scrollfn);
         loadPage(url, name);
       };
     });
   },
   loadConfig = () => {
     try {
-      webext.getItem(async (storedConfig) => {
-        Object.assign(config, storedConfig);
+      webext.getItem(async (config) => {
         // config.debug ? (mpg.cache = true) : false;
-        let blurName = config.blurimg ? "Show" : "Blur",
-        blurFrame = $(`<div class="blur-btn"><button class="blur-trigger" type="button">${blurName}</button></div>`),
-        observeFn = mph.observe(document.body, () => {
-          let x = $("div.phimage.blur"),
-          y = $("div.phimage");
-          if(x.length !== y.length) {
-            y.addClass("blur");
-            $("a > img.js-menuSwap").addClass("blur");
-            $("li > a > img.lazy").addClass("blur");
-            $("li > a > video.lazyVideo").addClass("blur");
-            $(".largeThumb").addClass("blur");
-            $(".playlist-thumb").addClass("blur");
-            check.category
-              ? $('a[data-mxptype="Category"] > img').addClass("blur")
-              : false;
-            check.video
-              ? ($("#videoElementPoster").addClass("blur"),
-                $(".mgp_videoPoster").addClass("blur"),
-                $("span.thumb > img.lazy").addClass("blur")
-                )
-              : false;
-            $("a.orangeButton > img").removeClass("blur");
-            $("img.catIcon").removeClass("blur");
-          }
+        let sidebar = mph.create("div","sidenav"),
+        magicpopup = mph.create("div","magic-popup"),
+        logo = mph.create("a","magiclogo","button"),
+        mTop = mph.create("input","magicTop","button"),
+        mCenter = mph.create("input","magicCenter","button"),
+        nav = mph.create("div","navbackground"),
+        watcher = mph.observe(document.body, () => {
+          mph.queryAll("div.phimage").forEach((ph) => {
+            if(config.blurimg && !check.favorites && !ph.classList.contains("blur")) {
+              let blur = (elements) => {
+                mph.queryAll(elements).forEach((e) => {
+                  e.classList.add("blur");
+                });
+              };
+              ph.classList.add("blur");
+              if(qs("img.js-menuSwap")) {
+                blur("img.js-menuSwap");
+              };
+              if(qs("li > a > img.lazy")) {
+                blur("li > a > img.lazy");
+              };
+              if(qs(".largeThumb")) {
+                blur(".largeThumb");
+              };
+              if(qs(".playlist-thumb")) {
+                blur(".playlist-thumb");
+              };
+              if(qs('a[data-mxptype="Category"] > img')) {
+                blur('a[data-mxptype="Category"] > img');
+              };
+              if(qs("#videoElementPoster")) {
+                blur("#videoElementPoster");
+              };
+              if(qs(".mgp_videoPoster")) {
+                blur(".mgp_videoPoster");
+              };
+              if(qs(".lazyVideo")) {
+                blur(".lazyVideo");
+              };
+              // if(qs("span.thumb > img.lazy")) {
+              //   blur("span.thumb > img.lazy");
+              // };
+              qs("a.orangeButton > img") ? qs("a.orangeButton > img").classList.remove("blur") : false;
+              qs("img.catIcon") ? qs("img.catIcon").classList.remove("blur") : false;
+            }
+          });
+          mph.queryAll("li > .wrap > .phimage").forEach((item) => {
+            let blurFrame = mph.create("div","blur-btn"),
+            blurBtn = mph.create("button","blur-trigger","button"),
+            blurName = config.blurimg ? "Show" : "Blur";
+            blurBtn.innerText = blurName;
+            blurFrame.prepend(blurBtn);
+            mph.ael(blurBtn,"click", (e) => {
+              mph.halt(e);
+              if(e.target.textContent.includes("Blur")) {
+                e.target.parentElement.nextElementSibling.classList.add("blur");
+                e.target.innerText = "Show";
+              } else {
+                e.target.parentElement.nextElementSibling.classList.remove("blur");
+                e.target.innerText = "Blur";
+              };
+            });
+            !item.previousElementSibling ? item.before(blurFrame) : false;
+            mph.ael(item,"mouseenter", (e) => {
+              e.target.classList.remove("blur");
+            });
+            mph.ael(item,"mouseleave", (e) => {
+              if(e.target.previousElementSibling.children[0].innerText !== "Blur") {
+                e.target.classList.add("blur");
+              };
+            });
+          });
         }),
-        handleBtns = (target,btnText,btnFinal) => {
-          if($(target).text() == btnText) {
-            $(target).parent().siblings("div").addClass("rm");
-            $(target).parent().parent().parent().addClass("marked");
-            $(target).parent().parent().siblings("a").addClass("rm");
-            $(target).parent().parent().siblings("span").addClass("rm");
-            $(target).text(btnFinal);
+        handleBtns = (t,btnText,btnFinal) => {
+          if(t.innerText === btnText) {
+            t.parentElement.previousElementSibling.classList.add("rm");
+            t.parentElement.parentElement.parentElement.classList.add("marked");
+            t.parentElement.parentElement.nextElementSibling.classList.add("rm");
+            t.parentElement.parentElement.nextElementSibling.nextElementSibling.classList.add("rm");
+            t.innerText = btnFinal;
           } else {
-            $(target).parent().siblings("div").removeClass("rm");
-            $(target).parent().parent().parent().removeClass("marked");
-            $(target).parent().parent().siblings("a").removeClass("rm");
-            $(target).parent().parent().siblings("span").removeClass("rm");
-            $(target).text(btnText);
+            t.parentElement.previousElementSibling.classList.remove("rm");
+            t.parentElement.parentElement.parentElement.classList.remove("marked");
+            t.parentElement.parentElement.nextElementSibling.classList.remove("rm");
+            t.parentElement.parentElement.nextElementSibling.nextElementSibling.classList.remove("rm");
+            t.innerText = btnText;
           }
-        },
-        blurfn = (e) => {
-          e.preventDefault();
-          if(e.target.textContent === "Blur") {
-            $(e.target).parent(".blur-btn").siblings(".phimage").addClass("blur");
-            $(e.target).text("Show");
-          } else {
-            $(e.target).parent(".blur-btn").siblings(".phimage").removeClass("blur");
-            $(e.target).text("Blur");
-          };
         },
         downloadfn = async (e) => {
-          e.preventDefault();
-          // handleBtns(e.target,"Download","[WIP]");
-          window.open($(e.target).parent().parent().siblings("a").attr("href"),"_blank")
+          mph.halt(e);
+          window.open(e.target.parentElement.parentElement.nextElementSibling.href,"_blank");
         },
         removerfn = (e) => {
-          e.preventDefault();
+          mph.halt(e);
           handleBtns(e.target,"Remove","Undo");
         },
         saveFav = () => {
           let downloader = mph.queryAll("button.download-trigger"),
           remover = mph.queryAll("button.remove-trigger");
-          for (let i = 0; i < remover.length; i++) {
-            remover[i].removeEventListener("click", removerfn)
-            mph.ael(remover[i],"click", removerfn);
+          remover.forEach((item,i) => {
+            item.removeEventListener("click", removerfn)
+            mph.ael(item,"click", removerfn);
             downloader[i].removeEventListener("click", downloadfn)
             mph.ael(downloader[i],"click", downloadfn);
-          };
-          config.favorites = $(".magic-popup > .favorites").html();
+          });
+          config.favorites = qs(".magic-popup > .favorites").innerHTML;
           webext.setItem(config);
         },
         phLogo = () => {
-          let find = !$(".gayLayout").length ? '/' : '/gay/',
-          logo = mph.create("magiclogo","a","button"),
-          nav = mph.create("navbackground","div");
+          let find = !qs(".gayLayout") ? '/' : '/gay/';
           qs(".magiclogo") ?? (
           qs("#headerContainer > .logo").appendChild(logo),
-          $('.logo > .logoWrapper > a > img').clone().appendTo(logo) );
-          // lognav.innerHTML = sidebar;
-          $(magicpopup).prependTo(document.body);
-          $(sidebar).prependTo(document.body);
-          document.body.prepend(header);
+          $('.logo > .logoWrapper > a > img').clone().appendTo(logo));
+          magicpopup.innerHTML = `<div id="popupContainer" class="home"></div>
+          <div id="popupContainer" class="categories"></div>
+          <div id="popupContainer" class="recommend"></div>
+          <div id="popupContainer" class="taste"></div>
+          <div id="popupContainer" class="favorites"></div>
+          <div id="popupContainer" class="brws_cfg">
+            <form class="magicph_cfg">
+              <section class="select">
+                Alternative player
+                <select name="altplayers">
+                  <option value="none">Default</option>
+                  <option disabled="" value="plyr">Plyr</option>
+                </select>
+              </section>
+              <section class="select">
+                <label>
+                  <span>Player seek time</span>
+                  <input type="number" name="seektime" id="seektime" placeholder="Player Seek Time" />
+                </label>
+              </section>
+              <section class="checkbox">
+                <label>
+                  <span>Auto "Jump to"</span>
+                  <div class="switch">
+                    <input type="checkbox" name="autojump" id="autojump" />
+                    <label for="autojump"></label>
+                  </div>
+                </label>
+              </section>
+              <section class="checkbox">
+                <label>
+                  <span>Scroll on load</span>
+                  <div class="switch">
+                    <input type="checkbox" name="autoscroll" id="autoscroll" />
+                    <label for="autoscroll"></label>
+                  </div>
+                </label>
+              </section>
+              <section class="checkbox">
+                <label>
+                  <span>Blur thumbnails</span>
+                  <div class="switch">
+                    <input type="checkbox" name="blurimg" id="blurimg" />
+                    <label for="blurimg"></label>
+                  </div>
+                </label>
+              </section>
+              <section class="checkbox">
+                <label>
+                  <span>Comment section</span>
+                  <div class="switch">
+                    <input type="checkbox" name="comments" id="comments" />
+                    <label for="comments"></label>
+                  </div>
+                </label>
+              </section>
+              <section class="checkbox">
+                <label>
+                  <span>"Top" button</span>
+                  <div class="switch">
+                    <input type="checkbox" name="topbutton" id="topbutton" />
+                    <label for="topbutton"></label>
+                  </div>
+                </label>
+              </section>
+              <section class="checkbox">
+                <label>
+                  <span>Sidebar</span>
+                  <div class="switch">
+                    <input type="checkbox" name="sidebar" id="sidebar" />
+                    <label for="sidebar"></label>
+                  </div>
+                </label>
+              </section>
+              <section class="select">
+              <span>[WIP] "Jump to" Blacklist</span>
+              <select name="blacklist">
+                <option value="none">None</option>
+                <option value="Footjob">Footjob</option>
+              </select>
+            </section>
+            <section class="checkbox">
+              <label>
+                <span>[WIP] Console logs</span>
+                <div class="switch">
+                  <input disabled="" type="checkbox" name="debug" id="debug" />
+                  <label for="debug"></label>
+                </div>
+              </label>
+            </section>
+            </form>
+          </div>
+          <div class="pagination3">
+            <ul class="firstPage">
+              <li class="page_current alpha"><span class="greyButton">1</span></li>
+              <li class="page_number">
+                <a class="greyButton" href="/video?page=2">2</a>
+              </li>
+              <li class="page_number">
+                <a class="greyButton" href="/video?page=3">3</a>
+              </li>
+              <li class="page_number">
+                <a class="greyButton" href="/video?page=4">4</a>
+              </li>
+              <li class="page_number">
+                <a class="greyButton" href="/video?page=5">5</a>
+              </li>
+              <li class="page_next_set">
+                <a class="greyButton" href="/video?page=10">10</a>
+              </li>
+              <li class="page_next omega">
+                <a href="/video?page=2" class="orangeButton"
+                  >Next
+                  <img class="pagination_arrow_right" src="https://ei.phncdn.com/www-static/images/rightArrow.png" alt="Right Arrow" title=""
+                /></a>
+              </li>
+            </ul>
+            <div class="pjump">
+              <input id="pageInput" type="number" name="pageJump" placeholder="Jump to page" value="">
+            </div>
+          </div>`;
+          sidebar.style = "width 0%";
+          sidebar.innerHTML = `<a id="sidebar" class="magic1">Home</a><a id="sidebar" class="magic2">Blacklist</a><a id="sidebar" class="magic3">Recommended</a><a id="sidebar" class="magic4">Taste Profile(WIP)</a><a id="sidebar" class="magic5">Favorites</a><a id="sidebar" class="magic6">Config</a><a id="sidebar" class="magic7"></a><a id="sidebar" class="magic999">Exit ⟵</a>`
+          document.body.prepend(sidebar,header,mTop,magicpopup);
           document.body.append(nav);
           let ff = qs("form.magicph_cfg");
           for (let prop in config) {
@@ -190,138 +332,109 @@ const header = mph.create("magic-customize","div"),
           });
           mph.ael(logo,"click", () => {
             nav.style.width = "100%";
-            $(".sidenav").attr("style", "width: 20% !important;");
-            $(".wrapper").toggleClass("blur");
-            $(".magic-popup").removeClass("open");
-            $("html").toggleClass("magicFreeze");
+            qs(".sidenav").setAttribute("style", "width: 20% !important;");
+            qs(".wrapper").classList.toggle("blur");
+            qs(".magic-popup").classList.remove("open");
+            qs("html").classList.toggle("magicFreeze");
           });
+          let popups = mph.queryAll(".magic-popup > #popupContainer"),
+          sidebars = mph.queryAll(".sidenav > a#sidebar");
           mph.ael(nav,"click", () => {
-            $(".magic-customize").attr("style", "display: none;");
-            $(".sidenav").attr("style", "width: 0%;");
-            $(".magic-popup").removeClass("open");
-            $(".wrapper").toggleClass("blur");
+            qs("html").classList.remove("magicFreeze");
+            qs(".magic-customize").setAttribute("style", "display: none;");
+            qs(".sidenav").setAttribute("style", "width: 0%;");
+            qs(".magic-popup").classList.remove("open");
+            qs(".wrapper").classList.toggle("blur");
             nav.style.width = "0%";
-            $(".magic-popup > div.categories").attr("style", "display: none;");
-            $(".magic-popup > div.taste").attr("style", "display: none;");
-            $(".magic-popup > div.favorites").attr("style", "display: none;");
-            $(".magic-popup > div.home").attr("style", "display: none;");
-            $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
-            $(".magic-popup > div.recommend").attr("style", "display: none;");
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
+            popups.forEach((item) => {
+              item.setAttribute("style", "display: none;");
+            });
+            pagination.children[0].classList.remove("top");
+            pagination.children[1].classList.remove("top");
             qs(".pjump > input").value = "";
-            $("html").toggleClass("magicFreeze");
-            $(".favorites > .wrap.marked").remove();
+            qs("html").classList.remove("magicFreeze");
+            if(qs(".wrap.marked")) {
+              mph.queryAll(".wrap.marked").forEach((r) => {
+                r.remove();
+              });
+            };
+            // $(".favorites > .wrap.marked").remove();
             saveFav();
             // window.location.reload();
           });
+          sidebars.forEach((sb) => {
+            mph.ael(sb,"click", () => {
+              popups.forEach((pops) => {
+                pops.setAttribute("style", "display: none;");
+              });
+              pagination.children[0].classList.remove("top");
+              pagination.children[1].classList.remove("top");
+            });
+          });
           mph.ael(qs(".magic1"),"click", () => {
-            $(".magic-popup > div.categories").attr("style", "display: none;");
-            $(".magic-popup > div.favorites").attr("style", "display: none;");
-            $(".magic-popup > div.taste").attr("style", "display: none;");
-            $(".magic-popup > div.recommend").attr("style", "display: none;");
-            $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
-            $(".magic-popup").addClass("open")
+            qs(".magic-popup").classList.add("open");
             nav.style.width = "100%";
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".magic-popup > div.home").attr("style", "display: block;");
+            qs(".magic-popup > div.home").setAttribute("style", "display: block;");
             load(`${document.location.host}`, ".frontListingWrapper", "home");
           });
           mph.ael(qs(".magic2"),"click", () => {
-            $(".magic-popup > div.home").attr("style", "display: none;");
-            $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
-            $(".magic-popup > div.favorites").attr("style", "display: none;");
-            $(".magic-popup > div.taste").attr("style", "display: none;");
-            $(".magic-popup > div.recommend").attr("style", "display: none;");
-            $(".magic-popup").addClass("open")
+            qs(".magic-popup").classList.add("open");
             nav.style.width = "100%";
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".magic-popup > div.categories").attr("style", "display: block;");
-            load(`${document.location.host}${find}categories?o=al`, "ul#categoriesListSection", "categories");
+            //load(`${document.location.host}${find}categories?o=al`, "ul#categoriesListSection", "categories");
           });
           mph.ael(qs(".magic3"),"click", () => {
-            $(".magic-popup > div.categories").attr("style", "display: none;");
-            $(".magic-popup > div.home").attr("style", "display: none;");
-            $(".magic-popup > div.favorites").attr("style", "display: none;");
-            $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
-            $(".magic-popup > div.taste").attr("style", "display: none;");
-            $(".magic-popup").addClass("open")
+            qs(".magic-popup").classList.add("open");
             nav.style.width = "100%";
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".magic-popup > div.recommend").attr("style", "display: block;");
+            qs(".magic-popup > div.recommend").setAttribute("style", "display: block;");
             load(`${document.location.host}${find}recommended`, "ul.recommendedContainerLoseOne", "recommend");
           });
           mph.ael(qs(".magic4"),"click", () => {
-            $(".magic-popup > div.categories").attr("style", "display: none;");
-            $(".magic-popup > div.home").attr("style", "display: none;");
-            $(".magic-popup > div.favorites").attr("style", "display: none;");
-            $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
-            $(".magic-popup > div.recommend").attr("style", "display: none;");
-            $(".magic-popup").addClass("open")
+            qs(".magic-popup").classList.add("open");
             nav.style.width = "100%";
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".magic-popup > div.taste").attr("style", "display: block;");
+            qs(".magic-popup > div.taste").setAttribute("style", "display: block;");
             load(`${document.location.host}/recommended/taste`, ".sectionWrapper", "taste");
           });
           mph.ael(qs(".magic5"),"click", () => {
-            $(".magic-popup > div.categories").attr("style", "display: none;");
-            $(".magic-popup > div.home").attr("style", "display: none;");
-            $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
-            $(".magic-popup > div.taste").attr("style", "display: none;");
-            $(".magic-popup > div.recommend").attr("style", "display: none;");
-            // $(".magic-popup > div.favorites").addClass("sb");
-            $(".magic-popup > div.favorites").attr("style", "display: grid;");
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".magic-popup").addClass("open");
+            qs(".magic-popup > div.favorites").setAttribute("style", "display: grid;");
+            qs(".magic-popup").classList.add("open");
             nav.style.width = "100%";
             saveFav();
           });
           mph.ael(qs(".magic6"),"click", () => {
-            $(".magic-popup > div.categories").attr("style", "display: none;");
-            $(".magic-popup > div.home").attr("style", "display: none;");
-            $(".magic-popup > div.favorites").attr("style", "display: none;");
-            $(".magic-popup > div.taste").attr("style", "display: none;");
-            $(".magic-popup > div.recommend").attr("style", "display: none;");
-            $(".magic-popup").addClass("open")
+            qs(".magic-popup").classList.add("open");
             nav.style.width = "100%";
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".magic-popup > div.brws_cfg").attr("style", "display: block !important;")
+            qs(".magic-popup > div.brws_cfg").setAttribute("style", "display: block !important;");
           });
           mph.ael(qs(".magic999"),"click", () => {
-            $(".magic-popup > div.categories").attr("style", "display: none;");
-            $(".magic-popup > div.home").attr("style", "display: none;");
-            $(".magic-popup > div.brws_cfg").attr("style", "display: none;");
-            $(".magic-popup > div.taste").attr("style", "display: none;");
-            $(".magic-popup > div.favorites").attr("style", "display: none;");
-            $(".magic-popup > div.recommend").attr("style", "display: none;");
-            $(".wrapper").toggleClass("blur");
-            // lognav.style.width = "0%";
-            $(".sidenav").attr("style", "width: 0%;");
-            $(".magic-popup").removeClass("open");
+            qs(".wrapper").classList.toggle("blur");
+            qs(".sidenav").setAttribute("style", "width: 0%;");
+            qs(".magic-popup").classList.remove("open");
             nav.style.width = "0%";
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
             qs(".pjump > input").value = "";
-            $("html").toggleClass("magicFreeze");
-            $(".favorites > .wrap.marked").remove();
+            qs("html").classList.toggle("magicFreeze");
+            qs(".favorites > .wrap.marked").remove();
             saveFav();
             // window.location.reload();
           });
         };
-        !config.sidebar ? phLogo() : false;
-        (config.blurimg && !check.favorites) ? observeFn : false;
+        mTop.value = "Top";
+        mCenter.value = "Recenter";
+        mph.ael(mTop,"click",(e) => {
+          mph.halt(e);
+          return window.scrollTo(0, 101);
+        });
+        mph.ael(mCenter,"click",(e) => {
+          mph.halt(e);
+          return window.scrollTo(0, 101);
+        });
+        config.sidebar ? phLogo() : false;
         config.autoscroll ? window.scrollTo(0, 101) : false;
-        config.topbutton ? $(".magicTop").addClass("rm") : false;
+        !config.topbutton ? mTop.classList.add("rm") : false;
+        watcher;
         if(check.video) {
-          config.comments ? $("#cmtWrapper").removeClass("rm") : $("#cmtWrapper").addClass("rm");
+          document.body.prepend(mCenter);
+          config.comments ? qs("#cmtWrapper").classList.remove("rm") : qs("#cmtWrapper").classList.add("rm");
           if(config.altplayers !== "none") {
-            loadCSS("css/plyr.css");
             mph.setItem("altplayers", config.altplayers);
           } else {
             if(mph.getItem("altplayers")) {
@@ -334,100 +447,93 @@ const header = mph.create("magic-customize","div"),
                 mph.removeItem("autojump")
               };
             }
+            if(config.blacklist) {
+              mph.setItem("blacklist", config.blacklist);
+            } else {
+              if(mph.getItem("blacklist")) {
+                mph.removeItem("blacklist")
+              };
+            }
           };
           mph.setItem("seektime", config.seektime);
           mph.query(".video-wrapper").then(() => {
-            let title = $("h1.title > span").text(),
+            let title = qs("h1.title > span").innerHTML,
             checker = mph.queryAll(".favorites > .wrap > .title > a"),
-            wrap = $(`<div class="wrap">
-            <div class="mph-btns">
+            wrap = mph.create("div","wrap"),
+            addFav = mph.create("div","magicph-fav icon-wrapper tooltipTrig");
+            wrap.innerHTML = `<div class="mph-btns">
             <div class="download-btn">
-              <button class="download-trigger" type="button">Download</button>
+            <button class="download-trigger" type="button">Download</button>
             </div>
             <div class="remove-btn">
-              <button class="remove-trigger" type="button">Remove</button>
+            <button class="remove-trigger" type="button">Remove</button>
             </div>
             </div>
             <a href='${document.location.origin}/view_video.php?viewkey=${document.location.search.replace("?viewkey=","")}'>
-              <img src='${$("img#videoElementPoster").attr("src")}'></a>
-              <span class="title">
-                <a href='${document.location.origin}/view_video.php?viewkey=${document.location.search.replace("?viewkey=","")}'>${title}</a>
-              </span>
-          </div>`),
-            favicon = $(`<div class="magicph-fav icon-wrapper tooltipTrig" data-title="[MagicPH] Add to Favorites" ><i class="ph-icon-favorite"><span></span></i></div>`);
-            favicon.prependTo($(".allActionsContainer"));
-            for (let i = 0; i < checker.length; i++) {
-              checker[i].textContent === title ? (
-                $(".magicph-fav").attr("data-title", "[MagicPH] Remove from Favorites"),
-                $(".magicph-fav").children("i").attr("style", "color: #f90;")
+            <img src='${qs("img#videoElementPoster").src}'></a>
+            <span class="title">
+            <a href='${document.location.origin}/view_video.php?viewkey=${document.location.search.replace("?viewkey=","")}'>${title}</a>
+            </span>`;
+            addFav.setAttribute("data-title","[MagicPH] Add to Favorites");
+            addFav.innerHTML = '<i class="ph-icon-favorite"><span></span></i>';
+            qs(".allActionsContainer").prepend(addFav);
+            checker.forEach((item) => {
+              item.textContent.includes(title) ? (
+                addFav.setAttribute("data-title","[MagicPH] Remove from Favorites"),
+                addFav.children[0].setAttribute("style", "color: #f90;")
               ) : false;
-            };
-            $(".magicph-fav").on("click", async function () {
-              if($(this).attr("data-title") !== "[MagicPH] Remove from Favorites") {
-                wrap.prependTo($(".magic-popup > .favorites"));
-                $(this).children("i").attr("style", "color: #f90;");
-                $(this).children("i").children("span").text("Saved to Favorites");
-                $(this).attr("data-title", "[MagicPH] Remove from Favorites");
+            });
+            mph.ael(addFav,"click", (e) => {
+              let a = e.target.parentElement;
+              if(!a.dataset.title.includes("[MagicPH] Remove from Favorites")) {
+                qs(".magic-popup > .favorites").prepend(wrap);
+                addFav.children[0].setAttribute("style", "color: #f90;");
+                addFav.children[0].children[0].innerHTML = "Saved to Favorites";
+                a.dataset.title = "[MagicPH] Remove from Favorites";
               } else {
-                $(this).children("i").attr("style", "");
-                $(this).children("i").children("span").text("Removed from Favorites");
-                $(this).attr("data-title", "[MagicPH] Add to Favorites");
-                for (let i = 0; i < checker.length; i++) {
-                  if(checker[i].textContent === title) {
-                    $("button.remove-trigger").eq(i).parent().siblings("div").addClass("rm");
-                    $("button.remove-trigger").eq(i).parent().parent().parent().addClass("marked");
-                    $("button.remove-trigger").eq(i).parent().parent().siblings("a").addClass("rm");
-                    $("button.remove-trigger").eq(i).parent().parent().siblings("span").addClass("rm");
-                    $("button.remove-trigger").eq(i).text("Undo");
-                  }
-                };
+                addFav.children[0].setAttribute("style", "");
+                addFav.children[0].children[0].innerHTML = "Removed from Favorites";
+                a.dataset.title = "[MagicPH] Add to Favorites";
+                checker.forEach((item,i) => {
+                  if(item.textContent.includes(title)) {
+                    let t = mph.queryAll("button.remove-trigger")[i];
+                    t.parentElement.previousElementSibling.classList.add("rm");
+                    t.parentElement.parentElement.parentElement.classList.add("marked");
+                    t.parentElement.parentElement.nextElementSibling.classList.add("rm");
+                    t.parentElement.parentElement.nextElementSibling.nextElementSibling.classList.add("rm");
+                    t.innerText = "Undo";
+                  };
+                });
               };
               saveFav();
-              await new Promise((resolve) => setTimeout(resolve, 3000));
-              $(this).children("i").children("span").text("");
+              // mph.delay(3000);
+              addFav.children[0].children[0].innerHTML = "";
             });
           })
         }
-        config.favorites !== "" ? $(".magic-popup > .favorites").html(config.favorites) : false;
-        blurFrame.prependTo($("li > div.wrap"));
-        let blurb = mph.queryAll(".blur-trigger"),
-        w = mph.queryAll("li > .wrap > .phimage");
-        observeFn.disconnect();
-        for (let i = 0; i < blurb.length; i++) {
-          mph.ael(blurb[i],"click", blurfn);
-          mph.ael(w[i],"mouseenter", (e) => {
-            $(e.target).removeClass("blur");
-            //$(e.target).parent().children(".blur-btn").children(".blur-trigger").removeClass("display-none");
-          });
-          mph.ael(w[i],"mouseleave", (e) => {
-            if($(e.target).parent().children(".blur-btn").children(".blur-trigger").text() !== "Blur") {
-              $(e.target).addClass("blur")
-            };
-            //$(e.target).parent().children(".blur-btn").children(".blur-trigger").addClass("display-none");
-          });
-        };
+        (config.favorites !== "") ? (qs(".magic-popup > .favorites").innerHTML = config.favorites) : (config.favorites = qs(".magic-popup > .favorites").innerHTML);
+        watcher.disconnect();
         loadHeader();
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        if(qs(".js-menu.categories")) {
-          mph.ael(qs(".js-menu.categories > a"),"click",() => {
-            load(`${document.location.host}${!$(".gayLayout").length ? '/' : '/gay/'}categories?o=al`, "ul#categoriesListSection", "categories");
-            $(".pagination3 > .pjump").eq(0).removeClass("top");
-            $(".pagination3 > ul").eq(0).removeClass("top");
-            $(".magic-popup > div.favorites").attr("style", "display: none;");
-            // $(".sidenav").attr("style", "width: 20% !important;");
-            $(".wrapper").toggleClass("blur");
-            $(".magic-popup").removeClass("open");
-            $("html").toggleClass("magicFreeze");
-            $(".magic-popup").addClass("open");
-            $(".navbackground").attr("style", "width: 100%");
-            $(".magic-popup > div.categories").attr("style", "display: block;");
-          });
-        }
+        // mph.delay(800);
+        // if(qs(".js-menu.categories")) {
+        //   mph.ael(qs(".js-menu.categories > a"),"click",() => {
+        //     load(`${document.location.host}${!$(".gayLayout").length ? '/' : '/gay/'}categories?o=al`, "ul#categoriesListSection", "categories");
+        //     $(".pagination3 > .pjump").eq(0).removeClass("top");
+        //     $(".pagination3 > ul").eq(0).removeClass("top");
+        //     $(".magic-popup > div.favorites").attr("style", "display: none;");
+        //     // $(".sidenav").attr("style", "width: 20% !important;");
+        //     $(".wrapper").toggleClass("blur");
+        //     $(".magic-popup").removeClass("open");
+        //     $("html").toggleClass("magicFreeze");
+        //     $(".magic-popup").addClass("open");
+        //     $(".navbackground").attr("style", "width: 100%");
+        //     $(".magic-popup > div.categories").attr("style", "display: block;");
+        //   });
+        // };
       });
     } catch (error) {
       mph.err(error);
     }
   };
-// window.readyState == "loading" ? loadConfig() : false;
 
 mph.ael(window,"load",loadConfig);

@@ -115,12 +115,12 @@ ul#headerMainMenu {
 }
 
 .pagination3 {
-  clear: both;
-  margin: 20px 0 0 0;
-  overflow: hidden;
-  position: relative;
-  text-align: center;
-  width: 100%;
+  // clear: both;
+  // margin: 20px 0 0 0;
+  // overflow: hidden;
+  // position: relative;
+  // text-align: center;
+  // width: 100%;
   .pjump,
   ul {
     transition: top 100ms ease-in-out 100ms;
@@ -128,7 +128,7 @@ ul#headerMainMenu {
     position: fixed !important;
     display: block !important;
     top: 100%;
-    left: 20%;
+    // left: 20%;
     margin: auto;
     overflow: hidden;
     width: auto;
@@ -175,13 +175,13 @@ ul#headerMainMenu {
 .gifWebMWrapper {
   margin-bottom: 0 !important;
 }
-.nf-videos > {
-  .sectionWrapper {
-    max-width: 80vw !important;
-    min-width: 991px !important;
-    width: 80vw !important;
-  }
-}
+// .nf-videos > {
+//   .sectionWrapper {
+//     max-width: 80vw !important;
+//     min-width: 991px !important;
+//     width: 80vw !important;
+//   }
+// }
 .video-wrapper,
 #player,
 #player.wide {
@@ -491,15 +491,22 @@ table {
     opacity: 1;
     visibility: visible;
   }
-}
+};
+#searchBarContainer {
+  border-radius: 25px !important;
+  label > input {
+    border-radius: 25px !important;
+  };
+};
+
 .headerSearchWrapper.sticky > form > fieldset > #searchBarContainer {
   #searchSuggestions {
     margin-top: 0px !important;
-  }
+  };
   #searchesWrapper {
     display: none !important;
     margin-top: 25px !important;
-  }
+  };
   width: 25% !important;
   &.active {
     width: 100% !important;
@@ -507,4 +514,9 @@ table {
       display: block !important;
     }
   }
+}
+
+.wrapper[style="overflow: hidden;"] {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
 }
