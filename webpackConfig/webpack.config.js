@@ -24,14 +24,40 @@ plugins = [
       },
       {
         from: path.resolve(root, "src/js/options.js"),
-        to: path.resolve(root, "dist/js/options.js"),
-        info: { minimized: true },
+        to: path.resolve(root, "dist/js"),
       },
-      // {
-      //   from: path.resolve(root, "src/js/injector.js"),
-      //   to: path.resolve(root, "dist/js/injector.js"),
-      //   info: { minimized: true },
-      // },
+      {
+        from: path.resolve(root, "src/js/webext.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/magicph.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/querySelector.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/block-traffic.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/player.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/networkPlayer.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/api.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/injector.js"),
+        to: path.resolve(root, "dist/js"),
+      },
       {
         from: path.resolve(root, "src/img"),
         to: path.resolve(root, "dist/img"),
@@ -48,10 +74,8 @@ commonConfig = {
   context: path.resolve(root, "src"),
   entry: {
     start: "./js/start.js",
+    header: "./js/header.js",
     favorites: "./js/favorites.js",
-    injector: "./js/injector.js",
-    magicph: "./js/magicph.js",
-    player: "./js/player.js",
   },
   output: {
     path: path.resolve(root, "dist/js"),
@@ -60,9 +84,22 @@ commonConfig = {
   module: {
     rules: [{
         test: /\.m?js$/,
-        exclude: /node_modules/,
+        exclude: /(node_modules|bower_components)/,
         use: {
           loader: "swc-loader",
+          options: {
+            // This makes swc-loader invoke swc synchronously.
+            sync: true,
+            jsc: {
+              parser: {
+                syntax: "ecmascript"
+              },
+              target: "es2020",
+            },
+            module: {
+              type: "es6",
+            },
+          },
         },
       },
       {
@@ -123,18 +160,6 @@ developmentConfig = {
         {
           from: path.resolve(root, "src/html"),
           to: path.resolve(root, "dist"),
-        },
-        {
-          from: path.resolve(root, "src/js/webext.js"),
-          to: path.resolve(root, "dist/js"),
-        },
-        {
-          from: path.resolve(root, "src/js/block-traffic.js"),
-          to: path.resolve(root, "dist/js"),
-        },
-        {
-          from: path.resolve(root, "src/js/background.js"),
-          to: path.resolve(root, "dist/js"),
         },
       ],
     }),

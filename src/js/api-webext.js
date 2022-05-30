@@ -1,3 +1,4 @@
+'use strict';
 const brws = (typeof browser=="undefined"?chrome:browser),
 configDefault = {
   debug: true,

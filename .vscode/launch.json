@@ -17,14 +17,9 @@
       "type": "firefox",
       "request": "launch",
       "clearConsoleOnReload": true,
-      "profile": "debug",
-      "keepProfileChanges": false,
       "reAttach": true,
       "reloadOnAttach": true,
-      "reloadOnChange": {
-        "watch": "${workspaceFolder}/src/**",
-        "ignore": "**/node_modules/**"
-      },
+      "reloadOnChange": "${workspaceFolder}/src/**",
       "url": "https://pornhub.com/",
       "addonPath": "${workspaceFolder}\\dist"
     },

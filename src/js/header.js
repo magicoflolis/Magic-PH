@@ -1,13 +1,13 @@
+'use strict';
 import custom_layout from "../html/header.html";
-import mph from './api.js';
-import {check} from "./general.js";
+import {mph} from './api.js';
+import {qs,qsA} from "./querySelector.js";
 import webext from './api-webext.js';
-// import qs from "./querySelector.js";
 
 function loadHeader() {
   try {
-  const gCheck = check.gay ? "/gay/" : "/",
-  menu = $("ul#headerMainMenu"),
+  const gCheck = mph.find.gay ? "/gay/" : "/",
+  menu = qs("ul#headerMainMenu"),
   dConfig = {
     headerOrder: [
       "home",
@@ -40,14 +40,14 @@ function loadHeader() {
     favB: `<a href="/magicph-favorites" class="js-topMenuLink"><span class="itemName">Favorites</span></a>`,
   },
   headin = {
-    home: (check.home) ? hl.homA : hl.homB,
+    home: (mph.find.home) ? hl.homA : hl.homB,
     videos: (/video/.test(document.location.href)) ? hl.vidA : hl.vidB,
-    categories: (check.category) ? hl.catA : hl.catB,
-    pornstars: (check.pstar) ? hl.porA : hl.porB,
-    gifs: (check.gif) ? hl.gifA : hl.gifB,
-    community: (check.community) ? hl.comA : hl.comB,
-    recommended: (check.recommended) ? hl.recA : hl.recB,
-    favorites: (check.favorites) ? hl.favA : hl.favB,
+    categories: (mph.find.category) ? hl.catA : hl.catB,
+    pornstars: (mph.find.pstar) ? hl.porA : hl.porB,
+    gifs: (mph.find.gif) ? hl.gifA : hl.gifB,
+    community: (mph.find.community) ? hl.comA : hl.comB,
+    recommended: (mph.find.recommended) ? hl.recA : hl.recB,
+    favorites: (mph.find.favorites) ? hl.favA : hl.favB,
     custom: `<a href="" class="js-topMenuLink"><span class="itemName">custom url</span></a>`,
   },
   headerBtns = {
@@ -225,14 +225,19 @@ function loadHeader() {
 //     community: $(`<li itemprop="name" id="menuItem6" class="menu js-menu item-6 community" data-hover="0">
 //     ${headin.community}
 //     </li>`),
-    recommended: $(`<li id="menuItem7" class="menu js-menu item-7 recommended" data-hover="0">${headin.recommended}</li>`),
-    favorites: $(`<li id="menuItem8" class="menu js-menu item-8 fav">${headin.favorites}</li>`),
-    custom: $(`<li id="menuItem9" class="menu js-menu item-9">${headin.custom}</li>`),
+    recommended: mph.create("li","menu js-menu item-7 recommended"),
+    favorites: mph.create("li","menu js-menu item-8 fav"),
+    custom: mph.create("li","menu js-menu item-9"),
+    // recommended: qs(`<li id="menuItem7" class="menu js-menu item-7 recommended" data-hover="0">${headin.recommended}</li>`),
+    // favorites: qs(`<li id="menuItem8" class="menu js-menu item-8 fav">${headin.favorites}</li>`),
+    // custom: qs(`<li id="menuItem9" class="menu js-menu item-9">${headin.custom}</li>`),
   };
   webext.getItem((config)=>{
     mph.query("body").then(() => {
       // menu.html("");
-      $(".magic-customize").append($(custom_layout));
+      let magicForm = mph.create("form","magicph_customize");
+      magicForm.innerHTML = custom_layout;
+      qs(".magic-customize").append(magicForm);
       let formBTN = () => {
         custombtn.id = "menuItem99";
         customin.title = "Customize Header";
@@ -240,39 +245,38 @@ function loadHeader() {
         mph.query("ul#headerMainMenu").then((e) => {
           e.appendChild(custombtn);
           custombtn.appendChild(customin);
-          // mph.ael(qs("li#menuItem99 > a"),"click", () => {
-          //   $(".wrapper").toggleClass("blur");
-          //   $("html").toggleClass("magicFreeze");
-          //   $(".navbackground").attr("style","width: 100%");
-          //   $(".magic-customize").attr("style","display: grid;");
-          // });
           mph.ael(customin,"click", () => {
-            $(".wrapper").toggleClass("blur");
-            $("html").toggleClass("magicFreeze");
-            $(".navbackground").attr("style","width: 100%");
-            $(".magic-customize").attr("style","display: grid;");
+            qs(".wrapper").classList.remove("blur");
+            qs("html").classList.remove("magicFreeze");
+            qs(".navbackground").setAttribute("style","width: 100%");
+            qs(".magic-customize").setAttribute("style","display: grid;");
           });
         });
       },
-      customize = mph.queryAll('section.head-select > select');
+      customize = qsA('section.head-select > select');
+      headerBtns.recommended.id = "menuItem7";
+      headerBtns.recommended.innerHTML = headin.recommended;
+      headerBtns.favorites.id = "menuItem8";
+      headerBtns.favorites.innerHTML = headin.favorites;
       customize.forEach((c, i) => {
         c.value = config.headerOrder[i];
         if(c.value === "custom") {
-          $(".magicph-name").eq(i).removeClass("rm");
-          $(".magicph-url").eq(i).removeClass("rm");
+          qsA(".magicph-name")[i].classList.remove("rm");
+          qsA(".magicph-url")[i].classList.remove("rm");
         };
-        for (let key in config.headerOrder) {
-          menu.append(headerBtns[config.headerOrder[key, i]])
-        };
+        // for (let key in config.headerOrder) {
+        //   menu.append(headerBtns[config.headerOrder[key, i]]);
+        // };
         mph.ael(c,"change", (e) => {
           try {
             let target = e.target,
             cname = target.className;
             if(target.value !== "custom") {
-              $(".magicph-name").addClass("rm");
-              $(".magicph-url").addClass("rm");
-            }
-            $(`#headerMainMenu > .${cname}`).html($(headin[target.value]));
+              qs(".magicph-name").classList.add("rm");
+              qs(".magicph-url").classList.add("rm");
+            };
+            qs(`#headerMainMenu > .${cname}`).innerHTML = `${headin[target.value]}`;
+            // $(`#headerMainMenu > .${cname}`).html($(headin[target.value]));
             config.headerOrder.splice(i, i, target.value);
             mph.log(config.headerOrder);
             webext.setItem(config);
@@ -287,21 +291,14 @@ function loadHeader() {
           config.headerOrder = dConfig.headerOrder;
           webext.setItem(config);
           config.headerOrder.forEach((item, index) => {
-            $(`#headerMainMenu > .${customize[index].className}`).html($(headin[item]));
+            qs(`#headerMainMenu > .${customize[index].className}`).innerHTML = `${headin[item]}`;
+            // $(`#headerMainMenu > .${customize[index].className}`).html($(headin[item]));
             customize[index].value = dConfig.headerOrder[index];
           });
           formBTN();
         });
       });
-      // mph.ael(qs("button.header_reset"),"click", () => {
-      //   config.headerOrder = dConfig.headerOrder;
-      //   webext.setItem(config);
-      //   config.headerOrder.forEach((item, index) => {
-      //     $(`#headerMainMenu > .${customize[index].className}`).html($(headin[item]));
-      //     customize[index].value = dConfig.headerOrder[index];
-      //   });
-      //   formBTN();
-      // });
+      menu.append(headerBtns.recommended,headerBtns.favorites);
     });
   });
 } catch (err) {
@@ -348,9 +345,9 @@ export default loadHeader
 //     GPornstar: $('.pornstar > a[href="/gay/pornstars"]'),
 //     GCommunity: $('.community > a[href^="/community?section=gay"]'),
 //     GPhoto: $('.photos > a[href^="/albums/gay"]'),
-//     GPremium: $('.premium > a[href="/gay/premium"]'),
+//     GPremium: '.premium > a[href="/gay/premium"]'),
 //   };
-// !check.gay ? (
+// !mph.find.gay ? (
 //   // src.Home.attr("href", mod.Home)
 //   src.Video.attr("href", mod.Video),
 //   src.Category.attr("href", mod.Category),

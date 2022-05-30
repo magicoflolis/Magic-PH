@@ -52,7 +52,7 @@ body.logged-out {
   width: 96vw !important;
   min-width: 96vw !important;
   max-width: 96vw !important;
-  height: 86vh !important;
+  // height: 86vh !important;
   margin: 1% 6% 10px auto !important;
   padding: 0 !important;
 }
@@ -95,6 +95,8 @@ li#profileHome,
 .mgp_videoPoster,
 .tasteLogin,
 .upgradeToPremium,
+search-list[label="Trending Searches"],
+search-list[label="Trending Pornstars and Models"],
 #profileMenuDropdown > .alpha,
 #main-container > .abovePlayer,
 [data-entrycode="DiscoverPremium"],
@@ -107,7 +109,7 @@ head > stylesheet,
 #customSkin,
 #customSkinCTA {
   @include remover();
-}
+};
 
 
 ul#headerMainMenu {
@@ -115,12 +117,6 @@ ul#headerMainMenu {
 }
 
 .pagination3 {
-  // clear: both;
-  // margin: 20px 0 0 0;
-  // overflow: hidden;
-  // position: relative;
-  // text-align: center;
-  // width: 100%;
   .pjump,
   ul {
     transition: top 100ms ease-in-out 100ms;
@@ -419,79 +415,6 @@ table {
     border: none;
   }
 }
-
-
-.mgp_download {
-  border-bottom: 1px solid rgba(255,255,255,.2) !important;
-}
-
-.mgp_downloadInfo {
-  background: rgba(0,0,0,.75);
-  position: absolute;
-  top: 46%;
-  left: 50%;
-  transition: opacity .2s linear;
-  width: 50%;
-  max-width: 550px;
-  transform: translate(-50%, -50%);
-  z-index: 6;
-  opacity: 0;
-  visibility: hidden;
-  > .mgp_copyCloseDiv {
-    border-bottom: 1px solid rgba(255,255,255,.2);
-    overflow: hidden;
-    padding: 2px 4px;
-    > .mgp_title {
-      font-size: 16px;
-      line-height: 30px;
-      padding: 0 0 0 5px;
-      float: left;
-    }
-    > .mgp_hideMenu {
-      font-size: 25px;
-      float: right;
-      cursor: pointer;
-      pointer-events: auto;
-      padding: 5px;
-    }
-  }
-  ul {
-    padding: 2px 4px;
-  }
-  li {
-    span {
-      padding-right: 10%;
-      width: 1%;
-      display: inline-block;
-      margin-left: 1%;
-    }
-    input {
-      margin: 1% 0px 1%;
-      text-align: center;
-      outline: 0 none;
-      background: transparent;
-      border: none;
-    }
-    input[value="[Error] Not Found"] {
-      visibility: hidden;
-    }
-    a.suggestToggleAlt {
-      margin: 1% 1% 1% 0px;
-      float: inline-end;
-      cursor: pointer;
-      color: #ccc;
-      &:hover {
-        color: #f90;
-        -webkit-text-decoration: 0;
-                text-decoration: 0;
-      }
-    }
-  }
-  &.mgp_active {
-    opacity: 1;
-    visibility: visible;
-  }
-};
 #searchBarContainer {
   border-radius: 25px !important;
   label > input {
@@ -514,9 +437,4 @@ table {
       display: block !important;
     }
   }
-}
-
-.wrapper[style="overflow: hidden;"] {
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
 }

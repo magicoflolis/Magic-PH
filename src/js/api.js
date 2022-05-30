@@ -1,6 +1,9 @@
 'use strict';
 
-const mph = {
+let doc = self.document,
+lpath = doc.location.pathname;
+
+export const mph = {
   ael(elm = document, event, callback){
     return elm.addEventListener(event, callback);
   },
@@ -13,7 +16,7 @@ const mph = {
   },
   /** Can create various elements */
   create(element,cname,type) {
-    let el = document.createElement(element);
+    let el = doc.createElement(element);
     type ? (el.type = type) : false;
     cname ? (el.className = cname) : false;
     return el;
@@ -43,8 +46,7 @@ const mph = {
     console.info('[%cMagicPH%c] %cINF', 'color: rgb(255,153,0);', '', 'color: rgb(0, 186, 124);', ...message);
   },
   inject(src) {
-    let script,
-    doc = document;
+    let script;
     script = this.create("script",null,"text/javascript");
     script.innerHTML = src;
     (doc.head || doc.documentElement || doc).appendChild(script);
@@ -73,16 +75,28 @@ const mph = {
     }
     return root.querySelector(selector);
   },
-  queryAll(selectors, root = document) {
-    return root.querySelectorAll(selectors);
-  },
   removeItem(key) {
     return localStorage.removeItem(key);
   },
   setItem(key,value) {
     return localStorage.setItem(key,value);
   },
+  find: {
+    community: lpath.includes("discover"),
+    channel: doc.querySelector("#channelsProfile"),
+    category: lpath.includes("categories"),
+    favorites: lpath.includes("magicph-favorites"),
+    home: doc.location.pathname == "/",
+    gay: lpath.includes("gay"),
+    gif: lpath.includes("gif"),
+    lo: doc.querySelector("body.logged-out"),
+    model: doc.querySelector("div.amateurModel"),
+    new: doc.querySelector("#headerSearchWrapperFree"),
+    premium: doc.querySelector(".premiumUser"),
+    pstar: lpath.includes("pornstar"),
+    user: doc.querySelector("#profileContent"),
+    video: lpath.includes("view_video"),
+    recommended: lpath.includes("recommended"),
+  },
   scrollnumber: /view_video.php/.test(window.location.href) ? 400 : 101,
 };
-
-export default mph;

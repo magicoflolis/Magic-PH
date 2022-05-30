@@ -14,7 +14,7 @@
         Alternative player
         <select name="altplayers">
           <option value="none">Default</option>
-          <option value="plyr">Plyr</option>
+          <option disabled="" value="plyr">Plyr</option>
         </select>
       </section>
       <section class="select">
@@ -52,7 +52,7 @@
       </section>
       <section class="checkbox">
         <label>
-          <span>Enable comments</span>
+          <span>Comment section</span>
           <div class="switch">
             <input type="checkbox" name="comments" id="comments" />
             <label for="comments"></label>
@@ -61,7 +61,7 @@
       </section>
       <section class="checkbox">
         <label>
-          <span>Disable "Top" button</span>
+          <span>"Top" button</span>
           <div class="switch">
             <input type="checkbox" name="topbutton" id="topbutton" />
             <label for="topbutton"></label>
@@ -70,13 +70,29 @@
       </section>
       <section class="checkbox">
         <label>
-          <span>Disable Sidebar</span>
+          <span>Sidebar</span>
           <div class="switch">
             <input type="checkbox" name="sidebar" id="sidebar" />
             <label for="sidebar"></label>
           </div>
         </label>
       </section>
+			<section class="select">
+      <span>[WIP] "Jump to" Blacklist</span>
+      <select name="blacklist">
+        <option value="none">None</option>
+        <option value="Footjob">Footjob</option>
+      </select>
+    </section>
+    <section class="checkbox">
+      <label>
+        <span>[WIP] Console logs</span>
+        <div class="switch">
+          <input disabled="" type="checkbox" name="debug" id="debug" />
+          <label for="debug"></label>
+        </div>
+      </label>
+    </section>
   </form>
   <!-- <script src="js/options.js"></script> -->
 	<script src="js/popup.js" type="module"></script>

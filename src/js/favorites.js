@@ -1,91 +1,48 @@
-import { check } from "./general.js";
-import mph from './api.js';
+'use strict';
+import {mph} from './api.js';
 import webext from './api-webext.js';
-
+import {qs,qsA} from "./querySelector.js";
+(() => {
 webext.getItem((config) => {
-  if(check.favorites) {
-    mph.query("body").then(() => {
+  mph.query("body").then(() => {
     document.title = "[MagicPH] Favorites";
-    $(document.body).addClass("mph");
-    $(".wrapper > .container").attr("class", "favorites").html(config.favorites);
-    let downloader = document.querySelectorAll("button.download-trigger"),
-    remover = document.querySelectorAll("button.remove-trigger"),
-    downloadfn = (e) => {
-      mph.halt(e);
-      let m = e.target
-      if($(m).text() == "Download") {
-        $(m).parent().siblings("div").addClass("rm");
-        $(m).parent().parent().parent().addClass("marked");
-        $(m).parent().parent().siblings("a").addClass("rm");
-        $(m).parent().parent().siblings("span").addClass("rm");
-        $(m).text("Downloaded!");
+    document.body.classList.add("mph");
+    qs(".wrapper > .container").classList.add("favorites");
+    qs(".wrapper > .container").innerHTML = config.favorites;
+    let downloader = qsA("button.download-trigger"),
+    remover = qsA("button.remove-trigger"),
+    handleBtns = (t,btnText,btnFinal) => {
+      if(t.innerText === btnText) {
+        t.parentElement.previousElementSibling.classList.add("rm");
+        t.parentElement.parentElement.parentElement.classList.add("marked");
+        t.parentElement.parentElement.nextElementSibling.classList.add("rm");
+        t.parentElement.parentElement.nextElementSibling.nextElementSibling.classList.add("rm");
+        t.innerText = btnFinal;
       } else {
-        $(m).parent().siblings("div").removeClass("rm");
-        $(m).parent().parent().parent().removeClass("marked");
-        $(m).parent().parent().siblings("a").removeClass("rm");
-        $(m).parent().parent().siblings("span").removeClass("rm");
-        $(m).text("Download");
-      };
-      downloader.forEach((item,i) => {
-        downloader[i].removeEventListener("click", downloadfn)
-        mph.ael(downloader[i],"click", downloadfn);
-        remover[i].removeEventListener("click", removerfn)
-        mph.ael(remover[i],"click", removerfn);
-      });
-      config.favorites = $(".magic-popup > .favorites").html();
-      webext.setItem(config);
+        t.parentElement.previousElementSibling.classList.remove("rm");
+        t.parentElement.parentElement.parentElement.classList.remove("marked");
+        t.parentElement.parentElement.nextElementSibling.classList.remove("rm");
+        t.parentElement.parentElement.nextElementSibling.nextElementSibling.classList.remove("rm");
+        t.innerText = btnText;
+      }
+    },
+    downloadfn = async (e) => {
+      mph.halt(e);
+      window.open(e.target.parentElement.parentElement.nextElementSibling.href,"_blank");
     },
     removerfn = (e) => {
       mph.halt(e);
-      let m = e.target
-      if($(m).text() == "Remove") {
-        $(m).parent().siblings("div").addClass("rm");
-        $(m).parent().parent().parent().addClass("marked");
-        $(m).parent().parent().siblings("a").addClass("rm");
-        $(m).parent().parent().siblings("span").addClass("rm");
-        $(m).text("Undo");
-      } else {
-        $(m).parent().siblings("div").removeClass("rm");
-        $(m).parent().parent().parent().removeClass("marked");
-        $(m).parent().parent().siblings("a").removeClass("rm");
-        $(m).parent().parent().siblings("span").removeClass("rm");
-        $(m).text("Remove");
-      };
-      downloader.forEach((item,i) => {
-        downloader[i].removeEventListener("click", downloadfn)
-        mph.ael(downloader[i],"click", downloadfn);
-        remover[i].removeEventListener("click", removerfn)
-        mph.ael(remover[i],"click", removerfn);
-      });
-      config.favorites = $(".magic-popup > .favorites").html();
-      webext.setItem(config);
+      handleBtns(e.target,"Remove","Undo");
     };
     remover.forEach((item,i) => {
-      remover[i].removeEventListener("click", removerfn)
-      mph.ael(remover[i],"click", removerfn);
-    });
-    downloader.forEach((item,i) => {
+      item.removeEventListener("click", removerfn)
+      mph.ael(item,"click", removerfn);
       downloader[i].removeEventListener("click", downloadfn)
       mph.ael(downloader[i],"click", downloadfn);
     });
+    config.favorites = qs(".wrapper > .favorites").innerHTML;
+    webext.setItem(config);
   });
-  };
 });
 
-
-// function fetchURL(link) {
-//   return new Promise((resolve,reject) => {
-//     $.ajax({
-//       type: "GET",
-//       url: link,
-//       dataType: 'image/jpg',
-//       async: true,
-//       success: (data) => {
-//         resolve(data);
-//       },
-//       error: (error) => {
-//         reject(error);
-//       }
-//     })
-//   });
-// };
+})();

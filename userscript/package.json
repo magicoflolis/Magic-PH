@@ -1,0 +1,69 @@
+{
+  "name": "magicph",
+  "productName": "MagicPH",
+  "version": "1.0.52",
+  "description": "Enhances your porn viewing experience. Quick, clean, and easy.",
+  "scripts": {
+    "dev:Start": "concurrently \"npm run dev:Userscript\" \"npm run dev:Server\" \"npm run dev:Sass\"",
+		"pub:Userscript": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/.env",
+    "dev:Userscript": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./src/.env",
+    "dev:Server": "http-server ./dist -c5",
+    "dev:Sass": "sass -w ./src/sass/style.scss:./dist/style.css -s compressed"
+  },
+  "author": "Magic <magicoflolis@tuta.io>",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/magicoflolis/Magic-PH/issues"
+  },
+  "homepage": "https://github.com/magicoflolis/Magic-PH",
+  "type": "module",
+  "devDependencies": {
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.189",
+    "@types/sass": "^1.43.1",
+    "autoprefixer": "^10.4.7",
+    "dotenv": "^16.0.1",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "http-server": "^14.1.0"
+  },
+  "dependencies": {
+    "node-watch": "^0.7.3",
+    "sass": "^1.52.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magicoflolis/Magic-PH.git"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "jquery": true,
+      "node": false,
+      "webextensions": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "prettier"
+    ],
+    "parserOptions": {
+      "sourceType": "module",
+      "allowImportExportEverywhere": false,
+      "ecmaFeatures": {
+        "globalReturn": true,
+        "arrowFunctions": true,
+        "modules": true
+      },
+      "ecmaVersion": "latest"
+    },
+    "rules": {}
+  },
+  "keywords": [
+    "magicph",
+    "ph",
+    "pornhub",
+    "pornhubpremium"
+  ],
+  "private": true
+}

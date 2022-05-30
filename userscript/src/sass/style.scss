@@ -1,0 +1,119 @@
+$theme: #f90;
+$theme-alt: rgba(255, 153, 0, 0.842);
+$dark: #000;
+$white: #fff;
+$hover: #464646;
+
+.rm {
+  content: "" !important;
+  display: none !important;
+  visibility: hidden !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  width: 0px !important;
+  max-width: 0px !important;
+  min-width: 0px !important;
+  height: 0px !important;
+  max-height: 0px !important;
+  min-height: 0px !important;
+};
+
+.mph_progress {
+  background: $theme;
+  background-color: $dark;
+  border: 2px solid $theme;
+  color: $theme;
+  width: auto;
+  height: auto;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: 16px;
+  margin: 0 3px;
+  line-height: 25px;
+  padding: 0 25px;
+  position: absolute;
+  top: 12%;
+  left: 0%;
+  z-index: 1000;
+}
+
+.mgp_download {
+  border-bottom: 1px solid rgba(255,255,255,.2) !important;
+};
+
+.mgp_downloadInfo {
+  background: rgba(0,0,0,.75);
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transition: opacity .2s linear;
+  width: 50%;
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  opacity: 0;
+  visibility: hidden;
+  > .mgp_copyCloseDiv {
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    overflow: hidden;
+    padding: 2px 4px;
+    > .mgp_title {
+      font-size: 16px;
+      line-height: 30px;
+      padding: 0 0 0 5px;
+      float: left;
+    }
+    > .mgp_hideMenu {
+      font-size: 25px;
+      float: right;
+      cursor: pointer;
+      pointer-events: auto;
+      padding: 5px;
+    }
+  }
+  ul {
+    padding: 2px 4px;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 50px 2fr 25px;
+    span {
+      padding-right: 10%;
+      width: 1%;
+      display: inline-block;
+      margin-left: 1%;
+    }
+    input {
+      color: #ccc;
+      margin: 1% 0px 1%;
+      text-align: center;
+      outline: 0 none;
+      background: transparent;
+      border: none;
+    }
+    input[value="[Error] Not Found"] {
+      visibility: hidden;
+    }
+    a.suggestToggleAlt {
+      margin: 1% 1% 1% 0px;
+      float: inline-end;
+      cursor: pointer;
+      color: #ccc;
+      &:hover {
+        color: #f90;
+        -webkit-text-decoration: 0;
+                text-decoration: 0;
+      }
+    }
+  }
+  &.mgp_active {
+    opacity: 1;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    visibility: visible;
+  }
+};

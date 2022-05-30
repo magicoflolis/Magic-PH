@@ -1,26 +1,44 @@
 'use strict';
+const Plyr = window.Plyr;
+import { mph } from './api.js';
+import { qs,qsA } from "./querySelector.js";
 
-import mph from './api.js';
-import qs from "./querySelector.js";
-import Plyr from '../web_accessible_resources/plyr.min.js';
+//xplayer.qualityList.core.options.sources.standard.mp4
 
-async function verify(args) {
+const verify = async (args) => {
   while (args) {
     await new Promise( resolve =>  requestAnimationFrame(resolve) )
   }
   return args;
+},
+l = {
+  ph: document.location.origin.includes("pornhub"),
+  rt: document.location.origin.includes("redtube"),
+  t8: document.location.origin.includes("tube8"),
+  tz: document.location.origin.includes("thumbzilla"),
+  yp: document.location.origin.includes("youporn"),
 };
-//media_5
-let seektime = localStorage.getItem("seektime"),
-pid = window.VIDEO_SHOW.videoId,
-phplayer = window.MGP.players[pid],
-//fv = window[`flashvars_${window.VIDEO_SHOW.video_id}`],
-// phmedia = fv.mediaDefinitions,
-mediaFiles = [window.media_0, window.media_1, window.media_2, window.media_3, window.media_4, window.media_5, window.media_6, window.media_7, window.media_8, window.media_9, window.media_10],
+
+let mediaFiles = [
+  self.media_0,
+  self.media_1,
+  self.media_2,
+  self.media_3,
+  self.media_4,
+  self.media_5,
+  self.media_6,
+  self.media_7,
+  self.media_8,
+  self.media_9,
+  self.media_10
+],
+seektime = localStorage.getItem("seektime"),
+vs = self.VIDEO_SHOW,
+pid = vs.videoId,
+phplayer = self.MGP.players[pid],
 vidQuality = mph.create("div","mgp_download"),
 dContainer = mph.create("div","mgp_downloadInfo"),
 dl = mph.create("h1","mph_progress"),
-dScript = mph.create("script",null,"text/javascript"),
 q_err = "[Error] Not Found",
 dlBtn = mph.create("a","mph_Downloader"),
 q_240,q_480,q_720,q_1080,q_1440,q_2160,q_best,getMediaUrl;
@@ -28,24 +46,40 @@ vidQuality.innerText = 'Video Quality(s)';
 
 mediaFiles.forEach((file) => {
   if(file) {
-    if(file.includes("/video/get_media?s=")) {
-      getMediaUrl = file;
-    }
+    getMediaUrl = file.includes("/video/get_media?s=") ? file : false;
   };
 });
+
+if(self.opener != null && l.ph) {
+  mph.info("Popup");
+  fetchLinks().then(async () => {
+    phplayer.mute();
+    phplayer.pause();
+    await DownloadVideo(q_best,vs.videoTitleOriginal.replace(/[^a-z0-9 ]/ig, '').replace(/[ ]/ig, '_'));
+  });
+} else {
+  fetchLinks().then(main);
+};
 
 async function fetchLinks() {
   let qURL = await mph.getURL(getMediaUrl).then(r => {
     r.forEach((item) => {
-      let quality = item.quality,
-      link = item.videoUrl;
-      (quality.includes("240")) ? (q_240 = link) :
-      (quality.includes("480")) ? (q_480 = link) :
-      (quality.includes("720")) ? (q_720 = link) :
-      (quality.includes("1080")) ? (q_1080 = link, mph.setItem("mgp_player", '{"quality":1080}')) :
-      (quality.includes("1440")) ? (q_1440 = link, mph.setItem("mgp_player", '{"quality":1440}')) :
-      (quality.includes("2160")) ? (q_2160 = link, mph.setItem("mgp_player", '{"quality":2160}')) : false;
-      q_best = link;
+      if(!item.quality.includes) {
+        (item.quality === 240) ? (q_240 = item.videoUrl) :
+        (item.quality === 480) ? (q_480 = item.videoUrl) :
+        (item.quality === 720) ? (q_720 = item.videoUrl) :
+        (item.quality === 1080) ? (q_1080 = item.videoUrl) :
+        (item.quality === 1440) ? (q_1440 = item.videoUrl) :
+        (item.quality === 2160) ? (q_2160 = item.videoUrl) : q_err;
+      } else {
+        (item.quality.includes("240")) ? (q_240 = item.videoUrl) :
+        (item.quality.includes("480")) ? (q_480 = item.videoUrl) :
+        (item.quality.includes("720")) ? (q_720 = item.videoUrl) :
+        (item.quality.includes("1080")) ? (q_1080 = item.videoUrl) :
+        (item.quality.includes("1440")) ? (q_1440 = item.videoUrl) :
+        (item.quality.includes("2160")) ? (q_2160 = item.videoUrl) : q_err;
+      };
+      q_best = item.videoUrl;
     });
     return [q_240,q_480,q_720,q_1080,q_1440,q_2160,q_best];
   });
@@ -69,20 +103,18 @@ async function DownloadVideo(url,title = "MagicPH") {
       }
       receivedLength += value.length;
       chunks.push(value);
-      dl.innerText = `[MagicPH Downloader] Received Chunks: ${receivedLength} of ${contentLength}`;
-      // mph.info(`Received ${receivedLength} of ${contentLength}`);
-    }
+      dl.innerText = `[MagicPH] Downloading... ${receivedLength} of ${contentLength}`;
+    };
     let Uint8Chunks = new Uint8Array(receivedLength), position = 0;
     for (let chunk of chunks) {
       Uint8Chunks.set(chunk, position);
       position += chunk.length;
-    }
+    };
     let result = new Blob([Uint8Chunks], {type: 'video/mp4'});
-    dlBtn.href = window.URL.createObjectURL(result);
+    dlBtn.href = self.URL.createObjectURL(result);
     dlBtn.download = `${title}.mp4`;
     dlBtn.click();
-    window.URL.revokeObjectURL(dlBtn.href);
-    //qs(".wrapper").classList.toggle("blur");
+    self.URL.revokeObjectURL(dlBtn.href);
     if (dl) {
       dl.remove();
     };
@@ -93,47 +125,23 @@ async function DownloadVideo(url,title = "MagicPH") {
 };
 
 function main() {
-  let layout = `<div class="mgp_copyCloseDiv"><div class="mgp_title">Video Quality(s)</div><div class="mgp_hideMenu" title="Close">🗙</div></div>
-<ul>
-<li><span>Best:</span><input value="${q_best ?? q_err}" type="url" size="70" id="urlAreaBest" class="mphURL" readonly></input><a class="suggestToggleAlt" onclick="copyUrl('urlAreaBest')" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
-<li><span>240p:</span><input value="${q_240 ?? q_err}" type="url" size="70" id="urlArea1" class="mphURL" readonly></input><a class="suggestToggleAlt" onclick="copyUrl('urlArea1')" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
-<li><span>480p:</span><input value="${q_480 ?? q_err}" type="url" size="70" id="urlArea2" class="mphURL" readonly></input><a class="suggestToggleAlt" onclick="copyUrl('urlArea2')" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
-<li><span>720p:</span><input value="${q_720 ?? q_err}" type="url" size="70" id="urlArea3" class="mphURL" readonly></input><a class="suggestToggleAlt" onclick="copyUrl('urlArea3')" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
-<li><span>1080p:</span><input value="${q_1080 ?? q_err}" type="url" size="70" id="urlArea4" class="mphURL" readonly></input><a class="suggestToggleAlt" onclick="copyUrl('urlArea4')" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
-<li><span>1440p:</span><input value="${q_1440 ?? q_err}" type="url" size="70" id="urlArea5" class="mphURL" readonly></input><a class="suggestToggleAlt" onclick="copyUrl('urlArea5')" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
-<li><span>2160p:</span><input value="${q_2160 ?? q_err}" type="url" size="70" id="urlArea6" class="mphURL" readonly></input><a class="suggestToggleAlt" onclick="copyUrl('urlArea6')" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
+  let layout = `<div class="mgp_copyCloseDiv"><div class="mgp_title">Video Quality(s)</div><div class="mgp_hideMenu" title="Close">🗙</div></div><ul>
+<li><span>Best:</span><input value="${q_best ?? q_err}" type="url" size="70" id="urlAreaBest" class="mphURL" readonly></input><a class="suggestToggleAlt" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
+<li><span>240p:</span><input value="${q_240 ?? q_err}" type="url" size="70" id="urlArea1" class="mphURL" readonly></input><a class="suggestToggleAlt" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
+<li><span>480p:</span><input value="${q_480 ?? q_err}" type="url" size="70" id="urlArea2" class="mphURL" readonly></input><a class="suggestToggleAlt" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
+<li><span>720p:</span><input value="${q_720 ?? q_err}" type="url" size="70" id="urlArea3" class="mphURL" readonly></input><a class="suggestToggleAlt" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
+<li><span>1080p:</span><input value="${q_1080 ?? q_err}" type="url" size="70" id="urlArea4" class="mphURL" readonly></input><a class="suggestToggleAlt" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
+<li><span>1440p:</span><input value="${q_1440 ?? q_err}" type="url" size="70" id="urlArea5" class="mphURL" readonly></input><a class="suggestToggleAlt" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
+<li><span>2160p:</span><input value="${q_2160 ?? q_err}" type="url" size="70" id="urlArea6" class="mphURL" readonly></input><a class="suggestToggleAlt" title="Copy"><div class="mgp_btn mgp_icon mgp_icon-copy"></div></a></li>
 </ul>`;
 dContainer.innerHTML = layout;
-dScript.innerHTML = `function copyUrl(id) {
-  try {
-    navigator.clipboard.writeText(document.getElementById(id).value);
-    document.getElementById(id).style.color = '#f90';
-  } catch (err) {
-    console.log("[MagicPH] " + err);
-    document.getElementById(id).style.color = 'rgb(221, 67, 67)';
-    document.getElementById(id).select();
-    document.execCommand("Copy");
-  }
-}`;
+
 let altplayer = () => {
   let options = {
     enabled: true,
     title: qs("h1.title > span").innerText,
     disableContextMenu: true,
-    controls: [
-      'restart',
-      'rewind',
-      'play',
-      'fast-forward',
-      'progress',
-      'current-time',
-      'duration',
-      'mute',
-      'volume',
-      'settings',
-      'download',
-      'fullscreen',
-    ],
+    controls: ['restart','rewind','play','fast-forward','progress','current-time','duration','mute','volume','settings','download','fullscreen',],
     clickToPlay: true,
     blankVideo: 'https://cdn.plyr.io/static/blank.mp4',
     quality: {
@@ -168,7 +176,7 @@ let altplayer = () => {
   pVideo = mph.create("div","altframe bigp");
   pVideo.id = "playerframe";
   pVideo.innerHTML = `<video id="altplayer" class="biga" controls data-poster="${qs("img#videoElementPoster").src}"></video>`
-  mph.queryAll("div.video-wrapper")[0].prepend(pVideo);
+  qsA("div.video-wrapper")[0].prepend(pVideo);
   new Plyr(document.getElementById("altplayer"), options);
   mph.ael(document.getElementById("altplayer"),"ready", event => {
     const player = event.detail.plyr;
@@ -215,8 +223,7 @@ let altplayer = () => {
     mph.query('head > script[src*="cdn1d-static-shared.phncdn.com/html5player/videoPlayer/es6player/6.1.6/desktop-player-adaptive-hls.min.js"]').then(r => {
       phplayer.mute();
       phplayer.pause();
-      mph.inject(`MGP.destroyPlayer(${pid})`);
-      // window.MGP.destroyPlayer(pid);
+      mph.inject(`self.MGP.destroyPlayer(${pid})`);
       r.remove();
       qs("v-flag-modal").remove();
     });
@@ -236,7 +243,23 @@ if(localStorage.getItem("altplayers")) {
   altplayer();
 } else {
   qs("div.mgp_contextMenu > div.mgp_content").prepend(vidQuality);
-  qs(".playerFlvContainer").append(dContainer,dScript);
+  qs(".playerFlvContainer").append(dContainer);
+  qsA(".mphURL").forEach((u) => {
+    mph.ael(u.nextElementSibling,"click",() => {
+      try {
+        if (document.body.contains(dl)) {
+          return;
+        };
+        navigator.clipboard.writeText(u.value);
+        u.style.color = '#f90';
+        mph.delay(2000).then(() => u.style.color = '#fff');
+      } catch (error) {
+        mph.err(error);
+        u.style.color = 'rgb(221, 67, 67)';
+        mph.inject(`${u}.select();self.document.execCommand("Copy");`);
+      }
+    })
+  });
   mph.ael(vidQuality,"click", () => {
     qs('.mgp_contextMenu').classList.add('mgp_hidden');
     dContainer.classList.add("mgp_active");
@@ -250,7 +273,7 @@ if(localStorage.getItem("altplayers")) {
     let jlMain = qs("a.js-triggerJumpCat.alpha");
     if(localStorage.getItem("autojump") && jlMain) {
       mph.info("Attempting to jump...");
-      let jumplist = mph.queryAll("a.js-triggerJumpCat"),
+      let jumplist = qsA("a.js-triggerJumpCat"),
       blacklist = localStorage.getItem("blacklist").toLocaleString(),
       filter = jlMain.children[0].innerText.trim().includes(blacklist);
       if(!filter) {
@@ -270,7 +293,7 @@ if(localStorage.getItem("altplayers")) {
       mph.info("Jumped!");
     } else {
       mph.info("Attempting to skip...");
-      mph.inject(`jumpToAction(${seektime})`);
+      mph.inject(`self.jumpToAction(${seektime})`);
     };
     phplayer.play();
     mph.info("Skipped!");
@@ -279,16 +302,4 @@ if(localStorage.getItem("altplayers")) {
 };
 };
 
-if(window.opener != null) {
-  mph.info("Popup");
-  fetchLinks().then(async () => {
-    await DownloadVideo(q_best,window.VIDEO_SHOW.videoTitleOriginal.replace(/[^a-z0-9 ]/ig, '').replace(/[ ]/ig, '_'));
-    // main();
-  });
-} else {
-fetchLinks().then(main);
-};
-
-
-// window.media_5 or media_0
 // Add "&?mgp_debug=true" in URL to enable debugging.

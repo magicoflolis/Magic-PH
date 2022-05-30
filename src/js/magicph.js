@@ -1,146 +1,141 @@
 'use strict';
 
-import mph from './api.js';
-import qs from "./querySelector.js";
-import { check, userInfo } from "./general.js";
-// mph.log("Loading inline script...");
-//const pginput = $(`<div class="pjump"><input class="jumper" id="pageInput" type="number" name="pageJump" placeholder="Jump to page"></div>`);
+import {mph} from './api.js';
+import {qs,qsA} from "./querySelector.js";
 
-check.channel ? mph.log("Channel page") : false;
-check.home
-  ? (mph.info("Homepage page"),
-  //$(pginput).prependTo(".container > .pagination3"),
-  $("#recommended-category-videos").parent().prependTo(".frontListingWrapper"),
-  $("#recommended-videos").parent().prependTo(".frontListingWrapper"))
-  : false;
+(() => {
+
+  if(document.documentElement.classList.contains("ios")) {return false};
+
+let userInfo = (url = "default") => {
+  if(url == "default") { return; }
+  mph.query('.userInfo > div.usernameWrap > span.usernameBadgesWrapper > a').then((user) => {
+    user.href = user.href + "/videos";
+  });
+};
+
+mph.find.channel ? mph.log("Channel page") : false;
+if(mph.find.home) {
+  mph.info("Homepage page");
+  qsA("ul").forEach((u) => {
+    if(u.dataset.hpblockname === "Recommended for You" ) {
+      qs(".frontListingWrapper").prepend(u.parentElement)
+    };
+  });
+
+};
 //window.PH_Storage.getItem("watchedVideoIds") // stored videos
 //window.PH_Storage.saveItem("watchedVideoStorage")
-if(check.video) {
+if(mph.find.video) {
   mph.info("Video page");
-  $("html").attr("style", "scrollbar-color: #4646463d #000 !important;")
-  localStorage.setItem("mgp_player", '{"quality":1080}')
+  qs("html").style = "scrollbar-color: #4646463d #000 !important;";
   userInfo("video");
-  $('[data-entrycode="VidPg-premVid-videoPage"]').parent().parent().remove();
-  $(".mainPlayerDiv").addClass("bigp")
-  $(".relatedVideos").addClass("mph1 video-info-row showLess allRelatedVideos")
-  $(".show-more-btn").addClass("bottom")
-  $(".mph1").appendTo(".video-actions-tabs")
-  $(".videos-list").addClass("mph2 video-info-row showLess")
-  $(".mph2").appendTo(".mph1")
-  $("#cmtWrapper").addClass("mph3 video-info-row showLess")
-  qs(".js-relatedRecommended").append(qs(".mph3"))
-  $(".mph2 > .user-playlist").attr("id", "relatedVideosCenter")
-  $("ul.mgp_quality.mgp_optionsList").find(".mgp_active").removeClass("mgp_active").find("li").eq(0).addClass("mgp_active")
+  qs('[data-entrycode="VidPg-premVid-videoPage"]') ? qs('[data-entrycode="VidPg-premVid-videoPage"]').parentElement.parentElement.remove() : false;
+  qs(".mainPlayerDiv").classList.add("bigp");
+  qs(".relatedVideos").classList.add("mph1","video-info-row","showLess","allRelatedVideos");
+  qs(".show-more-btn").classList.add("bottom");
+  qs(".video-actions-tabs").append(qs(".mph1"));
+  qs(".videos-list").classList.add("mph2","video-info-row","showLess");
+  qs(".mph1").append(qs(".mph2"));
+  qs(".videos-list").classList.add("mph3","video-info-row","showLess");
+  qs(".js-relatedRecommended").append(qs(".mph3"));
+  qs(".mph2 > .user-playlist").id = "relatedVideosCenter";
+  qsA("ul.mgp_quality.mgp_optionsList > li").forEach((a) => {
+    a.classList.remove("mgp_active");
+  });
+  qsA("ul.mgp_quality.mgp_optionsList > li")[0].classList.add("mgp_active");
   mph.ael(qs(".mgp_options"),"click", () => {
-    if (!$("div.mgp_optionsMenu.mgp_visible.mgp_level2").length) {
-      $("div.mgp_header").text("Quality");
-      $("div.mgp_optionsMenu")
-        .addClass("mgp_visible mgp_level2")
-        .find(".mgp_background")
-        .addClass("mgp_animated")
-        .attr("style", "width: 110px; height: 194px;");
-      $("ul.mgp_quality.mgp_optionsList").attr("style", "display:block;");
+    if (!qs("div.mgp_optionsMenu.mgp_visible.mgp_level2")) {
+      qs(".mgp_subPage > div:nth-child(1)").innerText = "Quality";
+      qs("div.mgp_optionsMenu").classList.add("mgp_level2","mgp_visible");
+      qs('.mgp_optionsMenu > div:nth-child(2)').classList.add("mgp_animated");
+      qs('.mgp_optionsMenu > div:nth-child(2)').setAttribute("style","width: 110px; height: 194px;");
+      qs("ul.mgp_quality.mgp_optionsList").setAttribute("style", "display:block;");
     } else {
-      $("div.mgp_optionsMenu")
-        .removeClass("mgp_visible mgp_level2")
-        .find(".mgp_background")
-        .removeClass("mgp_animated")
-        .attr("style", "width: 165px; height: 136px;");
-    $("ul.mgp_quality.mgp_optionsList").attr("style", "display:none;");
+      qs("div.mgp_optionsMenu").classList.remove("mgp_level2","mgp_visible");
+      qs('.mgp_optionsMenu > div:nth-child(2)').classList.remove("mgp_animated");
+      qs('.mgp_optionsMenu > div:nth-child(2)').setAttribute("style","width: 165px; height: 136px;");
+      qs("ul.mgp_quality.mgp_optionsList").setAttribute("style", "display:none;");
     }
   });
   mph.ael(qs(".mgp_clickHandler"),"click", () => {
-    $("div.mgp_optionsMenu")
-        .removeClass("mgp_visible mgp_level2")
-        .find(".mgp_background")
-        .removeClass("mgp_animated")
-        .attr("style", "width: 165px; height: 136px;");
-    $("ul.mgp_quality.mgp_optionsList").attr("style", "display:none;");
+    qs("div.mgp_optionsMenu").classList.remove("mgp_level2","mgp_visible");
+    qs('.mgp_optionsMenu > div:nth-child(2)').classList.remove("mgp_animated");
+    qs('.mgp_optionsMenu > div:nth-child(2)').setAttribute("style","width: 165px; height: 136px;");
+    qs("ul.mgp_quality.mgp_optionsList").setAttribute("style", "display:none;");
   });
-  $("div.mgp_header").on("click", function () {
-    $("div.mgp_optionsMenu.mgp_visible.mgp_level2")
-      .removeClass("mgp_level2")
-      .find(".mgp_background")
-      .attr("style", "width: 165px; height: 136px;");
+  qsA("div.mgp_header").forEach((h) => {
+    mph.ael(h,"click", () => {
+      if(qs("div.mgp_optionsMenu.mgp_visible.mgp_level2")) {
+        qs("div.mgp_optionsMenu").classList.remove("mgp_level2");
+        qs('.mgp_optionsMenu > div:nth-child(2)').setAttribute("style","width: 165px; height: 136px;");
+      };
+    })
   });
 };
-check.category ? mph.info("Categories") : false;
-check.user ? mph.info("User Profile") : false;
-if(check.model) {
+mph.find.category ? mph.info("Categories") : false;
+mph.find.user ? mph.info("User Profile") : false;
+if(mph.find.model) {
   mph.info(`Model`);
   userInfo("model");
 }
-// check.community
-//   ? (mph.info(`Community`),
-//     check.lo
-//       ? ($(".userWidgetbuttons").remove(), $("#communityMenuWrap").remove())
-//       : false)
-//   : false;
-check.pstar ? mph.info(`Pornstar`) : false;
-if (check.gif) {
+mph.find.pstar ? mph.info(`Pornstar`) : false;
+if (mph.find.gif) {
   mph.info(`Gifs`);
-  check.lo ? $(".float-right").remove() : false;
-}
-check.recommended
-  ? (check.lo
-    ? $('a[href="/recommended/rate"]').addClass("rm")
-    : false
-    //$(pginput).prependTo(".recommendedVideosContainer > .pagination3")
-    ) : false;
+  if(mph.find.lo) {
+    qs("#imgNavWrap").append(qs(".gifColumnRight"))
+  }
+};
+
+if(mph.find.recommended && mph.find.lo) {
+  mph.info("Recommended");
+  qs('a[href="/recommended/rate"]').classList.add("rm");
+};
+
+
 userInfo();
 
-if(check.lo) {
+if(mph.find.lo) {
   mph.info("Logged out");
   mph.inject(`disablePlaylistPlusButon = true`);
 };
 
-// pginput.on("change", async function (e) {
-//   e.preventDefault();
-//   let link = `${document.location.origin}${check.recommended ? `?page=` : `/video?page=`}${e.target.value}`;
-//   mph.log(link);
-//   await mph.getURL(link).then((text) => {
-//     $("body").html(text);
-//     let thumb = $("ul#videoCategory > li > img");
-//     for (let i = 0; i < thumb.length; i++) {
-//       thumb.eq(i).attr("src", thumb.eq(i).attr("data-thumb_url"));
-//     };
-//   });
-// });
-
 mph.ael(document,"scroll", () => {
-  const search = $(".headerSearchWrapper"),
-    pgnav = $(".pagination3 > ul").eq(1),
-    pgInput = $(".pagination3 > .pjump").eq(1),
-    mph1 = $(".mph1"),
-    mph2 = $(".mph2");
-    // smol = $(".mainPlayerDiv");
-  // sma = $("#vb"),
-  // smb = $("#vr"),
-  if(check.video) {
+  const search = qs(".headerSearchWrapper"),
+  pgnav = qsA(".pagination3 > ul")[1],
+  pgInput = qsA(".pagination3 > .pjump")[1],
+  mc = qs(".magicCenter"),
+  mph1 = qs(".mph1"),
+  mph2 = qs(".mph2");
+  // smol = qs(".mainPlayerDiv");
+  // sma = qs("#vb"),
+  // smb = qs("#vr"),
+  if(mph.find.video) {
     if(document.documentElement.scrollTop > 300) {
-      $(".magicCenter").addClass("top");
+      mc.classList.add("top");
     } else {
-      $(".magicCenter").removeClass("top");
+      mc.classList.remove("top");
     };
   };
   if(document.documentElement.scrollTop > mph.scrollnumber) {
-    $(".magicTop").addClass("top");
-    search.addClass("sticky");
-    pgnav.addClass("top");
-    pgInput.addClass("top");
-    mph1.attr("style", "display: block;");
-    mph2.attr("style", "display: block;");
-    $(".magicCenter").removeClass("top");
-    //smol.removeClass("bigp");
-    //smol.addClass("smolp");
+    qs(".magicTop").classList.add("top");
+    search.classList.add("sticky");
+    pgnav ? pgnav.classList.add("top") : false;
+    pgInput ? pgInput.classList.add("top") : false;
+    mph1 ? mph1.setAttribute("style", "display: block;") : false;
+    mph2 ? mph2.setAttribute("style", "display: block;") : false;
+    mc ? mc.classList.remove("top") : false;
+    //smol.classList.remove("bigp");
+    //smol.classList.add("smolp");
   } else {
-    $(".magicTop").removeClass("top");
-    search.removeClass("sticky");
-    pgnav.removeClass("top");
-    pgInput.removeClass("top");
-    mph1.attr("style", "display: none;");
-    mph2.attr("style", "display: none;");
-    //smol.addClass("bigp");
-    //smol.removeClass("smolp");
+    qs(".magicTop").classList.remove("top");
+    search.classList.remove("sticky");
+    pgnav ? pgnav.classList.remove("top") : false;
+    pgInput ? pgInput.classList.remove("top") : false;
+    mph1 ? mph1.setAttribute("style", "display: none;") : false;
+    mph2 ? mph2.setAttribute("style", "display: none;") : false;
+    //smol.classList.add("bigp");
+    //smol.classList.remove("smolp");
   };
 });
+})();

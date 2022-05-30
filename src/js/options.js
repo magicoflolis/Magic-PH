@@ -1,5 +1,4 @@
-const brws = (typeof browser=="undefined"?chrome:browser);
-function loadConfig() {
+(() => {
   let configDefault = {
     debug: true,
     altplayers: "none",
@@ -45,7 +44,7 @@ function loadConfig() {
     },
   };
   brws.storage.local.get(configDefault,(config) => {
-    let ff = document.querySelector("form.magicph_cfg") ?? console.error('[%cMagicPH%c] %cERROR', 'color: rgb(255,153,0);', '', 'color: rgb(249, 24, 128);', "Can't find form");
+    let ff = self.document.querySelector("form.magicph_cfg") ?? console.error('[%cMagicPH%c] %cERROR', 'color: rgb(255,153,0);', '', 'color: rgb(249, 24, 128);', "Can't find form");
     for (let prop in config) {
       prop in ff.elements
         ? ff.elements[prop].type == "checkbox"
@@ -60,10 +59,9 @@ function loadConfig() {
         : (config[$el.name] = $el.value);
       brws.storage.local.set(config);
     });
-  })
-};
+  });
 
-document.addEventListener("DOMContentLoaded", loadConfig);
+})();
 
 // headerOrder: [
 //   "home",

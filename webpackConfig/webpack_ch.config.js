@@ -12,8 +12,8 @@ plugins = [
   new CopyPlugin({
     patterns: [
       {
-        from: path.resolve(root, "src/manifest/chrome.json"),
-        to: path.resolve(root, "chrome_dist/manifest.json"),
+        from: path.resolve(root, "src/manifest/firefox.json"),
+        to: path.resolve(root, "dist/manifest.json"),
         transform(content) {
           const { version, description, author, homepage: homepage_url } = require('../package.json')
           const manifest = JSON.parse(content)
@@ -24,16 +24,40 @@ plugins = [
       },
       {
         from: path.resolve(root, "src/js/options.js"),
-        to: path.resolve(root, "chrome_dist/js/options.js"),
+        to: path.resolve(root, "dist/js/options.js"),
         info: { minimized: true },
       },
       {
+        from: path.resolve(root, "src/js/webext.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/querySelector.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/block-traffic.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/background.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/player.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
+        from: path.resolve(root, "src/js/api.js"),
+        to: path.resolve(root, "dist/js"),
+      },
+      {
         from: path.resolve(root, "src/img"),
-        to: path.resolve(root, "chrome_dist/img"),
+        to: path.resolve(root, "dist/img"),
       },
       {
         from: path.resolve(root, "src/web_accessible_resources"),
-        to: path.resolve(root, "chrome_dist/web_accessible_resources"),
+        to: path.resolve(root, "dist/web_accessible_resources"),
       },
     ],
   }),
@@ -46,7 +70,6 @@ commonConfig = {
     favorites: "./js/favorites.js",
     injector: "./js/injector.js",
     magicph: "./js/magicph.js",
-    player: "./js/player.js",
   },
   output: {
     path: path.resolve(root, "chrome_dist/js"),
@@ -66,7 +89,10 @@ commonConfig = {
       },
     ],
   },
-  resolve: { extensions: [".js"] },
+  resolve: {
+    extensions: [".js"],
+    fallback: { "path": require.resolve("path-browserify") }
+  },
   optimization: {
     minimize: true,
     minimizer: [
@@ -101,18 +127,6 @@ productionConfig = {
           from: path.resolve(root, "src/html/popup.html"),
           to: path.resolve(root, "dist"),
         },
-        {
-          from: path.resolve(root, "src/js/webext.js"),
-          to: path.resolve(root, "dist/js"),
-        },
-        {
-          from: path.resolve(root, "src/js/block-traffic.js"),
-          to: path.resolve(root, "dist/js"),
-        },
-        {
-          from: path.resolve(root, "src/js/background.js"),
-          to: path.resolve(root, "dist/js"),
-        },
       ],
     }),
   ],
@@ -127,18 +141,6 @@ developmentConfig = {
         {
           from: path.resolve(root, "src/html"),
           to: path.resolve(root, "dist"),
-        },
-        {
-          from: path.resolve(root, "src/js/webext.js"),
-          to: path.resolve(root, "dist/js"),
-        },
-        {
-          from: path.resolve(root, "src/js/block-traffic.js"),
-          to: path.resolve(root, "dist/js"),
-        },
-        {
-          from: path.resolve(root, "src/js/background.js"),
-          to: path.resolve(root, "dist/js"),
         },
       ],
     }),
