@@ -6,7 +6,7 @@
 
 | Version | Link | Alternative |
 |:----------:|:----------:|:----------:|
-Stable | [(GitHub) Install](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/userscript/dist/magicph.user.js) | [Sleazy Fork](https://greasyfork.org/scripts)
+Stable | [(GitHub) Install](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/userscript/dist/magicph.user.js) | [Sleazy Fork](https://greasyfork.org/scripts/445740)
 
 ***
 
@@ -54,7 +54,7 @@ Firefox Nightly Setup (Android):
 
 ## Source Code
 
-[https://github.com/magicoflolis/Magic-PH/userscript/src](https://github.com/magicoflolis/Magic-PH/userscript/src)
+[https://github.com/magicoflolis/Magic-PH/tree/master/userscript/src](https://github.com/magicoflolis/Magic-PH/tree/master/userscript/src)
 
 ### Contacts
 
