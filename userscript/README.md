@@ -14,6 +14,10 @@ Stable | [(GitHub) Install](https://raw.githubusercontent.com/magicoflolis/Magic
 
 This UserScipt is a small part of a webextension I am currently developing. [https://github.com/magicoflolis/Magic-PH](https://github.com/magicoflolis/Magic-PH)
 
+[Desktop/Mobile] Right click in video player to access the menu.
+
+[Mobile] Tap the cog in the video player to access the menu.
+
 **NOTE:**
 
 This UserScipt uses the 'unsafeWindow' object.
