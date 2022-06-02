@@ -23,16 +23,18 @@ p = {
   pub: "./dist/magicph.user.js",
 },
 js_env = process.env.JS_ENV === 'development',
+debugToggle = js_env ? true : false,
 jsonData = JSON.parse(readFileSync('./package.json', 'utf-8')),
 watcher = watch('./src/main.js', { recursive: true }, (evt, name) => {
 let header = readFileSync("./src/header.js").toString(),
-mphCSS = readFileSync("../dist/css/downloader.css").toString(),
+mphCSS = readFileSync("../tests/compiled/downloader.css").toString(),
 code = readFileSync("./src/main.js").toString(),
 // code = transformFileSync("./src/main.js").code,
 renderOut = (outFile, jshead) => {
   let ujs = nano(header, {
     jshead: jshead,
     mphCSS: mphCSS,
+    debugToggle: debugToggle,
     code: code,
     time: +new Date(),
   });
@@ -41,7 +43,11 @@ renderOut = (outFile, jshead) => {
   });
 },
 time = +new Date(),
-jshead_common = `// @author       ${jsonData.author}
+jshead_common = `// ==UserScript==
+// @name         ${js_env ? `[Dev] ${jsonData.productName}` : jsonData.productName}
+// @description  ${jsonData.description}
+// @author       ${jsonData.author}
+// @version      ${js_env ? time : jsonData.version}
 // @icon         https://github.com/magicoflolis/Magic-PH/raw/master/assets/magicph_logo.png
 // @downloadURL  https://github.com/magicoflolis/Magic-PH/releases/latest/download/magicph.user.js
 // @updateURL    https://github.com/magicoflolis/Magic-PH/releases/latest/download/magicph.user.js
@@ -49,40 +55,29 @@ jshead_common = `// @author       ${jsonData.author}
 // @namespace    ${jsonData.homepage}
 // @homepageURL  ${jsonData.homepage}
 // @license      GPL-3.0
-// @include      *pornhub.com/view_video.php?viewkey=*
-// @include      *pornhubpremium.com/view_video.php?viewkey=*
-// @include      *youporn.com/watch/*
-// @include      *youpornpremium.com/watch/*
-// @include      *youporngay.com/watch/*
-// @include      *youporngaypremium.com/watch/*
-// @include      *redtube.com/*
-// @include      *redtubepremium.com/*
-// @include      *tube8.com/porn-video/*
-// @include      *tube8premium.com/porn-video/*
-// @include      *thumbzilla.com/video/*
-// @include      *thumbzillapremium.com/video/*
-// @grant        GM_xmlhttpRequest
+// @match        *://*.pornhub.com/view_video.php?viewkey=*
+// @match        *://*.pornhubpremium.com/view_video.php?viewkey=*
+// @match        *://*.youporn.com/watch/*
+// @match        *://*.youpornpremium.com/watch/*
+// @match        *://*.youporngay.com/watch/*
+// @match        *://*.youporngaypremium.com/watch/*
+// @match        *://*.redtube.com/*
+// @match        *://*.redtubepremium.com/*
+// @match        *://*.tube8.com/porn-video/*
+// @match        *://*.tube8premium.com/porn-video/*
+// @match        *://*.thumbzilla.com/video/*
+// @match        *://*.thumbzillapremium.com/video/*
 // @grant        unsafeWindow
 // @run-at       document-idle
 // @compatible   Chrome
 // @compatible   Firefox
-// ==/UserScript==`,
-jshead_prod = `// ==UserScript==
-// @name         ${jsonData.productName}
-// @description  Best downloader for any PH Network site.
-// @version      ${jsonData.version}
-${jshead_common}`,
-jshead_dev = `// ==UserScript==
-// @name         [Dev] ${jsonData.productName}
-// @description  Best downloader for any PH Network site.
-// @version      ${time}
-${jshead_common}`;
+// ==/UserScript==`;
 if(js_env){
   // Development version
-  renderOut(p.dev, jshead_dev);
+  renderOut(p.dev, jshead_common);
 } else {
   // Release version
-  renderOut(p.pub, jshead_prod);
+  renderOut(p.pub, jshead_common);
 }
 });
 
