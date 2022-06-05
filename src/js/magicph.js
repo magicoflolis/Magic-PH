@@ -3,32 +3,30 @@
 import {mph} from './api.js';
 import {qs,qsA} from "./querySelector.js";
 
-(() => {
-
+(async () => {
+  try {
   if(document.documentElement.classList.contains("ios")) {return false};
 
 let userInfo = (url = "default") => {
   if(url == "default") { return; }
-  mph.query('.userInfo > div.usernameWrap > span.usernameBadgesWrapper > a').then((user) => {
-    user.href = user.href + "/videos";
-  });
+  mph.query('.userInfo > div.usernameWrap > span.usernameBadgesWrapper > a').then(user => user.href = user.href + "/videos");
 };
 
 mph.find.channel ? mph.log("Channel page") : false;
 if(mph.find.home) {
   mph.info("Homepage page");
-  qsA("ul").forEach((u) => {
+  mph.fe("ul",(u) => {
     if(u.dataset.hpblockname === "Recommended for You" ) {
       qs(".frontListingWrapper").prepend(u.parentElement)
     };
-  });
-
+  })
 };
 //window.PH_Storage.getItem("watchedVideoIds") // stored videos
 //window.PH_Storage.saveItem("watchedVideoStorage")
 if(mph.find.video) {
+  await mph.query(".mgp_container");
   mph.info("Video page");
-  qs("html").style = "scrollbar-color: #4646463d #000 !important;";
+  document.documentElement.style = "scrollbar-color: #4646463d #000 !important;";
   userInfo("video");
   qs('[data-entrycode="VidPg-premVid-videoPage"]') ? qs('[data-entrycode="VidPg-premVid-videoPage"]').parentElement.parentElement.remove() : false;
   qs(".mainPlayerDiv").classList.add("bigp");
@@ -40,9 +38,7 @@ if(mph.find.video) {
   qs(".videos-list").classList.add("mph3","video-info-row","showLess");
   qs(".js-relatedRecommended").append(qs(".mph3"));
   qs(".mph2 > .user-playlist").id = "relatedVideosCenter";
-  qsA("ul.mgp_quality.mgp_optionsList > li").forEach((a) => {
-    a.classList.remove("mgp_active");
-  });
+  mph.fe("ul.mgp_quality.mgp_optionsList > li",a => a.classList.remove("mgp_active"));
   qsA("ul.mgp_quality.mgp_optionsList > li")[0].classList.add("mgp_active");
   mph.ael(qs(".mgp_options"),"click", () => {
     if (!qs("div.mgp_optionsMenu.mgp_visible.mgp_level2")) {
@@ -64,14 +60,14 @@ if(mph.find.video) {
     qs('.mgp_optionsMenu > div:nth-child(2)').setAttribute("style","width: 165px; height: 136px;");
     qs("ul.mgp_quality.mgp_optionsList").setAttribute("style", "display:none;");
   });
-  qsA("div.mgp_header").forEach((h) => {
+  mph.fe("div.mgp_header",(h) => {
     mph.ael(h,"click", () => {
       if(qs("div.mgp_optionsMenu.mgp_visible.mgp_level2")) {
         qs("div.mgp_optionsMenu").classList.remove("mgp_level2");
         qs('.mgp_optionsMenu > div:nth-child(2)').setAttribute("style","width: 165px; height: 136px;");
       };
     })
-  });
+  })
 };
 mph.find.category ? mph.info("Categories") : false;
 mph.find.user ? mph.info("User Profile") : false;
@@ -97,7 +93,7 @@ userInfo();
 
 if(mph.find.lo) {
   mph.info("Logged out");
-  mph.inject(`disablePlaylistPlusButon = true`);
+  mph.inject(`disablePlaylistPlusButon = true`)
 };
 
 mph.ael(document,"scroll", () => {
@@ -111,13 +107,13 @@ mph.ael(document,"scroll", () => {
   // sma = qs("#vb"),
   // smb = qs("#vr"),
   if(mph.find.video) {
-    if(document.documentElement.scrollTop > 300) {
+    if(mph.html.scrollTop > 300) {
       mc.classList.add("top");
     } else {
       mc.classList.remove("top");
     };
   };
-  if(document.documentElement.scrollTop > mph.scrollnumber) {
+  if(mph.html.scrollTop > mph.scrollnumber) {
     qs(".magicTop").classList.add("top");
     search.classList.add("sticky");
     pgnav ? pgnav.classList.add("top") : false;
@@ -138,4 +134,7 @@ mph.ael(document,"scroll", () => {
     //smol.classList.remove("smolp");
   };
 });
+} catch(e) {
+  mph.err(e)
+};
 })();

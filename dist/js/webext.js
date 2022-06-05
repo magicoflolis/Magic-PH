@@ -1,1 +1,0 @@
-"use strict";const brws="undefined"==typeof browser?chrome:browser;

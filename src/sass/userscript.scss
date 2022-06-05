@@ -1,0 +1,212 @@
+@media screen and (min-width: 50rem) {
+  body > .mgp_downloadInfo {
+    li {
+      grid-template-columns: 50px 2fr 25px 25px !important;
+    }
+  };
+}
+.rm {
+  @include remover();
+};
+
+.mgp_videoStarted.mgp_hideControls .mgp_download {
+  display: none;
+}
+
+.mph_progressContainer {
+  @include theme;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: auto;
+  border-radius: 16px;
+  margin: 0 3px;
+  padding: 1px 5px 1px 5px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 25%;
+  left: 0%;
+  z-index: 50000;
+  h1 {
+    line-height: 25px;
+    font-size: 16px;
+    font-family: inherit;
+    font-weight: 700;
+    margin: 0 3px;
+    color: $theme !important;
+  };
+};
+
+.magicph-icon {
+  pointer-events: auto;
+  width: 2rem;
+  height: 1.25em;
+  fill: currentcolor;
+  line-height: 20px;
+  overflow-wrap: break-word;
+  white-space: nowrap;
+  g {
+    display: unset;
+  };
+}
+
+.mgp_contextMenu > .mgp_content > .mgp_download {
+  border-bottom: 1px solid rgba(255,255,255,.2) !important;
+};
+
+.mgp_controls > .mgp_download {
+  position: absolute;
+  top: 50%;
+  bottom: 0;
+  left: 80%;
+  right: 0;
+  color: #ccc;
+  pointer-events: auto;
+  cursor: pointer;
+  background-color: rgba(0,0,0,.7);
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-min-content;
+  height: -moz-min-content;
+  height: min-content;
+  z-index: 150;
+  border-radius: 5px;
+  background-color: rgba(0,0,0,.7);
+  padding: 8px 10px;
+}
+
+body > .mgp_downloadInfo {
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 25px;
+  top: 25%;
+}
+
+div.mgp_container > .mgp_downloadInfo {
+  width: 50%;
+  top: 46%;
+}
+
+body > .mgp_downloadInfo,
+div.mgp_container > .mgp_downloadInfo {
+  z-index: 2000;
+  background: rgba(0,0,0,.75);
+  position: absolute;
+  left: 50%;
+  transition: opacity .2s linear;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  visibility: hidden;
+  color: #ccc;
+  > .mgp_copyCloseDiv {
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    overflow: hidden;
+    padding: 2px 4px;
+    > .mgp_title {
+      font-size: 16px;
+      line-height: 30px;
+      padding: 0 0 0 5px;
+      float: left;
+    }
+    > .mgp_hideMenu {
+      font-size: 25px;
+      float: right;
+      cursor: pointer;
+      pointer-events: auto;
+      padding: 5px;
+    }
+  }
+  ul {
+    padding: 2px 4px;
+  }
+  li {
+    display: grid;
+    // grid-template-columns: minmax(auto, 3fr) minmax(1rem, auto) 5fr 5fr;
+    grid-template-columns: minmax(1rem,3rem) minmax(1rem, 50rem) 2rem 2rem;
+    span {
+      padding-right: 10%;
+      display: inline-block;
+      margin-left: 1%;
+    }
+    input {
+      color: #ccc;
+      margin: 1% 0px 1%;
+      text-align: center;
+      outline: 0 none;
+      background: transparent;
+      border: none;
+    }
+    a.suggestToggleAlt {
+      margin: 1% 1% 1% 0px;
+      float: inline-end;
+      cursor: pointer;
+      &:hover {
+        color: $theme;
+        -webkit-text-decoration: 0;
+                text-decoration: 0;
+      }
+      .magicph-icon {
+        position: relative;
+      }
+    }
+  }
+  &.mgp_active {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+};
+
+input[value^="[Error] Not Found"] {
+  visibility: hidden !important;
+};
+
+ul.mgp_switches > .mgp_download {
+  display: grid !important;
+  .magicph-icon {
+    display: block;
+    font-size: 25px;
+    min-height: 36px;
+    left: 50%;
+    padding-bottom: 5px;
+    position: relative;
+    top: 0px;
+    transform: translate(-50%, 0%);
+  };
+};
+
+.mgp_content > ul.mgp_downloadInfo {
+  li {
+    display: grid;
+    grid-template-columns: 8fr 20fr 2rem 2rem;
+    span {
+      padding-right: 10%;
+      width: 1%;
+      display: inline-block;
+      margin-left: 1%;
+    }
+    input {
+      color: #ccc;
+      margin: 1% 0px 1%;
+      text-align: center;
+      outline: 0 none;
+      background: transparent;
+      border: none;
+    }
+    a.suggestToggleAlt {
+      margin: 1% 1% 1% 0px;
+      float: inline-end;
+      cursor: pointer;
+      color: #ccc;
+      &:hover {
+        color: $theme;
+        -webkit-text-decoration: 0;
+                text-decoration: 0;
+      }
+      .magicph-icon {
+        position: relative;
+      }
+    }
+  }
+}

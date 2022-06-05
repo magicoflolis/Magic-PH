@@ -51,3 +51,36 @@ $hover: #464646;
   // height: 86vh !important;
   padding: 0 !important;
 }
+
+@mixin favorites {
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  min-height: 100px;
+  max-height: 95%;
+  right: 0px;
+  background-color: $dark;
+  display: grid;
+  grid-template-columns: auto repeat(4, 1fr) auto;
+  grid-column-gap: 1rem;
+  .wrap {
+    width: -webkit-min-content;
+    width: -moz-min-content;
+    width: min-content;
+    margin: 2%;
+    img {
+      cursor: pointer;
+      width: 25rem;
+      height: 15rem;
+      display: block;
+    }
+    .title > a,
+    .title {
+      font-size: 17px;
+      font-weight: 700;
+      color: $white;
+      word-break: break-word;
+      word-wrap: break-word;
+    }
+  }
+}

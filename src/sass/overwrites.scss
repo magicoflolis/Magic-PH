@@ -48,7 +48,7 @@ body.logged-out {
   }
 }
 
-.container {
+.wrapper > .container {
   width: 96vw !important;
   min-width: 96vw !important;
   max-width: 96vw !important;
@@ -56,7 +56,7 @@ body.logged-out {
   margin: 1% 6% 10px auto !important;
   padding: 0 !important;
 }
-.container > .frontListingWrapper,
+.wrapper > .container > .frontListingWrapper,
 #main-container,
 .gridWrapper,
 .section_wrapper,
@@ -113,7 +113,11 @@ head > stylesheet,
 
 
 ul#headerMainMenu {
-  grid-template-columns: repeat(9,1fr) !important;
+  grid-template-columns: repeat(9,12rem) !important;
+  display: grid;
+  li {
+    width: 100% !important;
+  }
 }
 
 .pagination3 {

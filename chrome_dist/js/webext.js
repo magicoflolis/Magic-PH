@@ -1,1 +1,0 @@
-const brws="undefined"==typeof browser?chrome:browser;export default brws;

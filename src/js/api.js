@@ -1,10 +1,21 @@
 'use strict';
 
-let doc = self.document,
-lpath = doc.location.pathname;
+let win = self ?? window,
+doc = win.document,
+l = {
+  href: doc.location.href,
+  path: doc.location.pathname,
+  ph: doc.location.origin.includes("pornhub"),
+  rt: doc.location.origin.includes("redtube"),
+  t8: doc.location.origin.includes("tube8"),
+  tz: doc.location.origin.includes("thumbzilla"),
+  yp: doc.location.origin.includes("youporn"),
+},
+fvideo = l.path.includes("view_video") || l.path.includes("porn_video") || l.path.includes("watch") || l.path.includes("video") || l.rt;
 
 export const mph = {
-  ael(elm = document, event, callback){
+  ael(elm,event,callback){
+    elm = elm ?? doc;
     return elm.addEventListener(event, callback);
   },
   /** Waits until args return true */
@@ -30,13 +41,21 @@ export const mph = {
   getItem(key) {
     return localStorage.getItem(key);
   },
-  async getURL(url) {
-    let res = await fetch(url, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" }
-    }),
-    r = await res.json();
-    return Promise.resolve(r);
+  html: doc.documentElement,
+  async fe(elements,callback) {
+    try {
+      return await new Promise((resolve, reject) => {
+        elements = elements ?? reject(new Error(`Element(s) not found ${elements})`));
+        this.qa(elements).then(e => resolve(e.forEach(callback)))
+      });
+    } catch (error) {
+      return this.err(error.message);
+    }
+  },
+  async fetchURL(url) {
+    let f = await fetch(url),
+    response = await f.json();
+    return response;
   },
   halt(e) {
     e.preventDefault();
@@ -46,15 +65,16 @@ export const mph = {
     console.info('[%cMagicPH%c] %cINF', 'color: rgb(255,153,0);', '', 'color: rgb(0, 186, 124);', ...message);
   },
   inject(src) {
-    let script;
-    script = this.create("script",null,"text/javascript");
-    script.innerHTML = src;
-    (doc.head || doc.documentElement || doc).appendChild(script);
-    if (script) {
-      script.remove();
-    };
+    let s;
+    s = this.create("script","mphInjected","text/javascript");
+    s.innerHTML = src;
+    (doc.head || this.html || doc).appendChild(s);
+    this.log(`Injected: ${s.innerHTML}`);
+    if(s) {
+      s.remove();
+    }
   },
-  log(...message){
+  log(...message) {
     console.log('[%cMagicPH%c] %cDBG', 'color: rgb(255,153,0);', '', 'color: rgb(255, 212, 0);', ...message);
   },
 /**
@@ -68,12 +88,28 @@ export const mph = {
     observer.observe(element, options);
     return observer;
   },
-  /** Waits until querySelectedElement exists */
-  async query(selector, root = document) {
+  /** Waits until element exists */
+  async query(selector,root) {
+    root = root ?? doc;
     while ( root.querySelector(selector) === null) {
       await new Promise( resolve =>  requestAnimationFrame(resolve) )
     }
     return root.querySelector(selector);
+  },
+  /** If element exists then querySelectorAll */
+  async qa(selector,root) {
+    try {
+      return await new Promise((resolve, reject) => {
+        root = root ?? doc;
+        if (root.querySelector(selector) === null) {
+          reject(new Error(`Element(s) not found ${root}.querySelector(${selector})`));
+        } else {
+          resolve(root.querySelectorAll(selector));
+        }
+      });
+    } catch (error) {
+      return this.err(error.message);
+    }
   },
   removeItem(key) {
     return localStorage.removeItem(key);
@@ -82,21 +118,28 @@ export const mph = {
     return localStorage.setItem(key,value);
   },
   find: {
-    community: lpath.includes("discover"),
+    href: doc.location.href,
+    path: doc.location.pathname,
+    ph: doc.location.origin.includes("pornhub"),
+    rt: doc.location.origin.includes("redtube"),
+    t8: doc.location.origin.includes("tube8"),
+    tz: doc.location.origin.includes("thumbzilla"),
+    yp: doc.location.origin.includes("youporn"),
+    community: l.path.includes("discover"),
     channel: doc.querySelector("#channelsProfile"),
-    category: lpath.includes("categories"),
-    favorites: lpath.includes("magicph-favorites"),
+    category: l.path.includes("categories"),
+    favorites: l.path.includes("magicph-favorites"),
     home: doc.location.pathname == "/",
-    gay: lpath.includes("gay"),
-    gif: lpath.includes("gif"),
+    gay: l.path.includes("gay"),
+    gif: l.path.includes("gif"),
     lo: doc.querySelector("body.logged-out"),
     model: doc.querySelector("div.amateurModel"),
     new: doc.querySelector("#headerSearchWrapperFree"),
     premium: doc.querySelector(".premiumUser"),
-    pstar: lpath.includes("pornstar"),
+    pstar: l.path.includes("pornstar"),
     user: doc.querySelector("#profileContent"),
-    video: lpath.includes("view_video"),
-    recommended: lpath.includes("recommended"),
+    video: fvideo,
+    recommended: l.path.includes("recommended"),
   },
-  scrollnumber: /view_video.php/.test(window.location.href) ? 400 : 101,
+  scrollnumber: fvideo ? 400 : 101,
 };

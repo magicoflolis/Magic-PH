@@ -44,6 +44,19 @@ configDefault = {
     },
   },
 },
+// blacklist: {
+//   blowjob: false,
+//   cumshot: false,
+//   facesitting: false,
+//   fingering: false,
+//   footjob: true,
+//   missionary: false,
+//   pussylicking: false,
+//   tittyfucking: false,
+//   toy: false,
+//   scissoring: false,
+//   sex: false,
+// },
 webext = {
   getItem(callback) {
     brws.storage.local.get(configDefault,callback);

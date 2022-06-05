@@ -7,7 +7,6 @@ import webext from './api-webext.js';
 function loadHeader() {
   try {
   const gCheck = mph.find.gay ? "/gay/" : "/",
-  menu = qs("ul#headerMainMenu"),
   dConfig = {
     headerOrder: [
       "home",
@@ -19,25 +18,25 @@ function loadHeader() {
       "favorites",
     ],
   };
-  let custombtn = mph.create("li","menu customize"),
-  customin = mph.create("a","customize-header js-topMenuLink","button"),
+  let custombtn = mph.create("li","menu-item menu customize"),
+  customin = mph.create("a","customize-header js-topMenuLink menu_elem_cont","button"),
   hl = {
-    homA: `<a href="${gCheck}" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Home</span><span class="activeLine"></span></span></a>`,
-    homB: `<a href="${gCheck}" class="js-topMenuLink"><span class="itemName">Home</span></a>`,
-    vidA: `<a href="${gCheck}video?o=tr&hd=1" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Porn Videos</span><span class="activeLine"></span></span></a>`,
-    vidB: `<a href="${gCheck}video?o=tr&hd=1" class="js-topMenuLink"><span class="itemName">Porn Videos</span></a>`,
-    catA: `<a href="${gCheck}categories?o=al" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Categories</span><span class="activeLine"></span></span></a>`,
-    catB: `<a href="${gCheck}categories?o=al" class="js-topMenuLink"><span class="itemName">Categories</span></a>`,
-    porA: `<a href="${gCheck}pornstars?performerType=pornstar" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Pornstars</span><span class="activeLine"></span></span></a>`,
-    porB: `<a href="${gCheck}pornstars?performerType=pornstar" class="js-topMenuLink"><span class="itemName">Pornstars</span></a>`,
-    gifA: `<a href="${gCheck}gifs?o=tr" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Photos & Gifs</span><span class="activeLine"></span></span></a>`,
-    gifB: `<a href="${gCheck}gifs?o=tr" class="js-topMenuLink"><span class="itemName">Photos & Gifs</span></a>`,
-    comA: `<a href="/user/discover${gCheck}" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Community</span><span class="activeLine"></span></span></a>`,
-    comB: `<a href="/user/discover${gCheck}" class="js-topMenuLink"><span class="itemName">Community</span></a>`,
-    recA: `<a href="${gCheck}recommended" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Recommended</span><span class="activeLine"></span></span></a>`,
-    recB: `<a href="${gCheck}recommended" class="js-topMenuLink"><span class="itemName">Recommended</span></a>`,
-    favA: `<a href="/magicph-favorites" class="active js-topMenuLink"><span class="itemName"><span class="arrowMenu">Favorites</span><span class="activeLine"></span></span></a>`,
-    favB: `<a href="/magicph-favorites" class="js-topMenuLink"><span class="itemName">Favorites</span></a>`,
+    homA: `<a href="${gCheck}" class="active js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text"><span class="arrowMenu">Home</span><span class="activeLine"></span></span></a>`,
+    homB: `<a href="${gCheck}" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">Home</span></a>`,
+    vidA: `<a href="${gCheck}video?o=tr&hd=1" class="active js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text"><span class="arrowMenu">Porn Videos</span><span class="activeLine"></span></span></a>`,
+    vidB: `<a href="${gCheck}video?o=tr&hd=1" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">Porn Videos</span></a>`,
+    catA: `<a href="${gCheck}categories?o=al" class="active js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text"><span class="arrowMenu">Categories</span><span class="activeLine"></span></span></a>`,
+    catB: `<a href="${gCheck}categories?o=al" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">Categories</span></a>`,
+    porA: `<a href="${gCheck}pornstars?performerType=pornstar" class="active js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text"><span class="arrowMenu">Pornstars</span><span class="activeLine"></span></span></a>`,
+    porB: `<a href="${gCheck}pornstars?performerType=pornstar" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">Pornstars</span></a>`,
+    gifA: `<a href="${gCheck}gifs?o=tr" class="active js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text"><span class="arrowMenu">Photos & Gifs</span><span class="activeLine"></span></span></a>`,
+    gifB: `<a href="${gCheck}gifs?o=tr" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">Photos & Gifs</span></a>`,
+    comA: `<a href="/user/discover${gCheck}" class="active js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text"><span class="arrowMenu">Community</span><span class="activeLine"></span></span></a>`,
+    comB: `<a href="/user/discover${gCheck}" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">Community</span></a>`,
+    recA: `<a href="${gCheck}recommended" class="active js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text"><span class="arrowMenu">Recommended</span><span class="activeLine"></span></span></a>`,
+    recB: `<a href="${gCheck}recommended" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">Recommended</span></a>`,
+    favA: `<a href="/magicph-favorites" class="active js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text"><span class="arrowMenu">Favorites</span><span class="activeLine"></span></span></a>`,
+    favB: `<a href="/magicph-favorites" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">Favorites</span></a>`,
   },
   headin = {
     home: (mph.find.home) ? hl.homA : hl.homB,
@@ -48,7 +47,7 @@ function loadHeader() {
     community: (mph.find.community) ? hl.comA : hl.comB,
     recommended: (mph.find.recommended) ? hl.recA : hl.recB,
     favorites: (mph.find.favorites) ? hl.favA : hl.favB,
-    custom: `<a href="" class="js-topMenuLink"><span class="itemName">custom url</span></a>`,
+    custom: `<a href="" class="js-topMenuLink menu_elem_cont"><span class="itemName menu_elem_text">custom url</span></a>`,
   },
   headerBtns = {
 //     home: $(`<li itemprop="name" id="menuItem1" class="menu js-menu item-1 home" data-hover="0">
@@ -58,8 +57,8 @@ function loadHeader() {
 //     ${headin.videos}
 //     </li>`),
 //     categories: $(`<li itemprop="name" id="menuItem3" class="menu js-menu item-3 categories" data-hover="0">
-//     <a class="js-topMenuLink">
-//     <span class="itemName">Categories</span></a>
+//     <a class="js-topMenuLink menu_elem_cont">
+//     <span class="itemName menu_elem_text">Categories</span></a>
 //     <div class="wideDropdown categories js-dropdown" data-submenu-type="categories" style="display: none;">
 //   <div class="innerDropdown clearfix js-submenu"><div class="leftPanel">
 //   <a href="/categories" class="title">Discover Categories</a>
@@ -225,15 +224,28 @@ function loadHeader() {
 //     community: $(`<li itemprop="name" id="menuItem6" class="menu js-menu item-6 community" data-hover="0">
 //     ${headin.community}
 //     </li>`),
-    recommended: mph.create("li","menu js-menu item-7 recommended"),
-    favorites: mph.create("li","menu js-menu item-8 fav"),
-    custom: mph.create("li","menu js-menu item-9"),
+    recommended: mph.create("li","menu_elem menu-item menu js-menu item-7 recommended"),
+    favorites: mph.create("li","menu_elem menu-item menu js-menu item-8 fav"),
+    custom: mph.create("li","menu_elem menu-item menu js-menu item-9"),
     // recommended: qs(`<li id="menuItem7" class="menu js-menu item-7 recommended" data-hover="0">${headin.recommended}</li>`),
     // favorites: qs(`<li id="menuItem8" class="menu js-menu item-8 fav">${headin.favorites}</li>`),
     // custom: qs(`<li id="menuItem9" class="menu js-menu item-9">${headin.custom}</li>`),
   };
   webext.getItem((config)=>{
     mph.query("body").then(() => {
+      let menu;
+      if(mph.find.ph || mph.find.yp) {
+        menu = qs("ul#headerMainMenu");
+      };
+      if(mph.find.t8) {
+        menu = qs("ul#main-nav");
+      };
+      if(mph.find.rt) {
+        menu = qs("ul.menu_list");
+      };
+      if(mph.find.tz) {
+        menu = qs("ul.categoryList");
+      };
       // menu.html("");
       let magicForm = mph.create("form","magicph_customize");
       magicForm.innerHTML = custom_layout;
@@ -241,17 +253,44 @@ function loadHeader() {
       let formBTN = () => {
         custombtn.id = "menuItem99";
         customin.title = "Customize Header";
-        customin.innerHTML = '<span class="itemName">customize (wip)</span>';
-        mph.query("ul#headerMainMenu").then((e) => {
-          e.appendChild(custombtn);
-          custombtn.appendChild(customin);
-          mph.ael(customin,"click", () => {
-            qs(".wrapper").classList.remove("blur");
-            qs("html").classList.remove("magicFreeze");
-            qs(".navbackground").setAttribute("style","width: 100%");
-            qs(".magic-customize").setAttribute("style","display: grid;");
+        customin.innerHTML = '<span class="itemName menu_elem_text">customize (wip)</span>';
+        if(mph.find.t8) {
+          mph.query("ul#main-nav").then((e) => {
+            e.appendChild(custombtn);
+            custombtn.appendChild(customin);
+            mph.ael(customin,"click", () => {
+              qs(".wrapper").classList.remove("blur");
+              qs("html").classList.remove("magicFreeze");
+              qs(".navbackground").setAttribute("style","width: 100%");
+              qs(".magic-customize").setAttribute("style","display: grid;");
+            });
           });
-        });
+        };
+        if(mph.find.tz) {
+          mph.query("ul.categoryList").then((e) => {
+            e.appendChild(custombtn);
+            custombtn.appendChild(customin);
+            mph.ael(customin,"click", () => {
+              qs(".wrapper").classList.remove("blur");
+              qs("html").classList.remove("magicFreeze");
+              qs(".navbackground").setAttribute("style","width: 100%");
+              qs(".magic-customize").setAttribute("style","display: grid;");
+            });
+          });
+        };
+        //
+        if(mph.find.ph || mph.find.yp) {
+          mph.query("ul#headerMainMenu").then((e) => {
+            e.appendChild(custombtn);
+            custombtn.appendChild(customin);
+            mph.ael(customin,"click", () => {
+              qs(".wrapper").classList.remove("blur");
+              qs("html").classList.remove("magicFreeze");
+              qs(".navbackground").setAttribute("style","width: 100%");
+              qs(".magic-customize").setAttribute("style","display: grid;");
+            });
+          });
+        };
       },
       customize = qsA('section.head-select > select');
       headerBtns.recommended.id = "menuItem7";
@@ -275,7 +314,15 @@ function loadHeader() {
               qs(".magicph-name").classList.add("rm");
               qs(".magicph-url").classList.add("rm");
             };
-            qs(`#headerMainMenu > .${cname}`).innerHTML = `${headin[target.value]}`;
+            if(mph.find.t8) {
+              qs(`#main-nav > .${cname}`).innerHTML = `${headin[target.value]}`;
+            };
+            if(mph.find.ph || mph.find.yp) {
+              qs(`#headerMainMenu > .${cname}`).innerHTML = `${headin[target.value]}`;
+            };
+            if(mph.find.rt) {
+              qs(`ul.menu_list > .${cname}`).innerHTML = `${headin[target.value]}`;
+            };
             // $(`#headerMainMenu > .${cname}`).html($(headin[target.value]));
             config.headerOrder.splice(i, i, target.value);
             mph.log(config.headerOrder);

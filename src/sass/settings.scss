@@ -1,0 +1,174 @@
+html.mph,
+body.mph {
+  padding: 0;
+  margin: 0;
+  background-color: $dark;
+  color: $white;
+}
+
+form.magicph_bl,
+form.magicph_cfg {
+  font-size: 1.25em;
+  section {
+    border: 1px solid $hover;
+    background-color: $dark;
+    color: #fff;
+    &.checkbox>label,
+    &.checkboxlist>label,
+    &.select,
+    &.mph {
+      display: flex;
+      justify-content: space-between;
+      padding: .825em;
+    }
+    &.checkbox>label,
+    &.checkboxlist>label {
+      cursor: pointer;
+    }
+    &.checkboxlist {
+      padding-left: .825em;
+      padding-bottom: .5em;
+      label {
+        padding-top: .5em;
+        padding-bottom: .5em;
+      };
+      p {
+        margin-bottom: .5em;
+      };
+    };
+    #seektime {
+      width: 50px;
+      text-align: center;
+    };
+  };
+  .switch {
+    position: relative;
+    width: 38px;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    margin: 5px;
+    > input {
+      display: none;
+    }
+    > label {
+      display: block;
+      overflow: hidden;
+      cursor: pointer;
+      height: 16px;
+      padding: 0;
+      line-height: 16px;
+      border: 1px solid $dark;
+      border-radius: 20px;
+      background-color: $hover;
+      &:before {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 20px;
+        margin: -2px;
+        background: #DADCE0;
+        position: absolute;
+        top: 0;
+        right: 20px;
+        border-radius: 20px;
+      }
+    }
+    > input:checked+label {
+      margin-left: 0;
+      background-color: rgba(255, 153, 0, 0.568);
+      &:before {
+        right: 0px;
+        background-color: $theme;
+      }
+    }
+  };
+};
+
+.magic-popup {
+  transition: top 200ms ease-in-out 200ms;
+  background: transparent;
+  height: auto;
+  width: auto;
+  position: fixed;
+  z-index: 10;
+  overflow-x: auto;
+  top: 100vh;
+  #popupContainer {
+    display: none;
+    overflow-y: auto;
+  }
+  > .recommend > .recommendedContainerLoseOne.videos li.videoBox {
+    margin: auto {
+      bottom: 15px !important;
+      right: 9px !important;
+    }
+    width: 23.8% !important;
+  }
+  > .taste > .sectionWrapper > .sectionTitle {
+    padding: 0px !important;
+    > .nav {
+      @include remover;
+    }
+  }
+  .home > div.sectionWrapper,
+  .home > div.frontListingWrapper {
+    @include taste;
+  }
+  .taste > {
+    div.sectionWrapper {
+      @include taste;
+    }
+    > {
+      .sectionTitle {
+        display: none !important;
+      }
+    }
+  }
+  .recommend > {
+    ul.recommendedContainerLoseOne {
+      background-color: $dark;
+      height: 100%;
+      position: fixed;
+      z-index: 10;
+      left: 19%;
+      top: 0px;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      padding: 0px !important;
+    }
+    > li {
+      width: inherit !important;
+      margin: 1% !important;
+    }
+  }
+  .categories > {
+    #categoriesListSection {
+      @include theme;
+      height: 100%;
+      position: fixed;
+      z-index: 10;
+      left: 20%;
+      overflow-x: auto;
+    }
+  }
+  #popupContainer form {
+    height: 100%;
+    position: fixed;
+    z-index: 10;
+    left: 20%;
+    overflow-x: auto;
+  }
+  .pagination3 {
+    > ul {
+      left: 25%;
+    }
+    > .pjump {
+      left: 52%;
+    }
+  }
+  &.open {
+    top: 0px !important;
+  }
+}

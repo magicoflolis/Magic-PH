@@ -1,18 +1,20 @@
 {
   "name": "magicph",
   "productName": "MagicPH",
-  "version": "1.0.52",
+  "version": "1.0.53",
   "description": "Enhances your porn viewing experience. Quick, clean, and easy.",
   "scripts": {
-    "dev:Start": "concurrently \"npm run dev:Firefox\" \"npm run dev:Sass\"",
-    "dev:Firefox": "webpack --progress --mode development --config=webpackConfig/webpack.config.js",
-    "dev:Chrome": "webpack --progress --mode development --config=webpackConfig/webpack_ch.config.js",
-    "dev:Sass": "sass -w ./src/sass/magicph.scss:./dist/css/magicph.css ./src/sass/downloader.scss:./dist/css/downloader.css ./src/sass/plyr/plyr.scss:./dist/css/plyr.css -s compressed",
-    "analyse-bundle": "ANALYSE= webpack --mode production --config=webpackConfig/webpack.config.js",
-    "build:Firefox": "webpack --mode production --config=webpackConfig/webpack.config.js",
-    "build:Chrome": "webpack --mode production --config=webpackConfig/webpack_ch.config.js",
-    "build:Crx": "node webpackConfig/buildChrome.js",
-    "build:Browsers": "npm run build:Sass && npm run build:Firefox && npm run build:Chrome && npm run build:Crx"
+    "Dev:FF": "concurrently \"npm run Webpack:FF\" \"npm run Start:Sass\"",
+    "Dev:Cr": "concurrently \"npm run Webpack:Cr\" \"npm run Start:Sass\"",
+    "Dev:Userscript": "npm --prefix ./userscript run dev:Start",
+    "Webpack:FF": "webpack --progress --mode development --config=webpackConfig/webpack.config.js --node-env firefox",
+    "Webpack:Cr": "webpack --progress --mode development --config=webpackConfig/webpack.config.js --node-env chrome",
+    "Start:Sass": "sass -w ./src/sass/magicph.scss:./tests/compiled/magicph.css ./src/sass/downloader.scss:./tests/compiled/downloader.css ./src/sass/plyr/plyr.scss:./tests/compiled/plyr.css -s compressed",
+    "build:Firefox": "webpack --mode production --config=webpackConfig/webpack.config.js --node-env firefox",
+    "build:Chrome": "webpack --mode production --config=webpackConfig/webpack.config.js --node-env chrome",
+    "build:Userscript": "npm --prefix ./userscript run pub:Userscript",
+    "build:Crx": "node tools/crx.js",
+    "build:Browsers": "npm run build:Firefox && npm run build:Chrome && npm run build:Crx"
   },
   "author": "Magic <magicoflolis@tuta.io>",
   "license": "GPL-3.0-only",
@@ -24,7 +26,7 @@
     "@ffmpeg/core": "^0.10.0",
     "@ffmpeg/ffmpeg": "^0.10.1",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.189",
+    "@swc/core": "^1.2.194",
     "@types/chrome": "^0.0.188",
     "@types/dotenv-webpack": "^7.0.3",
     "@types/firefox-webext-browser": "latest",
@@ -35,7 +37,6 @@
     "autoprefixer": "^10.4.7",
     "copy-webpack-plugin": "^11.0.0",
     "dotenv": "^16.0.1",
-    "dotenv-webpack": "^7.1.0",
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "html-loader": "^3.1.0",
@@ -50,10 +51,15 @@
   },
   "dependencies": {
     "browserslist": "^4.20.3",
+    "concurrently": "^7.2.1",
     "crx": "^5.0.1",
+    "crx3": "^1.1.3",
+    "css-loader": "^6.7.1",
     "globby": "^13.1.1",
     "jquery": "^3.6.0",
-    "sass": "^1.52.1"
+    "mini-css-extract-plugin": "^2.6.0",
+    "sass": "^1.52.1",
+    "sass-loader": "^13.0.0"
   },
   "repository": {
     "type": "git",
@@ -85,9 +91,21 @@
   },
   "keywords": [
     "magicph",
-    "ph",
     "pornhub",
-    "pornhubpremium"
+    "pornhubpremium",
+    "retube",
+    "retubepremium",
+    "tube8",
+    "tube8premium",
+    "thumbzilla",
+    "thumbzillapremium",
+    "youporn",
+    "youpornpremium",
+    "ph",
+    "rt",
+    "t8",
+    "tz",
+    "yp"
   ],
   "private": true
 }

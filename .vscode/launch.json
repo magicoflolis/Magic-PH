@@ -10,7 +10,7 @@
     {
       "name": "Attach:Firefox",
       "type": "firefox",
-      "request": "attach",
+      "request": "attach"
     },
     {
       "name": "SF",
@@ -21,7 +21,13 @@
       "reloadOnAttach": true,
       "reloadOnChange": "${workspaceFolder}/src/**",
       "url": "https://pornhub.com/",
-      "addonPath": "${workspaceFolder}\\dist"
+      "addonPath": "${workspaceFolder}\\tests\\firefox",
+      "pathMappings": [
+        {
+          "url": "webpack:///js",
+          "path": "${workspaceFolder}/src/js"
+        }
+      ]
     },
     {
       "type": "pwa-chrome",
