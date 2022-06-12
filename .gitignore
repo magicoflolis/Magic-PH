@@ -9,8 +9,8 @@ build
 /build/
 Notes
 /Notes/
-chrome
-/chrome/
+chrlauncher
+/chrlauncher/
 
 # dotenv environment variable file
 .env
