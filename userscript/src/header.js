@@ -1,4 +1,3 @@
-
 {jshead}
 
 /* eslint-disable no-undef */

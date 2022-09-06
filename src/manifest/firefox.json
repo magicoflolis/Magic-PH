@@ -6,7 +6,6 @@
     "page": "background.html"
   },
   "browser_action": {
-    "browser_style": false,
     "default_icon": {
 			"64": "img/icon_64.png",
       "128": "img/icon_128.png"
@@ -15,7 +14,6 @@
     "default_title": "MagicPH - Popup"
   },
   "options_ui": {
-    "browser_style": false,
     "page": "options.html",
     "open_in_tab": true
   },
@@ -23,20 +21,18 @@
     {
       "all_frames": true,
       "css": ["/css/magicph.css","/css/downloader.css"],
-      "js": ["/js/start.js","/js/injector.js","/js/header.js"],
+      "js": ["/js/start.js","/js/injector.js"],
       "matches": [
 			"https://*.pornhub.com/*",
 			"https://*.pornhubpremium.com/*",
 			"https://*.youporn.com/*",
 			"https://*.youpornpremium.com/*",
 			"https://*.youporngay.com/*",
-			"https://*.youporngaypremium.com/*",
 			"https://*.redtube.com/*",
 			"https://*.redtubepremium.com/*",
 			"https://*.tube8.com/*",
-			"https://*.tube8premium.com/*",
 			"https://*.thumbzilla.com/*",
-			"https://*.thumbzillapremium.com/*"
+      "https://onlyfans.com/*"
 			],
       "exclude_matches": [
         "https://www.pornhub.com/login",
@@ -46,32 +42,6 @@
         "https://www.pornhubpremium.com/gift"
       ],
       "run_at": "document_start"
-    },
-		{
-      "all_frames": true,
-      "js": ["/js/favorites.js"],
-      "matches": [
-			"https://*.pornhub.com/*",
-			"https://*.pornhubpremium.com/*",
-			"https://*.youporn.com/*",
-			"https://*.youpornpremium.com/*",
-			"https://*.youporngay.com/*",
-			"https://*.youporngaypremium.com/*",
-			"https://*.redtube.com/*",
-			"https://*.redtubepremium.com/*",
-			"https://*.tube8.com/*",
-			"https://*.tube8premium.com/*",
-			"https://*.thumbzilla.com/*",
-			"https://*.thumbzillapremium.com/*"
-			],
-      "exclude_matches": [
-        "https://www.pornhub.com/login",
-        "https://www.pornhub.com/create_account_select",
-        "https://www.pornhubpremium.com/login",
-        "https://www.pornhubpremium.com/create_account_select",
-        "https://www.pornhubpremium.com/gift"
-      ],
-      "run_at": "document_end"
     }
   ],
   "icons": {
@@ -87,24 +57,19 @@
     "tabs",
     "storage",
     "unlimitedStorage",
-    "*://static.trafficjunky.com/*",
+    "*://*.trafficjunky.com/*",
     "*://*.phncdn.com/*",
     "*://*.pornhub.com/*",
 		"*://*.pornhubpremium.com/*",
 		"*://*.youporn.com/*",
 		"*://*.youpornpremium.com/*",
 		"*://*.youporngay.com/*",
-		"*://*.youporngaypremium.com/*",
 		"*://*.redtube.com/*",
 		"*://*.redtubepremium.com/*",
 		"*://*.tube8.com/*",
-		"*://*.tube8premium.com/*",
 		"*://*.thumbzilla.com/*",
-		"*://*.thumbzillapremium.com/*"
+    "*://onlyfans.com/*"
   ],
-  "storage": {
-    "managed_schema": "managed_storage.json"
-  },
   "web_accessible_resources": ["/web_accessible_resources/*", "js/*", "css/plyr.css"],
   "commands": {},
   "browser_specific_settings": {

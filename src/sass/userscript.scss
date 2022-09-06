@@ -76,6 +76,55 @@
   padding: 8px 10px;
 }
 
+div.mgp_downloadInfo {
+  display: grid;
+  grid-auto-flow: row;
+}
+
+.mgp_downloadInfo {
+  ul {
+    padding: 2px 4px;
+  }
+  li {
+    display: grid;
+    grid-auto-flow: column;
+    margin: auto;
+    width: 100%;
+  }
+  &.mgp_active {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  input {
+    color: #ccc;
+    text-align: center;
+    outline: 0 none;
+    background: transparent;
+    border: none;
+    margin: auto;
+  }
+  span {
+    width: 45px;
+    margin: auto;
+  }
+  a.suggestToggleAlt {
+    cursor: pointer;
+    margin: auto;
+    &:hover {
+      color: $theme;
+      -webkit-text-decoration: 0;
+              text-decoration: 0;
+    }
+    .magicph-icon {
+      position: relative;
+    }
+  }
+  &.mgp_active {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+};
+
 body > .mgp_downloadInfo {
   font-size: 16px;
   font-family: inherit;
@@ -83,12 +132,9 @@ body > .mgp_downloadInfo {
   line-height: 25px;
   top: 25%;
 }
-
 div.mgp_container > .mgp_downloadInfo {
-  width: 50%;
   top: 46%;
 }
-
 body > .mgp_downloadInfo,
 div.mgp_container > .mgp_downloadInfo {
   z-index: 2000;
@@ -118,50 +164,10 @@ div.mgp_container > .mgp_downloadInfo {
       padding: 5px;
     }
   }
-  ul {
-    padding: 2px 4px;
-  }
-  li {
-    display: grid;
-    // grid-template-columns: minmax(auto, 3fr) minmax(1rem, auto) 5fr 5fr;
-    grid-template-columns: minmax(1rem,3rem) minmax(1rem, 50rem) 2rem 2rem;
-    span {
-      padding-right: 10%;
-      display: inline-block;
-      margin-left: 1%;
-    }
-    input {
-      color: #ccc;
-      margin: 1% 0px 1%;
-      text-align: center;
-      outline: 0 none;
-      background: transparent;
-      border: none;
-    }
-    a.suggestToggleAlt {
-      margin: 1% 1% 1% 0px;
-      float: inline-end;
-      cursor: pointer;
-      &:hover {
-        color: $theme;
-        -webkit-text-decoration: 0;
-                text-decoration: 0;
-      }
-      .magicph-icon {
-        position: relative;
-      }
-    }
-  }
-  &.mgp_active {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
 };
-
 input[value^="[Error] Not Found"] {
   visibility: hidden !important;
 };
-
 ul.mgp_switches > .mgp_download {
   display: grid !important;
   .magicph-icon {
@@ -175,38 +181,3 @@ ul.mgp_switches > .mgp_download {
     transform: translate(-50%, 0%);
   };
 };
-
-.mgp_content > ul.mgp_downloadInfo {
-  li {
-    display: grid;
-    grid-template-columns: 8fr 20fr 2rem 2rem;
-    span {
-      padding-right: 10%;
-      width: 1%;
-      display: inline-block;
-      margin-left: 1%;
-    }
-    input {
-      color: #ccc;
-      margin: 1% 0px 1%;
-      text-align: center;
-      outline: 0 none;
-      background: transparent;
-      border: none;
-    }
-    a.suggestToggleAlt {
-      margin: 1% 1% 1% 0px;
-      float: inline-end;
-      cursor: pointer;
-      color: #ccc;
-      &:hover {
-        color: $theme;
-        -webkit-text-decoration: 0;
-                text-decoration: 0;
-      }
-      .magicph-icon {
-        position: relative;
-      }
-    }
-  }
-}

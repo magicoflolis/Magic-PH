@@ -19,7 +19,7 @@
       "clearConsoleOnReload": true,
       "reAttach": true,
       "reloadOnAttach": true,
-      "reloadOnChange": "${workspaceFolder}/src/**",
+      "reloadOnChange": "${workspaceFolder}/src/js/**",
       "url": "https://pornhub.com/",
       "addonPath": "${workspaceFolder}\\tests\\firefox",
       "pathMappings": [
@@ -30,14 +30,14 @@
       ]
     },
     {
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "attach",
       "name": "Attach to browser",
       "port": 9222
     },
     {
       "name": "SC",
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "launch",
       "runtimeExecutable": "${workspaceFolder}\\chrome\\bin\\chrome.exe",
       "userDataDir": "${workspaceFolder}/chrome/profile",

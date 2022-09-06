@@ -3,7 +3,7 @@ html {
 }
 
 *:not(select) {
-  scrollbar-color: $theme-alt $dark !important;
+  // scrollbar-color: $theme-alt $dark !important;
   scrollbar-width: thin !important;
 }
 /* Chrome and derivatives*/
@@ -30,14 +30,17 @@ html {
   }
 }
 
-html,
-body {
-  width: 100%;
-  height: 100%;
-  > .frontListingWrapper {
-    @include container;
-  };
-}
+body > .frontListingWrapper {
+  @include container;
+};
+// html,
+// body {
+//   width: 100%;
+//   height: 100%;
+//   > .frontListingWrapper {
+//     @include container;
+//   };
+// }
 
 body.logged-out {
   .votes-fav-wrap,
@@ -52,12 +55,10 @@ body.logged-out {
   width: 96vw !important;
   min-width: 96vw !important;
   max-width: 96vw !important;
-  // height: 86vh !important;
-  margin: 1% 6% 10px auto !important;
+  margin: auto !important;
   padding: 0 !important;
 }
-.wrapper > .container > .frontListingWrapper,
-#main-container,
+// #main-container,
 .gridWrapper,
 .section_wrapper,
 #gifWebmPlayer {
@@ -67,18 +68,26 @@ body.logged-out {
 .rm,
 #welcome,
 .mgp_embedded > .mgp_gridMenu,
-#headerUpgradePremiumBtn,
-.livesex,
-.realsex,
+li[class*="sex"],
+li[class*="cam"],
+li[class*="premium"],
+li[class*="upsell"],
+[data-entrycode="DiscoverPremium"],
+[data-mxptext="Live Cams"],
+[class*="upgrade"],
+[class*="footer"],
+[class*="promo"],
+[class*="trafficjunky"],
+footer,
+search-list[label*="Trending"],
 .headerBtnsWrapper,
 #paidItems,
 .abovePlayer,
-.footerContentWrapper,
-.adsbytrafficjunky,
 .ad-link,
-.premiumPromoBannerWrapper,
+// .premiumPromoBannerWrapper,
 .sniperModeEngaged,
-li.mgp_upsell,
+// li.mgp_upsell,
+#primaryHeaderNav li:not(.menu_elem),
 .leftPanel > p,
 .leftPanel > .popularSearches,
 .popularFilterPhotos,
@@ -90,19 +99,26 @@ li.mgp_upsell,
 #under-player-playlists,
 .pornportal-wrapper,
 #popsByTrafficJunky,
-.menu.item-7.community,
+.ypLogo,
+.logoWrapper,
+#topMenuSection a.phLogoWrap,
+// .menu.item-7.community,
 li#profileHome,
-.mgp_videoPoster,
+div.bottomNav a.noImage:not(.recommended,.fav),
+#welcomeVideoMsg,
+body.logged-out .fanClubButtons,
+body.logged-out .underThumbButtons #playlistModal,
+#paidSites li:not([class*="menu_elem"]),
+#video_right_col,
+.topAdContainter,
+#pb_template,
 .tasteLogin,
-.upgradeToPremium,
-search-list[label="Trending Searches"],
-search-list[label="Trending Pornstars and Models"],
+// .upgradeToPremium,
+.pageCta,
+.subscriptionInfoWithButton,
+.add-to-collection,
 #profileMenuDropdown > .alpha,
 #main-container > .abovePlayer,
-[data-entrycode="DiscoverPremium"],
-[data-mxptext="Live Cams"],
-head > stylesheet,
-.logoWrapper,
 .mgp_cinema,
 #loadMoreRelatedVideosCenter,
 #hd-rightColVideoPage,
@@ -112,9 +128,12 @@ head > stylesheet,
 };
 
 
-ul#headerMainMenu {
-  grid-template-columns: repeat(9,12rem) !important;
+#headerMainMenu {
   display: grid;
+  place-content: center;
+  grid-gap: 1rem !important;
+  grid-auto-flow: column;
+  margin: auto;
   li {
     width: 100% !important;
   }
@@ -128,7 +147,6 @@ ul#headerMainMenu {
     position: fixed !important;
     display: block !important;
     top: 100%;
-    // left: 20%;
     margin: auto;
     overflow: hidden;
     width: auto;
@@ -155,6 +173,19 @@ ul#headerMainMenu {
 }
 }
 
+#vpContentContainer:not(.premiumLocked) {
+  grid-template-columns: auto !important;
+}
+
+#hd-leftColVideoPage,
+.video-wrapper {
+  width: 100% !important;
+}
+
+.video-wrapper {
+  margin: auto !important;
+}
+
 #relatedVideosCenter {
   display: grid;
 }
@@ -167,21 +198,18 @@ ul#headerMainMenu {
   width: 98vw;
 }
 .mgp_videoPoster {
-  height: 98vh !important;
-  width: 86% !important;
-  top: 0 !important;
-  left: 10% !important;
+  height: 100% !important;
+  width: 100% !important;
 }
+// .mgp_videoPoster {
+//   height: 98vh !important;
+//   width: 86% !important;
+//   top: 0 !important;
+//   left: 10% !important;
+// }
 .gifWebMWrapper {
   margin-bottom: 0 !important;
 }
-// .nf-videos > {
-//   .sectionWrapper {
-//     max-width: 80vw !important;
-//     min-width: 991px !important;
-//     width: 80vw !important;
-//   }
-// }
 .video-wrapper,
 #player,
 #player.wide {
@@ -441,4 +469,23 @@ table {
       display: block !important;
     }
   }
+}
+
+#video_left_col {
+  width: 100% !important;
+  .video_left_section {
+    width: auto !important;
+  }
+}
+#primaryHeaderNav,
+#paidSites {
+  display: grid !important;
+  grid-auto-flow: column !important;
+  margin: auto !important;
+  width: 100% !important;
+}
+
+#paidSites li.menu_elem,
+#primaryHeaderNav .mph-header-btn {
+  margin: auto !important;
 }

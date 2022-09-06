@@ -68,7 +68,13 @@ jshead_common = `// ==UserScript==
 // @match        *://*.thumbzilla.com/video/*
 // @match        *://*.thumbzillapremium.com/video/*
 // @grant        unsafeWindow
+// @grant        GM_xmlhttpRequest
+// @grant        GM_setClipboard
+// @grant        GM.xmlhttpRequest
+// @grant        GM.setClipboard
 // @run-at       document-idle
+// @connect      *
+// @noframes
 // @compatible   Chrome
 // @compatible   Firefox
 // ==/UserScript==`;
@@ -88,3 +94,5 @@ watcher.on('error', (err) => {
   watcher.close();
   delay(5000).then(() => watcher);
 });
+
+// @run-at       document-idle

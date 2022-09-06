@@ -112,27 +112,31 @@ form.magicph_cfg {
       @include remover;
     }
   }
-  .home > div.sectionWrapper,
-  .home > div.frontListingWrapper {
-    @include taste;
+  .home {
+    > div.sectionWrapper,
+    > div.frontListingWrapper,
+    > #content_container,
+    > #home_page_wrapper,
+    > #content,
+    > .clearfix, {
+      @include taste;
+    }
   }
-  .taste > {
+  .taste {
     div.sectionWrapper {
       @include taste;
     }
-    > {
-      .sectionTitle {
-        display: none !important;
-      }
+    > .sectionTitle {
+      display: none !important;
     }
   }
-  .recommend > {
+  .recommend {
     ul.recommendedContainerLoseOne {
       background-color: $dark;
       height: 100%;
       position: fixed;
       z-index: 10;
-      left: 19%;
+      left: 12%;
       top: 0px;
       overflow-x: hidden;
       overflow-y: scroll;
@@ -143,7 +147,7 @@ form.magicph_cfg {
       margin: 1% !important;
     }
   }
-  .categories > {
+  .categories {
     #categoriesListSection {
       @include theme;
       height: 100%;
@@ -157,7 +161,7 @@ form.magicph_cfg {
     height: 100%;
     position: fixed;
     z-index: 10;
-    left: 20%;
+    left: 12%;
     overflow-x: auto;
   }
   .pagination3 {
