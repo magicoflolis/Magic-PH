@@ -8,6 +8,7 @@ let brws = (typeof browser=='undefined'?chrome:browser),
 ogTitle = 'Magic PH',
 messenger,
 post = (msg ={}) => messenger.postMessage(msg);
+
 function connected(p) {
   messenger = p;
   messenger.postMessage({cfg: Config.cachedLocalStorage});

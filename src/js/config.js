@@ -14,11 +14,12 @@ Config = {
     topbutton: true,
     sidebar: true,
     favoriteVideos: [],
-    blacklist: ['none'],
+    blacklist: [],
   },
   cachedSyncConfig: {},
   cachedLocalStorage: {},
   resetToDefault,
+  clearFavorites,
 };
 
 function configProxy() {
@@ -114,7 +115,20 @@ function resetToDefault() {
   brws.storage.sync.set({
     ...Config.syncDefaults,
   });
-}
+  brws.storage.local.set({
+    ...Config.syncDefaults,
+  });
+};
+
+function clearFavorites() {
+  brws.storage.local.set({
+    favoriteVideos: []
+  });
+  brws.storage.sync.set({
+    favoriteVideos: []
+  });
+  return 'Favorites have been cleared';
+};
 
 setupConfig();
 

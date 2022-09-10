@@ -10,10 +10,10 @@ let userInfo = (url = "default") => {
   mph.query('.userInfo > div.usernameWrap > span.usernameBadgesWrapper > a').then(user => user.href = user.href + "/videos");
 };
 
-mph.find.channel ? mph.log("Channel page") : false;
+mph.find.channel ? mph.log('Channel page') : false;
 if(mph.find.home) {
-  mph.info("Homepage page");
-  for(let u of qsA("ul")) {
+  mph.info('Homepage page');
+  for(let u of qsA('ul')) {
     if(u.dataset.hpblockname === "Recommended for You" ) {
       qs(".frontListingWrapper").prepend(u.parentElement)
     };

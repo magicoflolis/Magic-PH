@@ -1,12 +1,11 @@
 {
-  "manifest_version": 3,
-	"name": "MagicPH",
+	"manifest_version": 2,
+  "name": "MagicPH",
   "short_name": "MagPH",
   "background": {
-    "service_worker": "/js/background.js",
-    "type": "module"
+    "page": "background.html"
   },
-  "action": {
+  "browser_action": {
     "default_icon": {
 			"64": "img/icon_64.png",
       "128": "img/icon_128.png"
@@ -22,20 +21,18 @@
     {
       "all_frames": true,
       "css": ["/css/magicph.css","/css/downloader.css"],
-      "js": ["/js/start.js","/js/injector.js","/js/header.js"],
+      "js": ["/js/start.js","/js/injector.js"],
       "matches": [
 			"https://*.pornhub.com/*",
 			"https://*.pornhubpremium.com/*",
 			"https://*.youporn.com/*",
 			"https://*.youpornpremium.com/*",
 			"https://*.youporngay.com/*",
-			"https://*.youporngaypremium.com/*",
 			"https://*.redtube.com/*",
 			"https://*.redtubepremium.com/*",
 			"https://*.tube8.com/*",
-			"https://*.tube8premium.com/*",
 			"https://*.thumbzilla.com/*",
-			"https://*.thumbzillapremium.com/*"
+      "https://onlyfans.com/*"
 			],
       "exclude_matches": [
         "https://www.pornhub.com/login",
@@ -51,61 +48,29 @@
     "64": "img/icon_64.png",
     "128": "img/icon_128.png"
   },
-  "content_security_policy": {
-    "extension_pages": "default-src 'self'; script-src 'self';"
-  },
-  "cross_origin_opener_policy": {
-    "value": "same-origin"
-  },
   "permissions": [
+    "cookies",
 		"webNavigation",
-    "declarativeNetRequest",
+    "webRequest",
+    "webRequestBlocking",
     "activeTab",
     "tabs",
     "storage",
-    "unlimitedStorage"
-  ],
-  "declarative_net_request" : {
-    "rule_resources" : [{
-      "id": "ruleset_1",
-      "enabled": true,
-      "path": "rules.json"
-    }]
-  },
-  "host_permissions": [
-    "*://static.trafficjunky.com/*",
+    "unlimitedStorage",
+    "*://*.trafficjunky.com/*",
     "*://*.phncdn.com/*",
     "*://*.pornhub.com/*",
 		"*://*.pornhubpremium.com/*",
 		"*://*.youporn.com/*",
 		"*://*.youpornpremium.com/*",
 		"*://*.youporngay.com/*",
-		"*://*.youporngaypremium.com/*",
 		"*://*.redtube.com/*",
 		"*://*.redtubepremium.com/*",
 		"*://*.tube8.com/*",
-		"*://*.tube8premium.com/*",
 		"*://*.thumbzilla.com/*",
-		"*://*.thumbzillapremium.com/*"
+    "*://onlyfans.com/*"
   ],
-  "storage": {
-    "managed_schema": "managed_storage.json"
-  },
-  "web_accessible_resources": [{
-    "resources": [ "/web_accessible_resources/*", "js/*", "css/plyr.css" ],
-    "matches": [ "https://*.pornhub.com/*",
-			"https://*.pornhubpremium.com/*",
-			"https://*.youporn.com/*",
-			"https://*.youpornpremium.com/*",
-			"https://*.youporngay.com/*",
-			"https://*.youporngaypremium.com/*",
-			"https://*.redtube.com/*",
-			"https://*.redtubepremium.com/*",
-			"https://*.tube8.com/*",
-			"https://*.tube8premium.com/*",
-			"https://*.thumbzilla.com/*",
-			"https://*.thumbzillapremium.com/*" ]
-  }],
+  "web_accessible_resources": ["/web_accessible_resources/*", "js/*", "css/plyr.css"],
   "commands": {},
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6wjjYKD/Q5yeVOWN3E3OnjOSXbrOAYy+25VbBgxKpk0LCPEB/4uhsXAlt/1sX9fDHJRQNxmhViuQbH8+oGEGKrPCjJOXdCUCprYvAqmcisz0fAQCzOHeklCdnjALvrI5lVB0UczZPdiHajGBS7y8W8EhAijd+zmBK0Ii/PbkgenbQOG/CxK7xwUg0p5HiVOXzqreMwqjpdE3iPjMKxDqnnGw5L6t/JfezUZ4BIetsC40h2PRWASow2PZuU54Znj7LuX2reMom5D1J/rJta1MTI6I0pUiexzV93j4muW/9HnpZO9A8RapC/0b6fGHuA/7bZ6x7+fCwsunciK3SeVcDQIDAQAB",
   "update_url": "https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/version/updates.xml"

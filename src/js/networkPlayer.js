@@ -1,10 +1,7 @@
-/* eslint-disable no-useless-escape */
 'use strict';
 
 import { mph } from './api.js';
 import { qs,qsA } from './querySelector.js';
-
-let og_style;
 
 const log = mph.log,
 err = mph.err;
@@ -16,19 +13,14 @@ progressBar = qs('.mph_progress'),
 progressContainer = qs('.mph_progressContainer'),
 progressUpdate = (message,time) => {
   try {
-    progressContainer.style = '';
+    progressContainer.style = 'display: block;';
     progressBar.innerText = message;
-    if(!og_style) {
-      og_style = body.style;
-      body.style = 'height: fit-content !important;';
-    };
     if(time) {
       if(+time === +time) {
         mph.delay(time).then(() => {
           if(progressContainer) {
-            progressContainer.style = 'display: none;';
+            progressContainer.style = '';
             progressBar.innerText = '';
-            body.style = og_style;
           };
         });
       };
@@ -55,101 +47,6 @@ dCopy = `<a class="suggestToggleAlt" title="Copy">
 ${mph.find.rt ? `<span>C</span></a>` : '<svg viewBox="0 0 24 24" aria-hidden="true" class="magicph-icon"><g class="copy"><path d="M6.11 4.25v1.86H4.25C3.01 6.11 2 7.12 2 8.36v11.39C2 20.99 3.01 22 4.25 22h11.39c1.24 0 2.25-1.01 2.25-2.25v-1.86h1.86c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2H8.36C7.12 2 6.11 3.01 6.11 4.25zm9.53 16.25H4.25c-.413 0-.75-.337-.75-.75V8.36c0-.412.337-.75.75-.75h11.39c.412 0 .75.338.75.75v11.39c0 .413-.338.75-.75.75zm4.11-17c.413 0 .75.337.75.75v11.39c0 .412-.337.75-.75.75h-1.86V8.36c0-1.24-1.01-2.25-2.25-2.25H7.61V4.25c0-.413.338-.75.75-.75h11.39z"></path></g></svg></a>'}`,
 dDownload = `<a class="suggestToggleAlt" title="Download">
 ${mph.find.rt ? `<span>D</span></a>` : '<svg viewBox="0 0 24 24" aria-hidden="true" class="magicph-icon"><g class="download"><path d="M3,14 v5 q0,2 2,2 h14 q2,0 2,-2 v-5 M7,10 l4,4 q1,1 2,0 l4,-4 M12,3 v11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></g></svg></a>'}`;
-
-if(!body.contains(progressContainer)) {
-  progressContainer.append(progressBar);
-  body.prepend(progressContainer);
-};
-async function preSetup() {
-  try {
-    const page = await mph.fetchURL(doc.location.href,'GET','text');
-    let htmlDocument = new DOMParser().parseFromString(page,'text/html'),
-    selected = htmlDocument.documentElement,
-    temp = '';
-    if(doc.location.origin.includes('youporn')) {
-      mediaFiles = `${doc.location.origin}/api/video/media_definitions${document.location.href.match(/\/[0-9]+\//gi)}`
-    } else {
-      for(let script of qsA('script', selected)) {
-        let rtMedia = script.innerHTML.match(/https:[\\/.?=0-9A-Z]+mp4[.?=0-9A-Z]+/gi),
-        t8Media = script.innerHTML.match(/https:[\\/A-Z.]+tube8[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9]+/gi),
-        tzMedia = script.innerHTML.match(/https:[\\/A-Z.]+thumbzilla[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9&]+/gi),
-        phMedia = script.innerHTML.match(/media_[0-9]=+/gi),
-        phMobile = script.innerHTML.match(/https:[\\/A-Z.]+pornhub[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9&]+/gi);
-        if(phMedia) {
-          let videosrc = phMedia || [],
-          rahd = script.innerHTML.match(/var [A-Za-z0-9]+=[^;]+/gi) || [];
-          if(!videosrc) {
-            progressUpdate(`[MagicPH] ERROR: Unable to locate Pornhub video media file(s) [value: ${videosrc}]`,5000)
-          };
-          for(let r of rahd) {temp += `${r};`};
-          for(let i = 0; i < videosrc.length; i++) {
-            let re = new RegExp(`media_[${videosrc[i]}]=[0-9/*+=+\\w\\d\\s]+`, 'gi'),
-            b = script.innerHTML.match(re) || [];
-            for(let fin of b) {
-              // eslint-disable-next-line no-unused-vars
-              let media_0,media_1,media_2,media_3,media_4,media_5,media_6,media_7,media_8,media_9,media_10;
-              mediaFiles = eval(`${temp} ${fin}`);
-            };
-          };
-          break;
-        };
-        if(phMobile) {
-          let videosrc = phMobile[0] || []
-          mediaFiles = videosrc.replaceAll('\\', '');
-          break;
-        };
-        if(rtMedia) {
-          let videosrc = rtMedia[0] || []
-          mediaFiles = videosrc.replaceAll('\\', '');
-          break;
-        };
-        if(t8Media) {
-          let videosrc = t8Media[0] || [];
-          mediaFiles = videosrc.replaceAll('\\', '');
-          break;
-        };
-        if(tzMedia) {
-          let videosrc = tzMedia[0] || [];
-          mediaFiles = videosrc.replaceAll('\\', '');
-          break;
-        };
-      };
-    };
-    for(let file of [mediaFiles]) {
-      if(file.includes('get_media?s=') || file.includes('media/mp4?s=') || file.includes('youporn') || file.includes('tube8')) {
-        mph.fetchURL(file,'GET','json').then((links) => {
-          for(let item of links) {
-            let q = item.quality.toLocaleString();
-            (q.match(/240/gi)) ? (q_240 = item.videoUrl) :
-            (q.match(/480/gi)) ? (q_480 = item.videoUrl) :
-            (q.match(/720/gi)) ? (q_720 = item.videoUrl) :
-            (q.match(/1080/gi)) ? (q_1080 = item.videoUrl) :
-            (q.match(/1440/gi)) ? (q_1440 = item.videoUrl) :
-            (q.match(/2160/gi)) ? (q_2160 = item.videoUrl) : q_err;
-            q_best = q_2160 ?? q_1440 ?? q_1080 ?? q_720 ?? q_480 ?? q_240 ?? item.videoUrl;
-          };
-          if(!q_240 || q_240 === '') {q_240 = q_err};
-          if(!q_480 || q_480 === '') {q_480 = q_err};
-          if(!q_720 || q_720 === '') {q_720 = q_err};
-          if(!q_1080 || q_1080 === '') {q_1080 = q_err};
-          if(!q_1440 || q_1440 === '') {q_1440 = q_err};
-          if(!q_2160 || q_2160 === '') {q_2160 = q_err};
-          if(!q_best || q_best === '') {q_best = q_1080 || q_720};
-          dContainer.innerHTML = `<div class="mgp_copyCloseDiv">
-          <div class="mgp_title">Video Quality(s)</div><div class="mgp_hideMenu" title="Close">🗙</div></div><ul><li><span>Best:</span><input value="${q_best ?? q_err}" type="url" size="70" id="urlAreaBest" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>240p:</span><input value="${q_240 ?? q_err}" type="url" size="70" id="urlArea1" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>480p:</span><input value="${q_480 ?? q_err}" type="url" size="70" id="urlArea2" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>720p:</span><input value="${q_720 ?? q_err}" type="url" size="70" id="urlArea3" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>1080p:</span><input value="${q_1080 ?? q_err}" type="url" size="70" id="urlArea4" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>1440p:</span><input value="${q_1440 ?? q_err}" type="url" size="70" id="urlArea5" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>2160p:</span><input value="${q_2160 ?? q_err}" type="url" size="70" id="urlArea6" class="mphURL" readonly></input>${dCopy}${dDownload}</li></ul>`;
-          if(win.opener != null) {
-            mph.info('Popup');
-            DownloadVideo(q_best,vidTitle);
-          } else {
-            networkPlayer();
-          };
-        }).catch(err);
-      } else {
-        progressUpdate(`[MagicPH] ERROR: Unable to locate video media file(s) [mediaFiles: "${mediaFiles}"]`,5000);
-      };
-    };
-  } catch(error) {err(error)}
-};
 async function networkPlayer() {
   try {
     if(mph.find.mobile) {await mph.query('.mgp_container')};
@@ -161,6 +58,9 @@ async function networkPlayer() {
     if(mph.find.ph) {
       vs = phplayer.settings();
       vid = vs;
+      if(qs('#player')) {
+        qs('#player').classList.add('bigp');
+      };
     };
     if(mph.find.rt) {
       mph.find.mobile ? qs('#player-placeholder').prepend(vidFrame) : qs('#video_left_col').prepend(vidFrame);
@@ -168,7 +68,16 @@ async function networkPlayer() {
       vid = vs[`playerDiv_${win.page_params.view_history.videoId}`].createPlayerSetup;
       if(!mph.find.mobile) {
         vidFrame.setAttribute('style','min-height: 70vh !important;');
-      }
+      };
+      qs('#redtube-player').classList.add('rm');
+      if(qs('.js_player_seek_trigger')) {
+        for(let i of qsA('.js_player_seek_trigger')) {
+          i.onclick = (e) => {
+            mph.halt(e);
+            phplayer.seek(i.dataset.seekTo, true);
+          }
+        };
+      };
     };
     if(mph.find.tz) {
       if(qs('.fullGrey')) {
@@ -176,18 +85,29 @@ async function networkPlayer() {
       };
       vs = win.video_vars;
       vid = vs;
+      vidFrame.classList.add('rm');
     };
     if(mph.find.t8) {
       vs = win.flashvars;
       vid = vs;
       qs('body').prepend(vidFrame);
+      if(qs('#playerContainerWrapper')) qs('#playerContainerWrapper').classList.add('rm');
+      if(qs('#videoWrapper')) qs('#videoWrapper').classList.add('rm');
     };
     if(mph.find.yp) {
-      mph.find.mobile ? qs('.videoCta').prepend(vidFrame) : qs('.main_content').prepend(vidFrame);
       vid = win.page_params.video.playerParams;
-      if(!mph.find.mobile) {
+      if(mph.find.mobile) {
+        qs('.videoCta').prepend(vidFrame);
+        qs('.mgp_container').classList.add('rm');
+        vidFrame.setAttribute('style', 'position: absolute;top: 0;bottom: 0;left: 0;right: 0;');
+      } else {
+        qs('.main_content').prepend(vidFrame);
+        qs('#videoWrapper').classList.add('rm');
         vidFrame.setAttribute('style','min-height: 70vh !important;');
-      }
+      };
+    };
+    if(mph.find.mobile) {
+      vidFrame.classList.add('mph_mobile');
     };
   log('Old Player:',vs ?? vid);
   let altplayer = () => {
@@ -372,19 +292,6 @@ async function networkPlayer() {
       };
     };
     return vidParams;
-  },
-  verify = async (args) => {
-    if(mph.getItem('altplayers')) return 'cancel';
-    // if(mph.find.mobile && !mph.find.t8 && !mph.find.rt && !mph.find.yp) {
-    //   while(args === false) {
-    //     await new Promise(resolve => requestAnimationFrame(resolve))
-    //   };
-    //   return args;
-    // };
-    while(args === false || args === null) {
-      await new Promise(resolve => requestAnimationFrame(resolve))
-    };
-    return args;
   };
 if(mph.getItem('altplayers')) {
   if(win.Plyr) {
@@ -393,41 +300,6 @@ if(mph.getItem('altplayers')) {
     progressUpdate('[MagicPH] ERROR: Unable to create new Plyr (reload webpage)',5000);
   };
 } else {
-  if(mph.find.mobile) {
-    vidFrame.classList.add('mph_mobile');
-  };
-  if(mph.find.tz) {
-    // qs('.mgp_container').classList.add('rm');
-    vidFrame.classList.add('rm');
-    // qs('#fullsContainer').classList.add('rm');
-  } else if(mph.find.t8) {
-    if(qs('#playerContainerWrapper')) qs('#playerContainerWrapper').classList.add('rm');
-    if(qs('#videoWrapper')) qs('#videoWrapper').classList.add('rm');
-  } else if(mph.find.rt) {
-    qs('#redtube-player').classList.add('rm');
-    if(qs('.js_player_seek_trigger')) {
-      for(let i of qsA('.js_player_seek_trigger')) {
-        i.onclick = (e) => {
-          mph.halt(e);
-          phplayer.seek(i.dataset.seekTo, true);
-        }
-      };
-    };
-  } else if(mph.find.yp) {
-    if(mph.find.mobile) {
-      qs('.mgp_container').classList.add('rm');
-      vidFrame.setAttribute('style', 'position: absolute;top: 0;bottom: 0;left: 0;right: 0;');
-    } else {
-      qs('#videoWrapper').classList.add('rm');
-    };
-  } else if(mph.find.ph) {
-    if(qs('#player')) {
-      qs('#player').classList.add('bigp');
-    };
-  };
-  // else {
-  //   qs('.mgp_container').parentElement.parentElement.classList.add('rm');
-  // };
   if(!mph.find.ph) {
     if(!mph.find.tz) {
       win.MGP.createPlayer('playerframe',customPlayer(vid));
@@ -439,25 +311,27 @@ if(mph.getItem('altplayers')) {
   };
 };
 // phplayer.play();
-mph.info('Loading player...');
-let playerready = await verify(phplayer.isReady() ?? phplayer.isPlaying());
-// let playerready = await verify(phplayer.isReady() ?? phplayer.isPlaying());
-if(typeof playerready === 'string') { return };
+// phplayer.unmute();
 // phplayer.pause();
+mph.info('Wating for player...');
+if(mph.getItem('altplayers')) return;
+while(phplayer.isReady() == false) {
+  await new Promise(resolve => requestAnimationFrame(resolve))
+};
+mph.info('Player is ready.');
 if(mph.getItem('autojump') && mph.currentSite.jlMain && qs(mph.currentSite.jlMain)) {
-  let jlMain = qs(mph.currentSite.jlMain);
+  let r = '',
+  lslist = JSON.parse(mph.getItem('blacklist'));
   mph.info('Attempting to jump...');
-  let blacklist = mph.getItem('blacklist').toLocaleString(),
-  filter = jlMain.children[0].innerText.trim().includes(blacklist);
-  if(!filter) {
-    mph.find.mobile ? qs(mph.currentSite.jl).dispatchEvent(new Event('mouseup')) : qs(mph.currentSite.jl).click();
-  } else {
-    for(let jlist of qsA(mph.currentSite.jc)) {
-      let sortFilter = jlist.children[0].innerText.trim().includes(blacklist);
-      if(sortFilter) continue;
-      mph.find.mobile ? jlist.dispatchEvent(new Event('mouseup')) : jlist.click();
-      break;
-    };
+  for(let bl of lslist) {
+    r += `${bl}|`
+  };
+  let reg = new RegExp(r.slice(0,-1), 'gi');
+  for(let jlist of qsA(mph.currentSite.jc)) {
+    let sortFilter = jlist.textContent.match(reg) || [];
+    if(sortFilter.length > 0) continue;
+    mph.find.mobile ? jlist.dispatchEvent(new Event('mouseup')) : jlist.click();
+    break;
   };
   mph.info('Jumped!');
 } else {
@@ -466,6 +340,7 @@ if(mph.getItem('autojump') && mph.currentSite.jlMain && qs(mph.currentSite.jlMai
   mph.info('Skipped!');
 };
 phplayer.play();
+phplayer.unmute();
 if(mph.find.mobile) {
   qs('div.mgp_controls > div.mgp_qualitiesMenu') ? tablet() : mobile();
 } else {
@@ -561,7 +436,7 @@ function urlFN() {
 async function DownloadVideo(url,title = 'MagicPH') {
   try {
     mph.info('Attempting to download...');
-    let invalid_chars = {'\\': '＼', '\/': '／', '\|': '｜', '<': '＜', '>': '＞', ':': '：', '*': '＊', '?': '？', '"': '＂', '🔞': '', '#': ''},
+    let invalid_chars = {'\\': '＼', '/': '／', '|': '｜', '<': '＜', '>': '＞', ':': '：', '*': '＊', '?': '？', '"': '＂', '🔞': '', '#': ''},
     content = '',
     og_title = doc.title,
     response = await mph.fetchURL(url,'GET','basic'),
@@ -569,7 +444,7 @@ async function DownloadVideo(url,title = 'MagicPH') {
     contentLength = +response.headers.get('Content-Length'),
     receivedLength = 0,
     chunks = [];
-    content = title.replace(/[\\\/\|<>\*\?:#"]/g, v => invalid_chars[v]);
+    content = title.replace(/[\\/|<>*?:#"]/g, v => invalid_chars[v]);
     mph.info('Downloading...');
     if(win.opener != null) {
       phplayer.mute();
@@ -600,15 +475,93 @@ async function DownloadVideo(url,title = 'MagicPH') {
     win.URL.revokeObjectURL(dlBtn.href);
     doc.title = og_title;
     progressUpdate('[MagicPH] Download Complete!',5000);
-    mph.delay(5000).then(() => {
-      if(win.opener != null) {
-        // phplayer.unmute();
-        win.close();
-      };
-    });
     return mph.info('Downloaded!');
   } catch (e) {
     mph.err(e);
   }
 };
-preSetup();
+
+mph.fetchURL(doc.location.href,'GET','text').then((page) => {
+  let parser = new DOMParser(),
+  htmlDocument = parser.parseFromString(page,'text/html'),
+  selected = htmlDocument.documentElement,
+  temp = '';
+  if(doc.location.origin.includes('youporn')) {
+    mediaFiles = `${doc.location.origin}/api/video/media_definitions${document.location.href.match(/\/[0-9]+\//gi)}`
+  } else {
+    for(let script of qsA('script', selected)) {
+      let txt = script.textContent,
+      rtMedia = txt.match(/https:[\\/.?=0-9A-Z]+mp4[.?=0-9A-Z]+/gi),
+      t8Media = txt.match(/https:[\\/A-Z.]+tube8[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9]+/gi),
+      tzMedia = txt.match(/https:[\\/A-Z.]+thumbzilla[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9&]+/gi),
+      phMedia = txt.match(/media_[0-9]=+/gi),
+      phMobile = txt.match(/https:[\\/A-Z.]+pornhub[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9&]+/gi);
+      if(phMedia) {
+        let videosrc = phMedia || [],
+        rahd = txt.match(/var [A-Za-z0-9]+=[^;]+/gi) || [];
+        if(!videosrc) {
+          progressUpdate(`[MagicPH] ERROR: Unable to locate Pornhub video media file(s) [value: ${videosrc}]`,5000)
+        };
+        for(let r of rahd) {temp += `${r};`};
+        for(let i = 0; i < videosrc.length; i++) {
+          let re = new RegExp(`media_[${videosrc[i]}]=[0-9/*+=+\\w\\d\\s]+`, 'gi'),
+          b = txt.match(re) || [];
+          for(let fin of b) {
+            // eslint-disable-next-line no-unused-vars
+            let media_0,media_1,media_2,media_3,media_4,media_5,media_6,media_7,media_8,media_9,media_10;
+            mediaFiles = eval(`${temp} ${fin}`);
+          };
+        };
+        break;
+      };
+      if(phMobile) {
+        let videosrc = phMobile[0] || []
+        mediaFiles = videosrc.replaceAll('\\', '');
+        break;
+      };
+      if(rtMedia) {
+        let videosrc = rtMedia[0] || []
+        mediaFiles = videosrc.replaceAll('\\', '');
+        break;
+      };
+      if(t8Media) {
+        let videosrc = t8Media[0] || [];
+        mediaFiles = videosrc.replaceAll('\\', '');
+        break;
+      };
+      if(tzMedia) {
+        let videosrc = tzMedia[0] || [];
+        mediaFiles = videosrc.replaceAll('\\', '');
+        break;
+      };
+    };
+  };
+  for(let file of [mediaFiles]) {
+    if(file.includes('get_media?s=') || file.includes('media/mp4?s=') || file.includes('youporn') || file.includes('tube8')) {
+      mph.fetchURL(file,'GET','json').then((links) => {
+        for(let item of links) {
+          let q = item.quality.toLocaleString();
+          (q.match(/240/gi)) ? (q_240 = item.videoUrl) :
+          (q.match(/480/gi)) ? (q_480 = item.videoUrl) :
+          (q.match(/720/gi)) ? (q_720 = item.videoUrl) :
+          (q.match(/1080/gi)) ? (q_1080 = item.videoUrl) :
+          (q.match(/1440/gi)) ? (q_1440 = item.videoUrl) :
+          (q.match(/2160/gi)) ? (q_2160 = item.videoUrl) : q_err;
+          q_best = q_2160 ?? q_1440 ?? q_1080 ?? q_720 ?? q_480 ?? q_240 ?? item.videoUrl;
+        };
+        if(!q_240 || q_240 === '') {q_240 = q_err};
+        if(!q_480 || q_480 === '') {q_480 = q_err};
+        if(!q_720 || q_720 === '') {q_720 = q_err};
+        if(!q_1080 || q_1080 === '') {q_1080 = q_err};
+        if(!q_1440 || q_1440 === '') {q_1440 = q_err};
+        if(!q_2160 || q_2160 === '') {q_2160 = q_err};
+        if(!q_best || q_best === '') {q_best = q_1080 || q_720};
+        dContainer.innerHTML = `<div class="mgp_copyCloseDiv">
+        <div class="mgp_title">Video Quality(s)</div><div class="mgp_hideMenu" title="Close">🗙</div></div><ul><li><span>Best:</span><input value="${q_best ?? q_err}" type="url" size="70" id="urlAreaBest" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>240p:</span><input value="${q_240 ?? q_err}" type="url" size="70" id="urlArea1" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>480p:</span><input value="${q_480 ?? q_err}" type="url" size="70" id="urlArea2" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>720p:</span><input value="${q_720 ?? q_err}" type="url" size="70" id="urlArea3" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>1080p:</span><input value="${q_1080 ?? q_err}" type="url" size="70" id="urlArea4" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>1440p:</span><input value="${q_1440 ?? q_err}" type="url" size="70" id="urlArea5" class="mphURL" readonly></input>${dCopy}${dDownload}</li><li><span>2160p:</span><input value="${q_2160 ?? q_err}" type="url" size="70" id="urlArea6" class="mphURL" readonly></input>${dCopy}${dDownload}</li></ul>`;
+        networkPlayer();
+      }).catch(err);
+    } else {
+      progressUpdate(`[MagicPH] ERROR: Unable to locate video media file(s) [mediaFiles: "${mediaFiles}"]`,5000);
+    };
+  };
+});

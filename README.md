@@ -4,7 +4,7 @@
 [![GitHub release](https://img.shields.io/github/release/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/releases/latest)
 [![GitHub stars](https://img.shields.io/github/stars/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/stargazers)
 
-> (Optional) Install "adblocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme))
+> Recommended to install any "adblocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme))
 
 *Enhances adult viewing experience. Clean, easy, simple, and quick.*
 
@@ -24,7 +24,7 @@ Userscript | [Install (GitHub)](https://raw.githubusercontent.com/magicoflolis/M
 
 ## About
 
-> Repo still a work in progress
+> Repo still under construction
 
 MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICENSE) web extension with the goal of improving webpage navigation and *reducing distractions.*
 
@@ -42,6 +42,7 @@ MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICE
 * Automatically collapse comment + related videos section.
 * Automatically skips video player ahead by 4 seconds.
 * Automatically "Jump To" the first section of video.
+* "Jump To" can now be filtered.
 * "Scroll To Top" button.
 * "Recenter" video player button.
 
@@ -49,11 +50,17 @@ Website (Supported) | Verison (Default) | Verison (Mobile) | Verison (Premium) |
 :---------:|:-----------:|:-----------:|:---------:|
 Pornhub | ✅ | [Userscript](#magicph) | Not Tested |
 RedTube | ✅ | [Userscript](#magicph) | Not Tested |
-Tube8 | ✅ | [Userscript](#magicph) | Not Tested |
-Thumbzilla | ✅ | [Userscript](#magicph) | Not Tested |
+Tube8 | ✅ | [Userscript](#magicph) | - |
+Thumbzilla | ✅ | [Userscript](#magicph) | - |
 YouPorn | ✅ | [Userscript](#magicph) | Not Tested |
+Modelhub | Not supported | Not supported | - |
+Onlyfans (WIP) | ✅ | Not Tested | - |
 
 ## Support
+
+**Accessing "Sidebar":**
+
+* Click websites logo in the header. (usual located top left of the page)
 
 **Accessing "Video Quality(s)" / Video Downloader:**
 
@@ -106,19 +113,19 @@ YouPorn | ✅ | [Userscript](#magicph) | Not Tested |
 # Install dependencies
 npm i
 
-# [ Build ] Chrome + Firefox
-npm run build:Browsers
-# [ Build ] Individual
-npm run build:Chrome
-npm run build:Firefox
-npm run build:Userscript
-
 # [ Development ] Chrome + sass
 npm run Dev:Cr
 # [ Development ] Firefox + sass
 npm run Dev:FF
 # [ Development ] Userscript + sass + http-server (http://localhost:8080)
 npm run Dev:Userscript
+
+# [ Build ] Chrome + Firefox
+npm run build:Browsers
+# [ Build ] Individual
+npm run build:Chrome
+npm run build:Firefox
+npm run build:Userscript
 
 # [ Testing ]
 # Browsers can be launched via "Run and Debug" in VSCode.
@@ -129,7 +136,6 @@ npm run Dev:Userscript
 ### Roadmap
 
 * Header customization.
-* Black list "Jump To" tags.
 * Fix any bugs along the way.
 
 ### Contacts

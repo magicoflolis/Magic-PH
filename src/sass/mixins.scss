@@ -53,21 +53,14 @@ $hover: #464646;
 }
 
 @mixin favorites {
-  height: -webkit-fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
+  height: 100%;
   min-height: 100px;
-  max-height: 95%;
   right: 0px;
   background-color: $dark;
   display: grid;
-  grid-template-columns: auto repeat(4, 1fr) auto;
-  grid-column-gap: 1rem;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
   .wrap {
-    width: -webkit-min-content;
-    width: -moz-min-content;
-    width: min-content;
-    margin: 2%;
     img {
       cursor: pointer;
       width: 25rem;

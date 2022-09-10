@@ -1,8 +1,6 @@
 /* eslint-env node */
 const {merge} = require('webpack-merge'),
 CopyPlugin = require('copy-webpack-plugin'),
-// BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
-// webpackEnv = require('dotenv-webpack'),
 path = require('path'),
 // root = path.resolve(__dirname, '..'),
 TerserPlugin = require('terser-webpack-plugin'),
@@ -48,7 +46,6 @@ plugins = [
       },
     ],
   }),
-  // new webpackEnv(),
 ],
 commonConfig = {
   context: file('src'),
@@ -79,10 +76,6 @@ commonConfig = {
           },
         },
       },
-      // {
-      //   test: /\.html$/i,
-      //   loader: 'html-loader',
-      // },
     ],
   },
   resolve: {
@@ -148,8 +141,3 @@ module.exports = (env,args) => {
 // function log(...message) {
 //   console.log('[Webpack] ', ...message);
 // };
-// let analyzer = process.env.ANALYSE !== undefined;
-// if(analyzer) {
-//   plugins.push(new BundleAnalyzerPlugin())
-//   console.log(`BundleAnalyzerPlugin added`)
-// }

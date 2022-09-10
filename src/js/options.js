@@ -14,14 +14,12 @@ function main() {
   }
   ff.addEventListener("change", (e) => {
     let $el = /** @type {HTMLInputElement} */ (e.target);
-    $el.type == "checkbox"
-      ? (config[$el.name] = $el.checked)
-      : (config[$el.name] = $el.value);
-      let s = brws.runtime.sendMessage({
-        name: $el.name,
-        value: config[$el.name]
-      });
-      s.then(console.log,console.error);
+    $el.type == "checkbox" ? (config[$el.name] = $el.checked) : (config[$el.name] = $el.value);
+    let s = brws.runtime.sendMessage({
+      name: $el.name,
+      value: config[$el.name]
+    });
+    s.then(console.log,console.error);
   });
 }
 
