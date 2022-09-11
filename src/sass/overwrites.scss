@@ -33,14 +33,6 @@ html {
 body > .frontListingWrapper {
   @include container;
 };
-// html,
-// body {
-//   width: 100%;
-//   height: 100%;
-//   > .frontListingWrapper {
-//     @include container;
-//   };
-// }
 
 body.logged-out {
   .votes-fav-wrap,
@@ -78,6 +70,7 @@ li[class*="upsell"],
 [class*="footer"],
 [class*="promo"],
 [class*="trafficjunky"],
+[id*="_ads"],
 footer,
 search-list[label*="Trending"],
 .headerBtnsWrapper,
@@ -201,24 +194,14 @@ body.logged-out .underThumbButtons #playlistModal,
   height: 100% !important;
   width: 100% !important;
 }
-// .mgp_videoPoster {
-//   height: 98vh !important;
-//   width: 86% !important;
-//   top: 0 !important;
-//   left: 10% !important;
-// }
 .gifWebMWrapper {
   margin-bottom: 0 !important;
 }
 .video-wrapper,
 #player,
-#player.wide {
+.player {
   transition: all 0s !important;
 }
-// .video-wrapper.js-relatedRecommended {
-//   margin-top: 13% !important;
-//   margin-bottom: 0 !important;
-// }
 .leftPanel ul.discover:after {
   background: none !important;
 }

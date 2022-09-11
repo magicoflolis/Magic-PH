@@ -1,29 +1,19 @@
-@media screen and (min-width: 50rem) {
-  body > .mgp_downloadInfo {
-    li {
-      grid-template-columns: 50px 2fr 25px 25px !important;
-    }
-  };
-}
-.rm {
-  @include remover();
-};
-
 .mgp_videoStarted.mgp_hideControls .mgp_download {
   display: none;
 }
 
 .mph_progressContainer {
-  @include theme;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
+  background: #f90;
+  background-color: #000;
+  border: 2px solid #f90;
+  color: #f90;
   width: fit-content;
   height: auto;
   border-radius: 16px;
   margin: 0 3px;
   padding: 1px 5px 1px 5px;
-  position: -webkit-sticky;
-  position: sticky;
+  position: fixed;
+  display: none;
   top: 25%;
   left: 0%;
   z-index: 50000;
@@ -34,19 +24,6 @@
     font-weight: 700;
     margin: 0 3px;
     color: $theme !important;
-  };
-};
-
-.magicph-icon {
-  pointer-events: auto;
-  width: 2rem;
-  height: 1.25em;
-  fill: currentcolor;
-  line-height: 20px;
-  overflow-wrap: break-word;
-  white-space: nowrap;
-  g {
-    display: unset;
   };
 }
 
@@ -61,14 +38,8 @@
   left: 80%;
   right: 0;
   color: #ccc;
-  pointer-events: auto;
   cursor: pointer;
-  background-color: rgba(0,0,0,.7);
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
   width: fit-content;
-  height: -webkit-min-content;
-  height: -moz-min-content;
   height: min-content;
   z-index: 150;
   border-radius: 5px;
@@ -83,7 +54,7 @@ div.mgp_downloadInfo {
 
 .mgp_downloadInfo {
   ul {
-    padding: 2px 4px;
+    padding: 2px 4px !important;
   }
   li {
     display: grid;
@@ -112,11 +83,12 @@ div.mgp_downloadInfo {
     margin: auto;
     &:hover {
       color: $theme;
-      -webkit-text-decoration: 0;
-              text-decoration: 0;
+      text-decoration: 0;
     }
     .magicph-icon {
       position: relative;
+      height: 1.25em;
+      fill: currentcolor;
     }
   }
   &.mgp_active {
@@ -131,6 +103,16 @@ body > .mgp_downloadInfo {
   font-weight: 700;
   line-height: 25px;
   top: 25%;
+  li {
+    @media only screen
+    and (min-device-width: 375px)
+    and (max-device-width: 812px)
+    and (-webkit-min-device-pixel-ratio: 3)
+    and (orientation: landscape) {
+      grid-template-columns: 50px 2fr 25px 25px;
+    }
+  }
+
 }
 div.mgp_container > .mgp_downloadInfo {
   top: 46%;
@@ -160,14 +142,13 @@ div.mgp_container > .mgp_downloadInfo {
       font-size: 25px;
       float: right;
       cursor: pointer;
-      pointer-events: auto;
       padding: 5px;
     }
   }
-};
+}
 input[value^="[Error] Not Found"] {
   visibility: hidden !important;
-};
+}
 ul.mgp_switches > .mgp_download {
   display: grid !important;
   .magicph-icon {
@@ -179,5 +160,9 @@ ul.mgp_switches > .mgp_download {
     position: relative;
     top: 0px;
     transform: translate(-50%, 0%);
-  };
-};
+  }
+}
+
+.mgp_download .magicph-icon {
+  height: 1.25em;
+}

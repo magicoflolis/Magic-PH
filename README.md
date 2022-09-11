@@ -48,11 +48,11 @@ MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICE
 
 Website (Supported) | Verison (Default) | Verison (Mobile) | Verison (Premium) |
 :---------:|:-----------:|:-----------:|:---------:|
-Pornhub | ✅ | [Userscript](#magicph) | Not Tested |
-RedTube | ✅ | [Userscript](#magicph) | Not Tested |
-Tube8 | ✅ | [Userscript](#magicph) | - |
-Thumbzilla | ✅ | [Userscript](#magicph) | - |
-YouPorn | ✅ | [Userscript](#magicph) | Not Tested |
+Pornhub | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | Not Tested |
+RedTube | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | Not Tested |
+Tube8 | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | - |
+Thumbzilla | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | - |
+YouPorn | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | Not Tested |
 Modelhub | Not supported | Not supported | - |
 Onlyfans (WIP) | ✅ | Not Tested | - |
 

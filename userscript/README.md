@@ -8,6 +8,12 @@
 |:----------:|:----------:|:----------:|
 Stable | [(GitHub) Install](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/userscript/dist/magicph.user.js) | [Sleazy Fork](https://sleazyfork.org/scripts/445740)
 
+**(Optional) Mobile Bookmarklet:**
+
+```JS
+javascript:(function(){["https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/userscript/dist/magicph.user.js"].map( s => document.body.appendChild(document.createElement('script')).src=s)})();
+```
+
 ***
 
 ## About
@@ -26,18 +32,21 @@ NOTE:
 
 This uses the 'unsafeWindow' object.
 
-```javascript
-...
+```JS
 // @grant        unsafeWindow
 ```
 
+> PornMD not supported as it doesn't host videos.
+
 Website (Supported) | Verison (Default) | Verison (Mobile) | Verison (Premium) |
 :---------:|:-----------:|:-----------:|:---------:|
-Pornhub | ✅ | ✅ | UNTESTED |
-RedTube | ✅ | ✅ | UNTESTED |
-Tube8 | ✅ | ✅ | UNTESTED |
-Thumbzilla | ✅ | ✅ | UNTESTED |
-YouPorn | ✅ | ✅ | UNTESTED |
+Pornhub | ✅ | ✅ | Not Tested |
+RedTube | ✅ | ✅ | Not Tested |
+Tube8 | ✅ | ✅ | - |
+Thumbzilla | ✅ | ✅ | - |
+YouPorn | ✅ | ✅ | Not Tested |
+Modelhub | Not supported | Not supported | - |
+Onlyfans (Not supported yet) | - | - | - |
 
 **Accessing the Menu:**
 
@@ -48,7 +57,7 @@ YouPorn | ✅ | ✅ | UNTESTED |
 
 **Firefox Nightly Setup (Android):**
 
-> Mobile versions tested with an Emulator + Firefox Nightly + Tampermonkey. Toggle "Desktop site" if any problems emerge.
+> Mobile version tested on Firefox Nightly + Tampermonkey and Bromite. Toggle "Desktop site" if any problems occur.
 
 * Install [Firefox Nightly](https://play.google.com/store/apps/details?id=org.mozilla.fenix)
 * Settings > About Firefox Nightly > Tap the "Firefox Browser Nightly" logo till debug menu is enable.
@@ -60,9 +69,7 @@ YouPorn | ✅ | ✅ | UNTESTED |
 
 ## Bugs / Issues
 
-> PornMD not supported as it doesn't host videos.
-
-* Mobile versions may not work every time.
+* Results may vary
 
 ## Source Code
 

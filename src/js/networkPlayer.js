@@ -58,17 +58,17 @@ async function networkPlayer() {
     if(mph.find.ph) {
       vs = phplayer.settings();
       vid = vs;
-      if(qs('#player')) {
-        qs('#player').classList.add('bigp');
-      };
+      // if(qs('#player')) {
+      //   qs('#player').classList.add('bigp');
+      // };
     };
     if(mph.find.rt) {
       mph.find.mobile ? qs('#player-placeholder').prepend(vidFrame) : qs('#video_left_col').prepend(vidFrame);
       vs = win.page_params.video_player_setup;
       vid = vs[`playerDiv_${win.page_params.view_history.videoId}`].createPlayerSetup;
-      if(!mph.find.mobile) {
-        vidFrame.setAttribute('style','min-height: 70vh !important;');
-      };
+      // if(!mph.find.mobile) {
+      //   vidFrame.setAttribute('style','min-height: 70vh !important;');
+      // };
       qs('#redtube-player').classList.add('rm');
       if(qs('.js_player_seek_trigger')) {
         for(let i of qsA('.js_player_seek_trigger')) {
@@ -103,7 +103,7 @@ async function networkPlayer() {
       } else {
         qs('.main_content').prepend(vidFrame);
         qs('#videoWrapper').classList.add('rm');
-        vidFrame.setAttribute('style','min-height: 70vh !important;');
+        // vidFrame.setAttribute('style','min-height: 70vh !important;');
       };
     };
     if(mph.find.mobile) {

@@ -39,25 +39,20 @@
   font-family: inherit;
   outline: 0 none;
   text-align: left !important;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
   vertical-align: top;
   font-weight: 700;
   border-radius: 16px;
   margin: 0 3px;
   line-height: 25px;
   padding: 0 25px;
-  -webkit-text-decoration-style: solid;
-          text-decoration-style: solid;
-  -webkit-text-decoration-color: currentcolor;
-          text-decoration-color: currentcolor;
+  text-decoration-style: solid;
+  text-decoration-color: currentcolor;
   text-decoration-thickness: auto;
 
   &:hover {
     background: $hover;
-    -webkit-text-decoration: 0;
-            text-decoration: 0;
+    text-decoration: 0;
   }
 };
 
@@ -199,20 +194,21 @@ a.customize-header,
 .topHeader .magiclogo img {
   max-width: 8rem !important;
 };
+.mgp_mobile,
 .mph_mobile {
-  // top: 50.85px;
   min-height: 208px;
   max-height: 508px;
 };
-.altframe {
+.mgp_desktop:not(.bigp) {
   width: 100% !important;
   height: 100% !important;
   background: #000;
   position: relative;
   overflow: hidden;
   margin: auto;
-  &:not(.mph_mobile) {
-    min-height: 508px;
+  &:not(.mgp_mobile,.mph_mobile) {
+    min-height: 70vh !important;
+    // min-height: 508px;
   }
 }
 .plyr__video-wrapper > video{
@@ -234,6 +230,7 @@ a.customize-header,
   left: 0 !important;
   z-index: 1000 !important;
 }
+.video-wrapper > #player,
 .bigp {
   width: 100% !important;
   height: 92vh !important;
@@ -242,13 +239,6 @@ a.customize-header,
   min-height: 508px !important;
   padding-bottom: 0px !important;
 }
-// .bigp {
-//   width: max(98vw, 80vw) !important;
-//   height: max(92vh, 80vh) !important;
-//   margin: 1% !important;
-//   top: 0 !important;
-//   z-index: 1000 !important;
-// }
 .smolp {
   height: 360px !important;
   width: 640px !important;
@@ -358,6 +348,16 @@ body.mph .favorites#mobileContainer {
   }
 }
 
+.underThumbButtons .magicph-icon {
+  @media only screen and (orientation: portrait) {
+    transform: translate(50%, 50%);
+  }
+  @media only screen and (orientation: landscape) and (min-width: 600px)  {
+    transform: translate(50%, 50%);
+  }
+}
+
+.underThumbButtons .magicph-icon,
 .allActionsContainer .magicph-icon {
   fill: #c6c6c6;
 }
@@ -366,26 +366,37 @@ body.mph .favorites#mobileContainer {
   fill: #bbb;
 }
 
+.video_actions_container .magicph-fav.icon-wrapper {
+  margin: 0px !important;
+  .magicph-icon {
+    padding: 15px 8px;
+    font-size: 20px;
+  }
+}
+.video_actions_container .magicph-icon,
 .video_action_wrap .magicph-icon {
   fill: #fff;
 }
 
 .player-under-btns .magicph-fav.icon-wrapper {
-  margin: 0 !important;
+  margin: 0px !important;
   .magicph-icon {
     fill: #656565;
     width: 2rem !important;
+    @media only screen and (orientation: portrait) {
+      transform: translate(50%, -50%);
+    }
+    @media only screen and (orientation: landscape) and (min-width: 600px)  {
+      transform: translate(50%, -50%);
+    }
   }
-}
-.magicph-icon {
-  width: 1.5rem;
-  height: auto;
 }
 .magicph-fav.icon-wrapper {
   margin: auto;
   float: left;
   cursor: pointer;
   white-space: nowrap;
+  width: 1.5rem;
   height: auto;
   color: #c6c6c6;
   span {
@@ -395,6 +406,9 @@ body.mph .favorites#mobileContainer {
     padding-left: 10px;
     padding-top: 3px;
     float: right;
+  }
+  .magicph-icon {
+    display: block;
   }
 }
 

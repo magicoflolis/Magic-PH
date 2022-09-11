@@ -12,7 +12,7 @@
   "scripts": {
     "Dev:FF": "concurrently \"npm run Webpack:FF\" \"npm run Dev:Sass\"",
     "Dev:Cr": "concurrently \"npm run Webpack:Cr\" \"npm run Dev:Sass\"",
-    "Dev:Userscript": "npm --prefix ./userscript run dev:Start",
+    "Dev:Userscript": "npm --prefix ./userscript run dev",
     "Dev:Sass": "sass -w ./src/sass/magicph.scss:./tests/compiled/magicph.css ./src/sass/downloader.scss:./tests/compiled/downloader.css ./src/sass/plyr/plyr.scss:./tests/compiled/plyr.css -s compressed",
     "web-run:firefox-android": "web-ext run --config=./tools/web-ext-firefox.js -t firefox-android --firefox-apk org.mozilla.firefox",
     "Webpack:FF": "webpack --progress --mode development --config=webpackConfig/webpack.config.js --node-env firefox",
