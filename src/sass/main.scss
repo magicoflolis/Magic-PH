@@ -7,9 +7,8 @@
 .magicBlur {
   video.lazyVideo,
   img.js-menuSwap,
-  img.lazy,
-  img.js-lazy,
-  img.thumb {
+  img[data-src],
+  img[data-thumb_url] {
     -webkit-filter: blur(15px) !important;
     filter: blur(15px) !important;
   }
@@ -207,7 +206,7 @@ a.customize-header,
   overflow: hidden;
   margin: auto;
   &:not(.mgp_mobile,.mph_mobile) {
-    min-height: 70vh !important;
+    min-height: 80vh !important;
     // min-height: 508px;
   }
 }
@@ -486,18 +485,4 @@ iframe.vframe {
     margin: 0 3px;
     color: $theme !important;
   };
-}
-
-.mph_ofsContainer {
-  display: grid;
-  grid-auto-flow: column;
-  margin: auto;
-  width: 12%;
-  position: fixed;
-  background-color: inherit;
-  color: inherit;
-  bottom: 2%;
-  cursor: pointer;
-  padding: 2px 4px;
-  z-index: 50000;
 }

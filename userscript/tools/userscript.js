@@ -55,6 +55,7 @@ buildUserJS = (evt, name) => {
 // @match        https://*.redtubepremium.com/*
 // @match        https://*.tube8.com/porn-video/*
 // @match        https://*.thumbzilla.com/video/*
+// @match        https://onlyfans.com/*
 // @grant        unsafeWindow
 // @noframes
 // @compatible   Chrome

@@ -166,3 +166,17 @@ ul.mgp_switches > .mgp_download {
 .mgp_download .magicph-icon {
   height: 1.25em;
 }
+
+.mph_ofsContainer {
+  display: grid;
+  grid-auto-flow: column;
+  margin: auto;
+  width: 12%;
+  position: fixed;
+  background-color: inherit;
+  color: inherit;
+  bottom: 2%;
+  cursor: pointer;
+  padding: 2px 4px;
+  z-index: 50000;
+}

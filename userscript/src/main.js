@@ -11,6 +11,7 @@ err = (...error) => {
   };
 },
 l = {
+  ofs: doc.location.origin.includes('onlyfans'),
   ph: doc.location.origin.includes('pornhub') && doc.location.pathname.match(/view_video/gi),
   rt: doc.location.origin.includes('redtube') && doc.location.pathname.match(/[0-9]+/gi),
   t8: doc.location.origin.includes('tube8') && doc.location.pathname.match(/porn-video[/0-9]+/gi),
@@ -52,6 +53,12 @@ delay = (ms) => new Promise(resolve => setTimeout(resolve, ms)),
 halt = (e) => {
   e.preventDefault();
   e.stopPropagation();
+},
+observe = (element, callback, options = {subtree:true,childList:true}) => {
+  let observer = new MutationObserver(callback);
+  callback([], observer);
+  observer.observe(element, options);
+  return observer;
 },
 fetchURL = async (url,method = 'GET',responseType = 'json',params = {}) => {
   try {
@@ -108,6 +115,17 @@ dl = make('h1','mph_progress'),
 dlContainer = make('div','mph_progressContainer'),
 dlBtn = make('a','mph_Downloader'),
 dContainer = make('div','mgp_downloadInfo'),
+ofsContainer = make('div','mph_ofsContainer', {
+  style: 'display: none;',
+}),
+ofsdwn = make('div','mph_ofs_dwn', {
+  title: 'Download all available videos',
+  innerHTML: 'Download All',
+}),
+ofscopy = make('div','mph_ofs_fav', {
+  title: 'Copy all available videos to clipboard',
+  innerHTML: 'Copy',
+}),
 msg = (message,time) => {
   dlContainer.style = 'display: block;';
   dl.innerText = message;
@@ -143,93 +161,159 @@ async function setup() {
     info('isMobile',isMobile());
     dlContainer.append(dl);
     doc.body.prepend(dlContainer);
-    let page = await fetchURL(doc.location.href,'GET','text'),
-    parser = new DOMParser(),
-    htmlDocument = parser.parseFromString(page,'text/html'),
-    selected = htmlDocument.documentElement,
-    temp = '';
-    if(doc.location.origin.includes('youporn')) {
-      mediaFiles = `${doc.location.origin}/api/video/media_definitions${document.location.href.match(/\/[0-9]+\//gi)}`
-    } else {
-      for(let scr of qsA('script', selected)) {
-        let txt = scr.innerHTML,
-        rtMedia = txt.match(/https:[\\/.?=0-9A-Z]+mp4[.?=0-9A-Z]+/gi),
-        t8Media = txt.match(/https:[\\/A-Z.]+tube8[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9]+/gi),
-        tzMedia = txt.match(/https:[\\/A-Z.]+thumbzilla[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9&]+/gi),
-        phMedia = txt.match(/media_[0-9]=+/gi),
-        phMobile = txt.match(/https:[\\/A-Z.]+pornhub[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9&]+/gi);
-        info(phMedia);
-        if(phMedia) {
-          let videosrc = phMedia || [],
-          rahd = txt.match(/var [A-Za-z0-9]+=[^;]+/gi) || [];
-          if(!videosrc) {
-            msg(`[MagicPH] ERROR: Unable to locate Pornhub video media file(s) [value: ${videosrc}]`,5000)
-          };
-          for(let r of rahd) {temp += `${r};`};
-          for(let i = 0; i < videosrc.length; i++) {
-            let re = new RegExp(`media_[${videosrc[i]}]=[0-9/*+=+\\w\\d\\s]+`, 'gi'),
-            b = txt.match(re) || [];
-            for(let fin of b) {
+    if(l.ofs) {
+      let videos = [],
+      preTitle = '';
+      observe(win.document.documentElement, (mutations) => {
+        try {
+          for(let mutation of mutations) {
+            for(let node of mutation.addedNodes) {
+              if (!(node instanceof HTMLElement)) continue;
+              for(let elem of node.querySelectorAll('source')) {
+                let canPush = true;
+                ofsContainer.setAttribute('style','');
+                for(const vid of videos) {
+                  if(vid.title !== elem.parentElement.getAttribute('id')) continue;
+                  canPush = false;
+                };
+                if(canPush && preTitle !== elem.parentElement.getAttribute('id')) {
+                  preTitle = elem.parentElement.getAttribute('id');
+                  videos.push({
+                    src: elem.getAttribute('src'),
+                    title: elem.parentElement.getAttribute('id'),
+                  },);
+                  info('Added to list:',videos);
+                };
+              };
+            };
+            for(let node of mutation.removedNodes) {
+              if (!(node instanceof HTMLElement)) continue;
               // eslint-disable-next-line no-unused-vars
-              let media_0,media_1,media_2,media_3,media_4,media_5,media_6,media_7,media_8,media_9,media_10;
-              mediaFiles = eval(`${temp} ${fin}`);
+              for(let elem of node.querySelectorAll('source')) {
+                ofsContainer.setAttribute('style','display: none;');
+              };
             };
           };
-          break;
+        } catch(error) {err(error)}
+      });
+      ael(ofsdwn,'click', async (e) => {
+        halt(e);
+        info('Downloading...',videos);
+        preTitle = '';
+        for(const vid of videos) {
+          // eslint-disable-next-line no-undef
+          if(Limit_Downloads || videos.length > 16 || isMobile()) {
+            await DownloadVideo(vid.src,vid.title);
+          } else {
+            DownloadVideo(vid.src,vid.title);
+          };
+          videos.splice(videos.indexOf(vid),1);
         };
-        if(phMobile) {
-          let videosrc = phMobile[0] || []
-          mediaFiles = videosrc.replaceAll('\\', '');
-          break;
+      });
+      ael(ofscopy,'click', (e) => {
+        halt(e);
+        let data = '';
+        for(const vid of videos) {
+          data += `${vid.src}
+`;
         };
-        if(rtMedia) {
-          let videosrc = rtMedia[0] || []
-          mediaFiles = videosrc.replaceAll('\\', '');
-          break;
-        };
-        if(t8Media) {
-          let videosrc = t8Media[0] || [];
-          mediaFiles = videosrc.replaceAll('\\', '');
-          break;
-        };
-        if(tzMedia) {
-          let videosrc = tzMedia[0] || [];
-          mediaFiles = videosrc.replaceAll('\\', '');
-          break;
-        };
-      };
-    };
-    if(mediaFiles) {
-      for(let file of [mediaFiles]) {
-        if(file.includes('get_media?s=') || file.includes('media/mp4?s=') || file.includes('youporn') || file.includes('tube8')) {
-          fetchURL(file,'GET','json').then((links) => {
-            for(let item of links) {
-              let q = item.quality.toLocaleString();
-              (q.match(/240/gi)) ? (q_240 = item.videoUrl) :
-              (q.match(/480/gi)) ? (q_480 = item.videoUrl) :
-              (q.match(/720/gi)) ? (q_720 = item.videoUrl) :
-              (q.match(/1080/gi)) ? (q_1080 = item.videoUrl) :
-              (q.match(/1440/gi)) ? (q_1440 = item.videoUrl) :
-              (q.match(/2160/gi)) ? (q_2160 = item.videoUrl) : q_err;
-              q_best = q_2160 ?? q_1440 ?? q_1080 ?? q_720 ?? q_480 ?? q_240 ?? item.videoUrl;
-            };
-            if(!q_240 || q_240 === '') {q_240 = q_err};
-            if(!q_480 || q_480 === '') {q_480 = q_err};
-            if(!q_720 || q_720 === '') {q_720 = q_err};
-            if(!q_1080 || q_1080 === '') {q_1080 = q_err};
-            if(!q_1440 || q_1440 === '') {q_1440 = q_err};
-            if(!q_2160 || q_2160 === '') {q_2160 = q_err};
-            if(!q_best || q_best === '') {q_best = q_1080 || q_720};
-            dContainer.innerHTML = `<div class='mgp_copyCloseDiv'><div class='mgp_title'>Video Quality(s)</div><div class='mgp_hideMenu' title='Close'>🗙</div></div><ul><li><span>Best:</span><input value='${q_best ?? q_err}' type='url' size='70' id='urlAreaBest' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>240p:</span><input value='${q_240 ?? q_err}' type='url' size='70' id='urlArea1' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>480p:</span><input value='${q_480 ?? q_err}' type='url' size='70' id='urlArea2' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>720p:</span><input value='${q_720 ?? q_err}' type='url' size='70' id='urlArea3' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>1080p:</span><input value='${q_1080 ?? q_err}' type='url' size='70' id='urlArea4' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>1440p:</span><input value='${q_1440 ?? q_err}' type='url' size='70' id='urlArea5' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>2160p:</span><input value='${q_2160 ?? q_err}' type='url' size='70' id='urlArea6' class='mphURL' readonly></input>${dCopy}${dDownload}</li></ul>`;
-            networkPlayer();
-          }).catch(err);
-        } else {
-          msg(`[MagicPH] ERROR: Unable to locate video media file(s) [mediaFiles: { ${mediaFiles} }]`,5000);
-        };
+        setClipboard(data,() => {
+          msg('[MagicPH] Copied URLs to Clipboard',2500)
+        });
+      });
+      if(!doc.body.contains(ofsContainer)) {
+        ofsContainer.append(ofsdwn,ofscopy);
+        doc.body.prepend(ofsContainer);
       };
     } else {
-      msg(`[MagicPH] ERROR: Unable to locate video media file(s) from page [mediaFiles: { ${mediaFiles} }]`,5000);
-    }
+      let page = await fetchURL(doc.location.href,'GET','text'),
+      parser = new DOMParser(),
+      htmlDocument = parser.parseFromString(page,'text/html'),
+      selected = htmlDocument.documentElement,
+      temp = '';
+      if(doc.location.origin.includes('youporn')) {
+        mediaFiles = `${doc.location.origin}/api/video/media_definitions${document.location.href.match(/\/[0-9]+\//gi)}`
+      } else {
+        for(let scr of qsA('script', selected)) {
+          let txt = scr.innerHTML,
+          rtMedia = txt.match(/https:[\\/.?=0-9A-Z]+mp4[.?=0-9A-Z]+/gi),
+          t8Media = txt.match(/https:[\\/A-Z.]+tube8[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9]+/gi),
+          tzMedia = txt.match(/https:[\\/A-Z.]+thumbzilla[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9&]+/gi),
+          phMedia = txt.match(/media_[0-9]=+/gi),
+          phMobile = txt.match(/https:[\\/A-Z.]+pornhub[\\/_.?=A-Z0-9]+media[\\/_.?=A-Z0-9&]+/gi);
+          info(phMedia);
+          if(phMedia) {
+            let videosrc = phMedia || [],
+            rahd = txt.match(/var [A-Za-z0-9]+=[^;]+/gi) || [];
+            if(!videosrc) {
+              msg(`[MagicPH] ERROR: Unable to locate Pornhub video media file(s) [value: ${videosrc}]`,5000)
+            };
+            for(let r of rahd) {temp += `${r};`};
+            for(let i = 0; i < videosrc.length; i++) {
+              let re = new RegExp(`media_[${videosrc[i]}]=[0-9/*+=+\\w\\d\\s]+`, 'gi'),
+              b = txt.match(re) || [];
+              for(let fin of b) {
+                // eslint-disable-next-line no-unused-vars
+                let media_0,media_1,media_2,media_3,media_4,media_5,media_6,media_7,media_8,media_9,media_10;
+                mediaFiles = eval(`${temp} ${fin}`);
+              };
+            };
+            break;
+          };
+          if(phMobile) {
+            let videosrc = phMobile[0] || []
+            mediaFiles = videosrc.replaceAll('\\', '');
+            break;
+          };
+          if(rtMedia) {
+            let videosrc = rtMedia[0] || []
+            mediaFiles = videosrc.replaceAll('\\', '');
+            break;
+          };
+          if(t8Media) {
+            let videosrc = t8Media[0] || [];
+            mediaFiles = videosrc.replaceAll('\\', '');
+            break;
+          };
+          if(tzMedia) {
+            let videosrc = tzMedia[0] || [];
+            mediaFiles = videosrc.replaceAll('\\', '');
+            break;
+          };
+        };
+      };
+      if(mediaFiles) {
+        for(let file of [mediaFiles]) {
+          if(file.includes('get_media?s=') || file.includes('media/mp4?s=') || file.includes('youporn') || file.includes('tube8')) {
+            fetchURL(file,'GET','json').then((links) => {
+              for(let item of links) {
+                let q = item.quality.toLocaleString();
+                (q.match(/240/gi)) ? (q_240 = item.videoUrl) :
+                (q.match(/480/gi)) ? (q_480 = item.videoUrl) :
+                (q.match(/720/gi)) ? (q_720 = item.videoUrl) :
+                (q.match(/1080/gi)) ? (q_1080 = item.videoUrl) :
+                (q.match(/1440/gi)) ? (q_1440 = item.videoUrl) :
+                (q.match(/2160/gi)) ? (q_2160 = item.videoUrl) : q_err;
+                q_best = q_2160 ?? q_1440 ?? q_1080 ?? q_720 ?? q_480 ?? q_240 ?? item.videoUrl;
+              };
+              if(!q_240 || q_240 === '') {q_240 = q_err};
+              if(!q_480 || q_480 === '') {q_480 = q_err};
+              if(!q_720 || q_720 === '') {q_720 = q_err};
+              if(!q_1080 || q_1080 === '') {q_1080 = q_err};
+              if(!q_1440 || q_1440 === '') {q_1440 = q_err};
+              if(!q_2160 || q_2160 === '') {q_2160 = q_err};
+              if(!q_best || q_best === '') {q_best = q_1080 || q_720};
+              dContainer.innerHTML = `<div class='mgp_copyCloseDiv'><div class='mgp_title'>Video Quality(s)</div><div class='mgp_hideMenu' title='Close'>🗙</div></div><ul><li><span>Best:</span><input value='${q_best ?? q_err}' type='url' size='70' id='urlAreaBest' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>240p:</span><input value='${q_240 ?? q_err}' type='url' size='70' id='urlArea1' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>480p:</span><input value='${q_480 ?? q_err}' type='url' size='70' id='urlArea2' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>720p:</span><input value='${q_720 ?? q_err}' type='url' size='70' id='urlArea3' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>1080p:</span><input value='${q_1080 ?? q_err}' type='url' size='70' id='urlArea4' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>1440p:</span><input value='${q_1440 ?? q_err}' type='url' size='70' id='urlArea5' class='mphURL' readonly></input>${dCopy}${dDownload}</li><li><span>2160p:</span><input value='${q_2160 ?? q_err}' type='url' size='70' id='urlArea6' class='mphURL' readonly></input>${dCopy}${dDownload}</li></ul>`;
+              networkPlayer();
+            }).catch(err);
+          } else {
+            msg(`[MagicPH] ERROR: Unable to locate video media file(s) [mediaFiles: { ${mediaFiles} }]`,5000);
+          };
+        };
+      } else {
+        msg(`[MagicPH] ERROR: Unable to locate video media file(s) from page [mediaFiles: { ${mediaFiles} }]`,5000);
+      }
+    };
   } catch (e) {
     err(e)
   };

@@ -11,14 +11,14 @@ Stable | [(GitHub) Install](https://raw.githubusercontent.com/magicoflolis/Magic
 **(Optional) Mobile Bookmarklet:**
 
 ```JS
-javascript:(function(){["https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/userscript/dist/magicph.user.js"].map( s => document.body.appendChild(document.createElement('script')).src=s)})();
+javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/userscript/dist/magicph.user.js'].map( s => document.body.appendChild(document.createElement('script')).src=s)})();
 ```
 
 ***
 
 ## About
 
-This UserScipt is a small part of a webextension I am currently developing. [https://github.com/magicoflolis/Magic-PH](https://github.com/magicoflolis/Magic-PH)
+This UserJS is a slim down version of 'networkPlayer.js' from my webextension I am currently developing. [https://github.com/magicoflolis/Magic-PH](https://github.com/magicoflolis/Magic-PH)
 
 **Features:**
 
@@ -40,15 +40,29 @@ This uses the 'unsafeWindow' object.
 
 Website (Supported) | Verison (Default) | Verison (Mobile) | Verison (Premium) |
 :---------:|:-----------:|:-----------:|:---------:|
-Pornhub | ✅ | ✅ | Not Tested |
-RedTube | ✅ | ✅ | Not Tested |
-Tube8 | ✅ | ✅ | - |
+Modelhub | Unsupported | Unsupported | - |
+OnlyFans | ✅ | ✅ | - |
+Pornhub | ✅ | ✅ | Untested |
+RedTube | ✅ | ✅ | Untested |
 Thumbzilla | ✅ | ✅ | - |
-YouPorn | ✅ | ✅ | Not Tested |
-Modelhub | Not supported | Not supported | - |
-Onlyfans (Not supported yet) | - | - | - |
+Tube8 | ✅ | ✅ | - |
+YouPorn | ✅ | ✅ | Untested |
+
+**OnlyFans Usage:**
+
+* Play any video on the page to bring up the bottom left menu or navigate to a Users video page.
+* IMPORTANT: This UserJS will store available videos and push them into an "Array".
+* IMPORTANT: Once "Download All" is pressed ALL videos still within the "Array" will be downloaded, video(s) will be removed from "Array" AFTER download(s) are complete.
+* IMPORTANT: Downloads will be handled simultaneously IF there are less than 16 videos in the "Array" OR on a mobile device. If "Array" > 16, then downloads will be handled one at a time.
+* Simultaneous downloads can be turned off by editing this variable.
+
+```JS
+let Limit_Downloads = false; // true to disable simultaneous downloads
+```
 
 **Accessing the Menu:**
+
+> Not for OnlyFans
 
 * [Desktop/Tablet/Mobile] Right click anywhere inside the video player.
 * [Tablet/Mobile] Press "Video Quality(s)" in the video player.
