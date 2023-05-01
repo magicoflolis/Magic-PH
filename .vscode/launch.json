@@ -17,17 +17,38 @@
       "type": "firefox",
       "request": "launch",
       "clearConsoleOnReload": true,
-      "reAttach": true,
+      "reAttach": false,
       "reloadOnAttach": true,
-      "reloadOnChange": "${workspaceFolder}/src/js/**",
       "url": "https://pornhub.com/",
       "addonPath": "${workspaceFolder}\\tests\\firefox",
+      "reloadOnChange": {
+        "watch": [
+          "${workspaceFolder}/src/**"
+        ],
+        "ignore": [
+          "${workspaceFolder}/node_modules/**"
+        ]
+      },
       "pathMappings": [
+        {
+          "url": "moz-extension://a1715261-6d13-462e-b10e-1d4f4f2cf103",
+          "path": "${workspaceFolder}/src"
+        },
         {
           "url": "webpack:///js",
           "path": "${workspaceFolder}/src/js"
+        },
+        {
+          "url": "webpack:///src/",
+          "path": "${webRoot}/src/"
         }
-      ]
+      ],
+      "log": {
+        "fileName": "${workspaceFolder}/log.txt",
+        "fileLevel": {
+          "default": "Debug"
+        }
+      }
     },
     {
       "type": "chrome",

@@ -6,85 +6,87 @@ body.mph {
   color: $white;
 }
 
-form.magicph_bl,
-form.magicph_cfg {
-  font-size: 1.25em;
-  section {
-    border: 1px solid $hover;
-    background-color: $dark;
-    color: #fff;
-    &.checkbox>label,
-    &.checkboxlist>label,
-    &.select,
-    &.mph {
-      display: flex;
-      justify-content: space-between;
-      padding: .825em;
+form {
+  .magicph_bl,
+  .magicph_cfg {
+    font-size: 1.25em;
+    section {
+      border: 1px solid $hover;
+      background-color: $dark;
+      color: #fff;
+      &.checkbox > label,
+      &.checkboxlist > label,
+      &.select,
+      &.mph {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.825em;
+      }
+      &.checkbox > label,
+      &.checkboxlist > label {
+        cursor: pointer;
+      }
+      &.checkboxlist {
+        padding-left: 0.825em;
+        padding-bottom: 0.5em;
+        label {
+          padding-top: 0.5em;
+          padding-bottom: 0.5em;
+        }
+        p {
+          margin-bottom: 0.5em;
+        }
+      }
+      [id='seektime'] {
+        width: 50px;
+        text-align: center;
+      }
     }
-    &.checkbox>label,
-    &.checkboxlist>label {
-      cursor: pointer;
-    }
-    &.checkboxlist {
-      padding-left: .825em;
-      padding-bottom: .5em;
-      label {
-        padding-top: .5em;
-        padding-bottom: .5em;
-      };
-      p {
-        margin-bottom: .5em;
-      };
-    };
-    #seektime {
-      width: 50px;
-      text-align: center;
-    };
-  };
-  .switch {
-    position: relative;
-    width: 38px;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    margin: 5px;
-    > input {
-      display: none;
-    }
-    > label {
-      display: block;
-      overflow: hidden;
-      cursor: pointer;
-      height: 16px;
-      padding: 0;
-      line-height: 16px;
-      border: 1px solid $dark;
-      border-radius: 20px;
-      background-color: $hover;
-      &:before {
-        content: "";
+    .switch {
+      position: relative;
+      width: 38px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      margin: 5px;
+      > input {
+        display: none;
+      }
+      > label {
         display: block;
-        width: 20px;
-        height: 20px;
-        margin: -2px;
-        background: #DADCE0;
-        position: absolute;
-        top: 0;
-        right: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        height: 16px;
+        padding: 0;
+        line-height: 16px;
+        border: 1px solid $dark;
         border-radius: 20px;
+        background-color: $hover;
+        &:before {
+          content: '';
+          display: block;
+          width: 20px;
+          height: 20px;
+          margin: -2px;
+          background: #dadce0;
+          position: absolute;
+          top: 0;
+          right: 20px;
+          border-radius: 20px;
+        }
+      }
+      > input:checked + label {
+        margin-left: 0;
+        background-color: rgba(255, 153, 0, 0.568);
+        &:before {
+          right: 0px;
+          background-color: $theme;
+        }
       }
     }
-    > input:checked+label {
-      margin-left: 0;
-      background-color: rgba(255, 153, 0, 0.568);
-      &:before {
-        right: 0px;
-        background-color: $theme;
-      }
-    }
-  };
-};
+  }
+}
 
 .magic-popup {
   transition: top 200ms ease-in-out 200ms;
@@ -95,7 +97,7 @@ form.magicph_cfg {
   z-index: 10;
   overflow-x: auto;
   top: 100vh;
-  #popupContainer {
+  [id='popupContainer'] {
     display: none;
     overflow-y: auto;
   }
@@ -115,10 +117,10 @@ form.magicph_cfg {
   .home {
     > div.sectionWrapper,
     > div.frontListingWrapper,
-    > #content_container,
-    > #home_page_wrapper,
-    > #content,
-    > .clearfix, {
+    > [id='content'],
+    > [id='content_container'],
+    > [id='home_page_wrapper'],
+    > .clearfix {
       @include taste;
     }
   }
@@ -149,7 +151,7 @@ form.magicph_cfg {
     }
   }
   .categories {
-    #categoriesListSection {
+    [id='categoriesListSection'] {
       @include theme;
       height: 100%;
       position: fixed;
@@ -158,7 +160,7 @@ form.magicph_cfg {
       overflow-x: auto;
     }
   }
-  #popupContainer form {
+  [id='popupContainer'] form {
     height: 100%;
     position: fixed;
     z-index: 10;

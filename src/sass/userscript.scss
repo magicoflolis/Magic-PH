@@ -7,6 +7,8 @@
   background-color: #000;
   border: 2px solid #f90;
   color: #f90;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
   height: auto;
   border-radius: 16px;
@@ -24,12 +26,12 @@
     font-weight: 700;
     margin: 0 3px;
     color: $theme !important;
-  };
+  }
 }
 
 .mgp_contextMenu > .mgp_content > .mgp_download {
-  border-bottom: 1px solid rgba(255,255,255,.2) !important;
-};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
 
 .mgp_controls > .mgp_download {
   position: absolute;
@@ -39,11 +41,15 @@
   right: 0;
   color: #ccc;
   cursor: pointer;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
+  height: -webkit-min-content;
+  height: -moz-min-content;
   height: min-content;
   z-index: 150;
   border-radius: 5px;
-  background-color: rgba(0,0,0,.7);
+  background-color: rgba(0, 0, 0, 0.7);
   padding: 8px 10px;
 }
 
@@ -53,12 +59,30 @@ div.mgp_downloadInfo {
 }
 
 .mgp_downloadInfo {
+  color: #ccc;
+  .mgp_title {
+    font-size: 16px;
+    line-height: 30px;
+    padding: 0 0 0 5px;
+    float: left;
+  }
+  .mgp_hideMenu {
+    cursor: pointer !important;
+    font-size: 25px;
+    float: right;
+    padding: 5px;
+  }
+  .mgp_copyCloseDiv {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    padding: 2px 4px;
+  }
   ul {
     padding: 2px 4px !important;
   }
   li {
-    display: grid;
-    grid-auto-flow: column;
+    display: flex;
+    flex-wrap: wrap;
     margin: auto;
     width: 100%;
   }
@@ -71,11 +95,7 @@ div.mgp_downloadInfo {
     text-align: center;
     outline: 0 none;
     background: transparent;
-    border: none;
-    margin: auto;
-  }
-  span {
-    width: 45px;
+    border: 0;
     margin: auto;
   }
   a.suggestToggleAlt {
@@ -83,6 +103,7 @@ div.mgp_downloadInfo {
     margin: auto;
     &:hover {
       color: $theme;
+      -webkit-text-decoration: 0;
       text-decoration: 0;
     }
     .magicph-icon {
@@ -91,11 +112,10 @@ div.mgp_downloadInfo {
       fill: currentcolor;
     }
   }
-  &.mgp_active {
-    opacity: 1 !important;
-    visibility: visible !important;
+  &:not(.mgp_active) {
+    display: none !important;
   }
-};
+}
 
 body > .mgp_downloadInfo {
   font-size: 16px;
@@ -103,16 +123,15 @@ body > .mgp_downloadInfo {
   font-weight: 700;
   line-height: 25px;
   top: 25%;
-  li {
-    @media only screen
-    and (min-device-width: 375px)
-    and (max-device-width: 812px)
-    and (-webkit-min-device-pixel-ratio: 3)
-    and (orientation: landscape) {
-      grid-template-columns: 50px 2fr 25px 25px;
-    }
-  }
-
+  // li {
+  //   @media only screen
+  //   and (min-device-width: 375px)
+  //   and (max-device-width: 812px)
+  //   and (-webkit-min-device-pixel-ratio: 3)
+  //   and (orientation: landscape) {
+  //     grid-template-columns: 50px 2fr 25px 25px;
+  //   }
+  // }
 }
 div.mgp_container > .mgp_downloadInfo {
   top: 46%;
@@ -120,33 +139,21 @@ div.mgp_container > .mgp_downloadInfo {
 body > .mgp_downloadInfo,
 div.mgp_container > .mgp_downloadInfo {
   z-index: 2000;
-  background: rgba(0,0,0,.75);
+  background: rgba(0, 0, 0, 0.75);
   position: absolute;
   left: 50%;
-  transition: opacity .2s linear;
+  transition: opacity 0.2s linear;
   transform: translate(-50%, -50%);
   opacity: 0;
   visibility: hidden;
   color: #ccc;
-  > .mgp_copyCloseDiv {
-    border-bottom: 1px solid rgba(255,255,255,.2);
-    overflow: hidden;
-    padding: 2px 4px;
-    > .mgp_title {
-      font-size: 16px;
-      line-height: 30px;
-      padding: 0 0 0 5px;
-      float: left;
-    }
-    > .mgp_hideMenu {
-      font-size: 25px;
-      float: right;
-      cursor: pointer;
-      padding: 5px;
-    }
-  }
+  // > .mgp_copyCloseDiv {
+  //   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  //   overflow: hidden;
+  //   padding: 2px 4px;
+  // }
 }
-input[value^="[Error] Not Found"] {
+input[value^='[Error] Not Found'] {
   visibility: hidden !important;
 }
 ul.mgp_switches > .mgp_download {
@@ -165,6 +172,19 @@ ul.mgp_switches > .mgp_download {
 
 .mgp_download .magicph-icon {
   height: 1.25em;
+}
+
+.xp-context-menu .mgp_download {
+  color: #a0a0a0;
+  cursor: pointer;
+  font-family: ArialMT,sans-serif;
+  font-size: 14px;
+  line-height: 2.14;
+  padding: 0 20px;
+  &:hover {
+    background: #434343;
+    color: #fff;
+  }
 }
 
 .mph_ofsContainer {

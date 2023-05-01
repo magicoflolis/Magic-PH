@@ -1,16 +1,12 @@
 # Dependency directories
-yarn.lock
-node_modules/
-jspm_packages/
-.vscode/.history/
 web-ext-artifacts
 web-ext
-build
+/tests/
 /build/
-Notes
 /Notes/
-chrlauncher
 /chrlauncher/
+/.vscode/.history/
+**/node_modules/**
 
 # dotenv environment variable file
 .env

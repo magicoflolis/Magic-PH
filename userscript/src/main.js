@@ -69,22 +69,23 @@ fetchURL = async (url,method = 'GET',responseType = 'json',params = {}) => {
           credentials: 'omit',
           ...params,
         }));
+      } else {
+        fetch(url, {
+          method: method,
+          credentials: 'include',
+          ...params,
+        }).then((response) => {
+          if(!response.ok) reject(response);
+          if(responseType.includes('json')) {
+            resolve(response.json());
+          } else if(responseType.includes('text')) {
+            resolve(response.text());
+          } else if(responseType.includes('blob')) {
+            resolve(response.blob());
+          };
+          resolve(response);
+        });
       };
-      fetch(url, {
-        method: method,
-        credentials: 'include',
-        ...params,
-      }).then((response) => {
-        if(!response.ok) reject(response);
-        if(responseType.includes('json')) {
-          resolve(response.json());
-        } else if(responseType.includes('text')) {
-          resolve(response.text());
-        } else if(responseType.includes('blob')) {
-          resolve(response.blob());
-        };
-        resolve(response);
-      });
     });
   } catch (error) {err(error);}
 },
@@ -226,7 +227,7 @@ async function setup() {
         doc.body.prepend(ofsContainer);
       };
     } else {
-      let page = await fetchURL(doc.location.href,'GET','text'),
+      let page = await fetchURL(doc.location.href,'GET','text').catch(err),
       parser = new DOMParser(),
       htmlDocument = parser.parseFromString(page,'text/html'),
       selected = htmlDocument.documentElement,
@@ -481,7 +482,7 @@ async function DownloadVideo(url,title = 'MagicPH') {
   }
 };
 
-if (doc.readyState == 'complete') {
+if (doc.readyState === 'complete') {
   setup();
 } else {
   win.addEventListener('load', setup);

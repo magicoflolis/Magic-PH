@@ -1,178 +1,165 @@
 'use strict';
-import './block-traffic.js';
+import { err, log } from './logger.js';
 import Config from './config.js';
-import { mph } from './api.js';
-const win = self ?? window;
-win.MPH = Config;
-let brws = (typeof browser=='undefined'?chrome:browser),
-ogTitle = 'Magic PH',
-messenger,
-post = (msg ={}) => messenger.postMessage(msg);
 
-function connected(p) {
-  messenger = p;
-  messenger.postMessage({cfg: Config.cachedLocalStorage});
-  messenger.onMessage.addListener((r) => {
-    mph.log('Background Script: received message from content script',r);
-    if(r.delete) {
-      Config.local.handler.deleteProperty(r.delete);
+const hermes = mph.hermes;
+
+const block = {
+  mini: [
+    'phncdn.com/www-static/js/lib/networkbar',
+    'phncdn.com/networkbar-*',
+    'phncdn.com/www-static/js/quality-selector.js',
+    'pornhub.com/front/menu_livesex',
+    'phncdn.com/www-static/js/promo-',
+  ],
+  full: [
+    'phncdn.com/www-static/js/lib/networkbar',
+    'phncdn.com/networkbar-*',
+    'phncdn.com/www-static/js/quality-selector.js',
+    'pornhub.com/front/menu_livesex',
+    'phncdn.com/www-static/js/promo-',
+    'phncdn.com/stattracker-*',
+    'phncdn.com/pre_videos/*',
+    'phncdn.com/www-static/*/htmlPauseRoll/pb_block.',
+    'phncdn.com/www-static/js/lib/generated/front-index-',
+    'phncdn.com/www-static/css/front-index-pc.css',
+    'phncdn.com/www-static/*/premium/premium-modals.',
+    'phncdn.com/www-static/js/ph-',
+    'phncdn.com/videos/*/*/*/*.webm',
+    'trafficjunky.(com|net)',
+    'hotjar.com/c/hotjar-*.js?sv=*',
+    'etahub.com/*',
+    'g.doubleclick.net/*',
+    'adtng.com/*',
+    'pornhub.com/_xa',
+    'pornhub.com/js/*',
+  ],
+  final: [],
+};
+
+function traffic(details) {
+  const requestURL = details.url;
+  if(details.tabId > 0 ) {
+    // seg-[\w\d-]+\.ts|
+    if(requestURL.match(/ads\W\D/g)) {
+      return { cancel: true };
     };
-    if(r.save) {
-      mph.log('Background Script: saving...',r.save);
-      if(r.params) {
-        Config.local.handler.set(r.save,r.params);
-        mph.log('Background Script: ',r.save,r.params);
-      } else {
-        Config.local.handler.set(r.save,Config.cachedLocalStorage[r.save]);
-        mph.log('Background Script: ',Config.cachedLocalStorage[r.save]);
+    for(let b of block.final) {
+      const teststr = new RegExp(`https://\\w+.${b}`,'gi');
+      if(requestURL.match(teststr)) {
+        return { cancel: true };
       };
     };
-    if(r.download) {
-      ogTitle = r.download.dlTitle;
-      let q_err = '[Error] Not Found',q_240,q_480,q_720,q_1080,q_1440,q_2160,q_best,
-      DownloadVideo = async (url,title = 'MagicPH') => {
-        try {
-          mph.info('Attempting to download...');
-          let response;
-          if(r.download.credentials) {
-            response = await mph.fetchURL(url,'GET','basic', {
-              credentials: r.download.credentials ?? 'include',
-            })
-          } else {
-            response = await mph.fetchURL(url,'GET','basic')
-          };
-          let invalid_chars = {'\\': '＼', '\\/': '／', '\\|': '｜', '<': '＜', '>': '＞', ':': '：', '*': '＊', '?': '？', '"': '＂', '🔞': '', '#': ''},
-          reader = response.body.getReader(),
-          contentLength = +response.headers.get('Content-Length'),
-          receivedLength = 0,
-          content = '',
-          chunks = [];
-          content = title.replace(/[\\\\/\\|<>\\*\\?:#']/g, v => invalid_chars[v]);
-          mph.info('Downloading...');
-          // eslint-disable-next-line no-constant-condition
-          while(true) {
-            const {done, value} = await reader.read();
-            if(done) {
-              break;
-            };
-            receivedLength += value.length;
-            let percentComplete = (receivedLength / contentLength) * 100;
-            chunks.push(value);
-            post({dlProgress: percentComplete.toFixed(2), dlTitle: ogTitle ?? 'MagicPH'});
-            console.groupCollapsed('[%cMagicPH%c] %cProgress', 'color: rgb(255,153,0);', '', 'color: rgb(175, 24, 32);',`${percentComplete.toFixed(2)}%`);
-            mph.table({DownloadProgress: `${percentComplete.toFixed(2)}%`, VideoTitle: content});
-            console.groupEnd();
-          };
-          let Uint8Chunks = new Uint8Array(receivedLength), position = 0;
-          for (let chunk of chunks) {
-            Uint8Chunks.set(chunk, position);
-            position += chunk.length;
-          };
-          let result = new Blob([Uint8Chunks], {type: 'video/mp4'}),
-          dlBtn = mph.make('a','mph_Downloader');
-          dlBtn.href = win.URL.createObjectURL(result);
-          dlBtn.download = `${content}.mp4`;
-          dlBtn.click();
-          win.URL.revokeObjectURL(dlBtn.href);
-          post({dlDone: 'Download Complete!', dlTitle: ogTitle ?? 'MagicPH'});
-          mph.table({
-            PageTitle: ogTitle ?? 'MagicPH',
-            VideoTitle: content,
-          });
-          mph.table({
-            VideoQualities: {
-              q_240,
-              q_480,
-              q_720,
-              q_1080,
-              q_1440,
-              q_2160,
-              q_best,
-            },
-          });
-          dlBtn.remove();
-        } catch (e) {
-          mph.err(e);
-          post({dlDone: e, dlTitle: ogTitle ?? 'MagicPH'});
-        }
-      };
-      try {
-      for(let file of r.download.mediaFiles) {
-        if(file.includes('onlyfans')) {
-          DownloadVideo(file,r.download.title);
-          break;
-        };
-        if(file.includes('get_media?s=') || file.includes('media/mp4?s=') || file.includes('youporn') || file.includes('tube8')) {
-          mph.fetchURL(file,'GET','json').then((links) => {
-            for(let item of links) {
-              let q = item.quality.toLocaleString();
-              (q.match(/240/gi)) ? (q_240 = item.videoUrl) :
-              (q.match(/480/gi)) ? (q_480 = item.videoUrl) :
-              (q.match(/720/gi)) ? (q_720 = item.videoUrl) :
-              (q.match(/1080/gi)) ? (q_1080 = item.videoUrl) :
-              (q.match(/1440/gi)) ? (q_1440 = item.videoUrl) :
-              (q.match(/2160/gi)) ? (q_2160 = item.videoUrl) : q_err;
-              q_best = q_2160 ?? q_1440 ?? q_1080 ?? q_720 ?? q_480 ?? q_240 ?? item.videoUrl;
-            };
-            if(!q_240 || q_240 === '') {q_240 = q_err};
-            if(!q_480 || q_480 === '') {q_480 = q_err};
-            if(!q_720 || q_720 === '') {q_720 = q_err};
-            if(!q_1080 || q_1080 === '') {q_1080 = q_err};
-            if(!q_1440 || q_1440 === '') {q_1440 = q_err};
-            if(!q_2160 || q_2160 === '') {q_2160 = q_err};
-            if(!q_best || q_best === '') {q_best = q_1080 || q_720};
-            DownloadVideo(q_best,r.download.title);
-          }).catch((e) => {
-            mph.err(e);
-            post({dlDone: e, dlTitle: ogTitle ?? 'MagicPH'});
-          });
-        } else {
-          throw new Error(`Unable to locate video media file(s) [mediaFiles: ${r.download.mediaFiles}]`);
-        };
-      };
-      } catch (e) {
-        mph.err(e);
-        post({dlDone: e, dlTitle: ogTitle ?? 'MagicPH'});
-      }
-    };
+  };
+  return;
+};
+
+const win = self ?? window;
+win.Config = Config;
+
+const injMPH = (tabId, changeInfo, tabInfo) => {
+  if(mph.isEmpty(tabInfo.url)) { return; };
+  if(!tabInfo.url.match(/pornhub/g)) { return; };
+  if(!Object.is(changeInfo.status, 'complete')) { return; };
+  webext.tabs.executeScript(tabId, {
+    file: 'js/mph-common.js'
+  }).then(() => {
+    webext.tabs.executeScript(tabId, {
+      file: 'js/magicph.js'
+    });
   });
 };
+
+let msgCache = {};
+let isVideo = link => link.match(/(video|watch)+|\/[\d]+\//g) || link.includes('redtube') && link.match(/\/[\d]+/g);
+webext.runtime.onConnect.addListener((p) => {
+  hermes.port = p;
+  let cfg = Config.cachedLocalStorage ?? {};
+  /**
+   * Default post message to send to all connected scripts
+   */
+  Object.assign(msgCache, { cfg });
+  hermes.send('Config',msgCache);
+  hermes.getPort().onMessage.addListener((root) => {
+    log('Background Script: received message from content script',root);
+    const r = root.msg;
+    if(root.channel === 'Save') {
+      if(mph.isNull(r.params)) {
+        Config.local.handler.set(r.save,cfg[r.save]);
+      } else {
+        Config.local.handler.set(r.save,r.params);
+      };
+    };
+    if(root.channel === 'Download') {
+      for(let m of r.mediaFiles) {
+        mph.fetchVideo(m,'download');
+      };
+    };
+  });
+  block.final = cfg.adblock.match(/full/gi) ? block.full : block.mini;
+  if(cfg.adblock.match(/off/gi)) {
+    webext.webRequest.onBeforeRequest.removeListener(traffic);
+  };
+});
+
+webext.webRequest.onBeforeRequest.addListener(traffic, {urls: ['http://*/*', 'https://*/*'],}, ['blocking']);
+
+webext.webRequest.onHeadersReceived.addListener((e) => {
+  if(Object.is(e.type,'main_frame')) {
+    if(isVideo(e.url)) {
+      mph.fetchVideo(e.url,'all').then((m) => {
+        hermes.send('Player', {
+          qualities: m,
+          cfg: Config.cachedLocalStorage
+        });
+      }).catch(err);
+    };
+  };
+}, { urls: ['https://*/*'] });
+
 /**
-* [handleMessage description]
-* @param  request      The message itself. This is a JSON-ifiable object.
-* @param  sender       A runtime.MessageSender object representing the sender of the message.
-* @param  sendResponse A function to call, at most once, to send a response to the message. The function takes a single argument, which may be any JSON-ifiable object. This argument is passed back to the message sender.
+* [onMessage description]
+* @param  msg      The message itself. This is a JSON-ifiable object.
+* @param  sender       A brws.runtime.MessageSender object representing the sender of the message.
+* @param  callback  A function to call, at most once, to send a response to the message. The function takes a single argument, which may be any JSON-ifiable object. This argument is passed back to the message sender.
 */
-// eslint-disable-next-line no-unused-vars
-function handleMessage(request, sender, sendResponse) {
-  mph.log('Background Script: handleMessage',sender);
-  if(!sender.url.includes('options.html')) {
-   return Promise.resolve({
-     value: Config.cachedLocalStorage[request.name]
-   });
-  } else {
-   Config.local.handler.set(request.name,request.value);
-   return Promise.resolve({
-    name: request.name,
-    value: request.value
-   });
-  }
- };
-brws.runtime.onConnect.addListener(connected);
-brws.runtime.onMessage.addListener(handleMessage);
-// function handleMessage(request, sender, sendResponse) {
-//   mph.log('Background Script: handleMessage',sender);
-//   mph.log(request, sender);
-//   if(Config.cachedLocalStorage[request.name]) {
-//    return Promise.resolve({
-//      value: Config.cachedLocalStorage[request.name]
-//    });
-//   };
-//   if(sender.url.includes('options.html')) {
-//    Config.local.handler.set(request.name,request.value);
-//    return Promise.resolve({
-//     name: request.name,
-//     value: request.value
-//    });
-//   };
-//  };
+function onMessage(msg, sender, callback) {
+  log('Message Handler:', sender, msg);
+  let cfg = Config.cachedLocalStorage ?? {};
+  if(msg.channel) {
+    if(msg.channel === 'cfg') {
+      callback({ cfg });
+    } else if(msg.channel === 'player') {
+      if(isVideo(msg.url)) {
+        mph.fetchVideo(msg.url,'all').then((m) => {
+          callback({
+            cfg,
+            qualities: m,
+          });
+        }).catch(err);
+      };
+    };
+    return true;
+  };
+  if(msg.name) {
+    if(sender.url.includes('options.html')) {
+      Config.local.handler.set(msg.name,msg.value);
+      callback({
+       name: msg.name,
+       value: msg.value
+      });
+    } else {
+      callback({ value: cfg[msg.name] });
+    };
+  };
+  if(msg.mediaFiles) {
+    mph.fetchQualities(msg.mediaFiles).then((m) => {
+      callback({ qualities: m });
+    }).catch(err);
+  };
+  return true;
+};
+
+webext.runtime.onMessage.addListener(onMessage);
+
+webext.tabs.onUpdated.addListener(injMPH);

@@ -18,6 +18,43 @@ $hover: #464646;
   color: $theme;
 }
 
+@mixin mphTheme {
+  cursor: pointer;
+  border: 3px solid $theme;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  list-style-type: none;
+  white-space: nowrap;
+  font-size: 16px;
+  font-family: inherit;
+  outline: 0 none;
+  text-align: center;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-weight: 700;
+  border-radius: 16px;
+  // vertical-align: top;
+  // margin: 0 3px;
+  margin: auto;
+  line-height: 25px;
+  padding: 0 25px;
+  -webkit-text-decoration-style: solid;
+  text-decoration-style: solid;
+  -webkit-text-decoration-color: currentcolor;
+  text-decoration-color: currentcolor;
+  text-decoration-thickness: auto;
+  &:hover {
+    background: $hover;
+    -webkit-text-decoration: 0;
+    text-decoration: 0;
+  }
+}
+
 @mixin taste {
   background-color: $dark;
   height: 100%;
@@ -42,6 +79,7 @@ $hover: #464646;
   height: 0px !important;
   max-height: 0px !important;
   min-height: 0px !important;
+  z-index: -1 !important;
 }
 
 @mixin container {
@@ -61,7 +99,7 @@ $hover: #464646;
   grid-gap: 1rem;
   grid-template-columns: repeat(4, 1fr);
   .wrap {
-    img {
+    a img {
       cursor: pointer;
       width: 25rem;
       height: 15rem;
@@ -74,6 +112,12 @@ $hover: #464646;
       color: $white;
       word-break: break-word;
       word-wrap: break-word;
+      font-family: Arial, Helvetica, sans-serif;
+      outline-style: none;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

@@ -1,7 +1,11 @@
 {
   "root": true,
   "globals": {
+		"mph": "writable",
+    "config": "writable",
     "GM": "writable",
+		"debug": "readonly",
+		"debugToggle": "readonly",
 		"browser": "readonly",
     "chrome": "readonly",
     "webext": "readonly",
@@ -9,9 +13,8 @@
   },
   "env": {
     "browser": true,
-    "es2021": true,
+    "es2022": true,
     "greasemonkey": true,
-    "jquery": true,
     "node": true
   },
   "extends": [
@@ -19,14 +22,17 @@
     "prettier"
   ],
   "parserOptions": {
+		"ecmaVersion": "latest",
     "sourceType": "module",
     "allowImportExportEverywhere": false,
     "ecmaFeatures": {
       "globalReturn": true,
       "arrowFunctions": true,
       "modules": true
-    },
-    "ecmaVersion": "latest"
+    }
   },
-  "rules": {}
+	"ignorePatterns": ["/userscript/src/header.js","/userscript/tools/userscript.js", "/userscript/dist/*.js"],
+  "rules": {
+    "quotes": ["warn", "single"]
+  }
 }
