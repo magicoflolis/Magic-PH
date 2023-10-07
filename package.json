@@ -55,7 +55,7 @@
     "mini-css-extract-plugin": "^2.7.5",
     "node-watch": "^0.7.3",
     "path-browserify": "^1.0.1",
-    "postcss": "^8.4.23",
+    "postcss": "^8.4.31",
     "sass": "^1.62.0",
     "sass-loader": "^13.2.2",
     "swc-loader": "^0.2.3",
