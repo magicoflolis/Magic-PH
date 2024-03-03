@@ -126,7 +126,7 @@ See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys-
 
 * Can be downloaded + installed with provided *.xpi in [releases](https://github.com/magicoflolis/Magic-PH/releases).
 
-### Development
+## Development
 
 > Developed with [VSCodium](https://vscodium.com)
 
@@ -147,7 +147,7 @@ The version of Node.js should match `"node"` key in `package.json`.
 $ pnpm i
 ```
 
-#### Userscript Version
+### Userscript Version
 
 ``` sh
 # Watch and compile to local HTTP server
@@ -157,7 +157,7 @@ $ pnpm run dev:UserJS
 $ pnpm run pub:UserJS
 ```
 
-#### Webextension Version
+### Webextension Version
 
 ``` sh
 # Compile webextension for "Chromium" to "./tests/chrome"
