@@ -5,6 +5,8 @@
 ![jsDelivr hits (GitHub)](https://img.shields.io/jsdelivr/gh/hm/magicoflolis/Magic-PH)
 [![GitHub Stars](https://img.shields.io/github/stars/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/stargazers)
 
+**This webextension/ userscript violates `PornHub` [Non-Consensual Content Policy](https://help.pornhub.com/hc/en-us/categories/4419836212499) (`2. Banning Downloads`), USE AT YOUR OWN RISK!**
+
 > Recommended to install any "adblocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme))
 
 *Enhances adult viewing experience. Clean, easy, simple, and quick.*
