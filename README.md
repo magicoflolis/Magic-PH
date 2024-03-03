@@ -1,15 +1,17 @@
 # MagicPH
 
+> Enhances adult viewing experience clean, quick, & easy
+
 ![GitHub License](https://img.shields.io/github/license/magicoflolis/Magic-PH)
 [![GitHub Release](https://img.shields.io/github/release/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/releases/latest)
 ![jsDelivr hits (GitHub)](https://img.shields.io/jsdelivr/gh/hm/magicoflolis/Magic-PH)
 [![GitHub Stars](https://img.shields.io/github/stars/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/stargazers)
 
-**This webextension/ userscript violates `PornHub` [Non-Consensual Content Policy](https://help.pornhub.com/hc/en-us/categories/4419836212499) (`2. Banning Downloads`), USE AT YOUR OWN RISK!**
+**This webextension / userscript violates `PornHub` [Non-Consensual Content Policy](https://help.pornhub.com/hc/en-us/categories/4419836212499) (`2. Banning Downloads`), USE AT YOUR OWN RISK!**
 
-> Recommended to install any "adblocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme))
+***
 
-*Enhances adult viewing experience. Clean, easy, simple, and quick.*
+MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICENSE) web extension with the goal of improving webpage navigation and *reducing distractions.* Recommended to install any "adblocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme))
 
 | Preview(s) |
 |:----------:|
@@ -21,19 +23,42 @@
 
 | Version | Link | Alternative | Note |
 |:----------:|:----------:|:----------:|:----------:|
-| Chrome / Edge | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | Work in progress |
-| Firefox | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | Main development platform |
-| Userscript | [Install](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | - | Downloaders only |
+| Chrome / Edge | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Development](#development) | Work in progress |
+| Firefox | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Development](#development) | Main development platform |
+| Userscript | [Install (GitHub)](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | [Install (OpenUserJS)](https://openuserjs.org/scripts/Magic/MagicPH) | Downloader only! |
+
+**(Optional) Mobile Bookmarklet:**
+
+> Save this URL as a bookmark, clicking it will cause the userscript version to inject itself into the current webpage.
+
+``` js
+javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/dist/UserJS/magicph.user.js'].map(s=>document.body.appendChild(document.createElement('script')).src=s)})();
+```
 
 ***
 
-## About
+**Userscript Features:**
 
-> Repo still under construction
+See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys--video-downloader)
 
-MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICENSE) web extension with the goal of improving webpage navigation and *reducing distractions.*
+* Built in video downloader allows user to easily download and save any video in its highest quality or preferred choice.
+* Video downloader can be combined with any 3rd party/external downloader.
 
-**Features:**
+| Website (Supported) | Verison (Default) | Verison (Mobile) | Verison (Premium) |
+|:---------:|:-----------:|:-----------:|:---------:|
+| Pornhub | ✅ | ✅ | Not Tested |
+| RedTube | ✅ | ✅ | Not Tested |
+| Tube8 | ✅ | ✅ | *N/A* |
+| Thumbzilla | ✅ | ✅ | *N/A* |
+| YouPorn | ✅ | ✅ | Not Tested |
+| Onlyfans | ✅ | ✅ | *N/A* |
+| xHamster | ✅ | ✅ | *N/A* |
+
+***
+
+**Webextension Features:**
+
+> See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys--video-downloader) & [Accessing "Sidebar"](#accessing-sidebar)
 
 * Config menu.
 * Improves webpage layout + webpage tweaks.
@@ -53,35 +78,28 @@ MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICE
 
 | Website (Supported) | Verison (Default) | Verison (Mobile) | Verison (Premium) |
 |:---------:|:-----------:|:-----------:|:---------:|
-| Pornhub | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | Not Tested |
-| RedTube | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | Not Tested |
-| Tube8 | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | - |
-| Thumbzilla | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | - |
-| YouPorn | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | Not Tested |
-| Modelhub | Not supported | Not supported | - |
-| Onlyfans | ✅ | ✅ | - |
-| xHamster | ✅ | ✅ | - |
+| Pornhub | ✅ | Not Tested | Not Tested |
+| RedTube | ✅ | Not Tested | Not Tested |
+| Tube8 | ✅ | Not Tested | *N/A* |
+| Thumbzilla | ✅ | Not Tested | *N/A* |
+| YouPorn | ✅ | Not Tested | Not Tested |
+| Onlyfans | ✅ | ✅ | *N/A* |
+| xHamster | ✅ | ✅ | *N/A* |
 
-**(Optional) Mobile Bookmarklet:**
+***
 
-```JS
-javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/dist/UserJS/magicph.user.js'].map(s=>document.body.appendChild(document.createElement('script')).src=s)})();
-```
+## Accessing "Video Quality(s)" / Video Downloader
 
-## Support
+* Desktop / Mobile / Tablet - Right click anywhere inside the video player.
+* Tablet / Mobile - Press "Video Quality(s)" in the video player.
+* Mobile - Press the gear icon in the video player.
+* Mobile - On Youporn press the gear icon then press "Video Quality(s)" in the video player.
 
-**Accessing "Sidebar":**
+## Accessing "Sidebar"
 
 * Click websites logo in the header. (usual located top left of the page)
 
-**Accessing "Video Quality(s)" / Video Downloader:**
-
-* [Desktop/Mobile/Tablet] Right click anywhere inside the video player.
-* [Tablet/Mobile] Press "Video Quality(s)" in the video player.
-* [Mobile] Press the gear icon in the video player.
-* [Mobile] On Youporn press the gear icon then press "Video Quality(s)" in the video player.
-
-## Installation
+## Webextension Installation
 
 **Chromium:**
 
@@ -108,9 +126,12 @@ javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@maste
 
 * Can be downloaded + installed with provided *.xpi in [releases](https://github.com/magicoflolis/Magic-PH/releases).
 
-### Build
+### Development
 
 > Developed with [VSCodium](https://vscodium.com)
+
+Install [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/).
+The version of Node.js should match `"node"` key in `package.json`.
 
 **Additional Help Links:**
 
@@ -121,23 +142,34 @@ javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@maste
 
 * [Plyr](https://github.com/sampotts/plyr)
 
-```bash
+``` sh
 # Install dependencies
-npm i
+$ pnpm i
+```
 
-# [ Development ] Chrome + sass
-npm run Dev:Cr
-# [ Development ] Firefox + sass
-npm run Dev:FF
-# [ Development ] Userscript + sass + http-server (http://localhost:8080)
-npm run Dev:UserJS
+#### Userscript Version
 
-# [ Build ] Chrome + Firefox
-npm run build:Browsers
+``` sh
+# Watch and compile to local HTTP server
+$ pnpm run dev:UserJS
+
+# Compile UserJS to "./dist/UserJS/magicph.user.js"
+$ pnpm run pub:UserJS
+```
+
+#### Webextension Version
+
+``` sh
+# Compile webextension for "Chromium" to "./tests/chrome"
+$ pnpm run dev:Cr
+# Compile webextension for "Firefox" to "./tests/chrome"
+$ pnpm run dev:FF
+
+# [ Build ] "Chromium" + "Firefox"
+$ pnpm run build:Browsers
 # [ Build ] Individual
-npm run build:Chrome
-npm run build:Firefox
-npm run Pub:UserJS
+$ pnpm run build:Chrome
+$ pnpm run build:Firefox
 
 # [ Testing ]
 # Browsers can be launched via "Run and Debug" in VSCode.

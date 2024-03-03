@@ -10,28 +10,77 @@
     "url": "https://github.com/magicoflolis/Magic-PH/issues"
   },
   "userJS": {
+    "build": {
+      "source": {
+        "head": "./src/UserJS/header.js",
+        "body": "./src/UserJS/main.js",
+        "extras": {
+          "downloadCSS": "./build/css/downloader.css"
+        }
+      },
+      "watchDirs": [ "./src/UserJS", "./src/Common/sass" ],
+      "paths": {
+        "dev": {
+          "fileName": "magicph.dev",
+          "url": "https://localhost:9090",
+          "env": "./src/UserJS/.env",
+          "dir": "./test-server"
+        },
+        "public": {
+          "fileName": "magicph",
+          "env": "./dist/UserJS/.env",
+          "dir": "./dist/UserJS"
+        }
+      }
+    },
     "name": "MagicPH",
     "version": "3.0.0",
     "bugs": "https://github.com/magicoflolis/Magic-PH/issues/new",
     "homepage": "https://github.com/magicoflolis/Magic-PH",
     "icon": "https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/assets/magicph_logo.png",
-    "url": "https://github.com/magicoflolis/Magic-PH/releases/latest/download/magicph.user.js"
+    "url": "https://github.com/magicoflolis/Magic-PH/releases/latest/download/magicph.user.js",
+    "compatible": ["chrome", "firefox", "edge", "opera", "safari"],
+    "connect": [],
+    "grant": [
+      "eval",
+      "GM.openInTab",
+      "GM.setClipboard",
+      "GM.xmlHttpRequest",
+      "unsafeWindow"
+    ],
+    "exclude": [],
+    "include": [],
+    "exclude-match": [],
+    "match": [
+      "https://*.pornhub.com/*",
+      "https://*.pornhubpremium.com/*",
+      "https://*.youporn.com/watch/*",
+      "https://*.youpornpremium.com/watch/*",
+      "https://*.youporngay.com/watch/*",
+      "https://*.redtube.com/*",
+      "https://*.redtubepremium.com/*",
+      "https://*.tube8.com/porn-video/*",
+      "https://*.thumbzilla.com/video/*",
+      "https://onlyfans.com/*",
+      "https://xhamster.com/videos/*"
+    ],
+    "noframes": true,
+    "resource": {},
+    "run-at": "document-start"
   },
   "type": "module",
   "scripts": {
-    "Dev:FF": "concurrently \"pnpm run Dev:Sass\" \"pnpm run Dev:WebFF\"",
-    "Dev:Cr": "concurrently \"pnpm run Dev:Sass\" \"pnpm run Dev:WebCr\"",
-    "Dev:UserJS": "concurrently \"pnpm run Dev:Webserver\" \"pnpm run Dev:Sass\" \"node ./tools/userscript.js\"",
-    "Dev:Sass": "sass --embed-sources -w ./src/Common/sass/magicph.scss:./build/css/magicph.css ./src/Common/sass/downloader.scss:./build/css/downloader.css ./src/Common/sass/plyr/plyr.scss:./build/css/plyr.css -s compressed",
-    "Dev:Webserver": "http-server ./test-server -p 9090 -s --no-dotfiles -c-1",
-    "Dev:WebFF": "webpack --mode development --config=tools/webpack.config.js --env brws=firefox",
-    "Dev:WebCr": "webpack --mode development --config=tools/webpack.config.js --env brws=chrome",
+    "dev:UserJS": "concurrently \"pnpm run dev:Webserver\" \"pnpm run dev:Sass\" \"node ./tools/userscript.js\"",
+    "dev:FF": "concurrently \"pnpm run dev:Sass\" \"webpack --mode development --config=tools/webpack.config.js --env brws=firefox\"",
+    "dev:Cr": "concurrently \"pnpm run dev:Sass\" \"webpack --mode development --config=tools/webpack.config.js --env brws=chrome\"",
+    "dev:Sass": "sass -w --embed-sources -s compressed ./src/Common/sass/magicph.scss:./build/css/magicph.css ./src/Common/sass/downloader.scss:./build/css/downloader.css ./src/Common/sass/plyr/plyr.scss:./build/css/plyr.css",
+    "dev:Webserver": "http-server ./test-server -p 9090 -s --no-dotfiles -c-1",
     "build:Browsers": "pnpm run build:Firefox && pnpm run build:Chrome && node tools/crx.js",
     "build:Chrome": "webpack --mode production --config=tools/webpack.config.js --env brws=chrome",
     "build:Firefox": "webpack --mode production --config=tools/webpack.config.js --env brws=firefox",
-    "build:UserJS": "concurrently \"pnpm run Pub:Sass\" \"node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/UserJS/.env\"",
-    "Pub:Sass": "sass --embed-sources ./src/Common/sass/magicph.scss:./build/css/magicph.css ./src/Common/sass/downloader.scss:./build/css/downloader.css ./src/Common/sass/plyr/plyr.scss:./build/css/plyr.css -s compressed",
-    "Pub:UserJS": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/UserJS/.env",
+    "build:UserJS": "concurrently \"pnpm run pub:Sass\" \"node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/UserJS/.env\"",
+    "pub:Sass": "sass --no-source-map -s compressed ./src/Common/sass/magicph.scss:./build/css/magicph.css ./src/Common/sass/downloader.scss:./build/css/downloader.css ./src/Common/sass/plyr/plyr.scss:./build/css/plyr.css",
+    "pub:UserJS": "node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/UserJS/.env",
     "web-run:firefox-android": "web-ext run --config=./tools/web-ext.js -t firefox-android --firefox-apk org.mozilla.firefox",
     "web-ext:sign": "web-ext --config=./tools/web-ext.cjs sign"
   },
@@ -64,5 +113,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/magicoflolis/Magic-PH.git"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
