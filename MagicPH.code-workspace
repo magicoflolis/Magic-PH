@@ -6,20 +6,26 @@
 	],
 	"settings": {
     "search.exclude": {
+			"**/build/**": true,
       "**/node_modules": true,
-      "**/chrome_dist/js": true,
-      "**/dist/js": true
+      "**/chrome_dist/js/**": true,
+      "**/dist/js/**": true,
+			"**/Notes/**": true
+    },
+		"editor.codeActionsOnSave": {
+      "source.fixAll": "never",
+      "source.fixAll.eslint": "explicit"
     },
     "editor.formatOnSaveMode": "modifications",
+    "explorer.excludeGitIgnore": true,
+    "files.exclude": {
+        "**/build/**": true,
+        "**/dist/**": true,
+        "**/node_modules/**": true,
+        "**/Notes/**": true
+    },
     "files.trimTrailingWhitespace": true,
-    "files.associations": {
-      ".eslintrc": "jsonc"
-    },
-    "editor.codeActionsOnSave": {
-      "source.fixAll": false,
-      "source.fixAll.eslint": true
-    },
-    "local-history.daysLimit": 7,
+    "local-history.daysLimit": 3,
     "local-history.maxDisplay": 10,
     "local-history.saveDelay": 0,
     "local-history.dateLocale": "en-US",

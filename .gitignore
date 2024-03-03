@@ -1,10 +1,11 @@
 # Dependency directories
 web-ext-artifacts
 web-ext
-/tests/
-/build/
-/Notes/
-/chrlauncher/
+tests
+tmp
+build
+Notes
+chrlauncher
 /.vscode/.history/
 **/node_modules/**
 

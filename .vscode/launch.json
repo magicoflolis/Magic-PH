@@ -16,14 +16,15 @@
       "name": "SF",
       "type": "firefox",
       "request": "launch",
+      "profile": "MagicPH",
       "clearConsoleOnReload": true,
       "reAttach": false,
       "reloadOnAttach": true,
       "url": "https://pornhub.com/",
-      "addonPath": "${workspaceFolder}\\tests\\firefox",
+      "addonPath": "${workspaceFolder}/build/WebExtension/firefox",
       "reloadOnChange": {
         "watch": [
-          "${workspaceFolder}/src/**"
+          "${workspaceFolder}/src/WebExtension/**"
         ],
         "ignore": [
           "${workspaceFolder}/node_modules/**"
@@ -31,16 +32,12 @@
       },
       "pathMappings": [
         {
-          "url": "moz-extension://a1715261-6d13-462e-b10e-1d4f4f2cf103",
-          "path": "${workspaceFolder}/src"
-        },
-        {
           "url": "webpack:///js",
-          "path": "${workspaceFolder}/src/js"
+          "path": "${workspaceFolder}/src/WebExtension/js"
         },
         {
           "url": "webpack:///src/",
-          "path": "${webRoot}/src/"
+          "path": "${webRoot}/src/WebExtension/"
         }
       ],
       "log": {
@@ -60,7 +57,7 @@
       "name": "SC",
       "type": "chrome",
       "request": "launch",
-      "runtimeExecutable": "${workspaceFolder}\\chrome\\bin\\chrome.exe",
+      "runtimeExecutable": "${workspaceFolder}/chrome/bin/chrome.exe",
       "userDataDir": "${workspaceFolder}/chrome/profile",
       "url": "https://pornhub.com/"
     }

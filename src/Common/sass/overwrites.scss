@@ -1,0 +1,583 @@
+@at-root * {
+  // scrollbar-color: $theme-alt $dark;
+  scrollbar-width: thin;
+  @supports not (scrollbar-width: thin) {
+    ::-webkit-scrollbar {
+      max-width: 4px;
+      max-height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: $theme-alt;
+      border-radius: 10px;
+      margin-top: 3px;
+      margin-bottom: 3px;
+      box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    }
+    ::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: $dark;
+      &:hover {
+        background-color: $dark;
+      }
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body > .frontListingWrapper {
+  @include container;
+}
+
+body.logged-out {
+  .votes-fav-wrap,
+  .userActions,
+  .userWidgetbuttons,
+  [id="communityMenuWrap"] {
+    @include remover();
+  }
+}
+
+.main_content > .container,
+.wrapper > .container {
+  width: 100% !important;
+  min-width: 96vw !important;
+  max-width: 100% !important;
+  margin: 10px 0 !important;
+  padding: 0 !important;
+}
+
+// [id="main-container"],
+.gridWrapper,
+.section_wrapper,
+[id="gifWebmPlayer"] {
+  max-width: 96vw !important;
+  min-width: 991px !important;
+  // width: 100vw !important;
+  padding: 0 !important;
+}
+
+.rm,
+.mgp_embedded > .mgp_gridMenu,
+// li[class*="sex"],
+li[class*="cam"],
+li[class*="premium"],
+li[class*="upsell"],
+[data-entrycode="DiscoverPremium"],
+[data-mxptext="Live Cams"],
+[class*="upgrade"],
+[class*="promo"],
+[class*="wixx-ecam-thumb"],
+[id*="_ads"],
+[src*="data:"]:not([class*="lazy"]),
+.sectionCarousel,
+.networkBar,
+.video-wrapper > [id="player"] + [class],
+.video-wrapper > [id="player"] ~ .hd.clear,
+.wrapper + [class],
+search-list[label*="Trending"],
+.headerBtnsWrapper,
+.abovePlayer,
+.ad-link,
+.sniperModeEngaged,
+.leftPanel > p,
+.leftPanel > .popularSearches,
+.popularFilterPhotos,
+.popularFiltersWrapper,
+.innerHeaderSubMenu.trendingWrapper,
+.headerSubMenu > .innerHeaderFilters,
+.playWrapper,
+.pornportal-wrapper,
+.ypLogo,
+.logoWrapper,
+div.bottomNav a.noImage:not(.recommended,.fav),
+body.logged-out .fanClubButtons,
+body.logged-out .underThumbButtons [id="playlistModal"],
+.topAdContainter,
+.tasteLogin,
+.pageCta,
+.subscriptionInfoWithButton,
+.add-to-collection,
+.mgp_cinema,
+.live-nav,
+.top-menu-container li[data-item],
+.top-menu-container li[data-relates],
+.dialog-desktop-container,
+.dialog-mobile-container,
+.fullscreen-dialog-container,
+[data-espnode="premium"],
+[id="below_footer_ad_content"],
+[id="recommendations"] > .recommendedPornstarsWrapper,
+[id="recommendations"] > .recommendedCategoriesWrapper,
+[id="topMenuSection"] a.phLogoWrap,
+[id="primaryHeaderNav"] li:not(.menu_elem),
+[id="paidSites"] li:not([class*="menu_elem"]),
+li[id="profileHome"],
+[id="under-player-playlists"],
+[id="hd-rightColVideoPage"],
+[id="profileMenuDropdown > .alpha"],
+[id="main-container > .abovePlayer"],
+[id="pb_template"],
+[id="video_right_col"],
+[id="js-abContainterMain"],
+[id="paidItems"],
+[id="popsByTrafficJunky"],
+[id="welcomeVideoMsg"],
+[id="loadMoreRelatedVideosCenter"],
+[id="customSkin"],
+[id="customSkinCTA"],
+[id="welcome"] {
+  @include remover();
+}
+
+[id="headerMainMenu"] {
+  display: grid;
+  place-content: center;
+  grid-gap: 1rem !important;
+  grid-auto-flow: column;
+  margin: auto;
+  li {
+    width: 100% !important;
+  }
+}
+
+.ios .pagination3 {
+  display: none !important;
+}
+
+.pagination3 {
+  .pjump,
+  ul {
+    transition: top 100ms ease-in-out 100ms;
+    z-index: 10 !important;
+    position: fixed !important;
+    display: block !important;
+    top: 100%;
+    margin: auto;
+    overflow: hidden;
+    width: auto;
+  }
+  .pjump {
+    left: 5%;
+    > input {
+      display: inline-block;
+      font-size: 20px;
+      line-height: 48px;
+      margin-right: 0;
+      padding: 0 25px;
+      width: -webkit-fit-content;
+      width: -moz-fit-content;
+      width: fit-content;
+      white-space: nowrap;
+      border: 0;
+      border-radius: 99px;
+      color: #cacaca;
+      background-color: #363636;
+      outline: 0;
+      vertical-align: top;
+    }
+  }
+}
+
+[id="vpContentContainer"]:not(.premiumLocked) {
+  grid-template-columns: auto !important;
+}
+
+[id="hd-leftColVideoPage"],
+.video-wrapper {
+  width: 100% !important;
+}
+
+.video-wrapper {
+  margin: auto !important;
+}
+
+[id="relatedVideosCenter"] {
+  display: grid;
+}
+
+.title-container,
+.video-actions-menu,
+.video-actions-container,
+.relatedVideos {
+  margin: 0 !important;
+  padding: 5px 0 5px !important;
+  width: 98vw;
+}
+
+.mgp_videoPoster {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.gifWebMWrapper {
+  margin-bottom: 0 !important;
+}
+
+.video-wrapper,
+[id="player"],
+.player {
+  transition: all 0s !important;
+}
+
+.leftPanel ul.discover:after {
+  background: none !important;
+}
+
+.pcVideoListItem {
+  display: flex;
+}
+
+.show-more-btn {
+  // left: 50% !important;
+  left: 0% !important;
+  padding: 0px !important;
+  text-align: center;
+  width: 100%;
+}
+
+[id="main-container"] {
+  [id="hd-leftColVideoPage"] {
+    .video-wrapper.relatedVideos {
+      border-bottom: 1px solid transparent !important;
+    }
+  }
+}
+
+ul.videos.user-playlist {
+  display: grid !important;
+  justify-content: center;
+  align-content: center;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(4, 1fr);
+  grid-row-gap: 15px;
+  grid-column-gap: 10px;
+  padding: 20px 10px;
+}
+
+.video-detailed-info {
+  float: none !important;
+}
+
+.mgp_autoplay {
+  display: block !important;
+}
+.mph1,
+.mph2,
+.mph3,
+[id="vb"],
+[id="vr"] {
+  display: none;
+  color: #4080fb;
+}
+
+[id="profileContent"],
+[id="recommendations"] ul.recommendedContainerLoseOne {
+  margin-left: 1% !important;
+  width: 96vw !important;
+}
+
+li > {
+  .wrap > {
+    .phimage {
+      max-width: -webkit-max-content !important;
+      max-width: -moz-max-content !important;
+      max-width: max-content !important;
+      width: 100% !important;
+    }
+  }
+}
+
+.displayFlex {
+  display: flex;
+}
+
+.flexWrap {
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-block;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  vertical-align: top;
+  text-align: center;
+}
+
+.orangeButton {
+  border-radius: 5px;
+  border: 0;
+  background: $theme;
+  color: $dark;
+}
+
+.noLinkBtn {
+  cursor: default !important;
+}
+
+.GreyBottomContainer {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0,
+    rgba(3, 3, 3, 0) 10%,
+    rgba(13, 13, 13, 0.93) 42%,
+    rgba(30, 30, 30, 0.93) 100%
+  );
+}
+
+.ProfileMainMenu {
+  background: #282828;
+  background: linear-gradient(to bottom, #323232 0, #1c1c1c 100%);
+}
+
+.arrow {
+  content: '';
+  width: 0;
+  height: 0;
+  font-size: 0;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.wrapLongTitle {
+  word-break: break-word;
+  word-wrap: break-word;
+}
+
+.sectionWrapper {
+  .sectionTitle {
+    padding: 12px 11px 0;
+  }
+  > {
+    a {
+      float: right;
+      text-transform: capitalize;
+      font-weight: 700;
+      padding: 0 10px;
+      text-decoration: none;
+    }
+  }
+}
+
+.nav {
+  float: left;
+}
+
+.nav {
+  a {
+    color: $white;
+    display: inline-block;
+    margin-right: 30px;
+    padding: 0 10px 10px;
+    text-transform: capitalize;
+    .active {
+      border-bottom: 1px solid $theme;
+    }
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.tasteLogin {
+  background-color: #2f2f2f;
+  padding: 1rem;
+  text-align: center;
+  .tasteLoginLinks {
+    font-weight: 700;
+  }
+  .tasteLoginMessage {
+    display: inline-block;
+    font-size: 1rem;
+    margin: 0;
+    &:before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 22px;
+      vertical-align: middle;
+    }
+  }
+  .tasteLoginText {
+    color: #bbb;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+    width: 96.999%;
+  }
+}
+
+.taste-instruction {
+  padding: 20px;
+  margin: 0;
+  color: $white;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin: 0 0 40px 0;
+  border-top: 1px #2d2d2d solid;
+  td,
+  th {
+    width: 16%;
+    text-align: center;
+
+    &:first-child {
+      padding: 10px 0 10px 20px;
+      width: 25%;
+      text-align: left;
+    }
+
+    &:last-child {
+      width: 27%;
+      color: #ababab;
+    }
+  }
+  thead {
+    background: #1d1d1d;
+    border-bottom: 1px solid $dark;
+    font-size: 1.5em;
+  }
+  thead th {
+    font-weight: 400;
+  }
+  tr:nth-child(even) {
+    background: #1d1d1d;
+    border-bottom: 1px solid $dark;
+  }
+  tbody {
+    font-size: 1.4em;
+  }
+  input[type='radio'] {
+    display: none;
+  }
+  input[type='radio'] + label {
+    display: inline-block;
+    padding: 0;
+    width: 25px;
+    height: 25px;
+    background: 0 0;
+    border-radius: 50%;
+    border: 2px solid #b4b4b4;
+  }
+  input[type='radio']:checked + label {
+    background: $theme;
+    width: 27px;
+    height: 27px;
+    border: 0;
+  }
+}
+
+[id="searchBarContainer"] {
+  border-radius: 25px !important;
+  label > input {
+    border-radius: 25px !important;
+  }
+}
+
+.headerSearchWrapper.sticky > form > fieldset > [id="searchBarContainer"] {
+  [id="searchSuggestions"] {
+    margin-top: 0px !important;
+  }
+  [id="searchesWrapper"] {
+    display: none !important;
+    margin-top: 25px !important;
+  }
+  width: 25% !important;
+  &.active {
+    width: 100% !important;
+    [id="searchesWrapper"] {
+      display: block !important;
+    }
+  }
+}
+
+[id="video_left_col"] {
+  width: 100% !important;
+  .video_left_section {
+    width: auto !important;
+  }
+}
+
+[id="paidSites"],
+[id="primaryHeaderNav"] {
+  display: grid !important;
+  grid-auto-flow: column !important;
+  margin: auto !important;
+  width: 100% !important;
+}
+
+[id="paidSites"] li.menu_elem,
+[id="primaryHeaderNav"] .mph-header-btn {
+  margin: auto !important;
+}
+
+.nf-videos {
+  float: left !important;
+  width: inherit !important;
+}
+
+.xh-thumb-disabled {
+  .channel-thumb-container img,
+  .intro-image-container img,
+  .main-wrap,
+  .pc-img,
+  .photo-intro img,
+  .picture_container img,
+  .pictures_block img,
+  .pornstar-live .img,
+  .pornstar-thumb-container img,
+  .recomm-promo-banner__pic,
+  .thumb-list img,
+  .video-thumb img,
+  img.blog-image,
+  img.fotorama__img,
+  img.xh-avatar,
+  .blog-list .thumb-container,
+  .cams-overlay,
+  .channel-logo .logo-container,
+  .clipstore-results,
+  .intro-video-container iframe,
+  .mixed-list .image-thumb,
+  .mixed-list .thumb-container,
+  .mobile-video-thumb .thumb-image-container,
+  .pc-bg,
+  .player-container,
+  .pornstar-logo .logo-container,
+  .related-list .logo,
+  .thumb-list .thumb,
+  .verified-items .thumb-container,
+  .verified-items iframe,
+  .video-intro iframe,
+  .video-thumb .thumb-widget-img,
+  .wixx-e,
+  .wixx-ebanner-container .wixx-ecams-widget,
+  .wixx-epremium-overlay,
+  img.xp-preload-image {
+    -webkit-filter: none !important;
+            filter: none !important;
+  }
+  .avatar-container,
+  .channel-logo,
+  .intro-image-container,
+  .intro-video-container,
+  .mixed-list .item,
+  .mobile-video-thumb,
+  .pc-bg,
+  .photo-intro,
+  .pictures_block .thumb_container,
+  .pornstar-logo,
+  .verified-items .item,
+  .video-intro {
+    overflow: auto !important;
+  }
+}

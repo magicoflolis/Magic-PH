@@ -1,8 +1,9 @@
 # MagicPH
 
-[![GitHub license](https://img.shields.io/github/license/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/releases/latest)
-[![GitHub stars](https://img.shields.io/github/stars/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/stargazers)
+![GitHub License](https://img.shields.io/github/license/magicoflolis/Magic-PH)
+[![GitHub Release](https://img.shields.io/github/release/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/releases/latest)
+![jsDelivr hits (GitHub)](https://img.shields.io/jsdelivr/gh/hm/magicoflolis/Magic-PH)
+[![GitHub Stars](https://img.shields.io/github/stars/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/stargazers)
 
 > Recommended to install any "adblocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme))
 
@@ -10,15 +11,17 @@
 
 | Preview(s) |
 |:----------:|
-![MagicPH Preview](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/assets/preview_addon.png)|
+|![Preview A](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/assets/userjs.PNG)|
+|![Preview B](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/assets/userjs1.PNG)|
+|![Preview C](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/assets/userjs2.PNG)|
 
 ***
 
 | Version | Link | Alternative | Note |
 |:----------:|:----------:|:----------:|:----------:|
-Chrome / Edge | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | Work in progress
-Firefox | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | Main development platform
-Userscript | [Install (GitHub)](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/userscript/dist/magicph.user.js) | [Sleazy Fork](https://sleazyfork.org/scripts/445740) | Mobile/Tablet Support
+| Chrome / Edge | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | Work in progress |
+| Firefox | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | Main development platform |
+| Userscript | [Install](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | - | Downloaders only |
 
 ***
 
@@ -46,15 +49,22 @@ MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICE
 * "Scroll To Top" button.
 * "Recenter" video player button.
 
-Website (Supported) | Verison (Default) | Verison (Mobile) | Verison (Premium) |
-:---------:|:-----------:|:-----------:|:---------:|
-Pornhub | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | Not Tested |
-RedTube | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | Not Tested |
-Tube8 | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | - |
-Thumbzilla | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | - |
-YouPorn | ✅ | [Userscript](https://sleazyfork.org/scripts/445740) | Not Tested |
-Modelhub | Not supported | Not supported | - |
-Onlyfans (WIP) | ✅ | Not Tested | - |
+| Website (Supported) | Verison (Default) | Verison (Mobile) | Verison (Premium) |
+|:---------:|:-----------:|:-----------:|:---------:|
+| Pornhub | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | Not Tested |
+| RedTube | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | Not Tested |
+| Tube8 | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | - |
+| Thumbzilla | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | - |
+| YouPorn | ✅ | [Userscript](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | Not Tested |
+| Modelhub | Not supported | Not supported | - |
+| Onlyfans | ✅ | ✅ | - |
+| xHamster | ✅ | ✅ | - |
+
+**(Optional) Mobile Bookmarklet:**
+
+```JS
+javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/dist/UserJS/magicph.user.js'].map(s=>document.body.appendChild(document.createElement('script')).src=s)})();
+```
 
 ## Support
 
@@ -118,14 +128,14 @@ npm run Dev:Cr
 # [ Development ] Firefox + sass
 npm run Dev:FF
 # [ Development ] Userscript + sass + http-server (http://localhost:8080)
-npm run Dev:Userscript
+npm run Dev:UserJS
 
 # [ Build ] Chrome + Firefox
 npm run build:Browsers
 # [ Build ] Individual
 npm run build:Chrome
 npm run build:Firefox
-npm run build:Userscript
+npm run Pub:UserJS
 
 # [ Testing ]
 # Browsers can be launched via "Run and Debug" in VSCode.
@@ -135,7 +145,6 @@ npm run build:Userscript
 
 ### Roadmap
 
-* Header customization.
 * Fix any bugs along the way.
 
 ### Contacts
