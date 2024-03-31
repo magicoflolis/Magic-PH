@@ -16,13 +16,13 @@ MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICE
 
 ---
 
-| Version | Link | Alternative | Note |
+| Version | Install | Alternative | Features |
 |:----------:|:----------:|:----------:|:----------:|
-| Chrome / Edge | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Development](#development) | Work in progress |
-| Firefox | [Releases](https://github.com/magicoflolis/Magic-PH/releases) | [Development](#development) | Main development platform |
-| Userscript | [Install (GitHub)](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | [Install (OpenUserJS)](https://openuserjs.org/scripts/Magic/MagicPH) | Downloader only! |
+| Userscript | [GitHub](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | [OpenUserJS](https://openuserjs.org/scripts/Magic/MagicPH) | [Userscript](#userscript-features) |
+| Chrome / Edge | [GitHub](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | [Webextension](#webextension-features) |
+| Firefox | [GitHub](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | [Webextension](#webextension-features) |
 
-**(Optional) Mobile Bookmarklet:**
+**(Optional) Bookmarklet:**
 
 > Save this URL as a bookmark, clicking it will cause the userscript version to inject itself into the current webpage.
 
@@ -40,7 +40,7 @@ javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@maste
 
 ---
 
-**Userscript Features:**
+## Userscript Features
 
 See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys--video-downloader)
 
@@ -65,7 +65,7 @@ See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys-
 
 ---
 
-**Webextension Features:**
+## Webextension Features
 
 See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys--video-downloader) & [Accessing "Sidebar"](#accessing-sidebar)
 
@@ -140,7 +140,7 @@ See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys-
 
 * Can be downloaded + installed with provided *.xpi in [releases](https://github.com/magicoflolis/Magic-PH/releases).
 
-## Development
+## Build
 
 > Developed with [VSCodium](https://vscodium.com)
 
@@ -193,6 +193,7 @@ $ pnpm run build:Firefox
 
 ### Roadmap
 
+* Finish webextension version.
 * Fix any bugs along the way.
 
 ### Source Code
