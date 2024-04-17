@@ -24,7 +24,8 @@
       "addonPath": "${workspaceFolder}/build/WebExtension/firefox",
       "reloadOnChange": {
         "watch": [
-          "${workspaceFolder}/src/WebExtension/**"
+          "${workspaceFolder}/src/WebExtension/**",
+          "${workspaceFolder}/build/css/**"
         ],
         "ignore": [
           "${workspaceFolder}/node_modules/**"
