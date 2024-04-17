@@ -23,6 +23,7 @@ A video downloader for various adult websites, see [Supported Websites](#support
 **Userscript:**
 
 * [GitHub Repository](https://github.com/magicoflolis/Magic-PH/blob/master/dist/UserJS/magicph.user.js?raw=1)
+* [Sleazy Fork](https://sleazyfork.org/scripts/492700)
 * [OpenUserJS](https://openuserjs.org/scripts/Magic/MagicPH)
 
 **(Not Recommended) Bookmarklet:**
