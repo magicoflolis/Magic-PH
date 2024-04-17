@@ -28,5 +28,11 @@
   },
   "close": {
     "message": "Close"
+  },
+  "download": {
+    "message": "Download"
+  },
+  "remove": {
+    "message": "Remove"
   }
 }

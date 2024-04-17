@@ -37,6 +37,6 @@ body:
     id: url
     attributes:
       label: URL
-      description: What URL are you attempting to access? If you do not wish to disclouse, put this [GitHub repository](https://github.com/magicoflolis/Magic-PH).
+      description: What URL are you attempting to access? If you do not wish to disclouse, put the URL of this GitHub repository [https://github.com/magicoflolis/Magic-PH](https://github.com/magicoflolis/Magic-PH).
     validations:
       required: true

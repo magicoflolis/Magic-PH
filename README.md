@@ -1,28 +1,44 @@
 # MagicPH
 
 > [!IMPORTANT]
-> This userscript / webextension violates [websites](#supported-websites) content policies on `Banning Downloads`.
+> This userscript / webextension violates [websites](https://github.com/magicoflolis/Magic-PH/blob/master/pages.md) content policies on `Banning Downloads`.
 >
 > **PLEASE USE AT YOUR OWN RISK!**
 
-![GitHub License](https://img.shields.io/github/license/magicoflolis/Magic-PH)
-[![GitHub Release](https://img.shields.io/github/release/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/releases/latest)
-![jsDelivr hits (GitHub)](https://img.shields.io/jsdelivr/gh/hm/magicoflolis/Magic-PH)
-[![GitHub Stars](https://img.shields.io/github/stars/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/stargazers)
+![GitHub License](https://img.shields.io/github/license/magicoflolis/Magic-PH?style=flat-square)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/magicoflolis/Magic-PH?style=flat-square)
+![GitHub Repo stars](https://img.shields.io/github/stars/magicoflolis/Magic-PH?style=flat-square)
 
 > Recommend using "ad blocker" or "content blocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme)) along side.
 
-A video downloader for various adult websites, see [Supported Websites](#supported-websites). *webextension version has not been updated in a while, please use Userscript version!*
+A video downloader for various adult websites. *webextension version has not been updated in a while, please use Userscript version!*
+
+Supported Websites
+
+| Websites | Version (Desktop) | Version (Mobile) |
+|:---------:|:-----------:|:-----------:|
+| [Beeg](https://beeg.com) | ✅ | ✅ |
+| [Onlyfans](https://onlyfans.com) | ✅ | ✅ |
+| [Pornhub](https://www.pornhub.com) | ✅ | ✅ |
+| [Pornhub Premium](https://www.pornhubpremium.com) | ✅ | ✅ |
+| [RedTube](https://www.redtube.com) | ✅ | ✅ |
+| [Tube8](https://www.tube8.com) | ✅ | ✅ |
+| [Thumbzilla](https://www.thumbzilla.com) | ✅ | ✅ |
+| [xHamster](https://xhamster.com) | ✅ | ✅ |
+| [XNXX](https://www.xnxx.com) | ✅ | ✅ |
+| [xVideos](https://www.xvideos.com) | ✅ | ✅ |
+| [YouPorn](https://www.youporn.com) | ✅ | ✅ |
+
+[List of policy violations for supported websites](https://github.com/magicoflolis/Magic-PH/blob/master/pages.md)
 
 ---
 
-## Install
+## Download
 
-> [Features](#userscript-features)
+[![Userscript](https://img.shields.io/badge/Userscript-Download-brightgreen.svg?style=flat-square&label=Userscript+(GitHub)&logo=javascript&logoColor=white)](https://github.com/magicoflolis/Magic-PH/blob/master/dist/UserJS/magicph.user.js?raw=1)
 
-**Userscript:**
+**Alternatives:**
 
-* [GitHub Repository](https://github.com/magicoflolis/Magic-PH/blob/master/dist/UserJS/magicph.user.js?raw=1)
 * [Sleazy Fork](https://sleazyfork.org/scripts/492700)
 * [OpenUserJS](https://openuserjs.org/scripts/Magic/MagicPH)
 
@@ -54,28 +70,6 @@ javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@maste
 * Built in tabs feature.
 * Built in video downloader allows user to easily download and save any video in its highest quality or preferred choice.
 * Video downloader can be combined with any 3rd party/external downloader.
-
-## Supported Websites
-
-**Userscript Version:**
-
-| Websites | Version (Desktop) | Version (Mobile) |
-|:---------:|:-----------:|:-----------:|
-| Beeg | ✅ | ✅ |
-| Onlyfans | ✅ | ✅ |
-| Pornhub | ✅ | ✅ |
-| Pornhub Premium | ✅ | ✅ |
-| RedTube | ✅ | ✅ |
-| RedTube Premium | ✅ | ✅ |
-| Tube8 | ✅ | ✅ |
-| Thumbzilla | ✅ | ✅ |
-| xHamster | ✅ | ✅ |
-| XNXX | ✅ | ✅ |
-| xVideos | ✅ | ✅ |
-| YouPorn | ✅ | ✅ |
-| YouPorn Premium | ✅ | ✅ |
-
----
 
 ## Accessing Downloader
 

@@ -84,11 +84,40 @@ const toDate = () => {
     fractionalSecondDigits: 3
   }).format(new Date());
 };
+const dataMap = new Map();
+const compareArrays = (a, b) =>
+  a.length === b.length && a.every((element, index) => element === b[index]);
+const addTo = (key, ...values) => {
+  if (values.length === 0) {
+    return '';
+  }
+  if (dataMap.has(key)) {
+    if (compareArrays(dataMap.get(key), values)) {
+      return dataMap.get(key);
+    }
+  }
+  dataMap.set(key, values);
+  return dataMap.get(key);
+};
+const filterData = [
+  'name',
+  'description',
+  'author',
+  'icon',
+  'version',
+  'url',
+  'homepage',
+  'bugs',
+  'license'
+];
 const initUserJS = async () => {
   /** @type { dotenv.DotenvConfigOutput } */
   let result = {};
   try {
     const jsonData = await fileToJSON('./package.json');
+    if (!isObj(jsonData)) {
+      throw new Error('"jsonData" IS NOT A JSON OBJECT');
+    }
     if (!jsonData.userJS) {
       throw new Error('Missing "userJS" key in package.json');
     }
@@ -120,6 +149,27 @@ const initUserJS = async () => {
         for (const i in keys.length) v = v[keys[i]];
         return isEmpty(v) ? '' : v;
       });
+    };
+    const compileMetadata = () => {
+      const metaData = [];
+      for (const [key, value] of Object.entries(userJS.metadata)) {
+        if (Array.isArray(value)) {
+          for (const v of value) {
+            metaData.push(`// @${key}     ${v}`);
+          }
+        } else if (isObj(value)) {
+          for (const [k, v] of Object.entries(value)) {
+            metaData.push(`// @${key}     ${k} ${v}`);
+          }
+        } else if (typeof value === 'boolean') {
+          if (value === true) {
+            metaData.push(`// @${key}`);
+          }
+        } else {
+          metaData.push(`// @${key}     ${value}`);
+        }
+      }
+      return metaData.join('\n');
     };
     const buildUserJS = async () => {
       try {
@@ -170,89 +220,73 @@ const initUserJS = async () => {
           }
           return resp;
         };
-        const compileMetadata = () => {
-          const metaData = [];
-          for (const [key, value] of Object.entries(userJS.metadata)) {
-            if (Array.isArray(value)) {
-              for (const v of value) {
-                metaData.push(`// @${key}     ${v}`);
-              }
-            } else if (isObj(value)) {
-              for (const [k, v] of Object.entries(value)) {
-                metaData.push(`// @${key}     ${k} ${v}`);
-              }
-            } else if (typeof value === 'boolean') {
-              if (value === true) {
-                metaData.push(`// @${key}`);
-              }
-            } else {
-              metaData.push(`// @${key}     ${value}`);
-            }
-          }
-          return metaData.join('\n');
-        };
         /**
          * @template { import('../package.json') } J
          * @template { string } S
          * @param { S[] } arr
          * @returns { J["userJS"][S] }
          */
-        const getData = (arr = []) => {
-          try {
-            if (!isObj(jsonData)) {
-              return 'ERROR "jsonData" IS NOT A JSON OBJECT';
+        const getData = () => {
+          for (const [k, v] of Object.entries(userJS)) {
+            if (typeof v !== 'string') {
+              continue;
             }
-            const resp = [];
-            for (const str of arr) {
-              const getParam = () => {
-                if (str in build.paths[dp] && build.paths[dp][str]) {
-                  return build.paths[dp][str];
-                } else if ('userJS' in jsonData && jsonData.userJS[str]) {
-                  return jsonData.userJS[str];
-                }
-                return jsonData[str] ?? null;
-              };
-              const param = getParam();
-              if (!param) {
-                continue;
+            if (k === 'name') {
+              addTo(
+                k,
+                `// @${k}         ${js_env ? '[Dev] ' : ''}${v}`,
+                ...compileLanguage('userjs_name')
+              );
+            } else if (k === 'description') {
+              addTo(k, `// @${k}  ${v}`, ...compileLanguage('userjs_description'));
+            } else if (k === 'author') {
+              addTo(k, `// @${k}       ${v}`);
+            } else if (k === 'icon') {
+              const buff = new Buffer.from(fs.readFileSync(v));
+              const base64data = buff.toString('base64');
+              if (v.endsWith('.png')) {
+                addTo(k, `// @${k}         data:image/png;base64,${base64data}`);
+              } else if (v.endsWith('.svg')) {
+                addTo(k, `// @${k}         data:image/svg+xml;base64,${base64data}`);
               }
-              if (str === 'name') {
-                resp.push(
-                  `// @${str}         ${js_env ? '[Dev] ' : ''}${param}`,
-                  ...compileLanguage('userjs_name')
-                );
-              } else if (str === 'description') {
-                resp.push(`// @${str}  ${param}`, ...compileLanguage('userjs_description'));
-              } else if (str === 'author') {
-                resp.push(`// @${str}       ${param}`);
-              } else if (str === 'icon') {
-                const buff = new Buffer.from(fs.readFileSync(param));
-                const base64data = buff.toString('base64');
-                if (param.endsWith('.png')) {
-                  resp.push(`// @${str}         data:image/png;base64,${base64data}`);
-                } else if (param.endsWith('.svg')) {
-                  resp.push(`// @${str}         data:image/svg+xml;base64,${base64data}`);
-                }
-              } else if (str === 'url') {
-                resp.push(`// @downloadURL  ${param}`, `// @updateURL    ${param}`);
-              } else if (str === 'version') {
-                resp.push(`// @${str}      ${js_env ? +new Date() : param}`);
-              } else if (str === 'homepage') {
-                resp.push(`// @namespace    ${param}`, `// @homepageURL  ${param}`);
-              } else if (str === 'bugs') {
-                resp.push(`// @supportURL   ${param}`);
-              } else if (str === 'license') {
-                resp.push(`// @${str}      ${param}`);
-              } else {
-                resp.push(param);
-              }
+            } else if (k === 'downloadURL') {
+              addTo(k, `// @downloadURL  ${v}`);
+            } else if (k === 'updateURL') {
+              addTo(k, `// @updateURL    ${v}`);
+            } else if (k === 'url') {
+              addTo(k, `// @downloadURL  ${v}`, `// @updateURL    ${v}`);
+            } else if (k === 'version') {
+              addTo(k, `// @${k}      ${js_env ? +new Date() : v}`);
+            } else if (k === 'homepage') {
+              addTo(k, `// @namespace    ${v}`, `// @homepageURL  ${v}`);
+            } else if (k === 'bugs') {
+              addTo(k, `// @supportURL   ${v}`);
+            } else if (k === 'license') {
+              addTo(k, `// @${k}      ${v}`);
+            } else {
+              addTo(k, v);
             }
-            return resp.join('\n');
-          } catch (ex) {
-            err(ex);
           }
+          for (const [k, v] of Object.entries(jsonData)) {
+            if (typeof v !== 'string') {
+              continue;
+            }
+            if (!filterData.includes(k)) {
+              continue;
+            }
+            if (dataMap.has(k)) {
+              continue;
+            }
+            if (k === 'license') {
+              addTo(k, `// @${k}      ${v}`);
+            }
+          }
+          if (userJS.metadata) {
+            addTo('metaData', compileMetadata());
+          }
+          return [...dataMap.values()].flat().join('\n');
         };
-        const userJSHeader = `// ==UserScript==\n${getData(['name', 'description', 'author', 'icon', 'version', 'url', 'homepage', 'bugs', 'license'])}\n${compileMetadata()}\n// ==/UserScript==`;
+        const userJSHeader = `// ==UserScript==\n${getData()}\n// ==/UserScript==`;
         const headerFile = await canAccess(build.source.head);
         const mainFile = await canAccess(build.source.body);
         const nanoCFG = {
@@ -260,12 +294,14 @@ const initUserJS = async () => {
           languageList: transformLanguages(),
           code: mainFile
         };
-        for (const [k, v] of Object.entries(build.source.extras)) {
-          const extraFile = await canAccess(v);
-          if (typeof extraFile === 'string') {
-            nanoCFG[k] = extraFile;
+        if (build.source.extras) {
+          for (const [k, v] of Object.entries(build.source.extras)) {
+            const extraFile = await canAccess(v);
+            if (typeof extraFile === 'string') {
+              nanoCFG[k] = extraFile;
+            }
           }
-        }
+        };
         const outFile = `${build.paths[dp].dir}/${build.paths[dp].fileName}.user.js`;
         await writeUserJS(outFile, nano(headerFile, nanoCFG));
         log('UserJS Build:', {
@@ -273,9 +309,8 @@ const initUserJS = async () => {
           time: toDate()
         });
         if (!js_env) {
-          const metaFile = await canAccess(build.source.metadata);
-          const outMeta = `${build.paths[dp].dir}/${build.paths[dp].fileName}.meta.user.js`;
-          await writeUserJS(outMeta, nano(metaFile, { metadata: userJSHeader }));
+          const outMeta = `${build.paths[dp].dir}/${build.paths[dp].fileName}.meta.js`;
+          await writeUserJS(outMeta, nano('{{metadata}}', { metadata: userJSHeader }));
           log('UserJS Metadata:', {
             path: outMeta,
             time: toDate()

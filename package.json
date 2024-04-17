@@ -15,10 +15,10 @@
     "bugs": "https://github.com/magicoflolis/Magic-PH/issues/new",
     "homepage": "https://github.com/magicoflolis/Magic-PH",
     "icon": "./assets/magicph_logo.png",
-    "url": "https://github.com/magicoflolis/Magic-PH/raw/master/dist/UserJS/magicph.user.js",
+    "downloadURL": "https://github.com/magicoflolis/Magic-PH/raw/master/dist/UserJS/magicph.user.js",
+    "updateURL": "https://github.com/magicoflolis/Magic-PH/raw/master/dist/UserJS/magicph.meta.js",
     "build": {
       "source": {
-        "metadata": "./src/UserJS/metadata.js",
         "head": "./src/UserJS/header.js",
         "body": "./src/UserJS/main.js",
         "extras": {
@@ -69,10 +69,8 @@
         "https://*.pornhub.com/*",
         "https://*.pornhubpremium.com/*",
         "https://*.youporn.com/*",
-        "https://*.youpornpremium.com/*",
         "https://*.youporngay.com/*",
         "https://*.redtube.com/*",
-        "https://*.redtubepremium.com/*",
         "https://*.tube8.com/*",
         "https://*.thumbzilla.com/*",
         "https://onlyfans.com/*",

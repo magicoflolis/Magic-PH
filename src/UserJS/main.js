@@ -859,7 +859,6 @@ const Network = {
       const fetchResp = (response_1) => {
         if (!response_1.ok) {
           err({ method, responseType, data, useFetch, resp: response_1 });
-          // reject(response_1)
           reject(new Error(`${response_1.status} ${url}`));
         }
         const check = (str_2 = 'text') => {
@@ -879,7 +878,7 @@ const Network = {
           resolve(check('clone'));
         } else if (responseType.match(/document/)) {
           const domParser = new DOMParser();
-          const respTxt = check('text'); // response_1.text()
+          const respTxt = check('text');
           if (respTxt instanceof Promise) {
             respTxt.then((txt) => {
               const doc = domParser.parseFromString(txt, 'text/html');
@@ -1266,9 +1265,6 @@ class Tabs {
             }
             await loadMedia(value.url.href);
           }
-          // /watch/15396852/mega-cum-on-clothes-cumpilation-cumshot-compilation-fully-clothed-sex-skirt/
-          // /videos/first-love-3-xhETgfQ
-          // /video-13gmj72a/two_naughty_lesbians_get_caught_when_they_stop_studying_to_start_fucking_follow_them_on_instagram_mingalilea_and_the.2001.xperience
         } else if (/^\/video-\w+\/[\w-.]+(?:\/(?=$))?$/i.test(val)) {
           if (/xnxx/.test(HP.current.root)) {
             value.url = `${HP.webpage.origin}${val}`;
@@ -1621,7 +1617,6 @@ const getOFQuality = (d, quality = 'original') => {
   return videoCache.get(d.host)[0];
 };
 const mphControls = make('mph-controls', '', {
-  // style: isMobile ? 'display: none;' : '',
   async onclick(evt) {
     const target = evt.target;
     if (!target.dataset) {
@@ -1705,15 +1700,15 @@ const addToWrapper = () => {
         }
       });
       const downBtn = make('mph-btn', 'of_btn', {
-        title: 'Download',
-        innerHTML: 'Download',
+        title: i18n$('download'),
+        innerHTML: i18n$('download'),
         dataset: {
           command: 'of-download'
         }
       });
       const rmBtn = make('mph-btn', 'of_btn', {
-        title: 'Remove',
-        innerHTML: 'Remove',
+        title: i18n$('remove'),
+        innerHTML: i18n$('remove'),
         dataset: {
           command: 'of-remove'
         }
@@ -1753,18 +1748,10 @@ const addToWrapper = () => {
         }
         $el.append(moreInfo);
       }
-
-      // videoCache.set(userId, { title: v.title, $el });
-
       if (!mphList.contains($el)) {
         mphList.append($el);
         hc.$elems.push($el);
       }
-      // Object.assign(hc, {
-      //   title: v.title
-      // });
-      // hc.cache.push(v);
-      // hc.mediaFiles.push(v);
     }
     hostCache.set(userId, hc);
     dul.append(mphList);
@@ -2295,10 +2282,8 @@ const makeContainer = (q = [], data = {}) => {
         }
       }),
       download: make('mph-a', '', {
-        title: 'Download',
-        innerHTML: HP.webpage.origin.match(/redtube/g)
-          ? 'Download'
-          : `${iconSVG.download} Download`,
+        title: i18n$('download'),
+        innerHTML: `${HP.webpage.origin.match(/redtube/g) ? '' : `${iconSVG.download} `}${i18n$('download')}`,
         dataset: {
           command: 'download-video',
           webpage: val
