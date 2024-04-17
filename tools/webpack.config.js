@@ -1,13 +1,13 @@
 /* eslint-env node */
 'use strict';
+// import { URL } from 'node:url';
 import fs from 'fs';
-// import util from 'util';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { merge } from 'webpack-merge';
 import CopyPlugin from 'copy-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
-// import * as sass from 'sass';
+// import { loadSass } from './sassLoader.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const access = fs.promises.access;
@@ -20,9 +20,10 @@ const globOptions = {
   ignore: ['**/*.txt']
 };
 /**
- * Object is Null
- * @param {Object} obj - Object
- * @returns {boolean} Returns if statement true or false
+ * Object is `null` or `undefined`
+ * @template O
+ * @param { O } obj
+ * @returns { boolean }
  */
 const isNull = (obj) => {
   return Object.is(obj, null) || Object.is(obj, undefined);
@@ -44,27 +45,7 @@ const fileToJSON = async (filePath, encoding = 'utf-8') => {
 export default async (env, args) => {
   const brws = env.brws;
   const webExtDir = `build/WebExtension/${brws}`;
-  const webExtSrc = 'src/WebExtension';
-  const compileSass = async () => {
-    const rootPath = file('build/css');
-    const dir = await fs.promises.opendir(rootPath);
-    for await (const dirent of dir) {
-      if (!dirent.isFile()) continue;
-      const result = await canAccess(path.join(rootPath, dirent.name));
-      await fs.promises.writeFile(path.join(file(webExtDir), 'css', dirent.name), result, 'utf8');
-    }
-  };
-  // const compileSass = async (root) => {
-  //   const rootPath = file(root);
-  //   const dir = await fs.promises.opendir(rootPath);
-  //   for await (const dirent of dir) {
-  //     if (!dirent.isFile()) continue;
-  //     if (!/(downloader|magicph|plyr)\.scss/.test(dirent.name)) continue;
-  //     const filePath = path.join(file(webExtDir), 'css', dirent.name.replace(/\.s[ac]ss$/i, '.css'));
-  //     const result = sass.compile(path.join(rootPath, dirent.name));
-  //     await fs.promises.writeFile(filePath, result.css, 'utf8');
-  //   }
-  // };
+  const webExtSrc = 'src';
   const plugins = [
     new CopyPlugin({
       patterns: [
@@ -86,7 +67,7 @@ export default async (env, args) => {
           }
         },
         {
-          from: file(`${webExtSrc}/_locales`),
+          from: file('src/_locales'),
           to: file(`${webExtDir}/_locales`),
           globOptions
         },
@@ -95,23 +76,6 @@ export default async (env, args) => {
           to: file(`${webExtDir}/[name][ext]`),
           globOptions
         },
-        // {
-        //   from: file('src/Common/sass/**'),
-        //   to: file(`${webExtDir}/css`),
-        //   async transform(content) {
-        //     const { version, author, homepage: homepage_url } = await fileToJSON('./package.json');
-        //     const manifest = JSON.parse(content);
-        //     return JSON.stringify(
-        //       Object.assign(manifest, {
-        //         version,
-        //         author,
-        //         homepage_url
-        //       }),
-        //       null,
-        //       ' '
-        //     );
-        //   }
-        // },
         {
           from: file(`${webExtSrc}/img`),
           to: file(`${webExtDir}/img`),
@@ -205,7 +169,6 @@ export default async (env, args) => {
       ignored: /(node_modules|bower_components)/
     }
   };
-  await compileSass();
   switch (args.mode) {
     case 'development':
       return merge(commonConfig, developmentConfig);

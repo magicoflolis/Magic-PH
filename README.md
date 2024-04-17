@@ -1,28 +1,31 @@
 # MagicPH
 
 > [!IMPORTANT]
-> This webextension / userscript violates `PornHub` [Non-Consensual Content Policy](https://help.pornhub.com/hc/en-us/categories/4419836212499) (`2. Banning Downloads`)
+> This userscript / webextension violates [websites](#supported-websites) content policies on `Banning Downloads`.
 >
-> PLEASE USE AT YOUR OWN RISK!
+> **PLEASE USE AT YOUR OWN RISK!**
 
 ![GitHub License](https://img.shields.io/github/license/magicoflolis/Magic-PH)
 [![GitHub Release](https://img.shields.io/github/release/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/releases/latest)
 ![jsDelivr hits (GitHub)](https://img.shields.io/jsdelivr/gh/hm/magicoflolis/Magic-PH)
 [![GitHub Stars](https://img.shields.io/github/stars/magicoflolis/Magic-PH)](https://github.com/magicoflolis/Magic-PH/stargazers)
 
-> Enhances adult viewing experience clean, quick, & easy
+> Recommend using "ad blocker" or "content blocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme)) along side.
 
-MagicPH, [open source](https://github.com/magicoflolis/Magic-PH/blob/master/LICENSE) web extension with the goal of improving webpage navigation and *reducing distractions.* Recommended to use an "ad blocker" or "content blocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme)) along side.
+A video downloader for various adult websites, see [Supported Websites](#supported-websites). *webextension version has not been updated in a while, please use Userscript version!*
 
 ---
 
-| Version | Install | Alternative | Features |
-|:----------:|:----------:|:----------:|:----------:|
-| Userscript | [GitHub](https://raw.githubusercontent.com/magicoflolis/Magic-PH/master/dist/UserJS/magicph.user.js) | [OpenUserJS](https://openuserjs.org/scripts/Magic/MagicPH) | [Userscript](#userscript-features) |
-| Chrome / Edge | [GitHub](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | [Webextension](#webextension-features) |
-| Firefox | [GitHub](https://github.com/magicoflolis/Magic-PH/releases) | [Build](#build) | [Webextension](#webextension-features) |
+## Install
 
-**(Optional) Bookmarklet:**
+> [Features](#userscript-features)
+
+**Userscript:**
+
+* [GitHub Repository](https://github.com/magicoflolis/Magic-PH/blob/master/dist/UserJS/magicph.user.js?raw=1)
+* [OpenUserJS](https://openuserjs.org/scripts/Magic/MagicPH)
+
+**(Not Recommended) Bookmarklet:**
 
 > Save this URL as a bookmark, clicking it will cause the userscript version to inject itself into the current webpage.
 
@@ -42,107 +45,80 @@ javascript:(function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@maste
 
 ## Userscript Features
 
-See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys--video-downloader)
+> See [Accessing Downloader](#accessing-downloader)
 
+* Designed for mobile and desktop devices.
+* Multiple language support.
+* Will match the websites theme.
+* Built in tabs feature.
 * Built in video downloader allows user to easily download and save any video in its highest quality or preferred choice.
 * Video downloader can be combined with any 3rd party/external downloader.
 
-| Websites (Supported) | Version (Desktop) | Version (Mobile) |
+## Supported Websites
+
+**Userscript Version:**
+
+| Websites | Version (Desktop) | Version (Mobile) |
 |:---------:|:-----------:|:-----------:|
-| Beeg (WIP) | ✅ | ✅ |
+| Beeg | ✅ | ✅ |
+| Onlyfans | ✅ | ✅ |
 | Pornhub | ✅ | ✅ |
-| Pornhub Premium | Not Tested | Not Tested |
+| Pornhub Premium | ✅ | ✅ |
 | RedTube | ✅ | ✅ |
-| RedTube Premium | Not Tested | Not Tested |
+| RedTube Premium | ✅ | ✅ |
 | Tube8 | ✅ | ✅ |
 | Thumbzilla | ✅ | ✅ |
-| YouPorn | ✅ | ✅ |
-| YouPorn Premium | Not Tested | Not Tested |
-| Onlyfans | ✅ | ✅ |
 | xHamster | ✅ | ✅ |
 | XNXX | ✅ | ✅ |
 | xVideos | ✅ | ✅ |
-
----
-
-## Webextension Features
-
-See [Accessing "Video Quality(s)" / Video Downloader](#accessing-video-qualitys--video-downloader) & [Accessing "Sidebar"](#accessing-sidebar)
-
-* Built in video downloader allows user to easily download and save any video in its highest quality or preferred choice.
-* Video downloader can be combined with any 3rd party/external downloader.
-* Fully customizable settings menu.
-* Improves webpage layout + webpage tweaks.
-* Alternative video player support. ( [Plyr](https://github.com/sampotts/plyr) )
-* Cross-site favorite videos page.
-* Automatically expands video player.
-* Automatically scroll on webpage load.
-* Automatically blur video thumbnails on webpage load.
-* Automatically collapse comment + related videos section.
-* Automatically skips video player ahead by 4 seconds.
-* Automatically "Jump To" the first section of video.
-* "Jump To" can now be filtered.
-* "Scroll To Top" button.
-* "Recenter" video player button.
-
-| Websites (Supported) | Version (Desktop) | Version (Mobile) |
-|:---------:|:-----------:|:-----------:|
-| Pornhub | ✅ | ✅ |
-| Pornhub Premium | Not Tested | Not Tested |
-| RedTube | ✅ | ✅ |
-| RedTube Premium | Not Tested | Not Tested |
-| Tube8 | ✅ | ✅ |
-| Thumbzilla | ✅ | ✅ |
 | YouPorn | ✅ | ✅ |
-| YouPorn Premium | Not Tested | Not Tested |
-| Onlyfans | ✅ | ✅ |
-| xHamster | ✅ | ✅ |
+| YouPorn Premium | ✅ | ✅ |
 
 ---
 
-## Accessing "Video Quality(s)" / Video Downloader
+## Accessing Downloader
 
-> Accessing "Video Quality(s)" may vary from website to website.
+**Default Method:**
 
-* Desktop / Mobile / Tablet - Right click anywhere inside the video player.
-* Tablet / Mobile - Press "Video Quality(s)" in the video player.
-* Mobile - Press the gear icon in the video player.
-* Mobile - On Youporn press the gear icon then press "Video Quality(s)" in the video player.
+* Click "**Show List**" located to the bottom right of the page.
+* Onlyfans (**Mobile**) - Click on any video post.
 
-## Accessing "Sidebar"
+**Website Specific:**
 
-* Click websites logo in the header.
+* Desktop / Mobile - Right click anywhere inside the video player then click "**Video Quality(s)**".
+* Mobile - Press "**Video Quality(s)**" in the video player.
+* Mobile (**Alternative**) - Press the gear icon in the video player.
+* Youporn (**Mobile**) - Press the gear icon in the video player then press "**Video Quality(s)**".
 
-## Webextension Installation
+## Tabs
 
-**Chromium:**
+> In a nutshell, the tab system work the same way your browser creates tabs, by default the tab is named after the host.
 
-> [Read this first](https://github.com/NeverDecaf/chromium-web-store#read-this-first=)
+A new tab is automatically created when a video source is found, the tab is named after the videos title.
 
-* Can be downloaded + installed with provided *.crx in [releases](https://github.com/magicoflolis/Magic-PH/releases) page or through zip.
-* Can be automatically updated with [chromium-web-store](https://github.com/NeverDecaf/chromium-web-store).
+**Creating a New Tab:**
 
-**Google Chrome:**
+> Creating a new tab is as easy as clicking the "+" within the list.
 
-* Must be manually downloaded + installed from [releases](https://github.com/magicoflolis/Magic-PH/releases) page through zip file.
-* Enable "Developer mode" in [chrome://extensions/](chrome://extensions/)
-* Unzip web extension to desired folder.
-* "Load unpacked" > /path to web extension/
+This new tab is a search box, typing any supported method will automatically find the video source(s)!
 
-**Microsoft Edge:**
+Supported Methods:
 
-* Must be manually downloaded + installed from [releases](https://github.com/magicoflolis/Magic-PH/releases) page through zip file.
-* Enable "Developer mode" in [edge://extensions/](edge://extensions/)
-* Unzip web extension to desired folder.
-* "Load unpacked" > /path to web extension/
-
-**Mozilla Firefox:**
-
-* Can be downloaded + installed with provided *.xpi in [releases](https://github.com/magicoflolis/Magic-PH/releases).
+* `<full url>` of any supported website or `<host>/<video path>`
+* Beeg (**Not Supported**) - *Still a work in progress*
+* Onlyfans (**Must be on the same website**) - *Still a work in progress*, `/<model>` or `/<model>/photos|videos|audios|likes|streams|upcoming-streams`.
+* Pornhub - `/view_video.php?viewkey=<video id>` or just entering the `<video id>`.
+* RedTube - `/<video id>`
+* Tube8 - `/porn-video/<video id>/`
+* Thumbzilla - `/video/<video id>/<video name>`
+* xHamster (**Work in Progress**) - `/videos/<video name>`
+* XNXX (**Work in Progress**) - `/video-<video id>/<video name>`
+* xVideos - `/video.<video id>/<video name>`
+* Youporn (**Work in Progress**) - `/watch/<video id>/<video name>/`
 
 ## Build
 
-> Developed with [VSCodium](https://vscodium.com)
+> Developed in [VSCodium](https://vscodium.com)
 
 Install [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/).
 The version of Node.js should match `"node"` key in `package.json`.
@@ -169,26 +145,6 @@ $ pnpm run dev:UserJS
 
 # Compile UserJS to "./dist/UserJS/magicph.user.js"
 $ pnpm run pub:UserJS
-```
-
-### Webextension Version
-
-``` sh
-# Compile webextension for "Chromium" to "./build/WebExtension/chrome"
-$ pnpm run dev:Cr
-# Compile webextension for "Firefox" to "./build/WebExtension/firefox"
-$ pnpm run dev:FF
-
-# [ Build ] "Chromium" + "Firefox"
-$ pnpm run build:Browsers
-# [ Build ] Individual
-$ pnpm run build:Chrome
-$ pnpm run build:Firefox
-
-# [ Testing ]
-# Browsers can be launched via "Run and Debug" in VSCode.
-# Edit runtimeExecutable in ".vscode/launch.json" to your Chrome executable.
-# Recommended to create an additional profile "about:profiles" for Firefox.
 ```
 
 ### Roadmap

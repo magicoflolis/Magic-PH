@@ -1,100 +1,9 @@
-// import { URL } from 'node:url';
-import { access, constants, readFile, writeFile } from 'node:fs/promises';
+import { URL } from 'node:url';
+import fs from 'node:fs';
 import dotenv from 'dotenv';
 import watch from 'node-watch';
-// import { loadLanguages } from './languageLoader.js';
+import { loadLanguages } from './languageLoader.js';
 
-/** @type { dotenv.DotenvConfigOutput } */
-let result = {};
-
-/** Source Directories */
-// const sDir = {
-//   head: './src/UserJS/header.js',
-//   body: './src/UserJS/main.js',
-//   /**
-//    * FORMAT
-//    * `name`: `file location`
-//    */
-//   extras: {
-//     'mainCSS': './tests/compiled/magicuserjs.css',
-//   },
-// };
-// const buildPaths = {
-//   /** File Name */
-//   name: 'magic-userjs',
-//   dev: {
-//     url: 'https://localhost:9090',
-//     env: './src/UserJS/.env',
-//     dir: './tests/userscript'
-//   },
-//   public: {
-//     env: './dist/.env',
-//     dir: './dist'
-//   }
-// };
-// const userJS = {
-//   /**
-//    * `//@compatible {{Web Browser}}`
-//    * @type { S[] }
-//    */
-//   compatible: ['chrome', 'firefox', 'edge', 'opera', 'safari'],
-//   /**
-//    * `//@connect {{URL}}`
-//    * @type { string[] }
-//    */
-//   connect: ['greasyfork.org', 'sleazyfork.org', 'github.com', 'openuserjs.org'],
-//   /**
-//    * `//@exclude {{URL}}`
-//    * @type { string[] }
-//    */
-//   exclude: [],
-//   /**
-//    * `//@exclude-match {{URL}}`
-//    * @type { string[] }
-//    */
-//   'exclude-match': [],
-//   /**
-//    * `//@grant {{GM Permission}}`
-//    * @type { string[] }
-//    */
-//   grant: [
-//     'GM.xmlHttpRequest',
-//     'GM.openInTab',
-//     'GM.getValue',
-//     'GM.setValue',
-//     'GM.info',
-//     'GM_xmlhttpRequest',
-//     'GM_openInTab',
-//     'GM_getValue',
-//     'GM_setValue',
-//     'GM_info'
-//   ],
-//   /**
-//    * `//@include {{URL}}`
-//    * @type { string[] }
-//    */
-//   include: [],
-//   /**
-//    * `//@match {{URL}}`
-//    * @type { string[] }
-//    */
-//   match: [ 'https://*/*' ],
-//   /**
-//    * `//@noframes`
-//    * @type { boolean }
-//    */
-//   noframes: true,
-//   /**
-//    * `//@resource {{name}} {{URL}}`
-//    * @type { object }
-//    */
-//   resource: {},
-//   /**
-//    * `//@run-at {{execute}}`
-//    * @type { string }
-//    */
-//   'run-at': 'document-start',
-// };
 const log = (...msg) => {
   console.log('[LOG]', ...msg);
 };
@@ -145,13 +54,16 @@ const isEmpty = (obj) => {
   return isNull(obj) || isBlank(obj);
 };
 const canAccess = async (filePath, encoding = 'utf-8') => {
-  const testAccess = await access(filePath, constants.R_OK | constants.W_OK);
+  const testAccess = await fs.promises.access(
+    filePath,
+    fs.promises.constants.R_OK | fs.promises.constants.W_OK
+  );
   if (isNull(testAccess)) {
-    const data = await readFile(filePath, encoding);
+    const data = await fs.promises.readFile(filePath, encoding);
     return data.toString(encoding);
   }
   return {
-    msg: `Cannot access provided filePath: ${filePath}`,
+    msg: `Cannot access provided filePath: ${filePath}`
   };
 };
 const fileToJSON = async (filePath, encoding = 'utf-8') => {
@@ -161,24 +73,31 @@ const fileToJSON = async (filePath, encoding = 'utf-8') => {
   }
   return JSON.parse(testAccess);
 };
-const dateOptions = {
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-  fractionalSecondDigits: 3
+const writeUserJS = async (destinationFilePath, data) => {
+  return await fs.promises.writeFile(destinationFilePath, data);
+};
+const toDate = () => {
+  return new Intl.DateTimeFormat('default', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    fractionalSecondDigits: 3
+  }).format(new Date());
 };
 const initUserJS = async () => {
+  /** @type { dotenv.DotenvConfigOutput } */
+  let result = {};
   try {
-    const jsonData = await fileToJSON('./package.json', 'utf-8');
+    const jsonData = await fileToJSON('./package.json');
     if (!jsonData.userJS) {
-      throw new Error('Missing "userJS" key in package.json')
+      throw new Error('Missing "userJS" key in package.json');
     }
     const userJS = jsonData.userJS;
     const { build } = userJS;
 
-    result = isEmpty(process.env.JS_ENV)
-      ? dotenv.config({ path: build.paths.dev.env })
-      : dotenv.config({ path: build.paths.public.env });
+    result = dotenv.config({
+      path: isEmpty(process.env.JS_ENV) ? build.paths.dev.env : build.paths.public.env
+    });
     if (result.error) {
       throw result.error;
     }
@@ -192,12 +111,8 @@ const initUserJS = async () => {
       );
     }
     const env = result.parsed;
-
-
     const js_env = env.JS_ENV === 'development';
     const dp = js_env ? 'dev' : 'public';
-
-    // const lngList = await loadLanguages(new URL('../src/_locales', import.meta.url));
     const nano = (template, data) => {
       return template.replace(/\{\{(.*?)\}\}/g, (_match, key) => {
         const keys = key.split('.');
@@ -206,92 +121,76 @@ const initUserJS = async () => {
         return isEmpty(v) ? '' : v;
       });
     };
-
-
-    /** Build Paths */
-    const outFile = `${build.paths[dp].dir}/${build.paths[dp].fileName}.user.js`;
     const buildUserJS = async () => {
       try {
-        const compileMetadata = () => {
-          const metaData = [];
-          try {
-            for (const [key, value] of Object.entries(userJS)) {
-              if (Array.isArray(value)) {
-                for (const v of value) {
-                  metaData.push(`// @${key}     ${v}`);
+        const lngList = await loadLanguages(new URL('../src/_locales', import.meta.url));
+        const transformLanguages = () => {
+          const resp = {};
+          for (const obj of lngList) {
+            for (const [k, v] of Object.entries(obj)) {
+              const o = {};
+              for (const [key, value] of Object.entries(v)) {
+                if (key.startsWith('ext')) {
+                  continue;
                 }
-              } else if (isObj(value)) {
-                for (const [k, v] of Object.entries(value)) {
-                  metaData.push(`// @${key}     ${k} ${v}`);
+                if (/userjs_(name|description)/i.test(key)) {
+                  continue;
                 }
-              } else if (typeof value === 'boolean') {
-                if (value === true) {
-                  metaData.push(`// @${key}`);
+                if (isEmpty(value.message)) {
+                  continue;
                 }
-              } else {
-                metaData.push(`// @${key}     ${value}`);
+                o[key] = value.message;
+              }
+              resp[k] = o;
+            }
+          }
+          return JSON.stringify(resp);
+        };
+        const compileLanguage = (type = 'userjs_name') => {
+          const resp = [];
+          for (const obj of lngList) {
+            for (const [k, v] of Object.entries(obj)) {
+              if (v[type]) {
+                if (isEmpty(v[type].message)) {
+                  continue;
+                }
+                if (k.startsWith('en')) {
+                  continue;
+                }
+                const t = type.toLowerCase().replace('userjs_', '');
+                if (type === 'userjs_name') {
+                  resp.push(
+                    `// @${t}:${k.replace('_', '-')}      ${js_env ? '[Dev] ' : ''}${v[type].message}`
+                  );
+                } else {
+                  resp.push(`// @${t}:${k.replace('_', '-')}      ${v[type].message}`);
+                }
               }
             }
-          } catch (ex) {
-            err(ex)
+          }
+          return resp;
+        };
+        const compileMetadata = () => {
+          const metaData = [];
+          for (const [key, value] of Object.entries(userJS.metadata)) {
+            if (Array.isArray(value)) {
+              for (const v of value) {
+                metaData.push(`// @${key}     ${v}`);
+              }
+            } else if (isObj(value)) {
+              for (const [k, v] of Object.entries(value)) {
+                metaData.push(`// @${key}     ${k} ${v}`);
+              }
+            } else if (typeof value === 'boolean') {
+              if (value === true) {
+                metaData.push(`// @${key}`);
+              }
+            } else {
+              metaData.push(`// @${key}     ${value}`);
+            }
           }
           return metaData.join('\n');
         };
-        // const transformLanguages = () => {
-        //   try {
-        //     const resp = {};
-        //     for (const obj of lngList) {
-        //       for (const [k, v] of Object.entries(obj)) {
-        //         if (k.includes('_')) {
-        //           continue;
-        //         }
-        //         const o = {};
-        //         for (const [key, value] of Object.entries(v)) {
-        //           if (key.startsWith('ext')) {
-        //             continue;
-        //           }
-        //           if (key.startsWith('userjs')) {
-        //             continue;
-        //           }
-        //           if (isEmpty(value.message)) {
-        //             continue;
-        //           }
-        //           o[key] = value.message;
-        //         }
-        //         resp[k] = o;
-        //       }
-        //     }
-        //     return JSON.stringify(resp);
-        //   } catch (ex) {
-        //     err(ex)
-        //   }
-        // }
-        // const compileLanguage = (type = 'userjsName') => {
-        //   try {
-        //     const resp = [];
-        //     for (const obj of lngList) {
-        //       for (const [k, v] of Object.entries(obj)) {
-        //         if (v[type]) {
-        //           if (isEmpty(v[type].message)) {
-        //             continue;
-        //           }
-        //           if (k.startsWith('en')) {
-        //             continue;
-        //           }
-        //           const t = type.toLowerCase().replace('userjs', '');
-        //           if (type === 'userjsName') {
-        //             resp.push(`// @${t}:${k.replace('_', '-')}      ${js_env ? '[Dev] ' : ''}${v[type].message}`);
-        //           } else {
-        //             resp.push(`// @${t}:${k.replace('_', '-')}      ${v[type].message}`);
-        //           }
-        //         }
-        //       }
-        //     }
-        //     return resp;
-        //   } catch (ex) {
-        //     err(ex)
-        //   }
-        // };
         /**
          * @template { import('../package.json') } J
          * @template { string } S
@@ -305,24 +204,37 @@ const initUserJS = async () => {
             }
             const resp = [];
             for (const str of arr) {
-              const param = 'userJS' in jsonData && jsonData.userJS[str] ? jsonData.userJS[str] : jsonData[str] ?? null;
+              const getParam = () => {
+                if (str in build.paths[dp] && build.paths[dp][str]) {
+                  return build.paths[dp][str];
+                } else if ('userJS' in jsonData && jsonData.userJS[str]) {
+                  return jsonData.userJS[str];
+                }
+                return jsonData[str] ?? null;
+              };
+              const param = getParam();
               if (!param) {
                 continue;
               }
               if (str === 'name') {
-                // resp.push(`// @${str}         ${js_env ? '[Dev] ' : ''}${param}`, ...compileLanguage('userjsName'));
-                resp.push(`// @${str}         ${js_env ? '[Dev] ' : ''}${param}`);
+                resp.push(
+                  `// @${str}         ${js_env ? '[Dev] ' : ''}${param}`,
+                  ...compileLanguage('userjs_name')
+                );
               } else if (str === 'description') {
-                // resp.push(`// @${str}  ${param}`, ...compileLanguage('userjsDescription'));
-                resp.push(`// @${str}  ${param}`);
+                resp.push(`// @${str}  ${param}`, ...compileLanguage('userjs_description'));
               } else if (str === 'author') {
                 resp.push(`// @${str}       ${param}`);
               } else if (str === 'icon') {
-                resp.push(`// @${str}         ${param}`);
+                const buff = new Buffer.from(fs.readFileSync(param));
+                const base64data = buff.toString('base64');
+                if (param.endsWith('.png')) {
+                  resp.push(`// @${str}         data:image/png;base64,${base64data}`);
+                } else if (param.endsWith('.svg')) {
+                  resp.push(`// @${str}         data:image/svg+xml;base64,${base64data}`);
+                }
               } else if (str === 'url') {
                 resp.push(`// @downloadURL  ${param}`, `// @updateURL    ${param}`);
-                // const userjsURL = js_env ? `${buildPaths.dev.url ?? 'https://localhost:8080'}/${buildPaths.name}.dev.user.js` : param;
-                // resp.push(`// @downloadURL  ${userjsURL}`, `// @updateURL    ${userjsURL}`);
               } else if (str === 'version') {
                 resp.push(`// @${str}      ${js_env ? +new Date() : param}`);
               } else if (str === 'homepage') {
@@ -335,18 +247,18 @@ const initUserJS = async () => {
                 resp.push(param);
               }
             }
-            return resp.join('\n')
+            return resp.join('\n');
           } catch (ex) {
-            err(ex)
+            err(ex);
           }
         };
         const userJSHeader = `// ==UserScript==\n${getData(['name', 'description', 'author', 'icon', 'version', 'url', 'homepage', 'bugs', 'license'])}\n${compileMetadata()}\n// ==/UserScript==`;
         const headerFile = await canAccess(build.source.head);
         const mainFile = await canAccess(build.source.body);
         const nanoCFG = {
-          jshead: userJSHeader,
-          // languageList: transformLanguages(),
-          code: mainFile,
+          metadata: userJSHeader,
+          languageList: transformLanguages(),
+          code: mainFile
         };
         for (const [k, v] of Object.entries(build.source.extras)) {
           const extraFile = await canAccess(v);
@@ -354,13 +266,21 @@ const initUserJS = async () => {
             nanoCFG[k] = extraFile;
           }
         }
-        const wfConfig = nano(headerFile, nanoCFG);
-
-        await writeFile(outFile, wfConfig);
-        log('Build:', {
+        const outFile = `${build.paths[dp].dir}/${build.paths[dp].fileName}.user.js`;
+        await writeUserJS(outFile, nano(headerFile, nanoCFG));
+        log('UserJS Build:', {
           path: outFile,
-          time: new Intl.DateTimeFormat('default', dateOptions).format(new Date())
+          time: toDate()
         });
+        if (!js_env) {
+          const metaFile = await canAccess(build.source.metadata);
+          const outMeta = `${build.paths[dp].dir}/${build.paths[dp].fileName}.meta.user.js`;
+          await writeUserJS(outMeta, nano(metaFile, { metadata: userJSHeader }));
+          log('UserJS Metadata:', {
+            path: outMeta,
+            time: toDate()
+          });
+        }
       } catch (ex) {
         err(ex);
       }

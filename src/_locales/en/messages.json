@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "MagicPH",
+    "description": "Must not exceed 45 characters"
+  },
+  "extDesc": {
+    "message": "Enhances adult viewing experience clean, quick, & easy.",
+    "description": "Must not exceed 132 characters"
+  },
+  "extShortDesc": {
+    "message": "Clean, quick, & easy",
+    "description": "Must not exceed 112 characters"
+  },
+  "userjs_name": {
+    "message": "MagicPH"
+  },
+  "userjs_description": {
+    "message": "Enhances adult viewing experience. Clean, easy, simple, and quick."
+  },
+  "newTab": {
+    "message": "New Tab"
+  },
+  "copy": {
+    "message": "Copy"
+  },
+  "no_license": {
+    "message": "N/A"
+  },
+  "close": {
+    "message": "Close"
+  }
+}
