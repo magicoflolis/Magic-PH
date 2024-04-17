@@ -13,5 +13,3 @@
 | [XNXX](https://info.xnxx.com/legal/tos) | In Violation | `2. Access` |
 | [xVideos](https://info.xvideos.net/legal/tos/) | In Violation | `2. Access` |
 | [YouPorn](https://www.youporn.com/information/#terms) | In Violation | `Terms Of Service` |
-
----
