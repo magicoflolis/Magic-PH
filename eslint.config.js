@@ -1,16 +1,32 @@
-import js from '@eslint/js';
 import globals from 'globals';
+import pluginJs from '@eslint/js';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
-const repoGlobals = {
+const userJSGlobals = {
+  userjs: 'writable',
+  config: 'writable',
+  mainCSS: 'readonly',
+  Limit_Downloads: 'readonly',
+  code: 'readonly',
+  metadata: 'readonly',
+  languageList: 'readonly',
+  translations: 'readonly',
+  ...globals.es2024,
+  ...globals.browser,
+  ...globals.greasemonkey
+};
+const webextGlobals = {
   mph: 'writable',
   config: 'writable',
   webext: 'readonly',
   brws: 'readonly',
   downloadCSS: 'readonly',
   Limit_Downloads: 'readonly',
-  ...globals.es2021
+  ...globals.es2024,
+  ...globals.browser,
+  ...globals.webextensions
 };
+
 const parserOptions = {
   allowImportExportEverywhere: false,
   ecmaFeatures: {
@@ -30,19 +46,14 @@ const rules = {
 };
 
 export default [
-  js.configs.recommended,
+  pluginJs.configs.recommended,
   eslintConfigPrettier,
   {
-    files: ['src/js/*.js'],
+    files: ['src/**/*.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: {
-        exportFunction: 'readonly',
-        ...repoGlobals,
-        ...globals.browser,
-        ...globals.webextensions
-      },
+      globals: webextGlobals,
       parserOptions
     },
     rules
@@ -52,23 +63,32 @@ export default [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: {
-        languageList: 'readonly',
-        ...repoGlobals,
-        ...globals.browser,
-        ...globals.greasemonkey
-      },
+      globals: userJSGlobals,
       parserOptions
     },
     rules
   },
   {
-    files: ['tools/*.js'],
+    files: ['src/UserJS/header.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: userJSGlobals,
+      parserOptions
+    },
+    rules: {
+      ...rules,
+      quotes: 'off',
+      'no-unused-vars': 'off'
+    }
+  },
+  {
+    files: ['tools/*.js', 'utils/**/*.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        ...repoGlobals,
+        ...globals.es2024,
         ...globals.node
       },
       parserOptions

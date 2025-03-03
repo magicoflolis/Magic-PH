@@ -18,14 +18,14 @@
       "request": "launch",
       "profile": "MagicPH",
       "clearConsoleOnReload": true,
-      "reAttach": false,
+      "reAttach": true,
       "reloadOnAttach": true,
+      "keepProfileChanges": false,
       "url": "https://pornhub.com/",
       "addonPath": "${workspaceFolder}/build/WebExtension/firefox",
       "reloadOnChange": {
         "watch": [
-          "${workspaceFolder}/src/WebExtension/**",
-          "${workspaceFolder}/build/css/**"
+          "${workspaceFolder}/src/**"
         ],
         "ignore": [
           "${workspaceFolder}/node_modules/**"
@@ -34,15 +34,15 @@
       "pathMappings": [
         {
           "url": "webpack:///js",
-          "path": "${workspaceFolder}/src/WebExtension/js"
+          "path": "${workspaceFolder}/src/js"
         },
         {
           "url": "webpack:///src/",
-          "path": "${webRoot}/src/WebExtension/"
+          "path": "${webRoot}/src/"
         }
       ],
       "log": {
-        "fileName": "${workspaceFolder}/log.txt",
+        "fileName": "${workspaceFolder}/firefox.log",
         "fileLevel": {
           "default": "Debug"
         }

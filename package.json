@@ -6,132 +6,55 @@
   "version": "2.0.18",
   "homepage": "https://github.com/magicoflolis/Magic-PH",
   "bugs": {
-    "url": "https://github.com/magicoflolis/Magic-PH/issues"
-  },
-  "userJS": {
-    "name": "MagicPH",
-    "description": "A video downloader for various adult websites.",
-    "version": "4.0.0",
-    "bugs": "https://github.com/magicoflolis/Magic-PH/issues/new",
-    "homepage": "https://github.com/magicoflolis/Magic-PH",
-    "icon": "./assets/magicph_logo.png",
-    "downloadURL": "https://github.com/magicoflolis/Magic-PH/raw/master/dist/UserJS/magicph.user.js",
-    "updateURL": "https://github.com/magicoflolis/Magic-PH/raw/master/dist/UserJS/magicph.meta.js",
-    "build": {
-      "source": {
-        "head": "./src/UserJS/header.js",
-        "body": "./src/UserJS/main.js",
-        "extras": {
-          "downloadCSS": "./build/css/downloader.css"
-        }
-      },
-      "watchDirs": [
-        "./src/UserJS/",
-        "./src/sass/"
-      ],
-      "paths": {
-        "dev": {
-          "fileName": "magicph.dev",
-          "env": "./src/UserJS/.env",
-          "dir": "./web-server"
-        },
-        "public": {
-          "fileName": "magicph",
-          "env": "./dist/UserJS/.env",
-          "dir": "./dist/UserJS"
-        }
-      }
-    },
-    "metadata": {
-      "compatible": [
-        "chrome",
-        "firefox",
-        "edge",
-        "opera",
-        "safari"
-      ],
-      "connect": [],
-      "grant": [
-        "unsafeWindow",
-        "GM_info",
-        "GM_openInTab",
-        "GM_setClipboard",
-        "GM_xmlhttpRequest",
-        "GM.info",
-        "GM.openInTab",
-        "GM.setClipboard",
-        "GM.xmlHttpRequest"
-      ],
-      "exclude": [],
-      "include": [],
-      "exclude-match": [],
-      "match": [
-        "https://*.pornhub.com/*",
-        "https://*.pornhubpremium.com/*",
-        "https://*.youporn.com/*",
-        "https://*.youporngay.com/*",
-        "https://*.redtube.com/*",
-        "https://*.tube8.com/*",
-        "https://*.thumbzilla.com/*",
-        "https://onlyfans.com/*",
-        "https://xhamster.com/*",
-        "https://*.xnxx.com/*",
-        "https://*.xvideos.com/*",
-        "https://beeg.com/*"
-      ],
-      "noframes": true,
-      "resource": {},
-      "require": [],
-      "run-at": "document-start"
-    }
+    "url": "https://github.com/magicoflolis/Magic-PH/issues/new/choose"
   },
   "type": "module",
   "scripts": {
-    "dev:UserJS": "concurrently \"pnpm run dev:Webserver\" \"sass --no-source-map -s compressed -w ./src/sass:./build/css\" \"node ./tools/userscript.js\"",
+    "dev:UserJS": "concurrently \"dotenvx run -f .env --quiet -- node ./tools/userscript.js\" \"pnpm run dev:Webserver\" \"sass --no-source-map -s expanded -w ./src/sass:./build/css\"",
     "dev:FF": "concurrently \"sass -w --embed-sources -s compressed ./src/sass:./build/WebExtension/firefox/css ./src/plyr/plyr.scss:./build/WebExtension/firefox/css/plyr.css\" \"webpack --mode development --config=tools/webpack.config.js --env brws=firefox\"",
     "dev:Cr": "concurrently \"sass -w --embed-sources -s compressed ./src/sass:./build/WebExtension/chrome/css ./src/plyr/plyr.scss:./build/WebExtension/chrome/css/plyr.css\" \"webpack --mode development --config=tools/webpack.config.js --env brws=chrome\"",
     "dev:Webserver": "http-server ./web-server -p 9090 -s --no-dotfiles -c-1",
     "build:Browsers": "pnpm run build:Firefox && pnpm run build:Chrome && node tools/crx.js",
     "build:Chrome": "webpack --mode production --config=tools/webpack.config.js --env brws=chrome",
     "build:Firefox": "webpack --mode production --config=tools/webpack.config.js --env brws=firefox",
-    "build:UserJS": "concurrently \"pnpm run pub:Sass\" \"node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/UserJS/.env\"",
-    "pub:Sass": "sass --no-source-map -s compressed ./src/sass:./build/css",
-    "pub:UserJS": "concurrently \"sass --no-source-map -s compressed ./src/sass:./build/css\" \"node -r dotenv/config ./tools/userscript.js dotenv_config_path=./dist/UserJS/.env\"",
+    "pub:UserJS": "concurrently \"sass --no-source-map -s expanded ./src/sass:./build/css\" \"dotenvx run --env JS_ENV=production -f .env --quiet -- node ./tools/userscript.js\"",
     "web-run:firefox-android": "web-ext run --config=./tools/web-ext.js -t firefox-android --firefox-apk org.mozilla.firefox",
     "web-ext:sign": "web-ext --config=./tools/web-ext.cjs sign"
   },
   "devDependencies": {
-    "@swc/cli": "^0.3.12",
-    "@swc/core": "^1.4.14",
-    "@types/chrome": "0.0.266",
-    "@types/firefox-webext-browser": "120.0.3",
+    "@dotenvx/dotenvx": "^1.38.3",
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.11.5",
+    "@types/chrome": "0.0.307",
+    "@types/firefox-webext-browser": "120.0.4",
     "@types/greasemonkey": "4.0.7",
-    "@violentmonkey/types": "0.1.7",
-    "browserslist": "^4.23.0",
-    "concurrently": "^8.2.2",
-    "copy-webpack-plugin": "^12.0.2",
+    "@violentmonkey/types": "0.2.0",
+    "browserslist": "^4.24.4",
+    "concurrently": "^9.1.2",
+    "copy-webpack-plugin": "^13.0.0",
     "crx3": "^1.1.3",
-    "dotenv": "^16.4.5",
-    "eslint": "^9.0.0",
-    "eslint-config-prettier": "^9.1.0",
-    "globals": "^15.0.0",
+    "eslint": "^9.21.0",
+    "eslint-config-prettier": "^10.0.2",
+    "globals": "^16.0.0",
     "http-server": "^14.1.1",
     "node-watch": "^0.7.4",
-    "prettier": "^3.2.5",
-    "sass": "^1.75.0",
+    "prettier": "^3.5.3",
+    "sass": "^1.85.1",
     "swc-loader": "^0.2.6",
-    "terser-webpack-plugin": "^5.3.10",
-    "web-ext": "^7.11.0",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-merge": "^5.10.0"
+    "terser-webpack-plugin": "^5.3.12",
+    "user.js": "workspace:^",
+    "web-ext": "^8.4.0",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-merge": "^6.0.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/magicoflolis/Magic-PH.git"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "pnpm": ">=10"
   },
-  "packageManager": "pnpm@8.6.7+sha1.019f4b93c5b07fb12e3097bae3d8f2d0cff444b7"
+  "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af"
 }

@@ -1,3 +1,6 @@
 @charset 'UTF-8';
 
-@import 'mixins','overwrites','settings','main';
+@use 'mixins';
+@use 'overwrites';
+@use 'settings';
+@use 'main';

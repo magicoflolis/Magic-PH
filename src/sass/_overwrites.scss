@@ -1,5 +1,5 @@
 @at-root * {
-  // scrollbar-color: $theme-alt $dark;
+  // scrollbar-color: hsla(36, 100%, 50%, 0.842) hsl(0, 0%, 0%);
   scrollbar-width: thin;
   @supports not (scrollbar-width: thin) {
     ::-webkit-scrollbar {
@@ -7,7 +7,7 @@
       max-height: 4px;
     }
     ::-webkit-scrollbar-track {
-      background-color: $theme-alt;
+      background-color: hsla(36, 100%, 50%, 0.842);
       border-radius: 10px;
       margin-top: 3px;
       margin-bottom: 3px;
@@ -15,9 +15,9 @@
     }
     ::-webkit-scrollbar-thumb {
       border-radius: 10px;
-      background-color: $dark;
+      background-color: hsl(0, 0%, 0%);
       &:hover {
-        background-color: $dark;
+        background-color: hsl(0, 0%, 0%);
       }
     }
   }
@@ -309,8 +309,8 @@ li > {
 .orangeButton {
   border-radius: 5px;
   border: 0;
-  background: $theme;
-  color: $dark;
+  background: hsl(36, 100%, 50%);
+  color: hsl(0, 0%, 0%);
 }
 
 .noLinkBtn {
@@ -371,13 +371,13 @@ li > {
 
 .nav {
   a {
-    color: $white;
+    color: hsl(0, 0%, 100%);
     display: inline-block;
     margin-right: 30px;
     padding: 0 10px 10px;
     text-transform: capitalize;
     .active {
-      border-bottom: 1px solid $theme;
+      border-bottom: 1px solid hsl(36, 100%, 50%);
     }
     &:hover {
       text-decoration: none;
@@ -416,7 +416,7 @@ li > {
 .taste-instruction {
   padding: 20px;
   margin: 0;
-  color: $white;
+  color: hsl(0, 0%, 100%);
 }
 
 table {
@@ -443,7 +443,7 @@ table {
   }
   thead {
     background: #1d1d1d;
-    border-bottom: 1px solid $dark;
+    border-bottom: 1px solid hsl(0, 0%, 0%);
     font-size: 1.5em;
   }
   thead th {
@@ -451,7 +451,7 @@ table {
   }
   tr:nth-child(even) {
     background: #1d1d1d;
-    border-bottom: 1px solid $dark;
+    border-bottom: 1px solid hsl(0, 0%, 0%);
   }
   tbody {
     font-size: 1.4em;
@@ -469,7 +469,7 @@ table {
     border: 2px solid #b4b4b4;
   }
   input[type='radio']:checked + label {
-    background: $theme;
+    background: hsl(36, 100%, 50%);
     width: 27px;
     height: 27px;
     border: 0;

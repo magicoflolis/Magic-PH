@@ -1,6 +1,10 @@
+export type config = {}
+
+export declare function hasOwn(obj: object, prop: string): boolean;
+
 export declare function objToStr<O>(obj: O): string;
 
-export declare function mkURL(str: string): URL;
+export declare function strToURL<S extends string | URL>(str: S): URL;
 
 /**
  * Object is typeof `RegExp`
@@ -37,9 +41,46 @@ export declare function isBlank<O>(obj: O): boolean;
  */
 export declare function isEmpty<O>(obj: O): boolean;
 
-export declare function normalizeTarget<T>(target: T, toQuery: boolean): T[];
+/**
+ * Type is not 100% accurate
+ */
+export declare function normalizeTarget<T>(
+  target: T,
+  toQuery: boolean,
+  root: Element | Document
+): T[];
 
 export declare function halt(evt: Event): void;
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'main-userjs': HTMLElement;
+    /**
+     * Made to "look like" a `HTMLAnchorElement`
+     */
+    'mph-a': HTMLElement;
+    'mph-addtab': HTMLElement;
+    'mph-body': HTMLElement;
+    /**
+     * Made to "look like" a `HTMLButtonElement`
+     */
+    'mph-btn': HTMLElement;
+    'mph-column': HTMLElement;
+    'mph-elem': HTMLElement;
+    'mph-host': HTMLElement;
+    'mph-header': HTMLElement;
+    'mph-list': HTMLElement;
+    'mph-main': HTMLElement;
+    'mph-root': HTMLElement;
+    'mph-row': HTMLElement;
+    'mph-section': HTMLElement;
+    'mph-tabs': HTMLElement;
+    'mph-tab': HTMLElement;
+    'mph-title': HTMLElement;
+    'mph-toolbar': HTMLElement;
+    'mph-url': HTMLElement;
+  }
+}
 
 /**
  * Appends an event listener for events whose type attribute value is type. The callback argument sets the callback that will be invoked when the event is dispatched.
@@ -66,18 +107,21 @@ export declare function ael<E extends HTMLElement, K extends keyof HTMLElementEv
 ): void;
 
 /**
- * Returns all element descendants of node that match selectors.
- *
- * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/querySelectorAll)
- */
-export declare function qsA<E extends Element>(selectors: string, root: E): NodeListOf<E>;
-
-/**
  * Returns the first element that is a descendant of node that matches selectors.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/querySelector)
  */
-export declare function qs<E extends Element>(selector: string, root: E): E | null;
+export declare function qs<E extends HTMLElement, S extends string>(selector: S, root: E): E | null;
+
+/**
+ * Returns all element descendants of node that match selectors.
+ *
+ * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/querySelectorAll)
+ */
+export declare function qsA<E extends HTMLElement, S extends string>(
+  selectors: S,
+  root: E
+): ReturnType<E['querySelectorAll']>;
 
 /**
  * Returns the first element that is a descendant of node that matches selectors.
@@ -87,32 +131,50 @@ export declare function qs<E extends Element>(selector: string, root: E): E | nu
 export declare function query<E extends Element>(selector: string, root: E): Promise<E | null>;
 
 /**
- * Form Attributes of Element
+ * Set attributes for an element.
  */
-export declare function formAttrs<E extends HTMLElement>(elem: E, attr: keyof E = {}): E;
+export declare function formAttrs<E extends HTMLElement>(elem: E, attr: keyof E): E;
 
 /**
  * Creates an instance of the element for the specified tag.
  * @param tagName The name of an element.
+ * @param cname A className for the element.
+ * @param attrs Set attributes for the element.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/createElement)
  */
-export declare function make<K extends keyof HTMLElementTagNameMap>(
+export declare function make<K extends keyof HTMLElementTagNameMap, A extends keyof HTMLElementTagNameMap[K]>(
   tagName: K,
-  cname: string,
-  attrs: keyof HTMLElement
+  cname?: string,
+  attrs?: {
+    [key in A]: unknown;
+  }
 ): HTMLElementTagNameMap[K];
 
-export declare function loadCSS(css: string, name: string = 'CSS'): HTMLStyleElement | undefined;
-
-export declare function observe<E extends Node>(
-  element: E,
-  listener: MutationCallback,
-  options: MutationObserverInit = { subtree: true, childList: true }
-): MutationObserver;
-// (this: E, mutations: MutationRecord[], observer: MutationObserver) => any,
-
-export declare function setObj<X, Y>(objA: X = {}, objB: Y = {}): Y;
+/**
+ * Based on uBlock Origin by Raymond Hill (https://github.com/gorhill/uBlock)
+ *
+ * [uBlock Origin Reference](https://github.com/gorhill/uBlock/blob/master/src/js/dom.js)
+ */
+export interface dom {
+  attr<T extends HTMLElement, A extends string, V extends unknown>(
+    target: T,
+    attr: A,
+    value?: V
+  ): V extends ReturnType<T['getAttribute']> ? V : void;
+  prop<T extends HTMLElement, P extends keyof T, V extends T[keyof T]>(
+    target: T,
+    prop: P,
+    value?: V
+  ): V | undefined;
+  text<T extends HTMLElement, V extends unknown>(target: T, text?: V): string | null | undefined;
+  cl: {
+    add<T extends HTMLElement>(target: T, token: string | string[]): boolean;
+    remove<T extends HTMLElement>(target: T, token: string | string[]): boolean;
+    toggle<T extends HTMLElement>(target: T, token: string | string[], force?: boolean): boolean;
+    has<T extends HTMLElement>(target: T, token: string | string[]): boolean;
+  };
+}
 
 type Sites = {
   [key in SiteKey]?: {
@@ -230,14 +292,4 @@ export class HandlePage {
   public Domains: PathMaps['Domains'];
 }
 
-/**
- * Opens a new window and loads a document specified by a given URL. Also, opens a new window that uses the url parameter and the name parameter to collect the output of the write method and the writeln method.
- * @param url Specifies a MIME type for the document.
- *
- * [Violentmonkey Reference](https://violentmonkey.github.io/api/gm/#gm_openintab)
- *
- * [Greasespot Reference](https://wiki.greasespot.net/GM.openInTab)
- *
- * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/open)
- */
-export declare function openTab(url: string | URL): WindowProxy | null;
+export declare function setObj<X, Y>(objA: X = {}, objB: Y = {}): Y;
