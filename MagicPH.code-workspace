@@ -40,5 +40,8 @@
       "**/src/sass/**",
     ],
     "local-history.path": "${workspaceFolder}/.vscode",
+    "markdown.validate.enabled": true,
+    "editor.semanticTokenColorCustomizations": {},
+    "yaml.maxItemsComputed": 25000,
 	}
 }
