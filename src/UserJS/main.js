@@ -1,18 +1,4 @@
-let currentUserId;
-let tsSrc;
-let vueRouter = [];
-
-const debug = true;
-const getUAData = () => {
-  if (typeof navigator.userAgentData !== 'undefined') {
-    const { platform, mobile } = navigator.userAgentData ?? {};
-    return mobile || /Android|Apple/.test(platform ?? '');
-  }
-  return false;
-};
-const isMobile = /Mobile|Tablet/.test(navigator.userAgent ?? '') || getUAData();
 // #region Console Logs
-
 const dbg = (...msg) => {
   const dt = new Date();
   console.debug(
@@ -32,10 +18,10 @@ const err = (...msg) => {
     'color: rgb(249, 24, 128);',
     ...msg
   );
+  const a = typeof alert !== 'undefined' && alert;
   for (const ex of msg) {
-    if (typeof ex === 'object' && 'cause' in ex) {
-      alert(`[MagicPH] (${ex.cause}) ${ex.message}`);
-      break;
+    if (typeof ex === 'object' && 'cause' in ex && a) {
+      a(`[Magic Userscript+] (${ex.cause}) ${ex.message}`);
     }
   }
 };
@@ -49,85 +35,216 @@ const info = (...msg) => {
   );
 };
 
-// const log = (...msg) => {
-//   console.log(
-//     '[%cMagicPH%c] %cLOG',
-//     'color: rgb(255,153,0);',
-//     '',
-//     'color: rgb(255, 212, 0);',
-//     ...msg
-//   );
-// };
+const log = (...msg) => {
+  console.log(
+    '[%cMagicPH%c] %cLOG',
+    'color: rgb(255,153,0);',
+    '',
+    'color: rgb(255, 212, 0);',
+    ...msg
+  );
+};
 // #endregion
-const Supports = {
-  gm: typeof GM !== 'undefined',
-  uwin: typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
-};
-const isGM = Supports.gm;
-const win = Supports.uwin;
-const navLang = (navigator.language ?? 'en').split('-')[0] ?? 'en';
-const i18n$ = (...args) => {
-  const arr = [];
-  for (const arg of args) {
-    arr.push(languageList[navLang][arg]);
+
+/**
+ * https://github.com/zloirock/core-js/blob/master/packages/core-js/internals/global-this.js
+ * @returns {typeof globalThis}
+ */
+function globalWin() {
+  const check = function (it) {
+    return it && it.Math === Math && it;
+  };
+  return (
+    check(typeof globalThis == 'object' && globalThis) ||
+    check(typeof window == 'object' && window) ||
+    check(typeof self == 'object' && self) ||
+    check(typeof this == 'object' && this) ||
+    (function () {
+      return this;
+    })() ||
+    Function('return this')()
+  );
+}
+
+/** @type { import("../typings/UserJS.d.ts").safeSelf } */
+function safeSelf() {
+  if (userjs.safeSelf) {
+    return userjs.safeSelf;
   }
-  return arr.length !== 1 ? arr : arr[0];
-};
-/**
- * @type { import("./types").objToStr }
- */
-const objToStr = (obj) => {
-  return Object.prototype.toString.call(obj);
-};
-/**
- * @type { import("./types").mkURL }
- */
-const mkURL = (str) => {
-  let u;
+  const g = globalWin();
+  const safe = {
+    XMLHttpRequest: g.XMLHttpRequest,
+    createElement: g.document.createElement.bind(g.document),
+    createElementNS: g.document.createElementNS.bind(g.document),
+    createTextNode: g.document.createTextNode.bind(g.document),
+    navigator: g.navigator
+  };
+  userjs.safeSelf = safe;
+  return userjs.safeSelf;
+}
+
+let currentUserId;
+let tsSrc;
+let vueRouter = [];
+
+const getUAData = () => {
+  if (userjs.isMobile !== undefined) {
+    return userjs.isMobile;
+  }
   try {
-    u = objToStr(str).includes('URL') ? str : new URL(str);
+    const { navigator } = safeSelf();
+    if (navigator) {
+      const { userAgent, userAgentData } = navigator;
+      const { platform, mobile } = userAgentData ? Object(userAgentData) : {};
+      userjs.isMobile =
+        /Mobile|Tablet/.test(userAgent ? String(userAgent) : '') ||
+        Boolean(mobile) ||
+        /Android|Apple/.test(platform ? String(platform) : '');
+    } else {
+      userjs.isMobile = false;
+    }
   } catch (ex) {
-    u = {};
-    err(ex, { cause: 'mkURL' });
+    userjs.isMobile = false;
+    ex.cause = 'getUAData';
+    err(ex);
   }
-  return u;
+  return userjs.isMobile;
+};
+const isMobile = getUAData();
+const BLANK_PAGE = 'about:blank';
+const isGM = typeof GM !== 'undefined';
+const win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
+
+// #region i18n
+class i18nHandler {
+  constructor() {
+    if (userjs.pool !== undefined) {
+      return this;
+    }
+    userjs.pool = new Map();
+    for (const [k, v] of Object.entries(translations)) {
+      if (!userjs.pool.has(k)) userjs.pool.set(k, v);
+    }
+  }
+  /**
+   * @param {string | Date | number} str
+   */
+  toDate(str = '') {
+    const { navigator } = safeSelf();
+    return new Intl.DateTimeFormat(navigator.language).format(
+      typeof str === 'string' ? new Date(str) : str
+    );
+  }
+  /**
+   * @param {number | bigint} number
+   */
+  toNumber(number) {
+    const { navigator } = safeSelf();
+    return new Intl.NumberFormat(navigator.language).format(number);
+  }
+  /**
+   * @type { import("../typings/UserJS.d.ts").i18n$ }
+   */
+  i18n$(key) {
+    const { navigator } = safeSelf();
+    const current = navigator.language.split('-')[0] ?? 'en';
+    return userjs.pool.get(current)?.[key] ?? 'Invalid Key';
+  }
+}
+const language = new i18nHandler();
+const { i18n$ } = language;
+// #endregion
+// #region Utilities
+/**
+ * @type { import("../typings/types.d.ts").qs }
+ */
+const qs = (selector, root) => {
+  try {
+    return (root || document).querySelector(selector);
+  } catch (ex) {
+    err(ex);
+  }
+  return null;
 };
 /**
- * @type { import("./types").isRegExp }
+ * @type { import("../typings/types.d.ts").qsA }
+ */
+const qsA = (selectors, root) => {
+  try {
+    return (root || document).querySelectorAll(selectors);
+  } catch (ex) {
+    err(ex);
+  }
+  return [];
+};
+/**
+ * @type { import("../typings/types.d.ts").query }
+ */
+const query = async (selector, root) => {
+  try {
+    while (isNull((root || document).querySelector(selector))) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    }
+    return (root || document).querySelector(selector);
+  } catch (ex) {
+    err(ex);
+  }
+  return root;
+};
+/**
+ * @type { import("../typings/types.d.ts").objToStr }
+ */
+const objToStr = (obj) => Object.prototype.toString.call(obj);
+/**
+ * @type { import("../typings/types.d.ts").strToURL }
+ */
+const strToURL = (str) => {
+  const WIN_LOCATION = window.location ?? BLANK_PAGE;
+  try {
+    str = str ?? WIN_LOCATION;
+    return objToStr(str).includes('URL') ? str : new URL(str);
+  } catch (ex) {
+    ex.cause = 'strToURL';
+    this.showError(ex);
+  }
+  return WIN_LOCATION;
+};
+/**
+ * @type { import("../typings/types.d.ts").isRegExp }
  */
 const isRegExp = (obj) => {
   const s = objToStr(obj);
   return s.includes('RegExp');
 };
 /**
- * @type { import("./types").isElem }
+ * @type { import("../typings/types.d.ts").isElem }
  */
 const isElem = (obj) => {
   const s = objToStr(obj);
   return s.includes('Element');
 };
 /**
- * @type { import("./types").isObj }
+ * @type { import("../typings/types.d.ts").isObj }
  */
 const isObj = (obj) => {
   const s = objToStr(obj);
   return s.includes('Object');
 };
 /**
- * @type { import("./types").isFn }
+ * @type { import("../typings/types.d.ts").isFN }
  */
 const isFN = (obj) => {
   const s = objToStr(obj);
   return s.includes('Function');
 };
 /**
- * @type { import("./types").isNull }
+ * @type { import("../typings/types.d.ts").isNull }
  */
 const isNull = (obj) => {
   return Object.is(obj, null) || Object.is(obj, undefined);
 };
 /**
- * @type { import("./types").isBlank }
+ * @type { import("../typings/types.d.ts").isBlank }
  */
 const isBlank = (obj) => {
   return (
@@ -138,28 +255,181 @@ const isBlank = (obj) => {
   );
 };
 /**
- * @type { import("./types").isEmpty }
+ * @type { import("../typings/types.d.ts").isEmpty }
  */
 const isEmpty = (obj) => {
   return isNull(obj) || isBlank(obj);
 };
 /**
- * @type { import("./types").normalizeTarget }
+ * @type { import("../typings/types.d.ts").normalizeTarget }
  */
-const normalizeTarget = (target, toQuery = true) => {
-  if (isNull(target)) {
+const normalizeTarget = (target, toQuery = true, root) => {
+  if (Object.is(target, null) || Object.is(target, undefined)) {
     return [];
   }
   if (Array.isArray(target)) {
     return target;
   }
   if (typeof target === 'string') {
-    return toQuery ? Array.from(qsA(target)) : [target];
+    return toQuery ? Array.from((root || document).querySelectorAll(target)) : [target];
   }
   if (isElem(target)) {
     return [target];
   }
   return Array.from(target);
+};
+/**
+ * @type { import("../typings/types.d.ts").ael }
+ */
+const ael = (el, type, listener, options = {}) => {
+  try {
+    for (const elem of normalizeTarget(el)) {
+      if (!elem) {
+        continue;
+      }
+      if (isMobile && type === 'click') {
+        elem.addEventListener('touchstart', listener, options);
+        continue;
+      }
+      elem.addEventListener(type, listener, options);
+    }
+  } catch (ex) {
+    err(ex);
+  }
+};
+/**
+ * @type { import("../typings/types.d.ts").formAttrs }
+ */
+const formAttrs = (elem, attr = {}) => {
+  if (!elem) {
+    return elem;
+  }
+  for (const key in attr) {
+    if (typeof attr[key] === 'object') {
+      formAttrs(elem[key], attr[key]);
+    } else if (isFN(attr[key])) {
+      if (/^on/.test(key)) {
+        elem[key] = attr[key];
+        continue;
+      }
+      ael(elem, key, attr[key]);
+    } else if (key === 'class') {
+      elem.className = attr[key];
+    } else {
+      elem[key] = attr[key];
+    }
+  }
+  return elem;
+};
+/**
+ * @type { import("../typings/types.d.ts").make }
+ */
+const make = (tagName, cname, attrs) => {
+  let el;
+  try {
+    const { createElement } = safeSelf();
+    el = createElement(tagName);
+    if (!isEmpty(cname)) {
+      if (typeof cname === 'string') {
+        el.className = cname;
+      } else if (isObj(cname)) {
+        formAttrs(el, cname);
+      }
+    }
+    if (!isEmpty(attrs)) {
+      if (typeof attrs === 'string') {
+        el.textContent = attrs;
+      } else if (isObj(attrs)) {
+        formAttrs(el, attrs);
+      }
+    }
+  } catch (ex) {
+    ex.cause = 'make';
+    err(ex);
+  }
+  return el;
+};
+
+/**
+ * @type { import("../typings/UserJS.d.ts").getGMInfo }
+ */
+const getGMInfo = () => {
+  if (isGM) {
+    if (isObj(GM.info)) {
+      return GM.info;
+    } else if (isObj(GM_info)) {
+      return GM_info;
+    }
+  }
+  return {
+    script: {
+      icon: '',
+      name: 'MagicPH',
+      namespace: 'https://github.com/magicoflolis/MagicPH',
+      updateURL: 'https://github.com/magicoflolis/Magic-PH/raw/master/dist/magicph.user.js',
+      version: 'Bookmarklet',
+      bugs: 'https://github.com/magicoflolis/Magic-PH/issues'
+    }
+  };
+};
+const $info = getGMInfo();
+/**
+ * @type { import("../typings/UserJS.d.ts").loadCSS }
+ */
+const loadCSS = (css, name = 'CSS') => {
+  try {
+    if (typeof name !== 'string') {
+      throw new Error('"name" must be a typeof "string"', { cause: 'loadCSS' });
+    }
+    const parent = document.documentElement || document.head || document.body;
+    if (qs(`style[data-role="${name}"]`, parent)) {
+      return qs(`style[data-role="${name}"]`, parent);
+    }
+    if (typeof css !== 'string') {
+      throw new Error('"css" must be a typeof "string"', { cause: 'loadCSS' });
+    }
+    if (isBlank(css)) {
+      throw new Error(`"${name}" contains empty CSS string`, { cause: 'loadCSS' });
+    }
+    if (isGM) {
+      let sty;
+      if (isFN(GM.addElement)) {
+        sty = GM.addElement(parent, 'style', {
+          textContent: css
+        });
+      } else if (isFN(GM_addElement)) {
+        sty = GM_addElement(parent, 'style', {
+          textContent: css
+        });
+      }
+      if (isElem(sty)) {
+        sty.dataset.insertedBy = $info.script.name;
+        sty.dataset.role = name;
+        return sty;
+      }
+    }
+    const sty = make('style', {
+      textContent: css,
+      dataset: {
+        insertedBy: $info.script.name,
+        role: name
+      }
+    });
+    parent.appendChild(sty);
+    return sty;
+  } catch (ex) {
+    err(ex);
+  }
+};
+const delay = (timeout = 5000) => new Promise((resolve) => setTimeout(resolve, timeout));
+/**
+ * @type { import("../typings/UserJS.d.ts").observe }
+ */
+const observe = (element, listener, options = { subtree: true, childList: true }) => {
+  const observer = new MutationObserver(listener);
+  observer.observe(element, options);
+  listener.call(element, [], observer);
+  return observer;
 };
 const smToArr = (m) => {
   let arr = [];
@@ -194,175 +464,14 @@ const fancyTimeFormat = (duration) => {
 
   return ret;
 };
-/**
- * @type { import("./types").halt }
- */
-const halt = (evt) => {
-  evt.preventDefault();
-  evt.stopPropagation();
-};
-/**
- * @type { import("./types").ael }
- */
-const ael = (el, type, listener, options) => {
-  try {
-    for (const elem of normalizeTarget(el)) {
-      if (!elem) {
-        continue;
-      }
-      if (isMobile && type === 'click') {
-        elem.addEventListener('touchstart', listener, options);
-        // elem.addEventListener('touchend', listener, options);
-        // type = 'mouseup';
-        continue;
-      }
-      elem.addEventListener(type, listener, options);
-    }
-  } catch (ex) {
-    err(ex);
-  }
-};
-/**
- * @type { import("./types").qsA }
- */
-const qsA = (selectors, root) => {
-  try {
-    return (root || document).querySelectorAll(selectors);
-  } catch (ex) {
-    err(ex);
-  }
-  return [];
-};
-/**
- * @type { import("./types").qs }
- */
-const qs = (selector, root) => {
-  try {
-    return (root || document).querySelector(selector);
-  } catch (ex) {
-    err(ex);
-  }
-  return null;
-};
-/**
- * @type { import("./types").query }
- */
-const query = async (selector, root) => {
-  try {
-    while (isNull((root || document).querySelector(selector))) {
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-    }
-    return (root || document).querySelector(selector);
-  } catch (ex) {
-    err(ex);
-  }
-  return root;
-};
-/**
- * @type { import("./types").formAttrs }
- */
-const formAttrs = (elem, attr = {}) => {
-  if (!elem) {
-    return elem;
-  }
-  for (const key in attr) {
-    if (typeof attr[key] === 'object') {
-      formAttrs(elem[key], attr[key]);
-    } else if (isFN(attr[key])) {
-      if (/^on/.test(key)) {
-        elem[key] = attr[key];
-        continue;
-      }
-      ael(elem, key, attr[key]);
-    } else if (key === 'class') {
-      elem.className = attr[key];
-    } else {
-      elem[key] = attr[key];
-    }
-  }
-  return elem;
-};
-/**
- * @type { import("./types").make }
- */
-const make = (tagName, cname, attrs) => {
-  let el;
-  try {
-    el = document.createElement(tagName);
-    if (!isEmpty(cname)) {
-      if (typeof cname === 'string') {
-        el.className = cname;
-      } else {
-        formAttrs(el, cname);
-      }
-    }
-    if (!isEmpty(attrs)) {
-      if (typeof attrs === 'string') {
-        el.textContent = attrs;
-      } else if (isObj(attrs)) {
-        formAttrs(el, attrs);
-      }
-    }
-  } catch (ex) {
-    err(ex);
-  }
-  return el;
-};
-/**
- * @type { import("./types").loadCSS }
- */
-const loadCSS = (css, name = 'CSS') => {
-  try {
-    if (typeof name !== 'string') {
-      throw new Error('[loadCSS] "name" must be a typeof "String"');
-    }
-    if (qs(`style[data-role="${name}"]`)) {
-      return qs(`style[data-role="${name}"]`);
-    }
-    if (typeof css !== 'string') {
-      throw new Error('[loadCSS] "css" must be a typeof "String"');
-    }
-    if (isBlank(css)) {
-      throw new Error(`[loadCSS] "${name}" contains empty CSS string`);
-    }
-    const sty = make('style', `mph-${name}`, {
-      textContent: css,
-      dataset: {
-        insertedBy: 'MagicPH',
-        role: name
-      }
-    });
-    (document.documentElement || document.head).appendChild(sty);
-    return sty;
-  } catch (ex) {
-    err(ex);
-  }
-  return undefined;
-};
-const delay = (timeout = 5000) => new Promise((resolve) => setTimeout(resolve, timeout));
-/**
- * @type { import("./types").observe }
- */
-const observe = (element, listener, options = { subtree: true, childList: true }) => {
-  const observer = new MutationObserver(listener);
-  observer.observe(element, options);
-  listener.call(element, [], observer);
-  return observer;
-};
+// #endregion
 
 // #region Classes
 /**
- * Based on uBlock Origin by Raymond Hill (https://github.com/gorhill/uBlock)
- * @link { https://github.com/gorhill/uBlock/blob/master/src/js/dom.js }
+ * @type { import("../typings/types.d.ts").dom }
  */
-class dom {
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   * @param { string } attr
-   * @param { * } [value=undefined]
-   */
-  static attr(target, attr, value = undefined) {
+const dom = {
+  attr(target, attr, value = undefined) {
     for (const elem of normalizeTarget(target)) {
       if (value === undefined) {
         return elem.getAttribute(attr);
@@ -373,47 +482,16 @@ class dom {
         elem.setAttribute(attr, value);
       }
     }
-  }
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   */
-  static clear(target) {
-    for (const elem of normalizeTarget(target)) {
-      while (elem.firstChild !== null) {
-        elem.removeChild(elem.firstChild);
-      }
-    }
-  }
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   * @returns { Node }
-   */
-  static clone(target) {
-    return normalizeTarget(target)[0].cloneNode(true);
-  }
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   * @param { string } prop
-   * @param { * } [value=undefined]
-   * @returns { keyof T | void }
-   */
-  static prop(target, prop, value = undefined) {
+  },
+  prop(target, prop, value = undefined) {
     for (const elem of normalizeTarget(target)) {
       if (value === undefined) {
         return elem[prop];
       }
       elem[prop] = value;
     }
-  }
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   * @param { string } text
-   */
-  static text(target, text) {
+  },
+  text(target, text) {
     const targets = normalizeTarget(target);
     if (text === undefined) {
       return targets.length !== 0 ? targets[0].textContent : undefined;
@@ -421,98 +499,44 @@ class dom {
     for (const elem of targets) {
       elem.textContent = text;
     }
-  }
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   */
-  static remove(target) {
-    for (const elem of normalizeTarget(target)) {
-      elem.remove();
-    }
-  }
-}
-dom.cl = class {
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   * @param { string | string[] } name
-   */
-  static add(target, name) {
-    if (Array.isArray(name)) {
+  },
+  remove(target) {
+    return normalizeTarget(target).some((elem) => elem.remove());
+  },
+  cl: {
+    add(target, token) {
+      token = Array.isArray(token) ? token : [token];
+      return normalizeTarget(target).some((elem) => elem.classList.add(...token));
+    },
+    remove(target, token) {
+      token = Array.isArray(token) ? token : [token];
+      return normalizeTarget(target).some((elem) => elem.classList.remove(...token));
+    },
+    toggle(target, token, force) {
+      let r;
       for (const elem of normalizeTarget(target)) {
-        elem.classList.add(...name);
+        r = elem.classList.toggle(token, force);
       }
-    } else {
-      for (const elem of normalizeTarget(target)) {
-        elem.classList.add(name);
-      }
+      return r;
+    },
+    has(target, token) {
+      return normalizeTarget(target).some((elem) => elem.classList.contains(token));
     }
   }
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   * @param { string | string[] } name
-   */
-  static remove(target, name) {
-    if (Array.isArray(name)) {
-      for (const elem of normalizeTarget(target)) {
-        elem.classList.remove(...name);
-      }
-    } else {
-      for (const elem of normalizeTarget(target)) {
-        elem.classList.remove(name);
-      }
-    }
-  }
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   * @param { string } name
-   * @param { boolean | undefined } state
-   * @returns { boolean }
-   */
-  static toggle(target, name, state) {
-    let r;
-    for (const elem of normalizeTarget(target)) {
-      r = elem.classList.toggle(name, state);
-    }
-    return r;
-  }
-  /**
-   * @template { HTMLElement } T
-   * @param { T } target
-   * @param { string } name
-   * @returns { boolean }
-   */
-  static has(target, name) {
-    for (const elem of normalizeTarget(target)) {
-      if (elem.classList.contains(name)) {
-        return true;
-      }
-    }
-    return false;
-  }
-};
-/**
- * @type { import("./types").setObj }
- */
-const setObj = (objA = {}, objB = {}) => {
-  objA = objA || {};
-  objB = objB || {};
-  const hasOwn = Object.hasOwn || Object.prototype.hasOwnProperty.call;
-  for (const [key, value] of Object.entries(objA)) {
-    if (!hasOwn(objB, key)) {
-      objB[key] = value;
-    } else if (typeof value === 'object') {
-      setObj(value, objB[key]);
-    }
-  }
-  return objB;
 };
 
+// const urlContainer = make('mph-url');
+// const urlBar = make('input', 'mph-url-bar', {
+//   autocomplete: 'off',
+//   spellcheck: false,
+//   type: 'text',
+//   placeholder: 'Placeholder text'
+// });
+
+// #region Handle Page
 class HandlePage {
   constructor(url) {
+    this.remove = this.remove.bind(this);
     this.hosts = {
       // 'about:blank': {
       //   domains: [],
@@ -522,10 +546,10 @@ class HandlePage {
         domains: ['pornhub.com', 'pornhubpremium.com']
       },
       youporn: {
-        domains: ['youporn.com', 'youporngay.com', 'youpornpremium.com']
+        domains: ['youporn.com', 'youporngay.com']
       },
       redtube: {
-        domains: ['redtube.com', 'redtubepremium.com']
+        domains: ['redtube.com']
       },
       tube8: {
         domains: ['tube8.com']
@@ -547,6 +571,27 @@ class HandlePage {
       },
       beeg: {
         domains: ['beeg.com']
+      },
+      '91porn': {
+        domains: ['91porn.com']
+      },
+      hqporner: {
+        domains: ['hqporner.com']
+      },
+      spankbang: {
+        domains: ['spankbang.com']
+      },
+      porntrex: {
+        domains: ['porntrex.com']
+      },
+      analdin: {
+        domains: ['analdin.com']
+      },
+      porn00: {
+        domains: ['porn00.org']
+      },
+      sxyprn: {
+        domains: ['sxyprn.com']
       }
     };
     this.videoData = {};
@@ -558,8 +603,119 @@ class HandlePage {
     if (isEmpty(url) || !isNull(this.theme)) {
       this.theme = this.themeHandler().load();
     }
+    this.supported = isFN(make('main-userjs').attachShadow);
+    this.frame = make('main-userjs', 'hidden', {
+      dataset: {
+        insertedBy: $info.script.name,
+        role: 'primary-container'
+      }
+    });
+    this.injected = false;
 
-    // dbg(this);
+    window.addEventListener('beforeunload', this.remove);
+  }
+  /**
+   * @param { function(): * } callback
+   * @param { Document } doc
+   */
+  inject(callback, doc) {
+    if (!doc) {
+      return;
+    }
+    try {
+      if (this.injected || !isNull(qs('main-userjs'))) {
+        return;
+      }
+      info({ Site: this.webpage.origin, isMobile, validDomain: this.cache.validDomain });
+
+      if (isMobile) {
+        dom.cl.add([this.frame, mphControls, dul], 'mph_mobile');
+        // Prevents being redirected to "Continue to video"
+        if (this.host.includes('pornhub')) {
+          const makeCookie = (name, value, options = {}) => {
+            try {
+              Object.assign(options, {
+                path: '/'
+              });
+              if (options.expires instanceof Date) {
+                options.expires = options.expires.toUTCString();
+              }
+              let updatedCookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+              for (const key in options) {
+                updatedCookie += `; ${key}`;
+                const optionValue = options[key];
+                if (optionValue !== true) {
+                  updatedCookie += `=${optionValue}`;
+                }
+              }
+              document.cookie = updatedCookie;
+              info('[makeCookie] New cookie value:', updatedCookie);
+              return updatedCookie;
+            } catch (ex) {
+              err(ex);
+            }
+            return '';
+          };
+          makeCookie('views', '0', { domain: `.${this.host}` });
+          // If we are on `/interstitial?viewkey=`
+          if (isFN(win.clearModalCookie) && this.webpage.searchParams.has('viewkey')) {
+            const videoURL = `${this.webpage.origin}/view_video.php?viewkey=${this.webpage.searchParams.get('viewkey')}`;
+            info(`Redirecting to "${videoURL}"`);
+            window.location.href = videoURL;
+            return;
+          }
+        }
+      }
+      if (isNull(loadCSS(mainCSS, 'primary-stylesheet'))) {
+        throw new Error('Failed to initialize script!', { cause: 'loadCSS' });
+      }
+      if (isEmpty(this.frame)) {
+        throw new Error('Failed to initialize script!', { cause: 'inject' });
+      }
+      const overlay = make('mph-elem', 'mph_overlay');
+      const header = make('mph-elem', 'mph_list_header');
+      const closeVQ = make('mph-elem', 'mgp_title', {
+        innerHTML: $info.script.name
+      });
+      const closeHM = make('mph-close', '', {
+        innerHTML: '🗙',
+        dataset: {
+          command: 'close'
+        }
+      });
+      const listToggle = make('mph-btn', 'of_btn', {
+        title: 'Hide/show list',
+        textContent: 'Show List ',
+        dataset: {
+          command: 'toggle-list'
+        }
+      });
+      const listCounter = make('mph-count', '', {
+        textContent: '(0)'
+      });
+      listToggle.append(listCounter);
+      header.append(closeVQ, closeHM);
+      dContainer.append(header, tab.el.head, dul);
+      this.frame.append(dContainer);
+      mphControls.append(overlay);
+      if (/onlyfans/.test(this.current.root)) {
+        const ofsHeader = make('mph-elem', 'mph_of_header');
+        ofsHeader.append(ofscopy, ofsdwn);
+        header.append(ofsHeader);
+        ofscopy.append(copyCounter);
+        ofsdwn.append(dwnCounter);
+      }
+      mphControls.append(listToggle);
+      progressFrame.append(progressElem);
+      doc.documentElement.append(this.frame, progressFrame, mphControls);
+      this.injected = true;
+      if (isFN(callback)) {
+        callback.call(this, doc);
+      }
+    } catch (ex) {
+      err(ex);
+      this.remove();
+    }
   }
   themeHandler() {
     return {
@@ -599,8 +755,6 @@ class HandlePage {
           this.color = 'var(--text-color, var(--mph-text-color, hsl(210, 12%, 97%)))';
           this.hover = 'var(--swiper-theme-color, hsl(196, 100%, 32%))';
           this.background = 'rgba(138,150,163,.12)';
-          // rgba(138, 150, 163, 0.12)
-          // opacity: 0.4;
           this['controls-background'] =
             'var(--overlay-color, var(--mph-controls-bg-color, hsla(0, 0%, 0%, 0.5)))';
           this.border = this.background;
@@ -659,20 +813,23 @@ class HandlePage {
     playerId: 0
   };
   /**
-   * @type { import("./types").HandlePage['current'] }
+   * @type { import("../typings/types.d.ts").HandlePage['current'] }
    */
   get current() {
     return this.cache;
   }
   set current(url) {
-    const urlObj = mkURL(url || window.location);
+    const urlObj = strToURL(url || window.location);
     const { host } = urlObj;
     this.webpage = urlObj;
     this.host = this.getHost(host);
     /** @type { string } */
     const d = host.split('.').at(-2);
     const root = this.hosts[d] ? d : 'blank';
-    const hostDom = setObj(HandlePage.domainDefaults, this.hosts[d] ?? {});
+    const hostDom = {
+      ...HandlePage.domainDefaults,
+      ...(this.hosts[d] ?? {})
+    };
     const routes = new Map();
     if (this.hosts[d]) {
       const findIn = (reg, type = 'domains') => {
@@ -727,7 +884,10 @@ class HandlePage {
     return this.videoData;
   }
   set Video(obj = {}) {
-    this.videoData = setObj(this.videoData, obj);
+    this.videoData = {
+      ...this.videoData,
+      ...obj
+    };
   }
   /**
    * @template { string } S
@@ -746,8 +906,14 @@ class HandlePage {
     }
     dom.text(qsA('mph-count:not([data-host])'), `(${num ?? 0})`);
   }
+  remove() {
+    if (this.frame) {
+      this.frame.remove();
+    }
+  }
 }
 const HP = new HandlePage();
+// #endregion
 class Timeout {
   constructor() {
     this.ids = [];
@@ -779,17 +945,59 @@ class Timeout {
 }
 // #endregion
 
+//#region Icon SVGs
 const iconSVG = {
-  close:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="magicph-icon" aria-hidden="true"><g stroke-width="0"></g><g stroke-linecap="round" stroke-linejoin="round"></g><g><path d="M4.70718 2.58574C4.31666 2.19522 3.68349 2.19522 3.29297 2.58574L2.58586 3.29285C2.19534 3.68337 2.19534 4.31654 2.58586 4.70706L9.87877 12L2.5859 19.2928C2.19537 19.6834 2.19537 20.3165 2.5859 20.7071L3.293 21.4142C3.68353 21.8047 4.31669 21.8047 4.70722 21.4142L12.0001 14.1213L19.293 21.4142C19.6835 21.8047 20.3167 21.8047 20.7072 21.4142L21.4143 20.7071C21.8048 20.3165 21.8048 19.6834 21.4143 19.2928L14.1214 12L21.4143 4.70706C21.8048 4.31654 21.8048 3.68337 21.4143 3.29285L20.7072 2.58574C20.3167 2.19522 19.6835 2.19522 19.293 2.58574L12.0001 9.87865L4.70718 2.58574Z" fill="#ffffff"></path></g></svg>',
-  copy: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="magicph-icon" aria-hidden="true"><g class="copy"><path d="M6.11 4.25v1.86H4.25C3.01 6.11 2 7.12 2 8.36v11.39C2 20.99 3.01 22 4.25 22h11.39c1.24 0 2.25-1.01 2.25-2.25v-1.86h1.86c1.24 0 2.25-1.01 2.25-2.25V4.25C22 3.01 20.99 2 19.75 2H8.36C7.12 2 6.11 3.01 6.11 4.25zm9.53 16.25H4.25c-.413 0-.75-.337-.75-.75V8.36c0-.412.337-.75.75-.75h11.39c.412 0 .75.338.75.75v11.39c0 .413-.338.75-.75.75zm4.11-17c.413 0 .75.337.75.75v11.39c0 .412-.337.75-.75.75h-1.86V8.36c0-1.24-1.01-2.25-2.25-2.25H7.61V4.25c0-.413.338-.75.75-.75h11.39z"></path></g></svg>',
-  download:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="magicph-icon" aria-hidden="true"><g class="download"><path d="M3,14 v5 q0,2 2,2 h14 q2,0 2,-2 v-5 M7,10 l4,4 q1,1 2,0 l4,-4 M12,3 v11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></g></svg>',
+  close: {
+    viewBox: '0 0 384 512',
+    html: '<path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>'
+  },
+  copy: {
+    viewBox: '0 0 448 512',
+    html: '<path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/>'
+  },
+  download: {
+    viewBox: '0 0 384 512',
+    html: '<path d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM216 232l0 102.1 31-31c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-72 72c-9.4 9.4-24.6 9.4-33.9 0l-72-72c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l31 31L168 232c0-13.3 10.7-24 24-24s24 10.7 24 24z"/>'
+  },
+  open: {
+    viewBox: '0 0 512 512',
+    html: '<path d="M352 0c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9L370.7 96 201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L416 141.3l41.4 41.4c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.6 19.8-29.6l0-128c0-17.7-14.3-32-32-32L352 0zM80 32C35.8 32 0 67.8 0 112L0 432c0 44.2 35.8 80 80 80l320 0c44.2 0 80-35.8 80-80l0-112c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 112c0 8.8-7.2 16-16 16L80 448c-8.8 0-16-7.2-16-16l0-320c0-8.8 7.2-16 16-16l112 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L80 32z"/>'
+  },
   mobileDownload:
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="mgp_icon magicph-icon" aria-hidden="true"><g class="download"><path d="M3,14 v5 q0,2 2,2 h14 q2,0 2,-2 v-5 M7,10 l4,4 q1,1 2,0 l4,-4 M12,3 v11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" ></path></g></svg>',
   remove:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="magicph-icon" aria-hidden="true"><g><path d="M14,3 C14.5522847,3 15,3.44771525 15,4 C15,4.55228475 14.5522847,5 14,5 L13.846,5 L13.1420511,14.1534404 C13.0618518,15.1954311 12.1930072,16 11.1479,16 L4.85206,16 C3.80698826,16 2.93809469,15.1953857 2.8579545,14.1533833 L2.154,5 L2,5 C1.44771525,5 1,4.55228475 1,4 C1,3.44771525 1.44771525,3 2,3 L5,3 L5,2 C5,0.945642739 5.81588212,0.0818352903 6.85073825,0.00548576453 L7,0 L9,0 C10.0543573,0 10.9181647,0.815882118 10.9945142,1.85073825 L11,2 L11,3 L14,3 Z M11.84,5 L4.159,5 L4.85206449,14.0000111 L11.1479,14.0000111 L11.84,5 Z M9,2 L7,2 L7,3 L9,3 L9,2 Z"/></g></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="magicph-icon" aria-hidden="true"><g><path d="M14,3 C14.5522847,3 15,3.44771525 15,4 C15,4.55228475 14.5522847,5 14,5 L13.846,5 L13.1420511,14.1534404 C13.0618518,15.1954311 12.1930072,16 11.1479,16 L4.85206,16 C3.80698826,16 2.93809469,15.1953857 2.8579545,14.1533833 L2.154,5 L2,5 C1.44771525,5 1,4.55228475 1,4 C1,3.44771525 1.44771525,3 2,3 L5,3 L5,2 C5,0.945642739 5.81588212,0.0818352903 6.85073825,0.00548576453 L7,0 L9,0 C10.0543573,0 10.9181647,0.815882118 10.9945142,1.85073825 L11,2 L11,3 L14,3 Z M11.84,5 L4.159,5 L4.85206449,14.0000111 L11.1479,14.0000111 L11.84,5 Z M9,2 L7,2 L7,3 L9,3 L9,2 Z"/></g></svg>',
+  video: {
+    viewBox: '0 0 576 512',
+    html: '<path d="M0 128C0 92.7 28.7 64 64 64l256 0c35.3 0 64 28.7 64 64l0 256c0 35.3-28.7 64-64 64L64 448c-35.3 0-64-28.7-64-64L0 128zM559.1 99.8c10.4 5.6 16.9 16.4 16.9 28.2l0 256c0 11.8-6.5 22.6-16.9 28.2s-23 5-32.9-1.6l-96-64L416 337.1l0-17.1 0-128 0-17.1 14.2-9.5 96-64c9.8-6.5 22.4-7.2 32.9-1.6z"/>'
+  },
+  load(type, container) {
+    const { createElementNS } = safeSelf();
+    const svgElem = createElementNS('http://www.w3.org/2000/svg', 'svg');
+    for (const [k, v] of Object.entries(iconSVG[type])) {
+      if (k === 'html') {
+        continue;
+      }
+      svgElem.setAttributeNS(null, k, v);
+      svgElem.classList.add('magicph-icon');
+    }
+    try {
+      if (typeof iconSVG[type].html === 'string') {
+        svgElem.innerHTML = iconSVG[type].html;
+        dom.attr(svgElem, 'id', `mph_${type ?? 'Unknown'}`);
+      }
+      // eslint-disable-next-line no-unused-vars
+    } catch (ex) {
+      /* empty */
+    }
+    if (container) {
+      container.appendChild(svgElem);
+      return svgElem;
+    }
+    return svgElem.outerHTML;
+  }
 };
+//#endregion
 const saveAs = (blob, filename) => {
   const url = URL.createObjectURL(blob);
   const a = make('a');
@@ -809,33 +1017,21 @@ const arrayConcat = (inputArray) => {
   }
   return result;
 };
+/**
+ * @type { import("../typings/UserJS.d.ts").Network }
+ */
 const Network = {
-  /**
-   * Fetch a URL with fetch API as fallback
-   *
-   * When GM is supported, makes a request like XMLHttpRequest, with some special capabilities, not restricted by same-origin policy
-   * @link https://violentmonkey.github.io/api/gm/#gm_xmlhttprequest
-   * @link https://developer.mozilla.org/docs/Web/API/Fetch_API
-   * @param { RequestInfo | URL } url - The URL to fetch
-   * @param { GM.Request['method'] | Request['method'] } method - Fetch method
-   * @param { GM.Request['responseType'] } responseType - Response type
-   * @param { RequestInit | GM.Request | XMLHttpRequest } data - Fetch parameters
-   * @param { boolean } useFetch
-   * @returns { Promise<Response> } Fetch results
-   */
-  async req(url, method = 'GET', responseType = 'json', data = {}, useFetch = false) {
+  async req(url, method = 'GET', responseType = 'json', data, useFetch = false) {
     if (isEmpty(url)) {
       throw new Error('"url" parameter is empty');
     }
-    method = Network.bscStr(method, false);
-    responseType = Network.bscStr(responseType);
+    data = Object.assign({}, data);
+    method = this.bscStr(method, false);
+    responseType = this.bscStr(responseType);
     const params = {
       method,
       ...data
     };
-    if (params.hermes) {
-      delete params.hermes;
-    }
     if (isGM && !useFetch) {
       if (params.credentials) {
         Object.assign(params, {
@@ -851,127 +1047,68 @@ const Network = {
     } else if (params.onprogress) {
       delete params.onprogress;
     }
-    return await new Promise((resolve, reject) => {
-      /**
-       * @param { Response } response_1
-       * @returns { Response | Document }
-       */
-      const fetchResp = (response_1) => {
-        if (!response_1.ok) {
-          err({ method, responseType, data, useFetch, resp: response_1 });
-          reject(new Error(`${response_1.status} ${url}`));
-        }
-        const check = (str_2 = 'text') => {
-          return isFN(response_1[str_2]) ? response_1[str_2]() : response_1;
-        };
-        if (responseType.match(/buffer/)) {
-          resolve(check('arrayBuffer'));
-        } else if (responseType.match(/json/)) {
-          resolve(check('json'));
-        } else if (responseType.match(/text/)) {
-          resolve(check('text'));
-        } else if (responseType.match(/blob/)) {
-          resolve(check('blob'));
-        } else if (responseType.match(/formdata/)) {
-          resolve(check('formData'));
-        } else if (responseType.match(/clone/)) {
-          resolve(check('clone'));
-        } else if (responseType.match(/document/)) {
-          const domParser = new DOMParser();
-          const respTxt = check('text');
-          if (respTxt instanceof Promise) {
-            respTxt.then((txt) => {
-              const doc = domParser.parseFromString(txt, 'text/html');
-              resolve(doc);
-            });
-          } else {
-            const doc = domParser.parseFromString(respTxt, 'text/html');
-            resolve(doc);
-          }
-        } else {
-          resolve(response_1);
-        }
-      };
+    return new Promise((resolve, reject) => {
       if (isGM && !useFetch) {
         Network.xmlRequest({
           url,
           responseType,
           ...params,
-          onerror: reject,
+          onerror: (r_1) => {
+            reject(new Error(`${r_1.status} ${url}`));
+          },
           onload: (r_1) => {
-            if (r_1.status !== 200) {
-              err({ method, responseType, data, useFetch, resp: r_1 });
-              reject(new Error(`${r_1.status} ${url}`));
-            }
+            if (r_1.status !== 200) reject(new Error(`${r_1.status} ${url}`));
             if (responseType.match(/basic/)) resolve(r_1);
             resolve(r_1.response);
           }
         });
       } else {
-        fetch(url, params).then(fetchResp).catch(reject);
+        fetch(url, params)
+          .then((response_1) => {
+            if (!response_1.ok) reject(response_1);
+            const check = (str_2 = 'text') => {
+              return isFN(response_1[str_2]) ? response_1[str_2]() : response_1;
+            };
+            if (responseType.match(/buffer/)) {
+              resolve(check('arrayBuffer'));
+            } else if (responseType.match(/json/)) {
+              resolve(check('json'));
+            } else if (responseType.match(/text/)) {
+              resolve(check('text'));
+            } else if (responseType.match(/blob/)) {
+              resolve(check('blob'));
+            } else if (responseType.match(/formdata/)) {
+              resolve(check('formData'));
+            } else if (responseType.match(/clone/)) {
+              resolve(check('clone'));
+            } else if (responseType.match(/document/)) {
+              const respTxt = check('text');
+              const domParser = new DOMParser();
+              if (respTxt instanceof Promise) {
+                respTxt.then((txt) => {
+                  const doc = domParser.parseFromString(txt, 'text/html');
+                  resolve(doc);
+                });
+              } else {
+                const doc = domParser.parseFromString(respTxt, 'text/html');
+                resolve(doc);
+              }
+            } else {
+              resolve(response_1);
+            }
+          })
+          .catch(reject);
       }
     });
   },
-  sizes: ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
   format(bytes, decimals = 2) {
-    if (Number.isNaN(bytes)) return '0 Bytes';
+    if (Number.isNaN(bytes)) return `0 ${this.sizes[0]}`;
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${Network.sizes[i]}`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${this.sizes[i]}`;
   },
-  prog(evt) {
-    return Object.is(evt.total, 0)
-      ? Network.format(evt.loaded)
-      : `${+((evt.loaded / evt.total) * 100).toFixed(2)}%`;
-  },
-  async stream(url = '', filename, data = {}) {
-    try {
-      const chunks = [];
-      const response = await Network.req(url, 'GET', 'basic', data, true).catch(err);
-      if (!response) {
-        return new Uint8Array();
-      }
-      const contentLength = +response.headers.get('Content-Length');
-      let receivedLength = 0;
-      for await (const chunk of Network.streamAsyncIterable(response.body)) {
-        receivedLength += chunk.length;
-        chunks.push(chunk);
-        if (filename) {
-          const percentComplete = Network.prog({
-            loaded: receivedLength,
-            total: contentLength
-          });
-          msg(`[MagicPH] (${percentComplete}) Downloading "${filename}" using "Fetch API"`);
-        }
-      }
-      const Uint8Chunks = new Uint8Array(receivedLength);
-      let position = 0;
-      for (const chunk of chunks) {
-        Uint8Chunks.set(chunk, position);
-        position += chunk.length;
-      }
-      return Uint8Chunks;
-    } catch (ex) {
-      err(ex);
-    }
-    return null;
-  },
-  async download(details = {}) {
-    return await new Promise((resolve) => {
-      Network.stream(details.url, details.name).then((Uint8Chunks) => {
-        const blob = new Blob([Uint8Chunks], {
-          type: 'application/octet-stream'
-        });
-        saveAs(blob, details.name);
-        resolve(details.name);
-      });
-    });
-  },
-  /**
-   * @param { GM.Request } details
-   * @returns { Promise<XMLHttpRequest> }
-   */
+  sizes: ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
   async xmlRequest(details) {
     if (isGM) {
       if (isFN(GM.xmlHttpRequest)) {
@@ -981,9 +1118,10 @@ const Network = {
       }
     }
     return await new Promise((resolve, reject) => {
+      const { XMLHttpRequest } = safeSelf();
       const req = new XMLHttpRequest();
       let method = 'GET';
-      let url = 'about:blank';
+      let url = BLANK_PAGE;
       let body;
       for (const [key, value] of Object.entries(details)) {
         if (key === 'onload') {
@@ -1036,6 +1174,58 @@ const Network = {
       }
     });
   },
+  bscStr(str = '', lowerCase = true) {
+    const txt = str[lowerCase ? 'toLowerCase' : 'toUpperCase']();
+    return txt.replaceAll(/\W/g, '');
+  },
+  prog(evt) {
+    return Object.is(evt.total, 0)
+      ? Network.format(evt.loaded)
+      : `${+((evt.loaded / evt.total) * 100).toFixed(2)}%`;
+  },
+  async stream(url = '', filename, data = {}) {
+    try {
+      const chunks = [];
+      const response = await Network.req(url, 'GET', 'basic', data, true).catch(err);
+      if (!response) {
+        return new Uint8Array();
+      }
+      const contentLength = +response.headers.get('Content-Length');
+      let receivedLength = 0;
+      for await (const chunk of Network.streamAsyncIterable(response.body)) {
+        receivedLength += chunk.length;
+        chunks.push(chunk);
+        if (filename) {
+          const percentComplete = Network.prog({
+            loaded: receivedLength,
+            total: contentLength
+          });
+          msg(`[MagicPH] (${percentComplete}) Downloading "${filename}" using "Fetch API"`);
+        }
+      }
+      const Uint8Chunks = new Uint8Array(receivedLength);
+      let position = 0;
+      for (const chunk of chunks) {
+        Uint8Chunks.set(chunk, position);
+        position += chunk.length;
+      }
+      return Uint8Chunks;
+    } catch (ex) {
+      err(ex);
+    }
+    return null;
+  },
+  async download(details = {}) {
+    return await new Promise((resolve) => {
+      Network.stream(details.url, details.name).then((Uint8Chunks) => {
+        const blob = new Blob([Uint8Chunks], {
+          type: 'application/octet-stream'
+        });
+        saveAs(blob, details.name);
+        resolve(details.name);
+      });
+    });
+  },
   /**
    * @param { ReadableStream<Uint8Array> } stream
    */
@@ -1050,20 +1240,10 @@ const Network = {
     } finally {
       reader.releaseLock();
     }
-  },
-  /**
-   * @template { string } S
-   * @param { S } str
-   * @param { boolean } lowerCase
-   * @returns { S }
-   */
-  bscStr(str = '', lowerCase = true) {
-    const txt = str[lowerCase ? 'toLowerCase' : 'toUpperCase']();
-    return txt.replaceAll(/\W/g, '');
   }
 };
 /**
- * @type { import("./types").openTab }
+ * @type { import("../typings/UserJS.d.ts").openTab }
  */
 const openTab = (url) => {
   if (isGM) {
@@ -1083,12 +1263,24 @@ const ofUsers = {};
 const videoCache = new Map();
 const hostCache = new Map();
 
-const ntHead = make('mph-tabs');
 const dul = make('mph-list');
 
 class Tabs {
   constructor() {
     this.Tab = new Map();
+    this.blank = 'about:blank';
+    this.protocal = 'mph:';
+    this.protoReg = new RegExp(`${this.protocal}(.+)`);
+    this.el = {
+      add: make('mph-addtab', '', {
+        textContent: '+',
+        dataset: {
+          command: 'new-tab'
+        }
+      }),
+      head: make('mph-tabs')
+    };
+    this.el.head.append(this.el.add);
   }
   hasTab(...params) {
     for (const p of params) {
@@ -1103,14 +1295,14 @@ class Tabs {
     return true;
   }
   storeTab(host) {
-    const h = host ?? 'about:blank';
+    const h = host ?? this.blank;
     if (!this.Tab.has(h)) {
       this.Tab.set(h, new Set());
     }
     return this.Tab.get(h);
   }
   cache(host, ...tabs) {
-    const h = host ?? 'about:blank';
+    const h = host ?? this.blank;
     const tabCache = this.storeTab(h);
     for (const t of normalizeTarget(tabs)) {
       if (tabCache.has(t)) {
@@ -1121,69 +1313,112 @@ class Tabs {
     this.Tab.set(h, tabCache);
     return tabCache;
   }
-  mph(host) {
-    if (!host.startsWith('mph:')) {
+  intFN(host) {
+    if (!host.startsWith(this.protocal)) {
       return;
     }
-    // const type = host.match(/mph:(.+)/)[1];
-    // if (type === 'newtab') {
-    //   dom.cl.remove(cfgpage, 'hidden');
+    // const type = host.match(this.protoReg)[1];
+    // if (type === 'settings') {
+    //   dom.cl.remove([cfgpage, exBtn], 'hidden');
     //   dom.cl.add(table, 'hidden');
     //   if (!container.supported) {
     //     dom.attr(container.frame, 'style', 'height: 100%;');
     //   }
     // }
   }
-  active(tab) {
-    dom.cl.remove(qsA('mph-tab', ntHead), 'active');
-    const tabContent = qsA('mph-list', dul);
-    dom.cl.add(tabContent, 'hidden');
-    dom.cl.add(tab, 'active');
-
-    const host = tab.dataset.host ?? 'about:blank';
-    if (host !== 'about:blank') {
-      const title = tab.dataset.title;
-      const content = normalizeTarget(tabContent).filter(
-        (t) => host === t.dataset.host || title === t.dataset.host
-      );
-      dom.cl.remove(content, 'hidden');
-    }
-    if (host === 'about:blank') {
-      HP.refresh();
-    } else if (host.startsWith('mph:')) {
-      this.mph(host);
+  active(tab, build = true) {
+    for (const t of normalizeTarget(tab, false)) {
+      dom.cl.remove(qsA('mph-tab', this.el.head), 'active');
+      const tabContent = qsA('mph-list', dul);
+      dom.cl.add(tabContent, 'hidden');
+      dom.cl.add(t, 'active');
+      if (!build) {
+        continue;
+      }
+      const host = t.dataset.host ?? this.blank;
+      if (host !== this.blank) {
+        const title = tab.dataset.title;
+        const content = normalizeTarget(tabContent).filter(
+          (t) => host === t.dataset.host || title === t.dataset.host
+        );
+        dom.cl.remove(content, 'hidden');
+      }
+      if (host === this.blank) {
+        HP.refresh();
+      } else if (host.startsWith(this.protocal)) {
+        this.intFN(host);
+      }
     }
   }
-  /** @param { Element } tab */
+  /** @param { HTMLElement } tab */
   close(tab) {
-    const host = tab.dataset.host;
-    if (hostCache.has(host)) {
-      hostCache.delete(host);
-    }
-    const sibling = tab.previousElementSibling ?? tab.nextElementSibling;
-    if (sibling) {
-      if (sibling.dataset.command !== 'new-tab') {
-        this.active(sibling);
+    for (const t of normalizeTarget(tab, false)) {
+      const host = t.dataset.host;
+      if (hostCache.has(host)) {
+        hostCache.delete(host);
       }
-    }
-    if (this.Tab.has(host)) {
-      const tabSet = this.Tab.get(host);
-      if (tabSet.has(tab)) {
-        tabSet.delete(tab);
+      if (dom.cl.has(t, 'active')) {
+        HP.refresh();
       }
+      const sibling = t.previousElementSibling ?? t.nextElementSibling;
+      if (sibling) {
+        if (sibling.dataset.command !== 'new-tab') {
+          this.active(sibling);
+        }
+      }
+      if (this.Tab.has(host)) {
+        this.Tab.delete(host);
+      }
+      t.remove();
     }
-    tab.remove();
   }
-  make(host = undefined, text) {
-    const tabCache = this.storeTab(host);
+  // active(tab) {
+  //   dom.cl.remove(qsA('mph-tab', ntHead), 'active');
+  //   const tabContent = qsA('mph-list', dul);
+  //   dom.cl.add(tabContent, 'hidden');
+  //   dom.cl.add(tab, 'active');
+
+  //   const host = tab.dataset.host ?? this.blank;
+  //   if (host !== this.blank) {
+  //     const title = tab.dataset.title;
+  //     const content = normalizeTarget(tabContent).filter(
+  //       (t) => host === t.dataset.host || title === t.dataset.host
+  //     );
+  //     dom.cl.remove(content, 'hidden');
+  //   }
+  //   if (host === this.blank) {
+  //     HP.refresh();
+  //   } else if (host.startsWith(this.protocal)) {
+  //     this.intFN(host);
+  //   }
+  // }
+  // /** @param { Element } tab */
+  // close(tab) {
+  //   const host = tab.dataset.host;
+  //   if (hostCache.has(host)) {
+  //     hostCache.delete(host);
+  //   }
+  //   const sibling = tab.previousElementSibling ?? tab.nextElementSibling;
+  //   if (sibling) {
+  //     if (sibling.dataset.command !== 'new-tab') {
+  //       this.active(sibling);
+  //     }
+  //   }
+  //   if (this.Tab.has(host)) {
+  //     const tabSet = this.Tab.get(host);
+  //     if (tabSet.has(tab)) {
+  //       tabSet.delete(tab);
+  //     }
+  //   }
+  //   tab.remove();
+  // }
+  create(host = undefined, text) {
     if (typeof host === 'string') {
-      if (host.startsWith('mph:')) {
+      if (host.startsWith(this.protocal) && this.hasTab(host)) {
         this.active(this.Tab.get(host));
         return;
       }
-      const content = normalizeTarget(tabCache).filter(
-        (t) => host === t.dataset.host || text === t.dataset.host
-      );
+      const content = normalizeTarget(this.storeTab(host)).filter((t) => host === t.dataset.host);
       if (!isEmpty(content)) {
         return;
       }
@@ -1193,7 +1428,7 @@ class Tabs {
         command: 'switch-tab',
         title: text
       },
-      style: `order: ${ntHead.childElementCount};`
+      style: `order: ${this.el.head.childElementCount};`
     });
     const tabClose = make('mph-elem', '', {
       dataset: {
@@ -1202,15 +1437,40 @@ class Tabs {
       title: i18n$('close'),
       textContent: 'X'
     });
+    // const tabHost = make('mujs-host');
+    // tab.append(tabHost, tabClose);
+    // this.el.head.append(tab);
+    // this.active(tab, false);
+    // this.cache(host, tab);
+    // if (isNull(host)) {
+    //   HP.refresh();
+    //   urlBar.placeholder = i18n$('newTab');
+    //   tab.dataset.host = this.blank;
+    //   tabHost.title = i18n$('newTab');
+    //   tabHost.textContent = i18n$('newTab');
+    // } else if (host.startsWith(this.protocal)) {
+    //   const type = host.match(this.protoReg)[1];
+    //   tab.dataset.host = host || HP.host;
+    //   tabHost.title = type || tab.dataset.host;
+    //   tabHost.textContent = tabHost.title;
+    //   this.intFN(host);
+    // } else {
+    //   tab.dataset.host = host || HP.host;
+    //   tabHost.title = host || HP.host;
+    //   tabHost.textContent = tabHost.title;
+    // }
+    // return tab;
+
     const tabBox = make('mph-host');
     tab.append(tabBox, tabClose);
-    ntHead.append(tab);
 
-    dom.cl.remove(qsA('mph-tab', ntHead), 'active');
-    dom.cl.add(qsA('mph-list', dul), 'hidden');
-    dom.cl.add(tab, 'active');
-
+    this.el.head.append(tab);
+    this.active(tab, false);
     this.cache(host, tab);
+
+    // dom.cl.remove(qsA('mph-tab', ntHead), 'active');
+    // dom.cl.add(qsA('mph-list', dul), 'hidden');
+    // dom.cl.add(tab, 'active');
 
     if (isNull(host)) {
       tab.dataset.host = 'about:blank';
@@ -1257,7 +1517,7 @@ class Tabs {
         //   tabBox.textContent = '<All Sites>';
         // }
         if (val.startsWith('http')) {
-          const url = mkURL(val);
+          const url = strToURL(val);
           if (objToStr(url).includes('URL')) {
             value.url = url;
             if (/onlyfans/.test(HP.current.root) && !/onlyfans/.test(url.host)) {
@@ -1377,7 +1637,7 @@ class Tabs {
       tabHost = host || HP.host;
       tabTitle = text || type || tabHost;
       tabText = text || tabTitle;
-      this.mph(host);
+      this.intFN(host);
     } else {
       tabHost = host || HP.host;
       tabTitle = text || host || dom.attr(qs('meta[property="og:title"]'), 'content') || HP.host;
@@ -1399,16 +1659,16 @@ class Tabs {
 const tab = new Tabs();
 const progressElem = make('h1', 'mph_progress');
 const progressFrame = make('mph-elem', 'mph_progressContainer');
-const frame = make('main-userjs', 'hidden', {
-  dataset: {
-    insertedBy: 'magic-ph',
-    role: 'primary-container'
-  }
-});
+// const frame = make('main-userjs', 'hidden', {
+//   dataset: {
+//     insertedBy: 'magic-ph',
+//     role: 'primary-container'
+//   }
+// });
 const dContainer = make('mph-root', '', {
   async onclick(evt) {
     try {
-      /** @type { Element } */
+      /** @type { HTMLElement } */
       const target = evt.target.closest('[data-command]');
       if (!target) {
         return;
@@ -1441,10 +1701,7 @@ const dContainer = make('mph-root', '', {
           if (!videoCache.has(d.host)) {
             return;
           }
-          msg(
-            `[MagicPH] Deleted Video Id: ${d.host}`,
-            2500
-          );
+          msg(`[MagicPH] Deleted Video Id: ${d.host}`, 2500);
           videoCache.delete(d.host);
           target.parentElement.parentElement.remove();
         } else if (cmd === 'remove-all') {
@@ -1487,16 +1744,16 @@ const dContainer = make('mph-root', '', {
       if (cmd === 'open-tab' && dataset.webpage) {
         openTab(dataset.webpage);
       } else if (cmd === 'new-tab') {
-        tab.make();
+        tab.create();
       } else if (cmd === 'switch-tab') {
         tab.active(target);
       } else if (cmd === 'close-tab' && target.parentElement) {
         tab.close(target.parentElement);
       } else if (cmd === 'close') {
         dom.cl.remove(mphControls, 'hidden');
-        dom.remove(qsA('video', frame));
-        dom.cl.remove(frame, 'expanded');
-        dom.cl.add(frame, 'hidden');
+        dom.remove(qsA('video', HP.frame));
+        dom.cl.remove(HP.frame, 'expanded');
+        dom.cl.add(HP.frame, 'hidden');
       } else if (cmd === 'copy' && dataset.webpage) {
         await writeClipboard(dataset.webpage);
         const inp = qs('input', target.parentElement);
@@ -1529,23 +1786,35 @@ const dContainer = make('mph-root', '', {
           a.remove();
         }
       } else if (cmd === 'preview-video' && dataset.webpage && videoCache.has(dataset.webpage)) {
-        if (!debug) {
-          msg('[MagicPH] Disabled, WIP', 2500);
+        let pageArea = qs('mph-page', target.parentElement);
+        if (!pageArea) {
+          pageArea = make('mph-page');
+          target.parentElement.append(pageArea);
+          if (HP.supported) {
+            const shadow = pageArea.attachShadow({ mode: 'closed' });
+            const videoElem = make('video', '', {
+              preload: 'auto'
+              // style: 'max-width: 720px; max-height: 720px;'
+            });
+            dom.attr(videoElem, 'controls', '');
+            dom.attr(videoElem, 'disablepictureinpicture', '');
+            const src = make('source', '', {
+              src: dataset.webpage,
+              type: 'video/mp4'
+            });
+            videoElem.append(src);
+            shadow.append(videoElem);
+            dom.cl.add(HP.frame, 'expanded');
+          }
           return;
         }
-        // dom.remove(qsA('video', frame));
-        // const videoElem = make('video', '', {
-        //   preload: 'auto'
-        // });
-        // dom.attr(videoElem, 'controls', '');
-        // dom.attr(videoElem, 'disablepictureinpicture', '');
-        // const src = make('source', '', {
-        //   src: dataset.webpage,
-        //   type: 'video/mp4'
-        // });
-        // videoElem.append(src);
-        // dom.cl.add(frame, 'expanded');
-        // target.parentElement.append(videoElem);
+        if (!dom.cl.has(pageArea, 'hidden')) {
+          dom.cl.add(pageArea, 'hidden');
+          dom.cl.remove(HP.frame, 'expanded');
+          return;
+        }
+        dom.cl.remove(pageArea, 'hidden');
+        dom.cl.add(HP.frame, 'expanded');
       } else if (cmd === 'load-ts' && dataset.webpage && videoCache.has(dataset.webpage)) {
         const vid = videoCache.get(dataset.webpage);
         const hc = hostCache.get(vid.title);
@@ -1617,7 +1886,7 @@ const getOFQuality = (d, quality = 'original') => {
   return videoCache.get(d.host)[0];
 };
 const mphControls = make('mph-controls', '', {
-  async onclick(evt) {
+  async click(evt) {
     const target = evt.target;
     if (!target.dataset) {
       return;
@@ -1646,10 +1915,10 @@ const mphControls = make('mph-controls', '', {
     } else if (cmd === 'toggle-list') {
       if (dom.cl.has(mphControls, 'hidden')) {
         dom.cl.remove(mphControls, 'hidden');
-        dom.cl.add(frame, 'hidden');
+        dom.cl.add(HP.frame, 'hidden');
         return;
       }
-      dom.cl.remove(frame, 'hidden');
+      dom.cl.remove(HP.frame, 'hidden');
       dom.cl.add(mphControls, 'hidden');
     }
   }
@@ -1666,14 +1935,14 @@ const addToWrapper = () => {
   }
   for (const [userId, userVideos] of videoCache) {
     const mphList =
-    qs(`mph-list > mph-list[data-host="${userId}"]`) ??
-    make('mph-list', 'mph_of_list', {
-      dataset: {
-        host: userId
-      }
-    });
+      qs(`mph-list > mph-list[data-host="${userId}"]`) ??
+      make('mph-list', 'mph_of_list', {
+        dataset: {
+          host: userId
+        }
+      });
     const hc = hostCache.get(userId);
-    tab.make(userId);
+    tab.create(userId);
     for (const v of userVideos) {
       if (qsA(`[data-title="${v.title}"]`, mphList).length !== 0) {
         continue;
@@ -1757,7 +2026,7 @@ const addToWrapper = () => {
     dul.append(mphList);
     HP.updateCounters(userVideos.length, userId);
   }
-}
+};
 const ofsdwn = make('mph-btn', 'of_btn', {
   title: 'Download available videos',
   textContent: 'Download ',
@@ -1779,31 +2048,12 @@ const ofsRm = make('mph-btn', 'of_btn', {
     command: 'of-remove-all'
   }
 });
-const getInfo = () => {
-  if (isGM) {
-    if (isObj(GM_info)) {
-      return GM_info;
-    } else if (isObj(GM.info)) {
-      return GM.info;
-    }
-  }
-  return {
-    script: {
-      icon: '',
-      name: 'MagicPH',
-      namespace: 'https://github.com/magicoflolis/MagicPH',
-      updateURL:
-        'https://github.com/magicoflolis/Magic-PH/blob/master/dist/UserJS/magicph.user.js?raw=1',
-      version: 'Bookmarklet'
-    }
-  };
-};
-const userjsInfo = getInfo();
 const vidQuality = make('div', 'mgp_download mgp_optionSelector', {
-  innerHTML: userjsInfo.script.name,
-  onclick(e) {
-    halt(e);
-    dom.cl.remove(frame, 'hidden');
+  innerHTML: $info.script.name,
+  onclick(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    dom.cl.remove(HP.frame, 'hidden');
     if (isMobile) {
       if (qs('div.mgp_controls > div.mgp_qualitiesMenu') || HP.host.includes('youporn')) {
         dom.cl.add('.mgp_contextMenu', 'mgp_hidden');
@@ -2038,19 +2288,19 @@ class mphHLS {
   }
 }
 class mphMedia {
-  constructor(url) {
+  constructor(url, webpage) {
     if (HP.webpage !== url) {
       HP.current = url || HP.webpage.href || window.location;
     }
-    this.webpage = HP.webpage.href;
+    this.webpage = webpage || HP.webpage.href;
     this.mediaFiles = new Set();
     this.playerId = undefined;
     this.title = 'MagicPH';
   }
 
   async fetchQualities(mFiles = []) {
-    const blankArr = [];
     try {
+      mFiles = smToArr(mFiles);
       return await new Promise((resolve, reject) => {
         const testURL = mFiles;
         const mf = mFiles.filter((file) => {
@@ -2064,7 +2314,7 @@ class mphMedia {
           return false;
         });
         if (isBlank(mf)) {
-          resolve(blankArr);
+          resolve(mFiles);
         }
         mFiles = [];
         Network.req(mf)
@@ -2085,7 +2335,7 @@ class mphMedia {
       });
     } catch (ex) {
       err(ex);
-      return blankArr;
+      return mFiles;
     }
   }
 
@@ -2162,8 +2412,77 @@ class mphMedia {
             }
             this.mediaFiles.add(v);
           }
-          // this.mediaFiles.add(...resp.map((i) => i.videoUrl));
           break;
+        }
+        if (this.mediaFiles.size === 0) {
+          const txt = selected.innerHTML.toString();
+          const vtReg = /video_title: '(.*?)'/.exec(txt);
+          if (vtReg) {
+            if (!Object.is(vtReg[1], this.title)) {
+              this.title = vtReg[1];
+            }
+          }
+          if (!/porntrex/.test(url)) {
+            const vUrlReg = txt.match(/video_alt_url: '(.*?)'/g);
+            if (vUrlReg) {
+              for (const r of vUrlReg) {
+                const v = /video_alt_url: '(.*?)'/.exec(r);
+                if (!v) {
+                  continue;
+                }
+                const f = v[1].replaceAll('function/0/', '');
+                if (this.mediaFiles.has(f)) {
+                  continue;
+                }
+                this.mediaFiles.add(f);
+              }
+            }
+          }
+          const ptReg = txt.match(/video_alt_url\d+: '(.*?)'/g);
+          if (ptReg) {
+            for (const r of ptReg) {
+              const v = /video_alt_url\d+: '(.*?)'/.exec(r);
+              if (!v) {
+                continue;
+              }
+              const f = v[1].replaceAll('function/0/', '');
+              if (this.mediaFiles.has(f)) {
+                continue;
+              }
+              this.mediaFiles.add(f);
+            }
+          }
+          const vReg = /(\w+)\.replaceAll\("\w+",(\w+)\+"pubs\/"\+(\w+)\+"\/"\)/.exec(txt);
+          if (vReg) {
+            const v = new RegExp(`${vReg[1]}="(<video.+</video>)"`).exec(txt);
+            if (v) {
+              let a, b, c;
+              a = b = c = '';
+              a = v[1];
+              for (const e of [vReg[2], vReg[3]]) {
+                const r = new RegExp(`${e}="(.*?)"`);
+                const eReg = r.exec(txt);
+                if (!eReg) {
+                  continue;
+                }
+                if (isBlank(b)) {
+                  b = eReg[1];
+                } else if (isBlank(c)) {
+                  c = eReg[1];
+                }
+              }
+              const final = a.replaceAll('nrpuv', b + 'pubs/' + c + '/').replaceAll('\\"', '"');
+              const elem = make('mph-fake');
+              elem.innerHTML = final;
+              for (const source of elem.firstElementChild.childNodes) {
+                if (this.mediaFiles.has(source.src)) {
+                  continue;
+                }
+                this.mediaFiles.add(source.src);
+              }
+              elem.remove();
+            }
+          }
         }
         return this.mediaFiles;
       };
@@ -2233,26 +2552,34 @@ class mphMedia {
         title: this.title
       }
     };
-    HP.videoData = setObj(HP.videoData, obj);
+    HP.videoData = {
+      ...HP.videoData,
+      ...obj
+    };
     return HP.Video;
   }
 }
-// #region makeContainer
 const makeContainer = (q = [], data = {}) => {
   if (isEmpty(q)) {
     info('Empty quality list', q);
     return;
   }
+  const d = {
+    host: HP.webpage.host,
+    hermes: {},
+    ...data
+  };
+  log(d);
   const def = {
     mediaFiles: q,
     cache: [],
     rows: new Set(),
     $elems: [],
-    hermes: data.hermes ?? {}
+    hermes: d.hermes
   };
-  const vt = data.title ?? getVidTitle() ?? HP.Video.title ?? document.title ?? 'MagicPH';
+  const vt = d.title ?? getVidTitle() ?? HP.Video.title ?? document.title ?? 'MagicPH';
   if (!tab.hasTab(HP.webpage.host)) {
-    tab.make(HP.webpage.host, vt);
+    tab.create(HP.webpage.host, vt);
   }
   if (hostCache.has(vt)) {
     const hc = hostCache.get(vt);
@@ -2269,13 +2596,13 @@ const makeContainer = (q = [], data = {}) => {
     }
   });
   const setRows = (parentElem, val, rows = ['source', 'copy', 'download', 'open', 'preview']) => {
-    if (hc.ts || data.ts) {
+    if (hc.ts || d.ts) {
       rows.push('loadTS');
     }
     const elem = {
       copy: make('mph-a', '', {
         title: i18n$('copy'),
-        innerHTML: `${HP.webpage.origin.match(/redtube/g) ? '' : `${iconSVG.copy} `}${i18n$('copy')}`,
+        innerHTML: `${iconSVG.load('copy')} ${i18n$('copy')}`,
         dataset: {
           command: 'copy',
           webpage: val
@@ -2283,11 +2610,13 @@ const makeContainer = (q = [], data = {}) => {
       }),
       download: make('mph-a', '', {
         title: i18n$('download'),
-        innerHTML: `${HP.webpage.origin.match(/redtube/g) ? '' : `${iconSVG.download} `}${i18n$('download')}`,
-        dataset: {
-          command: 'download-video',
-          webpage: val
-        }
+        innerHTML: `${iconSVG.load('download')} ${i18n$('download')}`,
+        ...(d.download ?? {
+          dataset: {
+            command: 'download-video',
+            webpage: val
+          }
+        })
       }),
       loadTS: make('mph-a', 'mph-item', {
         title: 'Get qualities from .TS file',
@@ -2299,7 +2628,7 @@ const makeContainer = (q = [], data = {}) => {
       }),
       open: make('mph-a', '', {
         title: 'Open in new Tab',
-        innerHTML: 'Open',
+        innerHTML: `${iconSVG.load('open')} Open`,
         dataset: {
           command: 'open-tab',
           webpage: val
@@ -2307,7 +2636,7 @@ const makeContainer = (q = [], data = {}) => {
       }),
       preview: make('mph-a', '', {
         title: 'Preview',
-        innerHTML: 'Preview',
+        innerHTML: `${iconSVG.load('video')} Preview`,
         dataset: {
           command: 'preview-video',
           webpage: val
@@ -2341,7 +2670,7 @@ const makeContainer = (q = [], data = {}) => {
     }
   };
   const rows = hc.rows ?? def.rows;
-  if (isEmpty(data.rows)) {
+  if (isEmpty(d.rows)) {
     for (const r of ['source', 'copy', 'download', 'open', 'preview']) {
       if (rows.has(r)) {
         continue;
@@ -2349,7 +2678,7 @@ const makeContainer = (q = [], data = {}) => {
       rows.add(r);
     }
   } else {
-    for (const r of data.rows) {
+    for (const r of d.rows) {
       if (rows.has(r)) {
         continue;
       }
@@ -2362,20 +2691,20 @@ const makeContainer = (q = [], data = {}) => {
     }
     const isStr = typeof v === 'string';
     const val = isStr ? v : URL.createObjectURL(v);
-    const $el = data.$el ?? make('mph-elem', 'mph-item');
-    videoCache.set(val, { title: vt, data, isStr, $el });
+    const $el = d.$el ?? make('mph-elem', 'mph-item');
+    videoCache.set(val, { title: vt, d, isStr, $el });
     if (!mphList.contains($el)) {
       mphList.append($el);
       hc.$elems.push($el);
     }
-    if (isEmpty(data.rows)) {
+    if (isEmpty(d.rows)) {
       setRows($el, val);
     } else {
-      setRows($el, val, data.rows);
+      setRows($el, val, d.rows);
     }
     Object.assign(hc, {
       title: vt,
-      data,
+      data: d,
       isStr,
       rows
     });
@@ -2383,9 +2712,8 @@ const makeContainer = (q = [], data = {}) => {
     hostCache.set(vt, hc);
   }
   dul.append(mphList);
-  HP.updateCounters(q.length, vt, HP.webpage.host);
+  HP.updateCounters(q.length, vt, d.host);
 };
-// #endregion
 const getVidTitle = (pgUrl) => {
   const cVid = HP.Video;
   try {
@@ -2444,7 +2772,7 @@ const getVidTitle = (pgUrl) => {
 };
 const geekVideos = async (doc = document, pgUrl) => {
   try {
-    const loc = isEmpty(pgUrl) ? HP.webpage : mkURL(pgUrl);
+    const loc = isEmpty(pgUrl) ? HP.webpage : strToURL(pgUrl);
     const media = new mphMedia(loc);
     const qualities = await media.autoStart();
     if (isEmpty(qualities)) {
@@ -2456,9 +2784,7 @@ const geekVideos = async (doc = document, pgUrl) => {
       ts: tsSrc,
       title: vt
     });
-
     await query('.mgp_container');
-
     let injInto = doc.documentElement;
     if (isMobile) {
       dom.cl.add(vidQuality, 'mgp_selector');
@@ -2610,12 +2936,16 @@ const geekShorts = async (doc = document) => {
   }
 };
 const triggerHls = async (id) => {
+  msg('[MagicPH] Compiling hls video...', 1500);
   if (!id) {
+    if (!qs('meta[name="twitter:image"]')) {
+      return;
+    }
     const ma = qs('meta[name="twitter:image"]').content.match(/\/(\d+)\//);
     id = ma ? ma[1] : location.pathname.replace(/\/-0/, '');
   }
-  const req = await Network.req(`https://store.externulls.com/facts/file/${id}`);
-  const hls_resources = req.file.hls_resources;
+  const { file } = await Network.req(`https://store.externulls.com/facts/file/${id}`);
+  const { hls_resources } = file;
   const fl_cdn = hls_resources[Object.keys(hls_resources)[0]];
   const hls = new mphHLS(`https://video.externulls.com/${fl_cdn}`);
   const frags = await hls.build();
@@ -2623,77 +2953,49 @@ const triggerHls = async (id) => {
   const blob = new Blob([arrayConcat(m)], {
     type: 'application/octet-stream'
   });
-  msg('[MagicPH] Cache complete!', 2500);
   makeContainer([blob], {
     rows: ['title', 'download'],
-    title: req.file.stuff.sf_name
+    title: file.data[0].cd_value
   });
   const injInto = qs('.XContentViewer__details__actions');
   if (injInto) {
     injInto.append(vidQuality);
   }
 };
-mph.SafeAnimationFrame = class {
-  constructor(callback) {
-    this.fid = this.tid = undefined;
-    this.callback = callback;
-  }
-  start(delay) {
-    if (delay === undefined) {
-      if (this.fid === undefined) {
-        this.fid = requestAnimationFrame(() => {
-          this.onRAF();
-        });
-      }
-      if (this.tid === undefined) {
-        this.tid = setTimeout(() => {
-          this.onSTO();
-        }, 20000);
-      }
-      return;
-    }
-    if (this.fid === undefined && this.tid === undefined) {
-      this.tid = setTimeout(() => {
-        this.macroToMicro();
-      }, delay);
-    }
-  }
-  clear() {
-    if (this.fid !== undefined) {
-      cancelAnimationFrame(this.fid);
-      this.fid = undefined;
-    }
-    if (this.tid !== undefined) {
-      clearTimeout(this.tid);
-      this.tid = undefined;
-    }
-  }
-  macroToMicro() {
-    this.tid = undefined;
-    this.start();
-  }
-  onRAF() {
-    if (this.tid !== undefined) {
-      clearTimeout(this.tid);
-      this.tid = undefined;
-    }
-    this.fid = undefined;
-    this.callback();
-  }
-  onSTO() {
-    if (this.fid !== undefined) {
-      cancelAnimationFrame(this.fid);
-      this.fid = undefined;
-    }
-    this.tid = undefined;
-    this.callback();
-  }
-};
 // #region Site Director
 const mainUserJS = async (doc = document) => {
   try {
-    const current = HP.current;
+    const { current } = HP;
     const ignoreTags = new Set(['br', 'head', 'link', 'meta', 'script', 'style']);
+    /**
+     * @template { Function } F
+     * @param { (this: F, node: Node) => * } callback
+     */
+    const watch = (callback) => {
+      observe(doc, (mutations) => {
+        try {
+          for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+              if (node.nodeType !== 1) {
+                continue;
+              }
+              if (ignoreTags.has(node.localName)) {
+                continue;
+              }
+              if (node.parentElement === null) {
+                continue;
+              }
+              if (!(node instanceof HTMLElement)) {
+                continue;
+              }
+              callback(node);
+            }
+          }
+        } catch (ex) {
+          err(ex);
+        }
+      });
+    };
     if (/onlyfans/.test(current.root)) {
       const app = await query('[id="app"]');
       while (isNull(app.__vue__)) {
@@ -2754,7 +3056,7 @@ const mainUserJS = async (doc = document) => {
             videoCache.set(userData.name, []);
           }
           const vid = videoCache.get(userData.name) || [];
-          if (vid.filter(v => v.id === p.id).length !== 0) {
+          if (vid.filter((v) => v.id === p.id).length !== 0) {
             continue;
           }
           if (!hostCache.has(userData.name)) {
@@ -2763,7 +3065,7 @@ const mainUserJS = async (doc = document) => {
               cache: [],
               $elems: []
             });
-          };
+          }
           for (const m of normalizeTarget(p.media)) {
             const videoId = `${m.id}`;
             const createVideo = () => {
@@ -2824,7 +3126,7 @@ const mainUserJS = async (doc = document) => {
             videoCache.set(userData.name, vid);
           }
         }
-        dbg('toGrab', {videoCache, ofMedia, hostCache});
+        dbg('toGrab', { videoCache, ofMedia, hostCache });
         addToWrapper();
       };
       appVue.$store.watch((a) => {
@@ -2871,6 +3173,57 @@ const mainUserJS = async (doc = document) => {
         }
       });
       vueRouter = appVue._routerRoot['$options'].router.history;
+    } else if (/porntrex|analdin|porn00/.test(current.root)) {
+      if (/analdin/.test(current.root)) {
+        watch(async (node) => {
+          if (node.tagName === 'VIDEO') {
+            const media = new mphMedia(window.location.href);
+            const qualities = await media.autoStart();
+            const vt = media.title ?? doc.title;
+            makeContainer(qualities, {
+              ts: tsSrc,
+              title: vt
+            });
+          }
+        });
+      }
+      const media = new mphMedia(HP.webpage);
+      const qualities = await media.autoStart();
+      const vt = media.title ?? doc.title;
+      makeContainer(qualities, {
+        ts: tsSrc,
+        title: vt
+      });
+    } else if (/spankbang/.test(current.root)) {
+      const q = [];
+      for (const e of qsA('video > source')) {
+        if (typeof e.src === 'string') {
+          q.push(e.src);
+        }
+      }
+      makeContainer(q, {
+        ts: tsSrc,
+        title: cleanURL(doc.title)
+      });
+    } else if (/91porn/.test(current.root)) {
+      const s = qs('source', qs('video'));
+      if (!s) {
+        return;
+      }
+      if (typeof s.src === 'string') {
+        makeContainer([s.src], {
+          title: cleanURL(doc.title)
+        });
+      }
+    } else if (/hqporner/.test(current.root)) {
+      const elem = qs('.videoWrapper > iframe');
+      const media = new mphMedia(elem.src);
+      const qualities = await media.autoStart();
+      const vt = media.title ?? doc.title;
+      makeContainer(qualities, {
+        ts: tsSrc,
+        title: vt
+      });
     } else if (/xnxx|xvideos/.test(current.root)) {
       while (isNull(win.html5player)) {
         await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -2882,10 +3235,6 @@ const mainUserJS = async (doc = document) => {
       const hls = html5player.hlsobj;
       const h = new mphHLS(hls.url);
       const q = await h.start();
-      if (isEmpty(q)) {
-        info('Empty quality list', q);
-        return;
-      }
       makeContainer(q, {
         rows: ['title', 'download'],
         ts: tsSrc,
@@ -2918,48 +3267,55 @@ const mainUserJS = async (doc = document) => {
     } else if (current.pathType === 'Shorties') {
       await geekShorts(doc);
     } else if (/beeg/.test(current.root)) {
-      observe(doc, (mutations) => {
-        try {
-          for (const mutation of mutations) {
-            for (const node of mutation.addedNodes) {
-              if (node.nodeType !== 1) {
-                continue;
-              }
-              if (ignoreTags.has(node.localName)) {
-                continue;
-              }
-              if (node.parentElement === null) {
-                continue;
-              }
-              if (!(node instanceof HTMLElement)) {
-                continue;
-              }
-              if (node.localName === 'div' && dom.cl.has(node, 'x-player__video')) {
-                const p = node.parentElement.parentElement;
-                if (qs('img[src]', p)) {
-                  const ma = qs('img[src]', p).src.match(/\/(\d+)\//);
-                  if (ma) {
-                    triggerHls(ma[1]);
-                    continue;
-                  }
-                }
-                triggerHls();
-              }
+      watch((node) => {
+        if (node.localName === 'div' && dom.cl.has(node, 'x-player__video')) {
+          const p = node.parentElement.parentElement;
+          if (qs('img[src]', p)) {
+            const ma = qs('img[src]', p).src.match(/\/(\d+)\//);
+            if (ma) {
+              triggerHls(ma[1]);
+              return;
             }
           }
-        } catch (ex) {
-          err(ex);
+          triggerHls(location.pathname.replace(/\/-0/, ''));
         }
+      });
+    } else if (/sxyprn/.test(current.root)) {
+      log(HP.current);
+      while (qs('#player_el').src === window.location.href) {
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+      }
+      makeContainer([qs('#player_el').src], {
+        rows: ['source', 'copy', 'open', 'preview'],
+        ts: tsSrc,
+        title: dom.text(qs('.post_text')),
+        host: location.hostname
       });
     }
     if (!/onlyfans/.test(current.root)) {
-      tab.make(HP.webpage.host);
+      tab.create(HP.webpage.host);
     }
   } catch (ex) {
     err(ex);
   }
 };
-const initUserJS = (doc) => {
+// #endregion
+/**
+ * @template { Function } F
+ * @param { (this: F, doc: Document) => * } onDomReady
+ */
+const loadDOM = (onDomReady) => {
+  if (isFN(onDomReady)) {
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      onDomReady(document);
+    } else {
+      document.addEventListener('DOMContentLoaded', (evt) => onDomReady(evt.target), {
+        once: true
+      });
+    }
+  }
+};
+loadDOM((doc) => {
   if (window.location === null) {
     err('"window.location" is null, reload the webpage or use a different one');
     return;
@@ -2968,114 +3324,5 @@ const initUserJS = (doc) => {
     err('"doc" is null, reload the webpage or use a different one');
     return;
   }
-  if (HP.injected) {
-    return;
-  }
-  HP.injected = true;
-
-  info(`Site: ${HP.webpage.origin} isMobile: ${isMobile}`);
-
-  if (isMobile) {
-    dom.cl.add([frame, mphControls, dul], 'mph_mobile');
-    // Prevents being redirected to "Continue to video"
-    if (HP.host.includes('pornhub')) {
-      const makeCookie = (name, value, options = {}) => {
-        try {
-          Object.assign(options, {
-            path: '/'
-          });
-          if (options.expires instanceof Date) {
-            options.expires = options.expires.toUTCString();
-          }
-          let updatedCookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
-          for (const key in options) {
-            updatedCookie += `; ${key}`;
-            const optionValue = options[key];
-            if (optionValue !== true) {
-              updatedCookie += `=${optionValue}`;
-            }
-          }
-          document.cookie = updatedCookie;
-          info('[makeCookie] New cookie value:', updatedCookie);
-          return updatedCookie;
-        } catch (ex) {
-          err(ex);
-        }
-        return '';
-      };
-      makeCookie('views', '0', { domain: `.${HP.host}` });
-      // If we are on `/interstitial?viewkey=`
-      if (isFN(win.clearModalCookie) && HP.webpage.searchParams.has('viewkey')) {
-        const videoURL = `${HP.webpage.origin}/view_video.php?viewkey=${HP.webpage.searchParams.get('viewkey')}`;
-        info(`Redirecting to "${videoURL}"`);
-        window.location.href = videoURL;
-        return;
-      }
-    }
-  }
-  const injectedCore = loadCSS(downloadCSS, 'core');
-  if (!injectedCore) {
-    throw new Error('Failed to initialize script!', { cause: 'loadCSS' });
-  }
-  const overlay = make('mph-elem', 'mph_overlay');
-  const header = make('mph-elem', 'mph_list_header');
-  const closeVQ = make('mph-elem', 'mgp_title', {
-    innerHTML: userjsInfo.script.name
-  });
-  const closeHM = make('mph-close', '', {
-    innerHTML: '🗙',
-    dataset: {
-      command: 'close'
-    }
-  });
-  const ntAdd = make('mph-addtab', '', {
-    textContent: '+',
-    dataset: {
-      command: 'new-tab'
-    }
-  });
-  const listToggle = make('mph-btn', 'of_btn', {
-    title: 'Hide/show list',
-    textContent: 'Show List ',
-    dataset: {
-      command: 'toggle-list'
-    }
-  });
-  const listCounter = make('mph-count', '', {
-    textContent: '(0)'
-  });
-  listToggle.append(listCounter);
-  ntHead.append(ntAdd);
-  header.append(closeVQ, closeHM);
-  dContainer.append(header, ntHead, dul);
-  frame.append(dContainer);
-  mphControls.append(overlay);
-  if (/onlyfans/.test(HP.current.root)) {
-    const ofsHeader = make('mph-elem', 'mph_of_header');
-    ofsHeader.append(ofscopy, ofsdwn);
-    header.append(ofsHeader);
-    ofscopy.append(copyCounter);
-    ofsdwn.append(dwnCounter);
-  }
-  mphControls.append(listToggle);
-  progressFrame.append(progressElem);
-  doc.documentElement.append(frame, progressFrame, mphControls);
-  mainUserJS(doc);
-};
-// #endregion
-/**
- * @template { Function } F
- * @param { (this: F, doc: Document) => any } onDomReady
- */
-const loadDOM = (onDomReady) => {
-  if (!isFN(onDomReady)) {
-    return;
-  }
-  if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    onDomReady.call({}, document);
-  }
-  document.addEventListener('DOMContentLoaded', (evt) => onDomReady.call({}, evt.target), {
-    once: true
-  });
-};
-loadDOM(initUserJS);
+  HP.inject(mainUserJS, doc);
+});

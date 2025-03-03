@@ -1,4 +1,4 @@
-{{metadata}}
+[[metadata]]
 (() => {
 'use strict';
 const Limit_Downloads = false; // Will apply to OnlyFans only
@@ -14,20 +14,21 @@ const inIframe = () => {
 if (inIframe()) {
   return;
 }
+let userjs = self.userjs;
 /**
-* Skip text/plain documents
-* @link https://github.com/gorhill/uBlock/blob/master/platform/common/vapi.js
-*/
-let mph = self.mph;
+ * Skip text/plain documents, based on uBlock Origin `vapi.js` file
+ *
+ * [Source Code](https://github.com/gorhill/uBlock/blob/master/platform/common/vapi.js)
+ */
 if (
   (document instanceof Document ||
     (document instanceof XMLDocument && document.createElement('div') instanceof HTMLDivElement)) &&
   /^image\/|^text\/plain/.test(document.contentType || '') === false &&
-  (self.mph instanceof Object === false || mph.MPH !== true)
+  (self.userjs instanceof Object === false || userjs.UserJS !== true)
 ) {
-  mph = self.mph = { MPH: true };
+  userjs = self.userjs = { UserJS: true };
 }
-if (!(typeof mph === 'object' && mph.MPH)) {
+if (!(typeof userjs === 'object' && userjs.UserJS)) {
   return;
 }
 /******************************************************************************/
@@ -37,12 +38,12 @@ if (!(typeof mph === 'object' && mph.MPH)) {
  * @desc Link to uncompiled Cascading Style Sheet
  * @link https://github.com/magicoflolis/Magic-PH/tree/master/src/sass
  */
-const downloadCSS = `{{downloadCSS}}`;
+const mainCSS = `[[mainCSS]]`;
 /**
 * Link to uncompressed locales + compiler
 * @link https://github.com/magicoflolis/Magic-PH/tree/master/src/_locales
 * @link https://github.com/magicoflolis/Magic-PH/blob/master/tools/languageLoader.js
 */
-const languageList = {{languageList}};
-{{code}}
+const translations = [[languageList]];
+[[code]]
 })();
