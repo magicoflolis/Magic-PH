@@ -1,0 +1,70 @@
+name: "🐞 Bug report"
+description: File a bug report.
+title: "[bug]: "
+labels: ["bug 🐞"]
+assignees:
+  - magicoflolis
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+      - label: I have searched the existing issues
+        required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: How are you using MagicPH?
+      multiple: true
+      options:
+        - User Script
+        - Web Extension
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Web Browser
+      description: What browser are you seeing this bug on?
+    validations:
+      required: true
+  - type: input
+    id: userjs
+    attributes:
+      label: User Script Manager
+      description: What user script manager are you using? - not required when using Web Extension
+    validations:
+      required: false
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      description: What URL did the bug occur on?
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug.
+      placeholder: A clear and concise description of the bug.
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: textarea
+    id: bug-reproduction
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the bug.
+      placeholder: |
+        1. Navigated to '...'
+        1. Console error '...'
+        1. etc.
+    validations:
+      required: false
