@@ -20,6 +20,8 @@ _Recommend using "ad blocker" or "content blocker" ([uBlock Origin](https://gith
 
 A video downloader for various adult websites. _WebExtension version has not been updated in a while, please use UserScript version!_
 
+[UserScript Changelog](https://github.com/magicoflolis/Magic-PH/blob/master/CHANGELOG.user.md)
+
 **Supported Websites:** - [List of policy violations](https://github.com/magicoflolis/Magic-PH/blob/master/pages.md)
 
 |                     Websites                      | Version (Desktop) | Version (Mobile) |
@@ -72,12 +74,12 @@ javascript: (function () {
 
 > See [Accessing Downloader](#accessing-downloader)
 
-- Designed for mobile and desktop devices.
-- Multiple language support.
-- Will match the websites theme.
-- Built in tabs feature.
-- Built in video downloader allows user to easily download and save any video in its highest quality or preferred choice.
-- Video downloader can be combined with any 3rd party/external downloader.
+- General:
+  - UI designed for mobile and desktop devices
+  - Will match the websites theme.
+  - Built in tabs feature.
+  - Built in video downloader allows user to easily download and save any video in its highest quality or preferred choice.
+  - Video downloader can be combined with any 3rd party/external downloader.
 
 ## Previews
 
