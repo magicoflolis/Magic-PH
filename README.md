@@ -177,3 +177,17 @@ $ pnpm run pub:UserJS
 ### Source Code
 
 - [https://github.com/magicoflolis/Magic-PH](https://github.com/magicoflolis/Magic-PH)
+
+---
+
+## Development
+
+```sh
+pnpm install
+pnpm run dev:UserJS   # watch + serve ./web-server
+pnpm run pub:UserJS   # production build, ./dist
+pnpm run lint
+pnpm run check:types
+pnpm run check:grants
+pnpm run test:e2e     # see tests/README.md
+```

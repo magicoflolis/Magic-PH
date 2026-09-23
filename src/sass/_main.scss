@@ -1,478 +1,1021 @@
+// Stylesheet of the interface, lives inside the closed shadow tree of <mph-userjs>.
+//
+// NOTE: The compiled CSS is placed inside a JavaScript template literal, do not use
+// backslashes, backticks or "${" in this file.
 
-.magicFreeze {
-  overflow: hidden !important;
-  overscroll-behavior-y: none !important;
-}
+// Every "mph-*" variable is set on <mph-userjs> by the site palette (see `HandlePage.palette`)
+// and can be overwritten by the user (Settings > Theme).
+$site: var(--mph-site-color, hsl(36, 100%, 50%));
+$hover: var(--mph-hover-color, hsl(36, 100%, 35%));
+$bg: var(--mph-background-color, hsl(0, 0%, 0%));
+$border: var(--mph-border-color, hsl(36, 100%, 50%));
+$text: var(--mph-text-color, hsl(210, 12%, 97%));
+$root-bg: var(--mph-root-bg, hsla(0, 0%, 6%, 0.97));
+$header-bg: var(--mph-header-bg, hsla(0, 0%, 0%, 0.35));
+$accent: var(--mph-accent, var(--mph-site-color, hsl(196, 100%, 47%)));
+$row-even: hsla(0, 0%, 100%, 0.06);
+$row-odd: hsla(0, 0%, 100%, 0.02);
+$error-bg: hsl(0, 100%, 22%);
+$z: 2147483647;
 
-.magicBlur {
-  .photoBlockBox ul.photosAlbumsListing .photoAlbumListContainer .photoAlbumListBlock,
-  .photoBlockBox ul.photosAlbumsListing.albumViews .photoAlbumListBlock,
-  div.nf-videos ul.photosAlbumsListing .photoAlbumListContainer .photoAlbumListBlock,
-  div.nf-videos ul.photosAlbumsListing.albumViews .photoAlbumListBlock,
-  .userWidgetWrapperGrid img,
-  video.lazyVideo,
-  .action_tag_image,
-  li img,
-  .userAvatar img,
-  .mgp_container .mgp_videoPoster img,
-  .video-box img,
-  .thumb_box img.videoThumbs:not([data-flipbook_active]),
-  .thumb-image-container__image,
-  .thumb-widget-img,
-  .xp-preload-image {
-    -webkit-filter: blur(15px) !important;
-    filter: blur(15px) !important;
-  }
-}
-
-.magicDefault {
-  overflow-y: scroll;
-  overscroll-behavior-y: none;
-}
-
-.magicTop,
-.magicCenter,
-button.tabButton {
-  @include theme;
-  @include mphTheme;
-}
-
-.mph-center {
-  &:not(.hidden) {
-    display: flex;
-    z-index: 1000;
-  }
-  width: 100%;
-  bottom: 1em;
-  position: fixed;
-  align-items: center;
-  justify-content: center;
-}
-
-// .magicCenter {
-//   display: none;
-// }
-
-.mph-btns,
-.download-trigger,
-.remove-trigger {
+@mixin fit {
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
 }
 
-.download-trigger,
-.remove-trigger {
-  font-size: medium;
-  font-weight: 700;
-  color: $white;
-}
+mujs-root {
+  font-family: var(--mujs-font-family, Arial, Helvetica, sans-serif);
+  text-rendering: optimizeLegibility;
+  word-break: normal;
+  font-size: 14px;
+  line-height: 1.35;
+  color: $text;
+  text-align: start;
 
-.blur-trigger,
-.download-trigger,
-.remove-trigger {
-  background: $dark;
-  border: 0;
-  border-radius: 3px;
-  cursor: pointer;
-  height: 100%;
-  text-align: center;
-}
+  &,
+  * {
+    box-sizing: border-box;
+  }
 
-.mph-btns {
-  display: grid;
-  grid-template-columns: minmax(auto, 1fr);
-  grid-column-gap: 0.5rem;
-  grid-auto-flow: column;
-  button {
-    svg,
-    img {
-      width: 14px;
-      height: 14px;
-    }
-    svg {
-      fill: currentColor;
-      background: transparent;
-    }
+  * {
+    scrollbar-color: $site hsl(224, 14%, 15%);
+    scrollbar-width: thin;
   }
 }
 
-.blur-btn {
-  max-width: -webkit-max-content;
-  max-width: -moz-max-content;
-  max-width: max-content;
-  width: 100%;
-  display: grid;
-  .blur-trigger {
-    width: 100%;
-    color: #6a6a6a;
-    font-size: 15px;
-    line-height: 17px;
-  }
+mujs-root,
+mujs-main,
+mujs-toolbar,
+mujs-header,
+mujs-body,
+mujs-list,
+mujs-post,
+mujs-tile,
+mujs-viewer,
+mujs-config,
+mujs-section,
+mujs-url,
+mujs-empty,
+mujs-elem,
+mu-js,
+tab-content,
+tab-host {
+  display: block;
 }
 
-.js-menu > a {
-  cursor: pointer;
+.hidden {
+  display: none !important;
 }
 
-.mobile .sidenav,
-.iso .sidenav {
-  width: 50%;
-}
-.sidenav {
-  transition: all 0.4s ease;
-  z-index: 10000;
-  height: 100%;
-  width: 12%;
-  position: fixed;
-  top: 0;
-  left: -200vw;
-  background: hsla(0, 0%, 0%, 0.75);
-  overflow: hidden;
-  padding-top: 10px;
-  display: grid;
-  grid-auto-flow: row;
-  place-content: stretch;
-  grid-auto-rows: 5rem;
-  a {
-    padding-left: 8px;
-    padding-top: 8px;
-    text-decoration: none;
-    font-size: 25px;
-    color: $white;
-    height: 50px;
-    &:hover {
-      text-decoration: none;
-      background: hsla(0, 0%, 26%, 0.95);
-      // border: 1px solid #252525;
-      cursor: pointer;
-    }
-  }
-}
-
-.navbackground {
-  z-index: 2;
-  width: 0;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-a.customize-header,
-.magiclogo > img {
-  cursor: pointer !important;
-  // width: auto !important;
-}
-
-.topHeader .magiclogo img {
-  max-width: 8rem !important;
-}
-.mgp_mobile,
-.mph_mobile {
-  min-height: 208px;
-  max-height: 508px;
-}
-// .mgp_desktop:not(.bigp) {
-//   width: 100% !important;
-//   width: -moz-available;
-//   width: -webkit-fill-available;
-//   height: 100% !important;
-//   background: hsl(0, 0%, 0%);
-//   position: relative;
-//   overflow: hidden;
-//   margin: auto;
-//   &:not(.mgp_mobile, .mph_mobile) {
-//     min-height: 80vh !important;
-//   }
-// }
-
-.plyr__video-wrapper > video {
-  width: max(100vw, 80vw);
-  height: max(92vh, 80vh);
-}
-.biga {
-  width: max(80vw, 50vw) !important;
-  height: max(72vh, 50vh) !important;
-  position: relative !important;
-}
-.smola {
-  height: 360px !important;
-  width: 640px !important;
-  margin-left: 60% !important;
-  position: fixed !important;
-  padding: 0 !important;
-  top: 0 !important;
-  left: 0 !important;
-  z-index: 1000 !important;
-}
-
-.video-wrapper > [id='player'],
-.bigp {
-  width: 100% !important;
-  height: 92vh !important;
-  background: #000 !important;
-  position: relative !important;
-  min-height: 508px !important;
-  padding-bottom: 0px !important;
-}
-.smolp {
-  height: 360px !important;
-  width: 640px !important;
-  margin-left: 60% !important;
-  position: fixed !important;
-  padding: 0 !important;
-  top: 0 !important;
-  left: 0 !important;
-  z-index: 1000 !important;
-}
-.smolnav {
-  z-index: -10 !important;
-  width: 100% !important;
-}
-.sticky {
-  z-index: 10 !important;
-  position: fixed !important;
-  top: 0;
-  &.headerSearchWrapper {
-    left: 0;
-    width: 50% !important;
-  }
-}
-
-.mph-blur {
-  -webkit-filter: blur(15px) !important;
-  filter: blur(15px) !important;
-  &.mph-body-wrapper {
-    transition: -webkit-filter 250ms ease-in-out 200ms;
-    transition: filter 250ms ease-in-out 200ms;
-    transition: filter 250ms ease-in-out 200ms, -webkit-filter 250ms ease-in-out 200ms;
-    transition: filter 250ms ease-in-out 200ms, -webkit-filter 250ms ease-in-out 200ms;
-  }
-}
-
-.favlayout,
-.favlayout {
-  div {
-    display: inline-block;
-    margin: 0 0 20px 0;
-    vertical-align: top;
-  }
-}
-.favorite {
-  text-shadow: initial;
-  text-transform: initial;
-  word-spacing: initial;
-  letter-spacing: initial;
-  background: url('https://di.phncdn.com/www-static/images/video_page/favorite.svg'no-repeat);
-  background-color: $dark;
-  background-position-x: 2%;
-  background-position-y: 50%;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
-  background-image: url('https://di.phncdn.com/www-static/images/video_page/favorite.svg');
-  background-size: auto;
-  background-origin: padding-box;
-  background-clip: border-box;
-}
-
-body.mph .favorites {
-  width: 100%;
-  position: relative;
-}
-
-.magic-popup > .favorites {
-  width: 88% !important;
-  position: fixed !important;
-  right: 0em;
-}
-
-.favorites {
-  &.mph_mobile {
-    flex-flow: row wrap;
-    justify-content: center;
-  }
-  height: 100%;
-  width: 100%;
+mujs-column,
+mujs-row,
+tab-root,
+.mujs-sty-flex {
   display: flex;
-  flex-flow: row wrap;
-  gap: 1em;
-  margin: auto;
-  overflow-x: hidden;
-  touch-action: auto;
-  padding: 0.5em;
-  .wrap {
-    width: 25rem;
-    min-height: 25em;
-    justify-content: center;
-    border: 1px solid rgba(138, 150, 163, .25);
-    border-radius: 10px;
-    background-color: var(--overlay-color, rgba(0,0,0,.6));
-    display: flex;
-    padding: 0.5em;
-    gap: 0.5em;
-    flex-flow: column wrap;
-    margin: auto;
-
-    a {
-      order: 1;
-      flex-grow: 1;
-      justify-content: center;
-      display: flex;
-      img {
-        cursor: pointer;
-        max-width: 25rem;
-        max-height: 25rem;
-        display: block;
-        margin: auto;
-      }
-    }
-
-    .title>a,
-    .title {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text-color, hsl(210, 12%, 97%));
-      word-break: break-word;
-      word-wrap: break-word;
-      font-family: Arial, Helvetica, sans-serif;
-      outline-style: none;
-      text-decoration: none;
-      text-align: center;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-    .title {
-      order: 2;
-    }
-
-    .mph-btn-container {
-      order: 0;
-      display: flex;
-      gap: 0.5em;
-      justify-content: center;
-    }
-  }
 }
 
-.underThumbButtons .magicph-icon {
-  @media only screen and (orientation: portrait) {
-    transform: translate(50%, 50%);
-  }
-  @media only screen and (orientation: landscape) and (min-width: 600px) {
-    transform: translate(50%, 50%);
-  }
+mujs-column,
+mujs-row {
+  gap: 0.5em;
 }
 
-.underThumbButtons svg.magicph-icon,
-.allActionsContainer svg.magicph-icon {
-  fill: #c6c6c6;
+// #region Icons
+.mujs-icon {
+  width: 1em;
+  height: 1em;
+  fill: currentcolor;
+  flex: none;
+  vertical-align: -0.125em;
 }
 
-.feature-wrapper svg.magicph-icon {
-  fill: #bbb;
-}
-
-.video_actions_container .magicph-fav.icon-wrapper {
-  margin: 0px !important;
-  .magicph-icon {
-    padding: 15px 8px;
-    font-size: 20px;
-  }
-}
-.video_actions_container svg.magicph-icon,
-.video_action_wrap svg.magicph-icon {
-  fill: #fff;
-}
-
-.player-under-btns .magicph-fav.icon-wrapper {
-  margin: 0px !important;
-  svg.magicph-icon {
-    fill: #656565;
-    width: 2rem !important;
-    @media only screen and (orientation: portrait) {
-      transform: translate(50%, -50%);
-    }
-    @media only screen and (orientation: landscape) and (min-width: 600px) {
-      transform: translate(50%, -50%);
-    }
-  }
-}
-.magicph-fav.icon-wrapper {
-  margin: auto;
-  float: left;
+// #endregion
+// #region Buttons
+mujs-a,
+mujs-btn,
+tab-add,
+tab-close {
   cursor: pointer;
-  white-space: nowrap;
-  width: 1.5rem;
-  height: auto;
-  color: #c6c6c6;
-  span {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 11px;
-    line-height: 18px;
-    padding-left: 10px;
-    padding-top: 3px;
-    float: right;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mujs-a,
+mujs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3em;
+  padding: 0.3em 0.7em;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: $bg;
+  color: $site;
+  font-weight: 500;
+  text-decoration: none;
+  @include fit;
+
+  &:hover,
+  &:focus-visible {
+    background: $hover;
+    color: $text;
+    outline: none;
   }
-  img,
-  em {
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px $site;
+  }
+
+  &[data-busy] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+// #endregion
+// #region Floating button + notice
+mujs-mainframe {
+  position: fixed;
+  z-index: $z;
+  bottom: var(--mujs-position-bottom, 1rem);
+  right: var(--mujs-position-right, 1rem);
+  top: var(--mujs-position-top, auto);
+  left: var(--mujs-position-left, auto);
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.55em 0.9em;
+  border: 2px solid $border;
+  border-radius: 1000px;
+  background: $bg;
+  color: $site;
+  font-size: 16px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  transition: opacity 0.25s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: $hover;
+    color: $text;
+    outline: none;
+  }
+
+  .mujs-icon {
+    width: 1.3em;
+    height: 1.3em;
+  }
+}
+
+count-frame {
+  display: inline-block;
+  min-width: 1em;
+  text-align: center;
+  font-weight: 700;
+}
+
+mujs-toast {
+  display: none;
+  position: fixed;
+  z-index: $z;
+  top: 1em;
+  left: 50%;
+  max-width: min(90vw, 40em);
+  padding: 0.6em 1.1em;
+  transform: translateX(-50%);
+  border: 1px solid $border;
+  border-radius: 1000px;
+  background: $bg;
+  color: $site;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+
+  &.show {
     display: block;
   }
 }
 
-.magic-customize {
-  min-width: 991px;
-  max-width: 1323px;
-  width: 100%;
-  background-color: #1b1b1b;
+// #endregion
+// #region Panel
+mujs-main {
   position: fixed;
-  z-index: 10;
-  display: none;
-  form.magicph_customize {
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    justify-items: center;
+  z-index: $z;
+  right: 1rem;
+  bottom: 1rem;
+  width: min(780px, calc(100vw - 2rem));
+  height: min(492px, calc(100vh - 2rem));
+  flex-direction: column;
+  border: 1px solid $border;
+  border-radius: 16px;
+  background: $root-bg;
+  color: $text;
+  overflow: hidden;
+
+  &:not(.hidden) {
+    display: flex;
+  }
+
+  &.expanded {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    align-items: center;
-    margin: auto;
-    section {
-      display: grid;
-      width: 100%;
+    border-radius: 0;
+  }
+
+  @media screen and (max-width: 800px) {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: min(72vh, 100%);
+    border-radius: 16px 16px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    &.expanded {
       height: 100%;
-      select {
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        option {
-          font-size: 12px;
-          font-weight: 700;
-          text-transform: uppercase;
-        }
-      }
+      border-radius: 0;
+    }
+  }
+
+  @media screen and (max-height: 500px) {
+    height: 100%;
+  }
+}
+
+// The panel opens on the side of the floating button
+mujs-root[data-side='left'] mujs-main:not(.expanded) {
+  right: auto;
+  left: 1rem;
+}
+
+mujs-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding: 0.5em;
+  flex: none;
+
+  .btn-handles {
+    order: 999;
+    flex: none;
+  }
+
+  tab-root {
+    flex: 1;
+    min-width: 0;
+    order: 0;
+    flex-flow: row nowrap;
+    gap: 0.5em;
+    text-align: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+
+    &::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
     }
   }
 }
 
-iframe.vframe {
-  background-color: $dark;
-  height: 100%;
+tab-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding: 0.25em 0.5em;
+  min-width: 8em;
+  max-width: min(16em, calc(100% - 2.5em));
+  flex: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  @include fit;
+
+  &.active,
+  &:hover {
+    background: $row-even;
+    border-color: $border;
+  }
+
+  tab-host {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  tab-close {
+    flex: none;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+      color: $site;
+    }
+  }
+}
+
+tab-add {
+  // Stays reachable while the tabs scroll
+  position: -webkit-sticky;
+  position: sticky;
+  right: 0;
+  flex: none;
+  background: $root-bg;
+  order: 999999;
+  padding: 0 0.4em;
+  font-size: 20px;
+  line-height: 1.2;
+  border-radius: 4px;
+
+  &:hover {
+    background: $row-even;
+  }
+}
+
+mujs-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em;
+  background: $header-bg;
+  border-top: 1px solid $border;
+  border-bottom: 1px solid $border;
+
+  flex-wrap: wrap;
+
+  mujs-url {
+    flex: 1 1 10em;
+    min-width: 0;
+  }
+
+  .of-actions {
+    flex: none;
+  }
+}
+
+mujs-column.btn-handles {
+  align-items: center;
+}
+
+.btn-handles mujs-btn {
+  padding: 0.3em 0.5em;
+}
+
+input {
+  font: inherit;
+  color: $text;
+  background: hsla(0, 0%, 0%, 0.35);
+  border: 1px solid $border;
+  border-radius: 6px;
+  padding: 0.3em 0.6em;
+  outline: none;
+
+  &:focus {
+    box-shadow: 0 0 0 2px $site;
+  }
+
+  &[type='checkbox'] {
+    display: none;
+  }
+}
+
+.mujs-url-bar {
   width: 100%;
-  position: fixed !important;
-  z-index: 99999 !important;
-  left: 0px;
-  top: 0px;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  padding: 0px !important;
 }
 
-.mph-header-btn.active {
-  color: #ff9000 !important;
+mujs-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.5em;
 }
 
-.menu_elem {
-  width: -webkit-fit-content !important;
-  width: -moz-fit-content !important;
-  width: fit-content !important;
+mujs-empty {
+  padding: 2em 1em;
+  text-align: center;
+  opacity: 0.8;
 }
+
+.mujs-footer {
+  flex: none;
+  flex-direction: column;
+  max-height: 25%;
+  overflow: auto;
+  padding: 0 0.5em;
+
+  .error {
+    display: block;
+    margin: 0.25em 0;
+    padding: 0.4em 0.6em;
+    border-radius: 6px;
+    background: $error-bg;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+  }
+}
+
+// #endregion
+// #region Videos
+// The cards of a tab (a video, an OnlyFans post). Columns are added as the panel grows,
+// a card never gets wider than what its content can use.
+.mph-feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21em), 1fr));
+  align-items: start;
+  gap: 0.75em;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+// A card: header, text, media, actions
+mujs-post {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  justify-self: center;
+  width: 100%;
+  max-width: 34em;
+  padding: 0.75em;
+  border: 1px solid $border;
+  border-radius: 14px;
+  background: $row-even;
+}
+
+.post-head {
+  align-items: center;
+  gap: 0.75em;
+
+  > mujs-a {
+    flex: none;
+  }
+}
+
+.avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.6em;
+  height: 2.6em;
+  overflow: hidden;
+  border-radius: 50%;
+  background: $accent;
+  color: hsl(0, 0%, 100%);
+  font-weight: 700;
+
+  img {
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+  }
+
+  .mujs-icon {
+    width: 1.2em;
+    height: 1.2em;
+  }
+}
+
+.post-who {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+// A video has room for its qualities and is named by its title, which can be long
+mujs-post[data-variant='video'] {
+  max-width: 60em;
+
+  .post-media[data-count='1'] {
+    grid-template-columns: minmax(0, 24em);
+  }
+}
+
+mujs-post[data-variant='video'] .post-name {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.post-handle {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.post-meta {
+  font-size: 12px;
+  opacity: 0.75;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.pill {
+  flex: none;
+  padding: 0.15em 0.75em;
+  border-radius: 1000px;
+  background: $accent;
+  color: hsl(0, 0%, 100%);
+  font-weight: 700;
+
+  &.free {
+    background: hsl(140, 55%, 33%);
+  }
+
+  &.muted {
+    background: $row-even;
+    color: $text;
+    font-weight: 500;
+  }
+}
+
+.post-text {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+// Tiles fill the width of their card, as many per row as fit. A lone tile is the whole width.
+.post-media {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5em, 1fr));
+  gap: 4px;
+  overflow: hidden;
+  border-radius: 10px;
+
+  mujs-tile {
+    aspect-ratio: 16 / 9;
+  }
+
+  &[data-count='1'] {
+    grid-template-columns: 1fr;
+  }
+}
+
+// The media of an OnlyFans post are laid out by how many there are
+mujs-post[data-variant='post'] .post-media {
+  mujs-tile {
+    aspect-ratio: 1;
+  }
+
+  &[data-count='1'] mujs-tile {
+    aspect-ratio: 16 / 9;
+  }
+
+  &[data-count='2'] {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &[data-count='3'] {
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    mujs-tile:first-child {
+      grid-row: span 2;
+      aspect-ratio: auto;
+    }
+  }
+}
+
+mujs-tile {
+  position: relative;
+  overflow: hidden;
+  background: hsl(0, 0%, 12%);
+
+  &[data-command] {
+    cursor: pointer;
+  }
+
+  // Building an HLS video takes a while
+  &[data-busy] {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  > img,
+  > video,
+  > .thumb-none {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+  }
+
+  > video,
+  > .thumb-none {
+    pointer-events: none;
+  }
+
+  > .thumb-none {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+
+    .mujs-icon {
+      width: 2em;
+      height: 2em;
+    }
+  }
+
+  // Any clickable video tile gets the same play glyph, whether it plays right away or needs a
+  // quick build first (an HLS stream the browser can't play natively)
+  &[data-type='video'][data-command]::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform: translate(-35%, -50%);
+    border-style: solid;
+    border-width: 0.6em 0 0.6em 1em;
+    border-color: transparent transparent transparent hsla(0, 0%, 100%, 0.9);
+    -webkit-filter: drop-shadow(0 0 4px hsla(0, 0%, 0%, 0.6));
+    filter: drop-shadow(0 0 4px hsla(0, 0%, 0%, 0.6));
+    pointer-events: none;
+  }
+
+  .badge {
+    position: absolute;
+    bottom: 0.4em;
+    left: 0.4em;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    padding: 0.1em 0.55em;
+    border-radius: 1000px;
+    background: hsla(0, 0%, 0%, 0.7);
+    color: hsl(0, 0%, 100%);
+    font-size: 12px;
+    font-weight: 600;
+
+    &.drm {
+      background: hsl(0, 80%, 35%);
+    }
+
+    &.top {
+      top: 0.4em;
+      bottom: auto;
+    }
+  }
+
+  .tile-actions {
+    position: absolute;
+    top: 0.35em;
+    right: 0.35em;
+    z-index: 1;
+    display: flex;
+    gap: 0.25em;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  &:hover .tile-actions,
+  &:focus-within .tile-actions {
+    opacity: 1;
+  }
+
+  .tile-btn {
+    padding: 0.3em;
+    border-color: transparent;
+    background: hsla(0, 0%, 0%, 0.7);
+    color: hsl(0, 0%, 100%);
+  }
+}
+
+// Full screen viewer
+mujs-viewer {
+  position: fixed;
+  z-index: $z;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: hsla(0, 0%, 0%, 0.94);
+  color: hsl(0, 0%, 100%);
+
+  &.hidden {
+    display: none !important;
+  }
+}
+
+.viewer-bar {
+  flex: none;
+  align-items: center;
+  padding: calc(0.5em + env(safe-area-inset-top, 0px))
+    calc(0.75em + env(safe-area-inset-right, 0px)) 0.5em
+    calc(0.75em + env(safe-area-inset-left, 0px));
+}
+
+.viewer-count {
+  flex: none;
+  opacity: 0.8;
+}
+
+.viewer-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewer-wrap {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.viewer-stage {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0.25em;
+
+  img,
+  video {
+    max-width: 100%;
+    max-height: 100%;
+    -o-object-fit: contain;
+    object-fit: contain;
+  }
+
+  audio {
+    width: min(90%, 32em);
+  }
+}
+
+.viewer-msg {
+  max-width: 28em;
+  padding: 1em;
+  border: 1px solid $border;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.viewer-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 2.4em;
+  height: 2.4em;
+  padding: 0;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: hsla(0, 0%, 0%, 0.55);
+  font-size: 26px;
+  line-height: 1;
+
+  &.prev {
+    left: 0.5em;
+  }
+
+  &.next {
+    right: 0.5em;
+  }
+}
+
+// Qualities / media of the card, scrolls without a scrollbar
+.viewer-strip {
+  display: flex;
+  flex: none;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 0.5em 0.5em calc(0.5em + env(safe-area-inset-bottom, 0px));
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  .thumb {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 6px;
+    opacity: 0.6;
+    color: hsl(0, 0%, 100%);
+    text-align: center;
+    line-height: 56px;
+
+    &:first-child {
+      margin-left: auto;
+    }
+
+    &:last-child {
+      margin-right: auto;
+    }
+
+    &.active {
+      opacity: 1;
+      outline: 2px solid $accent;
+    }
+  }
+
+  .thumb-label {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: hsla(0, 0%, 0%, 0.7);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+}
+
+// Phones: bigger touch targets, actions are always visible, no zoom when typing
+mujs-root[data-mobile] {
+  mujs-a,
+  mujs-btn {
+    min-height: 40px;
+  }
+
+  input,
+  select {
+    font-size: 16px;
+  }
+
+  mujs-tile .tile-actions {
+    opacity: 1;
+  }
+
+  .btn-handles mujs-btn {
+    min-width: 40px;
+  }
+
+  .viewer-nav {
+    width: 2.8em;
+    height: 2.8em;
+  }
+}
+
+select {
+  font: inherit;
+  color: $text;
+  background: hsla(0, 0%, 0%, 0.35);
+  border: 1px solid $border;
+  border-radius: 6px;
+  padding: 0.3em 0.6em;
+}
+
+// #endregion
+// #region Settings
+mujs-config {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+mujs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  padding: 0.5em;
+  border: 1px solid $border;
+  border-radius: 8px;
+
+  > label {
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  &.collapsed > *:not(:first-child) {
+    display: none;
+  }
+}
+
+.sub-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 0.2em 0.25em;
+  overflow-wrap: anywhere;
+
+  input:not([type='checkbox']) {
+    width: 14em;
+    max-width: 50%;
+  }
+}
+
+mujs-btn.sub-section {
+  align-self: flex-start;
+}
+
+.mujs-inlab {
+  position: relative;
+  flex: none;
+  width: 38px;
+
+  input[type='checkbox'] {
+    display: none;
+
+    &:checked + label {
+      background: $site;
+
+      &::before {
+        right: 0;
+      }
+    }
+  }
+
+  label {
+    display: block;
+    overflow: hidden;
+    height: 16px;
+    padding: 0;
+    border: 1px solid $border;
+    border-radius: 20px;
+    cursor: pointer;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 20px;
+      width: 20px;
+      height: 20px;
+      margin: -2px;
+      border-radius: 20px;
+      background: $text;
+    }
+  }
+}
+
+.mujs-sty-flex {
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  padding: 0.5em 0;
+
+  mujs-btn {
+    padding: 0.4em 1.5em;
+  }
+}
+
+.about mujs-a {
+  border-color: transparent;
+  background: transparent;
+  text-decoration: underline;
+}
+
+.mujs-invalid {
+  border-color: hsl(0, 100%, 50%) !important;
+  box-shadow: 0 0 0 2px hsl(0, 100%, 50%);
+}
+
+// #endregion

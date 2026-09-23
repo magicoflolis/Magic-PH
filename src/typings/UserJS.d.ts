@@ -1,55 +1,77 @@
-// import GM from '@types/greasemonkey';
-// import '@types/tampermonkey';
 import '@violentmonkey/types';
 
 /**
- * Some sites will alter or remove document functions
- * To get around this we bind them to the `userjs` object
- *
- * This method is based on uBlock Origin `scriptlets.js` file
- *
- * [Source Code](https://github.com/gorhill/uBlock/blob/master/assets/resources/scriptlets.js)
+ * Every key of `src/_locales/<language>/messages.json` used by the interface
  */
-export declare function safeSelf(): {
-  XMLHttpRequest: typeof XMLHttpRequest;
-  createElement: typeof document.createElement;
-  createElementNS: typeof document.createElementNS;
-  createTextNode: typeof document.createTextNode;
-  setTimeout: typeof setTimeout;
-  clearTimeout: typeof clearTimeout;
-};
+export interface Translations {
+  userjs_name: string;
+  userjs_description: string;
+  userjs_inject: string;
+  userjs_close: string;
+  userjs_autoinject: string;
+  userjs_fullscreen: string;
+  newTab: string;
+  newtab_hint: string;
+  empty: string;
+  search_placeholder: string;
+  search_settings: string;
+  copy: string;
+  copy_all: string;
+  close: string;
+  download: string;
+  download_all: string;
+  remove: string;
+  remove_all: string;
+  open: string;
+  min: string;
+  max: string;
+  issue: string;
+  settings: string;
+  save: string;
+  reset: string;
+  general: string;
+  theme: string;
+  import_export: string;
+  import_config: string;
+  export_config: string;
+  clear_tab_cache: string;
+  limit_downloads: string;
+  auto_hls: string;
+  concurrency: string;
+  dtime: string;
+  hls_load: string;
+  free: string;
+  prev: string;
+  next: string;
+  drm_notice: string;
+  play_error: string;
+  message: string;
+  free_preview: string;
+  position: string;
+  auto: string;
+  'top-left': string;
+  'top-right': string;
+  'bottom-left': string;
+  'bottom-right': string;
+  video: string;
+  videos: string;
+  photo: string;
+  photos: string;
+  gif: string;
+  gifs: string;
+  audio: string;
+  audios: string;
+}
+
+export interface LanguageTranslations {
+  en: Translations;
+  [language: string]: Partial<Translations>;
+}
 
 /**
- * @param css - CSS to inject
- * @param name - Name of stylesheet
- * @return Style element
+ * Translation of `key`, falls back to English and finally to `key` itself.
  */
-export declare function loadCSS(css: string, name: string): HTMLStyleElement;
-
-export declare function observe<E extends Node>(
-  element: E,
-  listener: MutationCallback,
-  options: MutationObserverInit = { subtree: true, childList: true }
-): MutationObserver;
-
-/**
- * Opens a new window and loads a document specified by a given URL. Also, opens a new window that uses the url parameter and the name parameter to collect the output of the write method and the writeln method.
- * @param url Specifies a MIME type for the document.
- *
- * [Violentmonkey Reference](https://violentmonkey.github.io/api/gm/#gm_openintab)
- *
- * [Greasespot Reference](https://wiki.greasespot.net/GM.openInTab)
- *
- * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/open)
- */
-export declare function openTab(url: string | URL): WindowProxy | null;
-
-/**
- * Get information about the current userscript.
- *
- * [ViolentMonkey Reference](https://violentmonkey.github.io/api/gm/#gm_info)
- */
-export declare function getGMInfo(): typeof GM_info;
+export declare function i18n$(key: keyof Translations | (string & {})): string;
 
 export interface StorageSystem {
   /**
@@ -73,8 +95,6 @@ export interface StorageSystem {
    * Set value - Saves key to either GM managed storage or `window.localStorage`
    *
    * [ViolentMonkey Reference](https://violentmonkey.github.io/api/gm/#gm_setvalue)
-   *
-   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API)
    */
   setValue<K extends string, V>(key: K, v: V): Promise<void>;
 
@@ -82,34 +102,70 @@ export interface StorageSystem {
    * Get value
    *
    * [ViolentMonkey Reference](https://violentmonkey.github.io/api/gm/#gm_getvalue)
-   *
-   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API)
    */
   getValue<K extends string, D>(key: K, def?: D): Promise<D>;
 }
 
+export interface TransferProgress {
+  loaded: number;
+  total: number;
+}
+
 export interface Network {
   /**
-   * Fetch a URL with fetch API as fallback
+   * Requests a URL.
    *
-   * When GM is supported, makes a request like XMLHttpRequest, with some special capabilities, not restricted by same-origin policy
+   * Uses `fetch` when it is preferred (`useFetch`) or when no userscript manager is available,
+   * otherwise `GM.xmlHttpRequest` (not restricted by the same-origin policy).
+   * Rejects when the status is not `2xx`.
+   *
+   * `responseType` `basic` resolves the `Response` (`fetch`) / response object (GM), `document` resolves a parsed `Document`.
    *
    * [ViolentMonkey Reference](https://violentmonkey.github.io/api/gm/#gm_xmlhttprequest)
    *
-   * [XMLHttpRequest MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest)
-   *
    * [Fetch MDN Reference](https://developer.mozilla.org/docs/Web/API/Fetch_API)
    */
-  req<T = string | Blob | ArrayBuffer | Document | object | Response>(
-    url: RequestInfo | URL,
-    method: Request['method'],
-    responseType: VMScriptResponseType,
-    data: VMScriptGMXHRDetails<T> | RequestInit,
-    useFetch: boolean
-  ): Promise<T>;
-  format(bytes: number, decimals: number): string;
-  xmlRequest<T = string | Blob | ArrayBuffer | Document | object | Response>(
-    details: VMScriptGMXHRDetails<T> | RequestInit
-  ): Promise<T | typeof GM_xmlhttpRequest<T>>;
-  bscStr<S extends string>(str: S, lowerCase: boolean): S;
+  req(
+    url: string | URL,
+    method?: string,
+    responseType?: string,
+    data?: Record<string, any>,
+    useFetch?: boolean
+  ): Promise<any>;
+  format(bytes: number, decimals?: number): string;
+  sizes: string[];
+  /** Progress of a transfer, `12.5%` or the size when the total is unknown */
+  prog(evt: TransferProgress): string;
+  /** Requests a page and parses it, nothing in it is executed */
+  doc(url: string | URL, data?: Record<string, any>): Promise<Document>;
+  /** Streams a response, resolves every chunk */
+  fetchChunks(
+    url: string | URL,
+    data?: Record<string, any>,
+    onProgress?: (evt: TransferProgress) => void
+  ): Promise<{ chunks: Uint8Array[]; size: number }>;
+  /** Downloads through the userscript manager, ignores CORS */
+  gmBlob(
+    url: string | URL,
+    data?: Record<string, any>,
+    onProgress?: (evt: TransferProgress) => void
+  ): Promise<Blob>;
+  /** `fetchChunks`, falls back to `gmBlob` when `fetch` is refused */
+  blob(
+    url: string | URL,
+    data?: Record<string, any>,
+    onProgress?: (evt: TransferProgress) => void
+  ): Promise<Blob>;
+  /** Downloads `url` and saves it as `name` */
+  download(
+    details: { url: string; name: string; data?: Record<string, any> },
+    onProgress?: (evt: TransferProgress) => void
+  ): Promise<string>;
+}
+
+declare global {
+  /** Translations of every language, generated by the builder */
+  let translations: LanguageTranslations;
+  /** Stylesheet of the interface, generated by the builder */
+  let main_css: string;
 }

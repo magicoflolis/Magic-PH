@@ -1,2 +1,6 @@
 packages:
   - 'utils/*'
+allowBuilds:
+  '@swc/core': true
+minimumReleaseAgeExclude:
+  - eslint@10.5.0

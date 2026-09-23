@@ -1,5 +1,14 @@
 # Changelog
 
+## v5.0.0
+
+* Rewrote the Magic-PH using the newer Userscript+ foundation
+* Fixed all supported sites
+* Added the following sites:
+  * porn00.org
+  * eporner.com
+  * youjizz.com
+
 ## v4.1.0
 
 * Added the following sites:

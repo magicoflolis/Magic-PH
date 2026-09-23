@@ -15,16 +15,40 @@
     "message": "MagicPH"
   },
   "userjs_description": {
-    "message": "Enhances adult viewing experience. Clean, easy, simple, and quick."
+    "message": "A video downloader for various adult websites. Clean, easy, simple, and quick."
+  },
+  "userjs_inject": {
+    "message": "Show Magic PH"
+  },
+  "userjs_close": {
+    "message": "Close Magic PH"
+  },
+  "userjs_autoinject": {
+    "message": "Show the button on page load"
+  },
+  "userjs_fullscreen": {
+    "message": "Open maximized"
   },
   "newTab": {
     "message": "New Tab"
   },
+  "newtab_hint": {
+    "message": "Type or paste a video URL or ID in the address bar and press Enter."
+  },
+  "empty": {
+    "message": "No videos found on this page."
+  },
+  "search_placeholder": {
+    "message": "Filter videos"
+  },
+  "search_settings": {
+    "message": "Settings"
+  },
   "copy": {
     "message": "Copy"
   },
-  "no_license": {
-    "message": "N/A"
+  "copy_all": {
+    "message": "Copy the URL of every video"
   },
   "close": {
     "message": "Close"
@@ -32,7 +56,118 @@
   "download": {
     "message": "Download"
   },
+  "download_all": {
+    "message": "Download every video"
+  },
   "remove": {
     "message": "Remove"
+  },
+  "remove_all": {
+    "message": "Remove every video"
+  },
+  "open": {
+    "message": "Open"
+  },
+  "min": {
+    "message": "Minimize"
+  },
+  "max": {
+    "message": "Maximize"
+  },
+  "issue": {
+    "message": "New issue"
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "reset": {
+    "message": "Reset"
+  },
+  "general": {
+    "message": "General"
+  },
+  "theme": {
+    "message": "Theme"
+  },
+  "import_export": {
+    "message": "Import / Export"
+  },
+  "import_config": {
+    "message": "Import config"
+  },
+  "export_config": {
+    "message": "Export config"
+  },
+  "clear_tab_cache": {
+    "message": "Delete the videos of a tab when it is closed"
+  },
+  "limit_downloads": {
+    "message": "Download one video at a time"
+  },
+  "auto_hls": {
+    "message": "Build HLS videos automatically"
+  },
+  "concurrency": {
+    "message": "Simultaneous downloads"
+  },
+  "dtime": {
+    "message": "Time before the button fades"
+  },
+  "hls_load": {
+    "message": "Get from HLS stream"
+  },
+  "free": {
+    "message": "Free"
+  },
+  "prev": {
+    "message": "Previous"
+  },
+  "next": {
+    "message": "Next"
+  },
+  "drm_notice": {
+    "message": "DRM protected: there is nothing to play or download."
+  },
+  "position": {
+    "message": "Button position"
+  },
+  "auto": {
+    "message": "Automatic"
+  },
+  "video": {
+    "message": "video"
+  },
+  "videos": {
+    "message": "videos"
+  },
+  "photo": {
+    "message": "photo"
+  },
+  "photos": {
+    "message": "photos"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIFs"
+  },
+  "audio": {
+    "message": "audio"
+  },
+  "audios": {
+    "message": "audios"
+  },
+  "message": {
+    "message": "Message"
+  },
+  "free_preview": {
+    "message": "Free preview"
+  },
+  "play_error": {
+    "message": "The browser cannot play this video. Download it instead."
   }
 }

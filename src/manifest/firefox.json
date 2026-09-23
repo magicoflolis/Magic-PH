@@ -56,6 +56,19 @@
         "https://*.pornhubpremium.com/gift"
       ],
       "run_at": "document_start"
+    },
+    {
+      "all_frames": true,
+      "js": [
+        "/js/mph.js",
+        "/js/mph-client.js",
+        "/js/mph-common.js",
+        "/js/fakku.js"
+      ],
+      "matches": [
+			  "https://*.fakku.net/hentai/*/read/page/*"
+			],
+      "run_at": "document_start"
     }
   ],
   "icons": {
@@ -89,7 +102,9 @@
     "*://*.xhcdn.com/*",
     "*://xhamster.com/*",
     "*://xhamster.desi/*",
-    "*://xhamster.one/*"
+    "*://xhamster.one/*",
+    "*://*.fakku.net/*",
+    "*://*.fakku.com/*"
   ],
   "web_accessible_resources": ["/web_accessible_resources/*", "js/*", "css/plyr.css", "img/*"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
