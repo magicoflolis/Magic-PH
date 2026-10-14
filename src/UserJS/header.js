@@ -3,6 +3,10 @@
 'use strict';
 /******************************************************************************/
 
+this.MagicJS ||= {};
+if (this.MagicJS.userjs === true) return;
+this.MagicJS.userjs = true;
+
 if (typeof window === 'undefined') {
   return;
 }
@@ -23,23 +27,14 @@ if (inIframe) return;
  */
 if (
   !(
-    (document instanceof Document ||
-      (document instanceof XMLDocument && document.createElement('div') instanceof HTMLDivElement)) &&
+    ((document instanceof Document || document instanceof XMLDocument) && document.createElement('div') instanceof HTMLDivElement) &&
     /^text\/html|^application\/(xhtml|xml)/.test(document.contentType || '') === true
   )
 ) {
   console.error('[%cMagicPH%c] %cERROR', 'color: rgb(255,153,0);', '', 'color: rgb(249, 24, 128);', `MIME type is not a document, got "${document.contentType || ''}"`);
   return;
 }
-/**
- * `self.userjs` is shared with other UserJS, every script owns its own key
- * so it can run once per page without blocking (or being blocked by) the others.
- */
-if (!(self.userjs instanceof Object)) {
-  self.userjs = {};
-}
-if (self.userjs.MagicPH === true) return;
-self.userjs.MagicPH = true;
+
 /** [i18n directory](https://github.com/magicoflolis/Magic-PH/tree/master/src/_locales) */
 const translations = [[languageList]];
 /** [source code](https://github.com/magicoflolis/Magic-PH/tree/master/src/sass/_main.scss) */

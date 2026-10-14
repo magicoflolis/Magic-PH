@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      5.0.0
+// @version      5.1.0
 // @name         MagicPH
 // @description  A video downloader for various adult websites.
 // @author       Magic <magicoflolis@tuta.io>
@@ -43,15 +43,22 @@
 // @match     https://*.xhamster.com/*
 // @match     https://*.xnxx.com/*
 // @match     https://*.xvideos.com/*
-// @match     https://91porn.com/view_video.php?*
-// @match     https://hqporner.com/hdporn/*
-// @match     https://spankbang.com/*/video/*
-// @match     https://*.porntrex.com/video/*/*
+// @match     https://91porn.com/*
+// @match     https://91porna.com/*
+// @match     https://hqporner.com/*
+// @match     https://spankbang.com/*
+// @match     https://*.porntrex.com/*
 // @match     https://*.analdin.com/*
-// @match     https://sxyprn.com/post/*
-// @match     https://www.porn00.org/video/*
-// @match     https://www.eporner.com/video-*/*
-// @match     https://www.youjizz.com/videos/*.html
+// @match     https://sxyprn.com/*
+// @match     https://www.porn00.org/*
+// @match     https://www.eporner.com/*
+// @match     https://www.youjizz.com/*
+// @match     https://beeg.com/*
+// @match     https://jable.tv/*
+// @match     https://fs1.app/*
+// @match     https://missav.ai/*
+// @match     https://missav.com/*
+// @match     https://missav.ws/*
 // @noframes
 // @run-at     document-start
 // ==/UserScript==

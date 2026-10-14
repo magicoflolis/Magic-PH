@@ -1,5 +1,21 @@
 # Changelog
 
+Known Issues:
+
+* Thumbnails may not load on 91porna
+* Not all websites and browsers support video playback
+
+## v5.1.0
+
+* Now supports these websites:
+  * beeg: beeg.com
+  * jable: jable.tv, fs1.app
+  * 91porna: 91porna.com
+  * missav: missav.ai, missav.ws, missav.com
+* Video playback is handled by an alternative video player, [video.js](https://videojs.org/); _disabled on unsupported websites_
+* Fixed some website specific issues
+* Loads all videos on the webpages homepage; _have not added support for all as of yet_
+
 ## v5.0.0
 
 * Rewrote the Magic-PH using the newer Userscript+ foundation

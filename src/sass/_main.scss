@@ -24,8 +24,8 @@ $z: 2147483647;
   width: fit-content;
 }
 
-mujs-root {
-  font-family: var(--mujs-font-family, Arial, Helvetica, sans-serif);
+mph-root {
+  font-family: var(--mph-font-family, Arial, Helvetica, sans-serif);
   text-rendering: optimizeLegibility;
   word-break: normal;
   font-size: 14px;
@@ -44,20 +44,20 @@ mujs-root {
   }
 }
 
-mujs-root,
-mujs-main,
-mujs-toolbar,
-mujs-header,
-mujs-body,
-mujs-list,
-mujs-post,
-mujs-tile,
-mujs-viewer,
-mujs-config,
-mujs-section,
-mujs-url,
-mujs-empty,
-mujs-elem,
+mph-root,
+mph-main,
+mph-toolbar,
+mph-header,
+mph-body,
+mph-list,
+mph-post,
+mph-tile,
+mph-viewer,
+mph-config,
+mph-section,
+mph-url,
+mph-empty,
+mph-elem,
 mu-js,
 tab-content,
 tab-host {
@@ -68,20 +68,20 @@ tab-host {
   display: none !important;
 }
 
-mujs-column,
-mujs-row,
+mph-column,
+mph-row,
 tab-root,
-.mujs-sty-flex {
+.mph-sty-flex {
   display: flex;
 }
 
-mujs-column,
-mujs-row {
+mph-column,
+mph-row {
   gap: 0.5em;
 }
 
 // #region Icons
-.mujs-icon {
+.mph-icon {
   width: 1em;
   height: 1em;
   fill: currentcolor;
@@ -91,8 +91,8 @@ mujs-row {
 
 // #endregion
 // #region Buttons
-mujs-a,
-mujs-btn,
+mph-a,
+mph-btn,
 tab-add,
 tab-close {
   cursor: pointer;
@@ -102,8 +102,8 @@ tab-close {
   user-select: none;
 }
 
-mujs-a,
-mujs-btn {
+mph-a,
+mph-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -141,13 +141,13 @@ mujs-btn {
 
 // #endregion
 // #region Floating button + notice
-mujs-mainframe {
+mph-frame {
   position: fixed;
   z-index: $z;
-  bottom: var(--mujs-position-bottom, 1rem);
-  right: var(--mujs-position-right, 1rem);
-  top: var(--mujs-position-top, auto);
-  left: var(--mujs-position-left, auto);
+  bottom: var(--mph-position-bottom, 1rem);
+  right: var(--mph-position-right, 1rem);
+  top: var(--mph-position-top, auto);
+  left: var(--mph-position-left, auto);
   display: flex;
   align-items: center;
   gap: 0.4em;
@@ -171,7 +171,7 @@ mujs-mainframe {
     outline: none;
   }
 
-  .mujs-icon {
+  .mph-icon {
     width: 1.3em;
     height: 1.3em;
   }
@@ -184,10 +184,10 @@ count-frame {
   font-weight: 700;
 }
 
-mujs-toast {
+mph-toast {
   display: none;
   position: fixed;
-  z-index: $z;
+  z-index: 99999999999999999;
   top: 1em;
   left: 50%;
   max-width: min(90vw, 40em);
@@ -209,7 +209,7 @@ mujs-toast {
 
 // #endregion
 // #region Panel
-mujs-main {
+mph-main {
   position: fixed;
   z-index: $z;
   right: 1rem;
@@ -257,12 +257,12 @@ mujs-main {
 }
 
 // The panel opens on the side of the floating button
-mujs-root[data-side='left'] mujs-main:not(.expanded) {
+mph-root[data-side='left'] mph-main:not(.expanded) {
   right: auto;
   left: 1rem;
 }
 
-mujs-toolbar {
+mph-toolbar {
   display: flex;
   justify-content: space-between;
   gap: 0.5em;
@@ -354,7 +354,7 @@ tab-add {
   }
 }
 
-mujs-header {
+mph-header {
   display: flex;
   flex: none;
   align-items: center;
@@ -366,7 +366,7 @@ mujs-header {
 
   flex-wrap: wrap;
 
-  mujs-url {
+  mph-url {
     flex: 1 1 10em;
     min-width: 0;
   }
@@ -376,11 +376,11 @@ mujs-header {
   }
 }
 
-mujs-column.btn-handles {
+mph-column.btn-handles {
   align-items: center;
 }
 
-.btn-handles mujs-btn {
+.btn-handles mph-btn {
   padding: 0.3em 0.5em;
 }
 
@@ -402,24 +402,24 @@ input {
   }
 }
 
-.mujs-url-bar {
+.mph-url-bar {
   width: 100%;
 }
 
-mujs-body {
+mph-body {
   flex: 1;
   min-height: 0;
   overflow: auto;
   padding: 0.5em;
 }
 
-mujs-empty {
+mph-empty {
   padding: 2em 1em;
   text-align: center;
   opacity: 0.8;
 }
 
-.mujs-footer {
+.mph-footer {
   flex: none;
   flex-direction: column;
   max-height: 25%;
@@ -454,7 +454,7 @@ mujs-empty {
 }
 
 // A card: header, text, media, actions
-mujs-post {
+mph-post {
   display: flex;
   flex-direction: column;
   gap: 0.6em;
@@ -471,7 +471,7 @@ mujs-post {
   align-items: center;
   gap: 0.75em;
 
-  > mujs-a {
+  > mph-a {
     flex: none;
   }
 }
@@ -496,7 +496,7 @@ mujs-post {
     object-fit: cover;
   }
 
-  .mujs-icon {
+  .mph-icon {
     width: 1.2em;
     height: 1.2em;
   }
@@ -513,15 +513,11 @@ mujs-post {
 }
 
 // A video has room for its qualities and is named by its title, which can be long
-mujs-post[data-variant='video'] {
+mph-post[data-variant='video'] {
   max-width: 60em;
-
-  .post-media[data-count='1'] {
-    grid-template-columns: minmax(0, 24em);
-  }
 }
 
-mujs-post[data-variant='video'] .post-name {
+mph-post[data-variant='video'] .post-name {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
@@ -573,12 +569,12 @@ mujs-post[data-variant='video'] .post-name {
 // Tiles fill the width of their card, as many per row as fit. A lone tile is the whole width.
 .post-media {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8.5em, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 0.5rem;
   overflow: hidden;
   border-radius: 10px;
 
-  mujs-tile {
+  mph-tile {
     aspect-ratio: 16 / 9;
   }
 
@@ -588,12 +584,12 @@ mujs-post[data-variant='video'] .post-name {
 }
 
 // The media of an OnlyFans post are laid out by how many there are
-mujs-post[data-variant='post'] .post-media {
-  mujs-tile {
+mph-post[data-variant='post'] .post-media {
+  mph-tile {
     aspect-ratio: 1;
   }
 
-  &[data-count='1'] mujs-tile {
+  &[data-count='1'] mph-tile {
     aspect-ratio: 16 / 9;
   }
 
@@ -605,17 +601,18 @@ mujs-post[data-variant='post'] .post-media {
     grid-template-columns: 2fr 1fr;
     grid-template-rows: 1fr 1fr;
 
-    mujs-tile:first-child {
+    mph-tile:first-child {
       grid-row: span 2;
       aspect-ratio: auto;
     }
   }
 }
 
-mujs-tile {
+mph-tile {
   position: relative;
   overflow: hidden;
   background: hsl(0, 0%, 12%);
+  min-height: 5rem;
 
   &[data-command] {
     cursor: pointer;
@@ -627,6 +624,7 @@ mujs-tile {
     pointer-events: none;
   }
 
+  // > video-player,
   > img,
   > video,
   > .thumb-none {
@@ -638,6 +636,7 @@ mujs-tile {
     object-fit: cover;
   }
 
+  // > video-player,
   > video,
   > .thumb-none {
     pointer-events: none;
@@ -649,7 +648,7 @@ mujs-tile {
     justify-content: center;
     opacity: 0.5;
 
-    .mujs-icon {
+    .mph-icon {
       width: 2em;
       height: 2em;
     }
@@ -723,7 +722,7 @@ mujs-tile {
 }
 
 // Full screen viewer
-mujs-viewer {
+mph-viewer {
   position: fixed;
   z-index: $z;
   inset: 0;
@@ -773,6 +772,7 @@ mujs-viewer {
   min-width: 0;
   padding: 0.25em;
 
+  video-player,
   img,
   video {
     max-width: 100%;
@@ -794,28 +794,6 @@ mujs-viewer {
   text-align: center;
 }
 
-.viewer-nav {
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  width: 2.4em;
-  height: 2.4em;
-  padding: 0;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  background: hsla(0, 0%, 0%, 0.55);
-  font-size: 26px;
-  line-height: 1;
-
-  &.prev {
-    left: 0.5em;
-  }
-
-  &.next {
-    right: 0.5em;
-  }
-}
-
 // Qualities / media of the card, scrolls without a scrollbar
 .viewer-strip {
   display: flex;
@@ -825,6 +803,10 @@ mujs-viewer {
   padding: 0.5em 0.5em calc(0.5em + env(safe-area-inset-bottom, 0px));
   scrollbar-width: none;
   -ms-overflow-style: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 
   &::-webkit-scrollbar {
     display: none;
@@ -872,9 +854,9 @@ mujs-viewer {
 }
 
 // Phones: bigger touch targets, actions are always visible, no zoom when typing
-mujs-root[data-mobile] {
-  mujs-a,
-  mujs-btn {
+mph-root[data-mobile] {
+  mph-a,
+  mph-btn {
     min-height: 40px;
   }
 
@@ -883,17 +865,12 @@ mujs-root[data-mobile] {
     font-size: 16px;
   }
 
-  mujs-tile .tile-actions {
+  mph-tile .tile-actions {
     opacity: 1;
   }
 
-  .btn-handles mujs-btn {
+  .btn-handles mph-btn {
     min-width: 40px;
-  }
-
-  .viewer-nav {
-    width: 2.8em;
-    height: 2.8em;
   }
 }
 
@@ -908,7 +885,7 @@ select {
 
 // #endregion
 // #region Settings
-mujs-config {
+mph-config {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
@@ -918,7 +895,7 @@ mujs-config {
   }
 }
 
-mujs-section {
+mph-section {
   display: flex;
   flex-direction: column;
   gap: 0.25em;
@@ -930,6 +907,10 @@ mujs-section {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   &.collapsed > *:not(:first-child) {
@@ -951,11 +932,11 @@ mujs-section {
   }
 }
 
-mujs-btn.sub-section {
-  align-self: flex-start;
+mph-btn.sub-section {
+  align-self: anchor-center;
 }
 
-.mujs-inlab {
+.mph-inlab {
   position: relative;
   flex: none;
   width: 38px;
@@ -996,26 +977,61 @@ mujs-btn.sub-section {
   }
 }
 
-.mujs-sty-flex {
+.mph-sty-flex {
   justify-content: space-evenly;
   flex-wrap: wrap;
   gap: 0.5em;
   padding: 0.5em 0;
 
-  mujs-btn {
+  mph-btn {
     padding: 0.4em 1.5em;
   }
 }
 
-.about mujs-a {
+.about mph-a {
   border-color: transparent;
   background: transparent;
   text-decoration: underline;
 }
 
-.mujs-invalid {
+.mph-invalid {
   border-color: hsl(0, 100%, 50%) !important;
   box-shadow: 0 0 0 2px hsl(0, 100%, 50%);
 }
 
 // #endregion
+
+@property --media-slider-fill {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+@property --media-slider-buffer {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+video-player,
+live-video-player,
+media-i18n,
+media-dialog,
+media-alert-dialog,
+media-error-dialog,
+media-controls {
+  display: contents;
+}
+media-container video,
+media-container [slot='poster'] {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+media-container video::-webkit-media-text-track-container {
+  z-index: 1;
+  scale: 0.98;
+  translate: 0 var(--media-caption-track-y, 0);
+  -webkit-transition: translate var(--media-caption-track-duration, 0) ease-out;
+  transition: translate var(--media-caption-track-duration, 0) ease-out;
+  transition-delay: var(--media-caption-track-delay, 0);
+  font-family: inherit;
+}

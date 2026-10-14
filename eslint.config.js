@@ -23,7 +23,7 @@ export default defineConfig([
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        ...globals.es2024,
+        ...globals.es2026,
         ...globals.browser,
         ...globals.webextensions
       }
@@ -45,7 +45,7 @@ export default defineConfig([
         main_css: 'readonly',
         page_css: 'readonly',
         translations: 'readonly',
-        ...globals.es2024,
+        ...globals.es2026,
         ...globals.browser,
         ...globals.greasemonkey
       }
@@ -66,14 +66,14 @@ export default defineConfig([
         code: 'readonly',
         metadata: 'readonly',
         languageList: 'readonly',
-        ...globals.es2024,
+        ...globals.es2026,
         ...globals.browser,
         ...globals.greasemonkey
       }
     }
   },
   {
-    files: ['tools/*.{js,mjs,cjs}', 'utils/**/*.js'],
+    files: ['tools/*.{js,mjs,cjs}', 'utils/**/*.{js,mjs,cjs}'],
     rules: {
       'no-var': 'error',
       'prefer-const': [
@@ -102,7 +102,7 @@ export default defineConfig([
     },
     languageOptions: {
       globals: {
-        ...globals.es2024,
+        ...globals.es2026,
         ...globals.node
       }
     }

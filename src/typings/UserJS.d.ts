@@ -113,54 +113,41 @@ export interface TransferProgress {
 
 export interface Network {
   /**
-   * Requests a URL.
+   * Fetch a URL with fetch API as fallback
    *
-   * Uses `fetch` when it is preferred (`useFetch`) or when no userscript manager is available,
-   * otherwise `GM.xmlHttpRequest` (not restricted by the same-origin policy).
-   * Rejects when the status is not `2xx`.
-   *
-   * `responseType` `basic` resolves the `Response` (`fetch`) / response object (GM), `document` resolves a parsed `Document`.
+   * When GM is supported, makes a request like XMLHttpRequest, with some special capabilities, not restricted by same-origin policy
    *
    * [ViolentMonkey Reference](https://violentmonkey.github.io/api/gm/#gm_xmlhttprequest)
    *
+   * [XMLHttpRequest MDN Reference](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest)
+   *
    * [Fetch MDN Reference](https://developer.mozilla.org/docs/Web/API/Fetch_API)
    */
-  req(
-    url: string | URL,
-    method?: string,
-    responseType?: string,
-    data?: Record<string, any>,
-    useFetch?: boolean
-  ): Promise<any>;
+  req<R = string | Request | URL, T = string | Blob | ArrayBuffer | Document | object>(
+    requestURL: R,
+    method: Request['method'],
+    responseType: VMScriptResponseType,
+    data: VMScriptGMXHRDetails<T> | RequestInit,
+    useFetch: boolean
+  ): Promise<T>;
   format(bytes: number, decimals?: number): string;
   sizes: string[];
   /** Progress of a transfer, `12.5%` or the size when the total is unknown */
   prog(evt: TransferProgress): string;
   /** Requests a page and parses it, nothing in it is executed */
-  doc(url: string | URL, data?: Record<string, any>): Promise<Document>;
+  doc(url: string | URL, data?: VMScriptGMXHRDetails<Document> | RequestInit): Promise<Document>;
   /** Streams a response, resolves every chunk */
   fetchChunks(
     url: string | URL,
-    data?: Record<string, any>,
+    data?: VMScriptGMXHRDetails<Response> | RequestInit,
     onProgress?: (evt: TransferProgress) => void
   ): Promise<{ chunks: Uint8Array[]; size: number }>;
   /** Downloads through the userscript manager, ignores CORS */
   gmBlob(
     url: string | URL,
-    data?: Record<string, any>,
+    data?: Record<string, unknown>,
     onProgress?: (evt: TransferProgress) => void
   ): Promise<Blob>;
-  /** `fetchChunks`, falls back to `gmBlob` when `fetch` is refused */
-  blob(
-    url: string | URL,
-    data?: Record<string, any>,
-    onProgress?: (evt: TransferProgress) => void
-  ): Promise<Blob>;
-  /** Downloads `url` and saves it as `name` */
-  download(
-    details: { url: string; name: string; data?: Record<string, any> },
-    onProgress?: (evt: TransferProgress) => void
-  ): Promise<string>;
 }
 
 declare global {

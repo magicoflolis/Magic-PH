@@ -1,9 +1,46 @@
 /**
- * Magic PH - main script, wrapped by `header.js` at build time.
- *
- * The header provides: `translations`, `main_css`, `page_css`.
+ * A tile: a quality of a video, a media of a video post
+ * @typedef { import("../typings/types.d.ts").MediaItem & { el: Tile; } } MediaItem
  */
-// #region Console
+
+/**
+ * A video found on a page, the input of `Library.addVideo`
+ * @typedef { import("../typings/types.d.ts").VideoData } VideoData
+ */
+
+/**
+ * The elements of a card
+ * @typedef { import("../typings/types.d.ts").PostEntry & { el: Post; } } PostEntry
+ */
+
+/**
+ * @typedef { import("../typings/types.d.ts").PostMedia } PostMedia
+ */
+
+/**
+ * @typedef { import("../typings/types.d.ts").PostCard } PostCard
+ */
+
+/**
+ * A tab
+ * @typedef { import("../typings/types.d.ts").MediaGroup & { pane: List; } } MediaGroup
+ */
+
+/**
+ * Events for `Toolbar`
+ * @typedef { { "active": (tab: HTMLElement, build: boolean) => void; "close": (tab: HTMLElement) => void; "internal": (host: string | undefined, hostname: string) => void; } } tabEvents
+ */
+
+/**
+ * Information about a supported website / page.
+ * @typedef { import("../typings/types.d.ts").SiteInfo } SiteInfo
+ */
+
+/**
+ * @typedef { import("../typings/types.d.ts").MPHConfig } MPHConfig
+ */
+
+//#region Console
 /**
  * Prefixed `console` wrapper.
  *
@@ -52,201 +89,172 @@ class con extends null {
     console.log(`${con.#title} %cLOG`, con.#color, '', 'color: rgb(219, 160, 73);', ...msg);
   }
 }
-// #endregion
-
-// #region Custom Elements Compatibility
-/**
- * Check for the browser's genuine `HTMLElement` interface object.
- *
- * The genuine interface object inherits from `Element`,
- * ES5 shims are plain functions that inherit from `Function.prototype`.
- * @param {unknown} fn
- * @returns {fn is typeof HTMLElement}
- */
-const isNativeHTMLElement = (fn) => {
-  try {
-    return (
-      typeof fn === 'function' &&
-      Reflect.getPrototypeOf(fn) === Element &&
-      Reflect.getPrototypeOf(/** @type {Function} */ (fn).prototype) === Element.prototype
-    );
-  } catch {
-    return false;
-  }
-};
-/**
- * Recover the genuine `HTMLElement` constructor, even if the webpage replaced `window.HTMLElement`
- * @returns {typeof HTMLElement | undefined}
- */
-const resolveHTMLElement = () => {
-  /** @type {Array<() => unknown>} */
-  const candidates = [
-    /** Untouched `window.HTMLElement` */
-    () => HTMLElement,
-    /** Shims keep the genuine prototype, which still points to the genuine constructor */
-    () => HTMLElement.prototype.constructor,
-    /** Every built-in element interface inherits from the genuine constructor */
-    () => Reflect.getPrototypeOf(HTMLDivElement),
-    () => Reflect.getPrototypeOf(HTMLSpanElement),
-    () => Reflect.getPrototypeOf(HTMLUnknownElement)
-  ];
-  for (const candidate of candidates) {
-    try {
-      const fn = candidate();
-      if (isNativeHTMLElement(fn)) return fn;
-    } catch {
-      /** Try the next candidate */
-    }
-  }
-  return undefined;
-};
-/**
- * Genuine `HTMLElement`, base class of every custom element in this UserJS
- * @type {typeof HTMLElement}
- */
-const NativeHTMLElement = /** @type {typeof HTMLElement} */ (resolveHTMLElement());
-if (NativeHTMLElement == null) {
-  con.err(new Error('Failed to find the native "HTMLElement"', { cause: 'customElements' }));
-  return;
-}
-/**
- * `define` and `get` of the genuine `CustomElementRegistry`.
- *
- * The ES5 adapter only overwrites them on the global `window.customElements` **instance**,
- * the prototype is left untouched.
- */
-const registryProto = /** @type {CustomElementRegistry} */ (
-  typeof CustomElementRegistry === 'function'
-    ? CustomElementRegistry.prototype
-    : Reflect.getPrototypeOf(customElements)
-);
-const nativeRegistry = {
-  define: registryProto.define,
-  get: registryProto.get
-};
-if (typeof nativeRegistry.define !== 'function' || typeof nativeRegistry.get !== 'function') {
-  con.err(new Error('Failed to find the native "customElements"', { cause: 'customElements' }));
-  return;
-}
-/**
- * Custom elements registry used by this UserJS.
- *
- * Prefers a scoped registry (keeps the UserJS elements away from the webpage) but only if
- * the browser actually upgrades elements created with it, otherwise falls back to the global registry.
- * @type {CustomElementRegistry}
- */
-const ce = (() => {
-  try {
-    const probeName = 'mujs-probe';
-    const probeRegistry = Reflect.construct(CustomElementRegistry, []);
-    class Probe extends NativeHTMLElement {}
-    Reflect.apply(nativeRegistry.define, probeRegistry, [probeName, Probe]);
-    const probe = Reflect.apply(Document.prototype.createElement, document, [
-      probeName,
-      { customElementRegistry: probeRegistry }
-    ]);
-    if (probe instanceof Probe) return Reflect.construct(CustomElementRegistry, []);
-  } catch {
-    /** Scoped registries are not supported, e.g. "Illegal constructor" */
-  }
-  return customElements;
-})();
-/**
- * Define a custom element using the genuine `CustomElementRegistry.prototype.define`
- *
- * Never use `ce.define` directly, on pages with the ES5 adapter it wraps the class
- * and calls it without `new` (`Class constructor cannot be invoked without 'new'`)
- * @param {string} name - Custom element name
- * @param {CustomElementConstructor} constructor - Custom element class
- */
-const defineElement = (name, constructor) => {
-  const existing = Reflect.apply(nativeRegistry.get, ce, [name]);
-  if (existing === constructor) return;
-  if (existing !== undefined) {
-    throw new Error(`"${name}" is already defined by another script`);
-  }
-  Reflect.apply(nativeRegistry.define, ce, [name, constructor]);
-};
-
-class MainUserJS extends NativeHTMLElement {}
-/** @type {Array<[string, CustomElementConstructor]>} */
-const customElementList = [['mph-userjs', MainUserJS]];
-for (const [name, constructor] of customElementList) {
-  try {
-    defineElement(name, constructor);
-  } catch (e) {
-    con.err(e);
-  }
-}
-// #endregion
+//#endregion
 
 //#region Placeholders
-const BLANK_FN = function () {};
-const BLANK_PAGE = 'about:blank';
 /**
- * Location of the current page.
- * @type {URL}
+ * @type {() => void}
  */
-const url = (() => {
-  try {
-    /** For some reason `window.location.href` isn't always the same as `location.href` */
-    return new URL(window.location.href);
-  } catch {
-    return new URL(BLANK_PAGE);
+const BLANK_FN = function () {};
+/**
+ * @type {"about:blank"}
+ */
+const BLANK_PAGE = 'about:blank';
+//#endregion
+//#region Page
+class Page extends null {
+  /** @type {?URL} */
+  static #url = null;
+  /**
+   * Location object of the window.
+   * @returns {Location}
+   */
+  static get location() {
+    return window.location;
   }
-})();
+  /**
+   * Location of the window.
+   * @returns {URL}
+   */
+  static get url() {
+    /** For some reason `window.location.href` isn't always the same as `location.href` */
+    if (Page.#url == null) Page.#url = Page.toURL(Page.location.href);
+    return Page.#url;
+  }
+  /**
+   * @param {string | URL} url - A string or any other object with a {@link https://developer.mozilla.org/docs/Glossary/Stringifier Stringifier} that represents an absolute URL or a relative reference to a base URL.
+   * @param {string | URL} [base] - A string representing the base URL to use in cases where `url` is a relative reference. If not specified, it defaults to `undefined`. Consider `location.origin`.
+   * @returns {URL}
+   */
+  static toURL(url, base = Page.location.href) {
+    if (base) {
+      return new URL(url, base);
+    }
+    return new URL(url);
+  }
+  /**
+   * @template {string[][] | Record<string, string> | string | URLSearchParams} I
+   * @param {I} [init]
+   * @returns {URLSearchParams}
+   */
+  static toSearchParams(init) {
+    try {
+      return new URLSearchParams(init);
+    } catch {
+      return new URLSearchParams(BLANK_PAGE);
+    }
+  }
+}
+const { url, toURL } = Page;
+//#endregion
+//#region Config
 /**
  * User configuration, populated by {@link init}
- * @type { import("../typings/types.d.ts").config }
+ * @type { MPHConfig }
  */
 let cfg;
-//#endregion
+
 /**
- * @template {string} S
- * @param {S} str
+ * @type { MPHConfig }
  */
-const normalizedHostname = (str) => {
-  let resp;
-  if (typeof str === 'string') {
-    resp = str.replace(/^www\./, '');
+const DEFAULT_CONFIG = {
+  autoinject: true,
+  autoexpand: false,
+  clearTabCache: true,
+  limitDownloads: false,
+  autoHLS: false,
+  position: 'auto',
+  concurrency: 4,
+  time: 10000,
+  theme: {
+    'mph-site-color': '',
+    'mph-hover-color': '',
+    'mph-background-color': '',
+    'mph-border-color': '',
+    'mph-text-color': '',
+    'mph-root-bg': '',
+    'mph-header-bg': '',
+    'mph-font-family': '',
+    'mph-position-top': '',
+    'mph-position-bottom': '',
+    'mph-position-left': '',
+    'mph-position-right': ''
   }
-  return resp || '';
 };
 /**
- * Returns the registrable domain (last 2 labels) of a hostname.
+ * Keeps only known keys with the expected type, protects against corrupted storage / bad imports.
+ * @template I
+ * @template T
+ * @param {I} input
+ * @param {T} [defaults]
+ * @returns {Partial<I> | Record<PropertyKey, unknown>}
+ */
+const sanitizeConfig = (input, defaults = DEFAULT_CONFIG) => {
+  const out = {};
+  if (isObj(input)) {
+    for (const [key, def] of Object.entries(defaults)) {
+      if (!(key in input)) continue;
+      const value = input[key];
+      if (isObj(def)) {
+        out[key] = sanitizeConfig(value, def);
+      } else if (typeof def === 'number') {
+        if (typeof value === 'number' && Number.isFinite(value)) out[key] = value;
+      } else if (typeof value === typeof def) {
+        out[key] = value;
+      }
+    }
+  }
+
+  return out;
+};
+//#endregion
+//#region Utilities
+/**
+ * @param {function} cb
+ */
+const defer = (cb) =>
+  queueMicrotask(() => {
+    try {
+      cb();
+    } catch (ex) {
+      con.err(ex);
+    }
+  });
+/**
  * @template {string} S
  * @param {S} str
  */
-const formatURL = (str) => {
-  let resp;
+const getHostname = (str) => {
   if (typeof str === 'string') {
-    resp = str
+    return str
+      .replace(/^www\./, '')
       .split('.')
       .splice(-2)
       .join('.')
       .replace(/\/|https:/g, '');
   }
-  return resp || '';
+  return '';
 };
 /**
- * @template {string} S
- * @param {S} str
- */
-const getHostname = (str) => formatURL(normalizedHostname(str));
-// #region Validators
-/**
- * Transform parameter into string
+ * Object to `[object *]`; tag: `[object RegExp]` gives `'RegExp'`
  * @template O
  * @param {O} obj
  * @returns {string}
  */
 function objToStr(obj) {
   try {
-    return Object.prototype.toString.call(obj).match(/\[object (.*)\]/)?.[1] || '';
+    return Object.prototype.toString.call(obj).slice(8, -1);
   } catch {
     return '';
   }
 }
+/**
+ * Parameter is `RegExp`
+ * @template O
+ * @param {O} obj
+ * @returns {obj is RegExp}
+ */
+const isRegExp = (obj) => /RegExp/.test(objToStr(obj));
 /**
  * @template O
  * @param {O} obj
@@ -269,28 +277,34 @@ const isHTML = (obj) => /Document|Element|HTML|Window/.test(objToStr(obj));
  * Parameter is `JSON Object`
  * @template O
  * @param {O} obj
- * @returns {obj is Record<PropertyKey, any>}
+ * @returns { obj is Object ? obj : obj is (Record<PropertyKey, unknown> | Record<keyof O, O>) }
  */
 const isObj = (obj) => /Object/.test(objToStr(obj));
 /**
  * @type { typeof import("../typings/types.d.ts").toArray }
  */
 function toArray(target, args, root) {
+  /** Check if target is `null` or `undefined`, highest priority */
   if (target == null) return /** @type {any} */ ([]);
-  if (Array.isArray(target)) return /** @type {any} */ (target);
-  if (target instanceof Window || target instanceof Document) return /** @type {any} */ ([target]);
-  if (isHTML(target)) return /** @type {any} */ (Array.of(target));
   const opts = Object.assign({}, args);
+  /** Check if target is already an array, priority */
+  if (Array.isArray(target)) {
+    return /** @type {any} */ (target);
+  }
+  /** Check if target is a {@link Window} or {@link Document}, priority */
+  if (target instanceof Window || target instanceof Document) return /** @type {[T]} */ ([target]);
+  /** Check if target is any type of Element, priority */
+  if (isHTML(target)) return /** @type {T[]} */ (Array.of(target));
   const method = /** @type {"entries" | "keys" | "values" | undefined} */ (
     ['entries', 'keys', 'values'].find((key) => key in opts || opts[key])
   );
   if (typeof target === 'string') {
     if (root instanceof Element || root instanceof Document) {
-      return /** @type {any} */ ([...root.querySelectorAll(target)]);
+      return /** @type {Element[]} */ ([...root.querySelectorAll(target)]);
     } else if (method === 'keys' && typeof root === 'string') {
-      return /** @type {any} */ (target.split(root));
+      return /** @type {string[]} */ (target.split(root));
     }
-    return method === 'keys' ? /** @type {any} */ ([...target]) : /** @type {any} */ ([target]);
+    return method === 'keys' ? /** @type {T[]} */ ([...target]) : /** @type {[T]} */ ([target]);
   }
   if (method != null) {
     const s = objToStr(target);
@@ -340,222 +354,20 @@ const isEmpty = (obj) => isNull(obj) || isBlank(obj);
  * @param {O} object
  * @returns {O}
  */
-const copyObject = (object) => JSON.parse(JSON.stringify(object));
+const copyObject = (object) => {
+  try {
+    return JSON.parse(JSON.stringify(object));
+  } catch {
+    return object;
+  }
+};
 /**
  * Message of an unknown thrown value.
  * @param {unknown} ex
  */
 const errMsg = (ex) => (ex instanceof Error ? ex.message : String(ex));
-// #endregion
-// #region Constants
-const isMobile = (() => {
-  const { userAgent = '', userAgentData = {} } = navigator;
-  const { platform = '', mobile = false } = Object(userAgentData);
-  return (
-    /Mobile|Tablet/.test(String(userAgent)) ||
-    Boolean(mobile) ||
-    /Android|Apple/.test(String(platform))
-  );
-})();
-/**
- * Userscript manager API wrapper.
- *
- * Supports both `GM.*` (Promise based) and legacy `GM_*` handles, falls back to plain web APIs when
- * running outside of a userscript manager (bookmarklet, console).
- */
-class $GM extends null {
-  static #INFO = {
-    script: {
-      icon: '',
-      name: 'Magic PH',
-      namespace: 'https://github.com/magicoflolis/Magic-PH',
-      updateURL: 'https://github.com/magicoflolis/Magic-PH/raw/master/dist/magicph.user.js',
-      version: 'Bookmarklet',
-      bugs: 'https://github.com/magicoflolis/Magic-PH/issues'
-    }
-  };
-  static get isGM() {
-    return typeof GM !== 'undefined' || typeof GM_xmlhttpRequest !== 'undefined';
-  }
-  /**
-   * Returns the page's version of `element`, needed to read expando properties (e.g. `__vue__`)
-   * that are not visible from the userscript sandbox.
-   * @template {object} E
-   * @param {E} element
-   * @returns {E}
-   */
-  static unwrap(element) {
-    // @ts-expect-error `wrappedJSObject` only exists in Firefox
-    return (element && element.wrappedJSObject) || element;
-  }
-  /**
-   * @param {...unknown} args
-   * @returns {?Element}
-   */
-  static addElement(...args) {
-    try {
-      if (typeof GM !== 'undefined' && isFN(GM.addElement)) {
-        // @ts-expect-error Overloads
-        return GM.addElement(...args);
-      }
-      if (typeof GM_addElement !== 'undefined' && isFN(GM_addElement)) {
-        // @ts-expect-error Overloads
-        return GM_addElement(...args);
-      }
-    } catch (ex) {
-      con.err(ex);
-    }
-    return null;
-  }
-  /**
-   * @param {string} link
-   */
-  static openInTab(link) {
-    try {
-      if (typeof GM !== 'undefined' && isFN(GM.openInTab)) {
-        return GM.openInTab(link, { active: true, insert: true });
-      }
-      if (typeof GM_openInTab !== 'undefined' && isFN(GM_openInTab)) {
-        return GM_openInTab(link, { active: true, insert: true });
-      }
-    } catch (ex) {
-      con.err(ex);
-    }
-    return window.open(link, '_blank', 'noopener,noreferrer');
-  }
-  static get info() {
-    if (typeof GM !== 'undefined' && isObj(GM.info)) return GM.info;
-    if (typeof GM_info !== 'undefined' && isObj(GM_info)) return GM_info;
-    return $GM.#INFO;
-  }
-  /**
-   * @param {string} key
-   * @param {unknown} value
-   */
-  static async setValue(key, value) {
-    if (typeof GM !== 'undefined' && isFN(GM.setValue)) return GM.setValue(key, value);
-    if (typeof GM_setValue !== 'undefined' && isFN(GM_setValue)) return GM_setValue(key, value);
-    return undefined;
-  }
-  /**
-   * @template D
-   * @param {string} key
-   * @param {D} [def]
-   * @returns {Promise<D | undefined>}
-   */
-  static async getValue(key, def) {
-    if (typeof GM !== 'undefined' && isFN(GM.getValue)) return GM.getValue(key, def);
-    if (typeof GM_getValue !== 'undefined' && isFN(GM_getValue)) return GM_getValue(key, def);
-    return def;
-  }
-  /**
-   * @param {string} text
-   * @param {() => void} command
-   */
-  static registerMenuCommand(text, command) {
-    try {
-      if (typeof GM !== 'undefined' && isFN(GM.registerMenuCommand)) {
-        return GM.registerMenuCommand(text, command);
-      }
-      if (typeof GM_registerMenuCommand !== 'undefined' && isFN(GM_registerMenuCommand)) {
-        return GM_registerMenuCommand(text, command);
-      }
-    } catch (ex) {
-      con.err(ex);
-    }
-    return undefined;
-  }
-  /**
-   * @param {string} text
-   * @param {string} [type]
-   * @returns {Promise<boolean>}
-   */
-  static async setClipboard(text, type = 'text') {
-    try {
-      if (typeof GM !== 'undefined' && isFN(GM.setClipboard)) {
-        await GM.setClipboard(text, type);
-        return true;
-      }
-      if (typeof GM_setClipboard !== 'undefined' && isFN(GM_setClipboard)) {
-        GM_setClipboard(text, type);
-        return true;
-      }
-    } catch (ex) {
-      con.err(ex);
-    }
-    return false;
-  }
-  /**
-   * Cross-origin capable request. Falls back to a regular `XMLHttpRequest`.
-   *
-   * Callbacks receive the response object (`status`, `response`, `responseText`, ...).
-   * @param {Record<string, any>} details
-   * @returns {{ abort: () => void }}
-   */
-  static xmlHttpRequest(details) {
-    if (typeof GM !== 'undefined' && isFN(GM.xmlHttpRequest)) {
-      return /** @type {any} */ (GM.xmlHttpRequest(/** @type {any} */ (details)));
-    }
-    if (typeof GM_xmlhttpRequest !== 'undefined' && isFN(GM_xmlhttpRequest)) {
-      return /** @type {any} */ (GM_xmlhttpRequest(/** @type {any} */ (details)));
-    }
-    const req = new XMLHttpRequest();
-    const { onload, onerror, onabort, ontimeout, onprogress } = details;
-    req.open(String(details.method || 'GET'), String(details.url));
-    req.responseType = /^(arraybuffer|blob|document|json|text)$/.test(details.responseType)
-      ? details.responseType
-      : 'text';
-    if (details.timeout > 0) req.timeout = details.timeout;
-    if (details.anonymous === false) req.withCredentials = true;
-    if (isObj(details.headers)) {
-      for (const [k, v] of Object.entries(details.headers)) {
-        try {
-          req.setRequestHeader(k, String(v));
-        } catch {
-          /* forbidden header */
-        }
-      }
-    }
-    if (isFN(onload)) req.addEventListener('load', () => onload(req));
-    if (isFN(onerror)) req.addEventListener('error', () => onerror(req));
-    if (isFN(onabort)) req.addEventListener('abort', () => onabort(req));
-    if (isFN(ontimeout)) req.addEventListener('timeout', () => ontimeout(req));
-    if (isFN(onprogress)) req.addEventListener('progress', (evt) => onprogress(evt));
-    req.send(details.data ?? details.body ?? null);
-    return { abort: () => req.abort() };
-  }
-}
-// #endregion
-// #region DEFAULT_CONFIG
-/**
- * @type { import("../typings/types.d.ts").config }
- */
-const DEFAULT_CONFIG = {
-  autoinject: true,
-  autoexpand: false,
-  clearTabCache: true,
-  limitDownloads: false,
-  autoHLS: false,
-  position: 'auto',
-  concurrency: 4,
-  time: 10000,
-  theme: {
-    'mph-site-color': '',
-    'mph-hover-color': '',
-    'mph-background-color': '',
-    'mph-border-color': '',
-    'mph-text-color': '',
-    'mph-root-bg': '',
-    'mph-header-bg': '',
-    'mujs-font-family': '',
-    'mujs-position-top': '',
-    'mujs-position-bottom': '',
-    'mujs-position-left': '',
-    'mujs-position-right': ''
-  }
-};
-// #endregion
-// #region i18n
+//#endregion
+//#region i18n
 class Language extends null {
   static #map = new Map(Object.entries(translations));
   /**
@@ -580,35 +392,217 @@ class Language extends null {
   static get current() {
     const lang = String(navigator.language || 'en');
     const full = lang.replace('-', '_');
-    if (Language.#map.has(full)) return full;
-    return lang.split('-').find((l) => Language.#map.has(l)) || 'en';
+    const m = Language.#map;
+    if (m.has(full)) return full;
+    return lang.split('-').find((l) => m.has(l)) || 'en';
   }
 }
 const { i18n$ } = Language;
-// #endregion
-// #region Utilities
+//#endregion
+//#region More Utilities
+/**
+ * Userscript manager API wrapper.
+ *
+ * Supports both `GM.*` (Promise based) and legacy `GM_*` handles, falls back to plain web APIs when
+ * running outside of a userscript manager (bookmarklet, console).
+ */
+class $GM extends null {
+  static get isGM() {
+    return typeof GM !== 'undefined';
+  }
+  /**
+   * @returns {VMScriptGMInfoObject | Partial<VMScriptGMInfoObject>}
+   */
+  static get info() {
+    if ($GM.isGM && isObj(GM.info)) return GM.info;
+    if (typeof GM_info !== 'undefined' && isObj(GM_info)) return GM_info;
+    return {
+      script: {
+        icon: '',
+        name: 'Magic PH',
+        namespace: 'https://github.com/magicoflolis/Magic-PH',
+        updateURL: 'https://github.com/magicoflolis/Magic-PH/raw/master/dist/magicph.user.js',
+        version: 'Bookmarklet',
+        bugs: 'https://github.com/magicoflolis/Magic-PH/issues'
+      },
+      version: 'Bookmarklet'
+    };
+  }
+  static addElement() {
+    /** @type { typeof GM_addElement } */
+    const _ =
+      ($GM.isGM && isFN(GM.addElement) && GM.addElement) ||
+      (typeof GM_addElement !== 'undefined' && isFN(GM_addElement) && GM_addElement) ||
+      BLANK_FN;
+    return _(...arguments);
+  }
+  /**
+   * @param {string} link
+   */
+  static openInTab(link) {
+    try {
+      if ($GM.isGM && isFN(GM.openInTab)) {
+        return GM.openInTab(link, { active: true, insert: true });
+      }
+      if (typeof GM_openInTab !== 'undefined' && isFN(GM_openInTab)) {
+        return GM_openInTab(link, { active: true, insert: true });
+      }
+    } catch (ex) {
+      con.err(ex);
+    }
+    return window.open(link, '_blank', 'noopener,noreferrer');
+  }
+  static async setValue() {
+    /** @type { typeof GM.setValue | typeof GM_setValue } */
+    const _ =
+      ($GM.isGM && isFN(GM.setValue) && GM.setValue) ||
+      (typeof GM_setValue !== 'undefined' && isFN(GM_setValue) && GM_setValue) ||
+      BLANK_FN;
+    _(...arguments);
+  }
+  /**
+   * @template D
+   * @param {string} key
+   * @param {D} [def]
+   * @returns {Promise<D | undefined>}
+   */
+  static async getValue(key, def) {
+    if ($GM.isGM && isFN(GM.getValue)) return GM.getValue(key, def);
+    if (typeof GM_getValue !== 'undefined' && isFN(GM_getValue)) return GM_getValue(key, def);
+    return def;
+  }
+  /**
+   * @param {string} text
+   * @param {() => void} command
+   */
+  static registerMenuCommand(text, command) {
+    try {
+      if ($GM.isGM && isFN(GM.registerMenuCommand)) {
+        return GM.registerMenuCommand(text, command);
+      }
+      if (typeof GM_registerMenuCommand !== 'undefined' && isFN(GM_registerMenuCommand)) {
+        return GM_registerMenuCommand(text, command);
+      }
+    } catch (ex) {
+      con.err(ex);
+    }
+    return undefined;
+  }
+  /**
+   * @param {string} text
+   * @param {string} [type]
+   * @returns {Promise<boolean>}
+   */
+  static async setClipboard(text, type = 'text') {
+    try {
+      if ($GM.isGM && isFN(GM.setClipboard)) {
+        GM.setClipboard(text, type);
+        return true;
+      }
+      if (typeof GM_setClipboard !== 'undefined' && isFN(GM_setClipboard)) {
+        GM_setClipboard(text, type);
+        return true;
+      }
+    } catch (ex) {
+      con.err(ex);
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (ex) {
+      con.err(ex);
+    }
+    return false;
+  }
+  static async xmlHttpRequest() {
+    const _ =
+      ($GM.isGM && isFN(GM.xmlHttpRequest) && GM.xmlHttpRequest) ||
+      (typeof GM_xmlhttpRequest !== 'undefined' && isFN(GM_xmlhttpRequest) && GM_xmlhttpRequest) ||
+      /**
+       * @template {string | Blob | ArrayBuffer | Document | object} T
+       * @param {VMScriptGMXHRDetails<T>} details
+       */
+      function (details) {
+        return new Promise((resolve, reject) => {
+          const req = new XMLHttpRequest();
+          let method = 'GET';
+          let url = BLANK_PAGE;
+          let body;
+          for (const [key, value] of toArray(details, { entries: true })) {
+            if (isFN(value)) {
+              const [, k] = /^on(\w+)/g.exec(key) || [];
+              if (k) {
+                if (/progress/i.test(k)) {
+                  req.addEventListener(k, value);
+                } else {
+                  req.addEventListener(k, (evt) => {
+                    value(evt);
+                    if (/error|abort/.test(k)) {
+                      reject(evt);
+                    } else {
+                      resolve(evt);
+                    }
+                  });
+                }
+              }
+            } else if (typeof value === 'string') {
+              if (key === 'responseType') {
+                req.responseType = /buffer/i.test(value) ? 'arraybuffer' : value;
+              } else if (key === 'method') {
+                method = value;
+              } else if (key === 'url') {
+                url = value;
+              }
+            } else if (value instanceof URL) {
+              url = value;
+            } else if (key === 'body') {
+              body = value;
+            }
+          }
+          req.open(method, url);
+          if (isEmpty(req.responseType)) {
+            req.responseType = 'text';
+          }
+          if (body) {
+            req.send(body);
+          } else {
+            req.send();
+          }
+        });
+      };
+    return /** @type { typeof GM.xmlHttpRequest } */ (_(...arguments));
+  }
+}
+const isMobile = (() => {
+  const { userAgent = '', userAgentData = {} } = navigator;
+  const { platform = '', mobile = false } = Object(userAgentData);
+  return (
+    /Mobile|Tablet/.test(String(userAgent)) ||
+    Boolean(mobile) ||
+    /Android|Apple/.test(String(platform))
+  );
+})();
+/**
+ * @type { import("../typings/types.d.ts").groupBy }
+ */
+const groupBy = (items, keySelector) => {
+  if ('groupBy' in Object) return Object.groupBy(items, keySelector);
+  /** [Object.groupBy polyfill](https://gist.github.com/gtrabanco/7c97bd41aa74af974fa935bfb5044b6e) */
+  return items.reduce((acc = {}, ...args) => {
+    const key = keySelector(...args);
+    acc[key] ??= [];
+    acc[key].push(args[0]);
+    return acc;
+  }, {});
+};
 /**
  * @type { import("../typings/types.d.ts").qs }
  */
-const qs = (selector, root) => {
-  try {
-    return (root || document).querySelector(selector);
-  } catch (ex) {
-    con.err(ex);
-  }
-  return null;
-};
+const qs = (selector, root = document) => root.querySelector(selector);
 /**
  * @type { import("../typings/types.d.ts").qsA }
  */
-const qsA = (selectors, root) => {
-  try {
-    return (root || document).querySelectorAll(selectors);
-  } catch (ex) {
-    con.err(ex);
-  }
-  return /** @type {any} */ ([]);
-};
+const qsA = (selectors, root = document) => root.querySelectorAll(selectors);
 /**
  * @param {HTMLElement} elem - HTMLElement
  * @param {unknown} str - Class string(s)
@@ -622,7 +616,7 @@ function addClass(elem, str) {
 }
 /**
  * @template {HTMLElement} E
- * @param {E} elem
+ * @param {?E} elem
  * @param {Record<keyof E, E>} attr
  */
 function formAttrs(elem, attr) {
@@ -640,6 +634,8 @@ function formAttrs(elem, attr) {
         }
       } else if (/^class/i.test(key)) {
         addClass(elem, value);
+      } else if (typeof value === 'number' && Number.isFinite(value)) {
+        elem[key] = value;
       } else if (
         elem.tagName === 'A' &&
         typeof value === 'string' &&
@@ -657,7 +653,8 @@ function formAttrs(elem, attr) {
  * @type { typeof import("../typings/types.d.ts").make }
  */
 const make = (tagName, ...attributes) => {
-  const el = document.createElement(tagName, { customElementRegistry: ce });
+  /** @type {Element} */
+  const el = document.createElement(tagName);
   for (let i = 0; i < attributes.length; i++) {
     const _attr = attributes[i];
     if (i === 0) {
@@ -717,8 +714,31 @@ const waitFor = (fn, timeout = 30000, interval = 100) =>
  * @param {number} [timeout] - ms, `0` waits forever
  * @returns {Promise<Element | null>}
  */
-const query = (selector, root, timeout = 30000) =>
-  waitFor(() => (root || document).querySelector(selector), timeout);
+const query = (selector, root = document, timeout = 60000) =>
+  new Promise((resolve) => {
+    const found = root.querySelector(selector);
+    if (found) return resolve(found);
+    let timer;
+    const mo = new MutationObserver(() => {
+      const el = root.querySelector(selector);
+      if (!el) return;
+      mo.disconnect();
+      clearTimeout(timer);
+      resolve(el);
+    });
+    mo.observe(root?.documentElement ?? root, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['id', 'class']
+    });
+    if (timeout > 0) {
+      timer = setTimeout(() => {
+        mo.disconnect();
+        resolve(null);
+      }, timeout);
+    }
+  });
 /**
  * @param {number} duration - Seconds
  * @returns {string} `1:01`, `4:03:59`, `123:03:59`
@@ -781,17 +801,21 @@ const sanitizeFilename = (str, fallback = 'MagicPH') => {
  * A private policy is used instead of installing a pass-through `default` policy on the website.
  */
 const ttPolicy = (() => {
+  const policy = {
+    /**
+     * @template {string} T
+     * @param {T} s
+     */
+    createHTML: (s) => s
+  };
   try {
-    const tt = /** @type {any} */ (window).trustedTypes;
-    if (tt && isFN(tt.createPolicy)) {
-      return /** @type {{ createHTML(s: string): string } | null} */ (
-        tt.createPolicy('magicph', { createHTML: (/** @type {string} */ s) => s })
-      );
+    if (typeof window.trustedTypes !== 'undefined') {
+      return window.trustedTypes.createPolicy('magicph', policy);
     }
   } catch {
     /* CSP `trusted-types` does not allow the policy name */
   }
-  return null;
+  return policy;
 })();
 /**
  * Parses an HTML string into an inert document (no scripts run, no resources load).
@@ -801,7 +825,7 @@ const ttPolicy = (() => {
 const parseHTML = (html) => {
   const str = String(html);
   return new DOMParser().parseFromString(
-    /** @type {string} */ (ttPolicy ? ttPolicy.createHTML(str) : str),
+    /** @type {string} */ (ttPolicy.createHTML(str)),
     'text/html'
   );
 };
@@ -817,39 +841,19 @@ const htmlToText = (html) => {
   }
 };
 /**
- * @param {string} text
- * @returns {Promise<boolean>}
- */
-const writeClipboard = async (text) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch (ex) {
-    con.info('Clipboard API unavailable, using fallback:', errMsg(ex));
-  }
-  if (await $GM.setClipboard(text)) return true;
-  try {
-    const area = make('textarea', { value: text, readOnly: true });
-    area.style.cssText = 'position:fixed;top:-100px;opacity:0;';
-    (document.body || document.documentElement).append(area);
-    area.select();
-    const done = document.execCommand('copy');
-    area.remove();
-    return done;
-  } catch (ex) {
-    con.err(ex);
-  }
-  return false;
-};
-/**
  * Saves `blob` to disk.
  * @param {Blob} blob
  * @param {string} filename
  */
 const saveAs = (blob, filename) => {
+  if (!blob) return;
   const href = URL.createObjectURL(blob);
-  const a = make('a', { href, download: filename, rel: 'noopener' });
-  a.style.display = 'none';
+  const a = make('a', {
+    href,
+    download: filename,
+    rel: 'noopener',
+    style: 'display: none;'
+  });
   (document.body || document.documentElement).append(a);
   a.click();
   a.remove();
@@ -878,8 +882,132 @@ const runPool = async (items, limit, worker) => {
   await Promise.all(Array.from({ length: lanes }, lane));
   return results;
 };
-// #endregion
-// #region DOM helpers
+/**
+ * Resolution of a video url: `720p.mp4`, `720P_4000K_1.mp4`, `720p.h264.mp4`, `720.mp4`.
+ * The query is ignored, signed urls contain random characters.
+ * @param {string} src
+ */
+const resolutionOf = (src) => {
+  const path = src.split('?')[0];
+  return +(
+    /(\d{3,4})p(?=[._]|$)/i.exec(path.split('/').pop() ?? '')?.[1] ??
+    /\d+(?=P|p\.)/.exec(path)?.[0] ??
+    /\/(\d{3,4})\.(?:mp4|webm)$/.exec(path)?.[1] ??
+    0
+  );
+};
+/**
+ * Sorts `hlsByQuality` best-first into a playlist array, only when its best quality actually beats
+ * `files`' best (or there are no files) -- otherwise HLS adds nothing worth offering.
+ * @param {Array<string | { src: string }>} files
+ * @param {Map<number, string>} hlsByQuality
+ * @returns {{ ts: string[]; preferHLS: boolean }}
+ */
+const pickHLS = (files, hlsByQuality) => {
+  if (!Array.isArray(files)) {
+    files = Array.from(files);
+  }
+  if (!(hlsByQuality instanceof Map) || !hlsByQuality.size) return { ts: [], preferHLS: false };
+  const bestFile = Math.max(
+    0,
+    ...files.map((f) =>
+      typeof f === 'string' ? resolutionOf(f) : parseInt(f.label, 10) || resolutionOf(f.src)
+    )
+  );
+  const bestHls = Math.max(...hlsByQuality.keys());
+  if (bestHls <= bestFile && files.length) return { ts: [], preferHLS: false };
+  const ts = Array.from(hlsByQuality)
+    .sort((a, b) => b[1] - a[1])
+    .map((i) => i[1]);
+  return { ts, preferHLS: true };
+};
+/**
+ * First balanced `{...}` or `[...]` of `txt` (from `from`), `window.initials={...};` -> object.
+ * @param {string} txt
+ * @param {number} [from]
+ * @returns {unknown}
+ */
+const extractJSON = (txt, from = 0) => {
+  const start = txt.slice(from).search(/[{[]/) + from;
+  let depth = 0;
+  let quoted = false;
+  for (let i = start; i >= from && i < txt.length; i++) {
+    const c = txt[i];
+    if (quoted) {
+      if (c === '\\') i++;
+      else if (c === '"') quoted = false;
+    } else if (c === '"') {
+      quoted = true;
+    } else if (c === '{' || c === '[') {
+      depth++;
+    } else if ((c === '}' || c === ']') && --depth === 0) {
+      return JSON.parse(txt.slice(start, i + 1));
+    }
+  }
+  throw new SyntaxError('No JSON found');
+};
+/**
+ * Absolute address of `ref`.
+ * @param {string} ref
+ * @param {string | URL} base
+ * @returns {string} Empty when `ref` is not an address
+ */
+const absURL = (ref, base) => {
+  try {
+    return ref ? toURL(ref, base).href : '';
+  } catch {
+    return '';
+  }
+};
+/**
+ * JSON-LD objects of a page.
+ * @param {Document} doc
+ * @returns {Array<Record<string, unknown>>}
+ */
+const ldNodes = (doc) => {
+  /** @type {Array<Record<string, unknown>>} */
+  const nodes = [];
+  for (const node of qsA('script[type="application/ld+json"]', doc)) {
+    try {
+      const json = JSON.parse(node.textContent ?? '');
+      nodes.push(...[].concat(json?.['@graph'] ?? json).filter(isObj));
+    } catch {
+      /* not JSON */
+    }
+  }
+  return nodes;
+};
+/**
+ * Title, thumbnail and duration a page announces to search engines and social networks (JSON-LD, Open Graph).
+ * @param {Document} doc
+ * @param {string | URL} base - Address of the page, thumbnails may be relative
+ * @returns {{ title?: string; poster?: string; duration: number }}
+ */
+const readMeta = (doc, base) => {
+  /** @param {string} selector */
+  const meta = (selector) => qs(selector, doc)?.getAttribute('content')?.trim() || undefined;
+  const video = ldNodes(doc).find((n) => /VideoObject/.test(String([].concat(n['@type']))));
+  const thumb = [].concat(video?.thumbnailUrl ?? []).find((t) => typeof t === 'string' || t?.url);
+  const poster =
+    (typeof thumb === 'string' ? thumb : thumb?.url) ||
+    meta('meta[property="og:image"]') ||
+    meta('meta[name="twitter:image"]') ||
+    qs('link[rel="image_src"]', doc)?.getAttribute('href');
+  return {
+    title:
+      (video?.name && htmlToText(video.name)) || meta('meta[property="og:title"]') || undefined,
+    poster: poster ? absURL(poster, base) || undefined : undefined,
+    duration: toSeconds(
+      video?.duration ||
+        meta('meta[property="og:video:duration"]') ||
+        meta('meta[property="video:duration"]') ||
+        meta('meta[property="og:duration"]') ||
+        meta('meta[itemprop="duration"]')
+    )
+  };
+};
+//#endregion
+//#region DOM helpers
 class dom extends null {
   /**
    * @template {HTMLElement} E
@@ -898,7 +1026,7 @@ class dom extends null {
    */
   static prop(target, prop, value = undefined) {
     const t = dom.HTML(target);
-    if (value === undefined) {
+    if (value == null) {
       return t.find((elem) => elem[prop]);
     }
     for (const elem of t) {
@@ -913,16 +1041,6 @@ class dom extends null {
     for (const elem of dom.HTML(target)) elem.remove();
     return dom;
   }
-  /**
-   * Removes every child element of `target`
-   * @template {HTMLElement} E
-   * @param {E | E[] | Set<E> | NodeListOf<E>} target
-   */
-  static rmChildren(target) {
-    for (const elem of dom.HTML(target)) {
-      for (const e of Array.from(elem.children)) e.remove();
-    }
-  }
   static get cl() {
     return {
       /**
@@ -935,6 +1053,7 @@ class dom extends null {
         /** @type {string[]} */
         const _token = toArray(token, { keys: true }, ' ');
         for (const elem of dom.HTML(target)) elem.classList.add(..._token);
+        return dom.cl;
       },
       /**
        * @template {HTMLElement} E
@@ -946,6 +1065,7 @@ class dom extends null {
         /** @type {string[]} */
         const _token = toArray(token, { keys: true }, ' ');
         for (const elem of dom.HTML(target)) elem.classList.remove(..._token);
+        return dom.cl;
       },
       /**
        * @template {HTMLElement} E
@@ -971,190 +1091,6 @@ class dom extends null {
         return dom.HTML(target).some((elem) => elem.classList.contains(String(token)));
       }
     };
-  }
-}
-/**
- * @typedef { { "active": (tab: HTMLElement, build: boolean) => void; "close": (tab: HTMLElement) => void; "internal": (host: string | undefined, hostname: string) => void; } } tabEvents
- */
-/**
- * Tab strip. Every tab is identified by `dataset.host`.
- *
- * - `about:blank` is the "new tab", it accepts a URL / video id
- * - `mujs:<name>` are internal pages, e.g. `mujs:settings`
- * - anything else is a group of videos
- */
-class Tabs {
-  /** @type { Set<{ type: keyof tabEvents; listener: tabEvents[keyof tabEvents] }> } */
-  events = new Set();
-  /** @type { Set<HTMLElement> } */
-  pool = new Set();
-  /** @type { typeof BLANK_PAGE } */
-  blank = BLANK_PAGE;
-  /** @type { "mujs:" } */
-  protocal = 'mujs:';
-  /** @type { RegExp } */
-  protoReg = new RegExp(`${this.protocal}(.+)`, 'i');
-  /** @type { { [key: string]: HTMLElement } } */
-  el = {
-    add: make('tab-add', {
-      textContent: '+',
-      title: i18n$('newTab'),
-      dataset: {
-        command: 'new-tab'
-      }
-    }),
-    head: make('tab-root')
-  };
-  /**
-   * @param { ?HTMLElement } root
-   */
-  constructor(root) {
-    this.el.head.append(this.el.add);
-    // A mouse wheel scrolls vertically, the tabs overflow horizontally
-    ael(
-      this.el.head,
-      'wheel',
-      (evt) => {
-        const e = /** @type {WheelEvent} */ (evt);
-        const head = this.el.head;
-        if (e.deltaX !== 0 || head.scrollWidth <= head.clientWidth) return;
-        e.preventDefault();
-        head.scrollLeft += e.deltaY;
-      },
-      { passive: false }
-    );
-    root?.append(this.el.head);
-  }
-  get _pool() {
-    return toArray(this.pool).filter((e) => !isNull(e));
-  }
-  get _active() {
-    return this._pool.find(({ classList }) => classList.contains('active')) || null;
-  }
-  /**
-   * @template H
-   * @param {H} hostname
-   */
-  getTab(hostname) {
-    const host = this.validate(hostname);
-    return this._pool.find(({ dataset }) => dataset.host === host) || null;
-  }
-  /**
-   * @template H
-   * @param {H} hostname
-   */
-  validate(hostname) {
-    if (typeof hostname === 'string') {
-      return hostname;
-    } else if (hostname instanceof URL || hostname instanceof Location) {
-      return hostname.toString();
-    }
-    return '';
-  }
-  /**
-   * @template {keyof tabEvents} K
-   * @param {K} type
-   * @param {tabEvents[K]} listener
-   */
-  addListener(type, listener) {
-    this.events.add({ type, listener });
-  }
-  /**
-   * @template {keyof tabEvents} K
-   * @param {K} type
-   * @param {...unknown} args
-   */
-  #dispatch(type, ...args) {
-    for (const evt of toArray(this.events).filter((event) => event.type === type)) {
-      try {
-        if (isFN(evt.listener)) {
-          /** @type {Function} */ (evt.listener).call(this, ...args);
-        }
-      } catch (ex) {
-        con.err(ex);
-      }
-    }
-    return this;
-  }
-  /**
-   * Handles internal protocols
-   * @template H
-   * @param {H} hostname
-   */
-  intFN(hostname) {
-    const h = this.validate(hostname);
-    const [, host] = this.protoReg.exec(h) || [];
-    return this.#dispatch('internal', host, h);
-  }
-  /**
-   * @template {HTMLElement} T
-   * @param {T} tab
-   * @param {boolean} [build]
-   */
-  active(tab, build = true) {
-    if (isElem(tab)) {
-      if (!this.pool.has(tab)) {
-        this.pool.add(tab);
-      }
-      return this.#dispatch('active', tab, build);
-    }
-    return this;
-  }
-  /**
-   * @template {HTMLElement} T
-   * @param {T} tab
-   */
-  close(tab) {
-    if (isElem(tab)) {
-      this.pool.delete(tab);
-      this.#dispatch('close', tab);
-      tab.remove();
-    }
-    return this;
-  }
-  /**
-   * @param {string} [hostname] - `undefined` creates a "new tab"
-   * @param {string} [title] - Label of the tab
-   * @param {boolean} [activate] - Switch to the tab
-   */
-  create(hostname = undefined, title = undefined, activate = true) {
-    if (typeof hostname === 'string') {
-      const createdTab = this.getTab(hostname);
-      if (createdTab) {
-        if (activate) this.active(createdTab);
-        return createdTab;
-      }
-    }
-    const tab = make('tab-content', {
-      dataset: {
-        command: 'switch-tab'
-      },
-      style: `order: ${this.el.head.childElementCount};`
-    });
-    const tabClose = make('tab-close', {
-      dataset: {
-        command: 'close-tab'
-      },
-      title: i18n$('close'),
-      textContent: 'X'
-    });
-    const tabHost = make('tab-host');
-    tab.append(tabHost, tabClose);
-    const [, host] = this.protoReg.exec(hostname ?? '') ?? [];
-    if (isNull(hostname)) {
-      tab.dataset.host = this.blank;
-      tabHost.title = tabHost.textContent = i18n$('newTab');
-    } else if (host) {
-      tab.dataset.host = hostname;
-      tabHost.title = tabHost.textContent = i18n$(host);
-    } else {
-      tab.dataset.host = hostname;
-      tabHost.title = tabHost.textContent = title ?? hostname;
-    }
-    this.el.head.append(tab);
-    this.pool.add(tab);
-    if (activate) this.active(tab, true);
-    return tab;
   }
 }
 class Timeout {
@@ -1335,7 +1271,7 @@ class IconSVG extends null {
     const svgElem = document.createElementNS(IconSVG.NS, 'svg');
     svgElem.setAttribute('viewBox', sel.viewBox);
     svgElem.setAttribute('aria-hidden', 'true');
-    svgElem.setAttribute('class', 'mujs-icon magicph-icon');
+    svgElem.setAttribute('class', 'mph-icon magicph-icon');
     svgElem.dataset.icon = String(key);
     if (sel.fill) svgElem.setAttribute('fill', sel.fill);
     if (sel.stroke) svgElem.setAttribute('stroke', sel.stroke);
@@ -1438,153 +1374,136 @@ class jsStorage extends null {
     }
   }
 }
-// #endregion
-// #region Network
-/**
- * @type { import("../typings/UserJS.d.ts").Network }
- */
-const Network = {
-  req(requestURL, method = 'GET', responseType = 'json', data, useFetch = false) {
+//#endregion
+//#region Network
+class Network extends null {
+  static sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  /**
+   * @template {string | Request | URL} R
+   * @template {string | object | Document | ArrayBuffer | Blob} T
+   * @param {R} requestURL
+   * @param {string} method
+   * @param {VMScriptResponseType} responseType
+   * @param {VMScriptGMXHRDetails<T> | RequestInit} data
+   * @param {boolean} useFetch
+   * @returns {Promise<T>}
+   */
+  static req(requestURL, method = 'GET', responseType = 'json', data, useFetch = false) {
+    const params = Object.assign({}, data);
+    if (typeof method === 'string') {
+      params.method = method.toUpperCase().replaceAll(/\W/g, '');
+    }
+    if (typeof responseType === 'string') {
+      responseType = responseType.toLowerCase().replaceAll(/\W/g, '');
+    }
+    if (params.credentials && $GM.isGM && !useFetch) {
+      params.anonymous = Object.is(params.credentials, 'omit');
+      delete params.credentials;
+    } else if (params.onprogress) {
+      delete params.onprogress;
+    }
     return new Promise((resolve, reject) => {
-      const target = requestURL instanceof URL ? requestURL.href : String(requestURL ?? '');
-      if (isEmpty(target)) {
-        reject(new Error('"url" parameter is empty', { cause: 'Network.req' }));
-        return;
-      }
-      const params = Object.assign({}, data);
-      params.method = String(method).toUpperCase().replaceAll(/\W/g, '');
-      const type = String(responseType).toLowerCase().replaceAll(/\W/g, '');
-      const timeout = typeof params.timeout === 'number' ? params.timeout : 30000;
-      /**
-       * @param {string | number} status
-       * @param {string} cause
-       */
-      const fail = (status, cause) => {
-        const e = new Error(`status: ${status} finalURL: ${target}`, { cause });
-        e.name = '';
-        reject(e);
-      };
-      /**
-       * @param {string} txt
-       */
-      const asJSON = (txt) => {
-        try {
-          return JSON.parse(txt);
-        } catch (ex) {
-          reject(ex);
-          return undefined;
-        }
-      };
-      if (useFetch || !$GM.isGM) {
-        const ctl = new AbortController();
-        const timer = timeout > 0 ? setTimeout(() => ctl.abort(), timeout) : undefined;
-        const init = { ...params };
-        if (!init.signal) init.signal = ctl.signal;
-        delete init.onprogress;
-        delete init.timeout;
-        delete init.anonymous;
-        // `fetch` only accepts a same-origin referrer
-        if (
-          init.referrer &&
-          new URL(init.referrer, window.location.href).origin !== window.location.origin
-        ) {
-          delete init.referrer;
-        }
-        fetch(target, init)
-          .then(async (resp) => {
-            if (!resp.ok) {
-              fail(resp.status, 'Network.req::fetch');
-              return;
-            }
-            if (/array|buffer/.test(type)) {
-              resolve(await resp.arrayBuffer());
-            } else if (/json/.test(type)) {
-              resolve(await resp.json());
-            } else if (/text/.test(type)) {
-              resolve(await resp.text());
-            } else if (/blob/.test(type)) {
-              resolve(await resp.blob());
-            } else if (/form|data/.test(type)) {
-              resolve(await resp.formData());
-            } else if (/clone|copy/.test(type)) {
-              resolve(resp.clone());
-            } else if (/document/.test(type)) {
-              resolve(parseHTML(await resp.text()));
+      if (useFetch) {
+        const _request =
+          requestURL instanceof Request ? requestURL : new Request(requestURL, params);
+        fetch(_request)
+          .then((resp) => {
+            if (resp.ok) {
+              if (/array|buffer/i.test(responseType)) {
+                resolve(resp.arrayBuffer());
+              } else if (/json/i.test(responseType)) {
+                resolve(resp.json());
+              } else if (/text/i.test(responseType)) {
+                resolve(resp.text());
+              } else if (/blob/i.test(responseType)) {
+                resolve(resp.blob());
+              } else if (/form|data/i.test(responseType)) {
+                resolve(resp.formData());
+              } else if (/clone|copy/i.test(responseType)) {
+                resolve(resp.clone());
+              } else if (/document/i.test(responseType)) {
+                const responseText = resp.text();
+                const domParser = new DOMParser();
+                if (responseText instanceof Promise) {
+                  responseText.then((txt) => {
+                    const doc = domParser.parseFromString(txt, 'text/html');
+                    resolve(doc);
+                  });
+                } else {
+                  const doc = domParser.parseFromString(responseText, 'text/html');
+                  resolve(doc);
+                }
+              } else {
+                resolve(resp);
+              }
             } else {
-              resolve(resp);
+              reject(resp);
             }
           })
-          .catch(reject)
-          .finally(() => {
-            if (timer !== undefined) clearTimeout(timer);
-          });
-        return;
-      }
-      if (params.credentials) {
-        params.anonymous = Object.is(params.credentials, 'omit');
-        delete params.credentials;
-      }
-      if (params.referrer) {
-        params.headers = { Referer: params.referrer, ...params.headers };
-        delete params.referrer;
-      }
-      /** @type {'arraybuffer' | 'blob' | 'json' | 'text'} */
-      const gmType = /array|buffer/.test(type)
-        ? 'arraybuffer'
-        : /^(blob|json)$/.test(type)
-          ? /** @type {'blob' | 'json'} */ (type)
-          : 'text';
-      $GM.xmlHttpRequest({
-        ...params,
-        url: target,
-        responseType: gmType,
-        timeout: timeout > 0 ? timeout : undefined,
-        onerror(r) {
-          fail(r?.status ?? 0, 'Network.req::onerror');
-        },
-        ontimeout() {
-          fail('timeout', 'Network.req::ontimeout');
-        },
-        onabort() {
-          fail('aborted', 'Network.req::onabort');
-        },
-        onload(r) {
-          if (r.status < 200 || r.status >= 300) {
-            fail(r.status, 'Network.req::onload');
-          } else if (/basic/.test(type)) {
-            resolve(r);
-          } else if (/document/.test(type)) {
-            resolve(parseHTML(String(r.responseText ?? r.response ?? '')));
-          } else if (gmType === 'json') {
-            resolve(
-              typeof r.response === 'string' || r.response == null
-                ? asJSON(String(r.response ?? r.responseText ?? ''))
-                : r.response
-            );
-          } else {
-            resolve(r.response);
+          .catch(reject);
+      } else {
+        const fallback = () =>
+          Network.req(requestURL, method, responseType, data, true).then(resolve, reject);
+        /** @type {VMScriptGMXHRDetails<typeof responseType>} */
+        const DETAILS = {
+          url: requestURL,
+          responseType,
+          ...params,
+          onerror() {
+            fallback();
+          },
+          onload(r_1) {
+            if (r_1.status !== 200) {
+              fallback();
+            } else if (/basic/i.test(responseType)) {
+              resolve(r_1);
+            } else {
+              resolve(r_1.response);
+            }
           }
-        }
-      });
+        };
+        $GM.xmlHttpRequest(DETAILS);
+      }
     });
-  },
-  format(bytes, decimals = 2) {
+  }
+  /**
+   * @param {number} bytes
+   * @param {number} [decimals]
+   * @returns {string}
+   */
+  static format(bytes, decimals = 2) {
     if (Number.isNaN(bytes) || !Number.isFinite(bytes) || bytes <= 0) return `0 ${this.sizes[0]}`;
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), this.sizes.length - 1);
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${this.sizes[i]}`;
-  },
-  sizes: ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-  prog(evt) {
+  }
+  /**
+   * @param { { loaded: number; total: number; } } evt
+   */
+  static prog(evt) {
     return !evt.total
       ? Network.format(evt.loaded)
       : `${+((evt.loaded / evt.total) * 100).toFixed(2)}%`;
-  },
-  async doc(pageURL, data, useFetch) {
-    return parseHTML(await Network.req(pageURL, 'GET', 'text', data, useFetch));
-  },
-  async fetchChunks(chunkURL, data, onProgress) {
+  }
+  /**
+   *
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<Document> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<Document>}
+   */
+  static async doc(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'document', data, useFetch);
+  }
+  /**
+   *
+   * @param {string | URL} chunkURL
+   * @param {VMScriptGMXHRDetails<Response> | RequestInit} [data]
+   * @param {(evt: { loaded: number; total: number; }) => void} onProgress
+   * @returns {Promise<{ chunks: Uint8Array[]; size: number }>}
+   */
+  static async fetchChunks(chunkURL, data, onProgress) {
     /** @type {Response} */
     const resp = await Network.req(chunkURL, 'GET', 'basic', { timeout: 0, ...data }, true);
     const total = Number(resp.headers.get('Content-Length')) || 0;
@@ -1595,24 +1514,34 @@ const Network = {
     }
     /** @type {Uint8Array[]} */
     const chunks = [];
-    let size = 0;
+    let loaded = 0;
     const reader = resp.body.getReader();
     try {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         chunks.push(value);
-        size += value.length;
-        if (isFN(onProgress)) onProgress({ loaded: size, total });
+        loaded += value.length;
+        if (isFN(onProgress)) onProgress({ loaded, total });
       }
     } finally {
       reader.releaseLock();
     }
-    return { chunks, size };
-  },
-  gmBlob(blobURL, data, onProgress) {
+    return { chunks, size: loaded };
+  }
+  /**
+   *
+   * @param {string | URL} blobURL
+   * @param {Record<string, unknown>} [data]
+   * @param {(evt: { loaded: number; total: number; }) => void} [onprogress]
+   * @returns {Promise<Blob>}
+   */
+  static gmBlob(blobURL, data, onprogress) {
     return new Promise((resolve, reject) => {
-      const fail = (/** @type {string | number} */ status) =>
+      /**
+       * @param {string | number} status
+       */
+      const fail = (status) =>
         reject(new Error(`status: ${status} finalURL: ${blobURL}`, { cause: 'Network.gmBlob' }));
       $GM.xmlHttpRequest({
         url: blobURL,
@@ -1620,9 +1549,7 @@ const Network = {
         responseType: 'blob',
         anonymous: Object.is(data?.credentials, 'omit'),
         headers: data?.referrer ? { Referer: data.referrer } : undefined,
-        onprogress(evt) {
-          if (isFN(onProgress)) onProgress({ loaded: evt.loaded, total: evt.total });
-        },
+        onprogress,
         onload(r) {
           if (r.status >= 200 && r.status < 300 && r.response) {
             resolve(r.response);
@@ -1635,39 +1562,111 @@ const Network = {
         onabort: () => fail('aborted')
       });
     });
-  },
-  async blob(blobURL, data, onProgress) {
-    try {
-      const { chunks } = await Network.fetchChunks(blobURL, data, onProgress);
-      return new Blob(chunks, { type: 'application/octet-stream' });
-    } catch (ex) {
-      // Most commonly CORS, a userscript manager request is not bound by it
-      if (!$GM.isGM) throw ex;
-      con.info('Fetch failed, retrying with "xmlHttpRequest":', errMsg(ex));
-      return Network.gmBlob(blobURL, data, onProgress);
-    }
-  },
-  async download(details, onProgress) {
-    const blob = await Network.blob(details.url, details.data, onProgress);
-    saveAs(blob, details.name);
-    return details.name;
   }
-};
-// #endregion
-// #region Handle Page
+}
+//#endregion
+
+//#region Custom Elements
 /**
- * Information about a supported website / page.
- * @typedef {{
- *   webpage: URL;
- *   host: string;
- *   root: string;
- *   pathType: string;
- * }} SiteInfo
+ * Base for custom elements.
  */
+class Base extends HTMLElement {
+  _mph_ = {};
+  constructor() {
+    super();
+  }
+  connectedMoveCallback() {}
+}
+
+class MainUserJS extends Base {
+  _mph_ = {
+    injected: false
+  };
+  constructor() {
+    super();
+    if (!isFN(this.attachShadow)) {
+      throw new Error('Failed to initialize: "attachShadow not supported"', {
+        cause: 'MainUserJS'
+      });
+    }
+    const shadow = this.attachShadow({ mode: 'closed' });
+
+    // Keep page level shortcuts / popunders from reacting to input inside the interface
+    for (const type of [
+      'click',
+      'mousedown',
+      'mouseup',
+      'pointerdown',
+      'pointerup',
+      'touchstart',
+      'touchend',
+      'keydown',
+      'keyup',
+      'keypress',
+      'contextmenu',
+      'wheel',
+      'scroll'
+    ]) {
+      this.addEventListener(type, (evt) => evt.stopPropagation());
+    }
+
+    /**
+     * Inserts a stylesheet.
+     * @param {string} css
+     * @param {string} role - Name of the stylesheet
+     * @param {ParentNode & Node} parent
+     * @returns {?HTMLStyleElement}
+     */
+    const loadCSS = (css, role, parent) => {
+      try {
+        if (typeof css !== 'string' || isBlank(css)) {
+          throw new Error(`"${role}" contains an empty CSS string`, { cause: 'loadCSS' });
+        }
+        /** @type {?HTMLStyleElement} */
+        let sty = null;
+        if ($GM.isGM) {
+          sty = $GM.addElement(parent, 'style', { textContent: css });
+        }
+        if (!(sty instanceof HTMLStyleElement)) {
+          sty = make('style', { textContent: css });
+          parent.append(sty);
+        }
+        sty.dataset.insertedBy = $GM.info.script.name;
+        sty.dataset.role = role;
+        return sty;
+      } catch (ex) {
+        con.err(ex);
+      }
+      return null;
+    };
+    loadCSS(main_css, 'primary-stylesheet', shadow);
+
+    /** @type {Root} */
+    const root = make('mph-root', {
+      dataset: isMobile ? { mobile: '' } : {}
+    });
+    shadow.append(root);
+    this._mph_.root = root;
+    defer(() => {
+      this.dataset.insertedBy = $GM.info.script.name;
+      this.dataset.role = 'primary-container';
+    });
+  }
+  get injected() {
+    return this._mph_.injected;
+  }
+  connectedCallback() {
+    this._mph_.injected = true;
+  }
+  disconnectedCallback() {
+    this._mph_.injected = false;
+  }
+}
+
 /**
  * Resolves which supported website a URL belongs to, provides the site palette and page globals.
  */
-class HandlePage {
+class Root extends Base {
   /**
    * Supported websites, key is the "root" name used by the site handlers.
    * @type {Record<string, { domains: string[] }>}
@@ -1683,6 +1682,7 @@ class HandlePage {
     xnxx: { domains: ['xnxx.com'] },
     xvideos: { domains: ['xvideos.com'] },
     '91porn': { domains: ['91porn.com'] },
+    '91porna': { domains: ['91porna.com'] },
     hqporner: { domains: ['hqporner.com'] },
     spankbang: { domains: ['spankbang.com'] },
     porntrex: { domains: ['porntrex.com'] },
@@ -1690,44 +1690,78 @@ class HandlePage {
     porn00: { domains: ['porn00.org'] },
     sxyprn: { domains: ['sxyprn.com'] },
     eporner: { domains: ['eporner.com'] },
-    youjizz: { domains: ['youjizz.com'] }
+    youjizz: { domains: ['youjizz.com'] },
+    beeg: { domains: ['beeg.com'] },
+    jable: { domains: ['jable.tv', 'fs1.app'] },
+    missav: { domains: ['missav.ai', 'missav.ws', 'missav.com'] }
   };
   /**
-   * @param {string | URL | Location} [input]
-   * @returns {URL}
-   */
-  static toURL(input = window.location.href) {
-    try {
-      if (input instanceof URL) return input;
-      if (typeof input === 'string') return new URL(input, window.location.href);
-      if (input && typeof input.href === 'string') return new URL(input.href);
-    } catch (ex) {
-      con.err(ex);
-    }
-    return new URL(BLANK_PAGE);
-  }
-  /**
    * Resolves `input` without touching any state.
-   * @param {string | URL | Location} [input]
-   * @returns {SiteInfo}
+   * @template {string | URL | Location} I
+   * @param {I} [input]
+   * @returns {Omit<SiteInfo, "router">}
    */
-  static resolve(input) {
-    const webpage = HandlePage.toURL(input);
-    const host = getHostname(webpage.hostname);
-    const root = Object.keys(HandlePage.HOST).find((k) =>
-      HandlePage.HOST[k].domains.includes(host)
-    );
-    /** @type {Map<string, RegExp>} */
-    const routes = new Map();
-    if (root && /pornhub|tube8|youporn|thumbzilla|redtube/.test(root)) {
-      if (root === 'pornhub') {
-        routes.set('GIF', /^\/gif\/\d+(?:\/(?=$))?$/i);
-        routes.set('Shorties', /^\/shorties(?:\/(?=$))?$/i);
+  static resolve(input = Page.location.href) {
+    try {
+      const webpage = toURL(input);
+      const host = getHostname(webpage.hostname);
+      const root =
+        Object.keys(Root.HOST).find((k) => Root.HOST[k].domains.includes(host)) ?? 'blank';
+      /** @type {Map<string, RegExp | string>} */
+      const routes = new Map([
+        ['Homepage', '/'],
+        ['Video', /view_video\.php/]
+      ]);
+      if (/pornhub|tube8|youporn|thumbzilla|redtube/.test(root)) {
+        if (root === 'youporn') {
+          routes.set('GayHomepage', /^\/gay/);
+        }
+        if (root === 'pornhub') {
+          routes.set('GayHomepage', /^\/gayporn/);
+          routes.set('TransHomepage', /^\/transgender/);
+          routes.set('LesbianHomepage', /^\/lesbian/);
+          routes.set('GIF', /^\/gif\/\d+(?:\/(?=$))?$/);
+          routes.set('Shorties', /^\/shorties(?:\/(?=$))?$/);
+        } else {
+          routes.set('Video', root === 'redtube' ? /\/[\d]+/ : /(video|watch)+|\/[\d]+\//);
+        }
       }
-      routes.set('Video', root === 'redtube' ? /\/[\d]+/ : /(video|watch)+|\/[\d]+\//);
+      if (/jable|porn00|eporner|xvideos|xhamster|analdin/.test(root)) {
+        routes.set('Video', /^\/video(s|-.*|\.)?\//);
+      }
+      if (root === 'porntrex') {
+        routes.set('Video', /^\/video\/.*\/.*/);
+      }
+      if (root === 'sxyprn') {
+        routes.set('Video', /^\/post\//);
+      }
+      if (root === 'hqporner') {
+        routes.set('Video', /^\/hdporn\//);
+      }
+      if (root === 'xnxx') {
+        routes.set('TodaysHomepage', /^\/todays-selection/);
+        routes.set('SearchHomepage', /^\/search\//);
+      }
+      if (root === 'youjizz') {
+        routes.set('Video', /^\/videos\/.+\.html/);
+      }
+      if (root === 'spankbang') {
+        routes.set('Video', /\/\w+\/video\//);
+      }
+      if (root === 'missav') {
+        routes.set('Video', /\/\w+\/\w+(\/[\w-]+)?/);
+      }
+      if (root === '91porna') {
+        routes.set('Video', /\/comic\/index\/detail/);
+      }
+      const path =
+        [...routes].find(([, reg]) =>
+          isRegExp(reg) ? reg.test(webpage.pathname) : reg === webpage.pathname
+        )?.[0] ?? 'Unknown';
+      return { webpage, host, root, path };
+    } catch {
+      return { webpage: new URL(BLANK_PAGE), host: 'blank', root: 'blank', path: 'Unknown' };
     }
-    const pathType = [...routes].find(([, reg]) => reg.test(webpage.pathname))?.[0] ?? 'Unknown';
-    return { webpage, host, root: root ?? 'blank', pathType };
   }
   /**
    * Site palette, applied as CSS variables.
@@ -1789,72 +1823,103 @@ class HandlePage {
     };
   }
   /**
-   * Default spot of the floating button, `[corner, distance from the edge in rem]`.
-   *
-   * Keeps it clear of what websites pin to their corners: bottom navigation bars on phones,
-   * "live cams" / chat popups on desktop.
-   * @type {Record<string, { desktop: [string, number]; mobile: [string, number] }>}
-   */
-  static SPOTS = {
-    default: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 4.5] },
-    onlyfans: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 5] },
-    xhamster: { desktop: ['bottom-left', 1], mobile: ['bottom-right', 4.5] }
-  };
-  /**
-   * Where the floating button sits, as `--mujs-position-*` values.
+   * Where the floating button sits, as `--mph-position-*` values.
    * @param {string} [corner] - `auto` (website default), `top-left`, `top-right`, `bottom-left` or `bottom-right`
    * @param {string} [root] - Website
    * @param {boolean} [mobile]
    * @returns {Record<string, string>}
    */
   static placement(corner = 'auto', root = 'default', mobile = isMobile) {
-    const spot = (HandlePage.SPOTS[root] ?? HandlePage.SPOTS.default)[
-      mobile ? 'mobile' : 'desktop'
-    ];
+    /**
+     * Default spot of the floating button, `[corner, distance from the edge in rem]`.
+     *
+     * Keeps it clear of what websites pin to their corners: bottom navigation bars on phones,
+     * "live cams" / chat popups on desktop.
+     * @type {Record<string, { desktop: [string, number]; mobile: [string, number] }>}
+     */
+    const SPOTS = {
+      default: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 4.5] },
+      onlyfans: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 5] },
+      xhamster: { desktop: ['bottom-left', 1], mobile: ['bottom-right', 4.5] }
+    };
+    const spot = (SPOTS[root] ?? SPOTS.default)[mobile ? 'mobile' : 'desktop'];
     const [where, lift] = /^(top|bottom)-(left|right)$/.test(corner) ? [corner, 1] : spot;
     const [vertical, horizontal] = where.split('-');
     const safe = (/** @type {string} */ edge) => `env(safe-area-inset-${edge}, 0px)`;
     /** @param {string} edge @param {number} rem */
     const at = (edge, rem) => `calc(${rem}rem + ${safe(edge)})`;
     return {
-      'mujs-position-top': vertical === 'top' ? at('top', lift) : 'auto',
-      'mujs-position-bottom': vertical === 'bottom' ? at('bottom', lift) : 'auto',
-      'mujs-position-left': horizontal === 'left' ? at('left', 1) : 'auto',
-      'mujs-position-right': horizontal === 'right' ? at('right', 1) : 'auto'
+      'mph-position-top': vertical === 'top' ? at('top', lift) : 'auto',
+      'mph-position-bottom': vertical === 'bottom' ? at('bottom', lift) : 'auto',
+      'mph-position-left': horizontal === 'left' ? at('left', 1) : 'auto',
+      'mph-position-right': horizontal === 'right' ? at('right', 1) : 'auto'
     };
   }
-  /** @type {SiteInfo} */
-  #info;
-  /**
-   * @param {string | URL | Location} [input]
-   */
-  constructor(input) {
-    this.#info = HandlePage.resolve(input);
+  constructor() {
+    super();
+
+    this.current = url;
   }
   /**
-   * @param {string | URL | Location} input
-   */
-  setCurrent(input) {
-    this.#info = HandlePage.resolve(input);
-    return this;
-  }
-  /**
-   * @type { import("../typings/types.d.ts").HandlePage['current'] }
+   * @returns {SiteInfo}
    */
   get current() {
-    return this.#info;
+    return this._mph_;
+  }
+  /**
+   * @template {string | URL | Location} I
+   * @param {I} [input]
+   */
+  set current(input) {
+    try {
+      this._mph_ = Root.resolve(input);
+    } catch {
+      this._mph_ = {};
+    }
   }
   get webpage() {
-    return this.#info.webpage;
+    return this.current.webpage ?? null;
   }
   get host() {
-    return this.#info.host;
+    return this.current.host ?? null;
   }
   get root() {
-    return this.#info.root;
+    return this.current.root ?? null;
+  }
+  get router() {
+    return this.current.router ?? null;
+  }
+  /**
+   * @param {{ push: (path: string) => unknown } | null} pageRouter
+   */
+  set router(pageRouter) {
+    if (isNull(pageRouter)) {
+      this.current.router = null;
+    } else {
+      this.current.router = pageRouter;
+    }
   }
   get palette() {
-    return HandlePage.palette(this.#info.root);
+    return Root.palette(this.current.root);
+  }
+  /**
+   * @param {string} path
+   * @returns {boolean}
+   */
+  navigate(path) {
+    try {
+      if (!this.router || isEmpty(path)) return false;
+      const result = this.router.push(path);
+      // Vue Router rejects duplicate navigations, not an error
+      if (result instanceof Promise) result.catch(BLANK_FN);
+      if (typeof container !== 'undefined') {
+        container.hidePanel();
+      }
+      return true;
+    } catch (ex) {
+      con.err(ex);
+    }
+    return false;
   }
   /**
    * Mobile websites redirect to "Continue to video" (interstitial), skip it.
@@ -1876,223 +1941,1943 @@ class HandlePage {
     }
     return false;
   }
-}
-const HP = new HandlePage();
-// #endregion
-// #region Media
-/**
- * Resolution of a video url: `720p.mp4`, `720P_4000K_1.mp4`, `720p.h264.mp4`, `720.mp4`.
- * The query is ignored, signed urls contain random characters.
- * @param {string} src
- */
-/**
- * Sorts `hlsByQuality` best-first into a playlist array, only when its best quality actually beats
- * `files`' best (or there are no files) -- otherwise HLS adds nothing worth offering.
- * @param {Array<string | { src: string }>} files
- * @param {Map<number, string>} hlsByQuality
- * @returns {{ ts: string[]; preferHLS: boolean }}
- */
-const pickHLS = (files, hlsByQuality) => {
-  if (!hlsByQuality.size) return { ts: [], preferHLS: false };
-  const bestFile = Math.max(
-    0,
-    ...files.map((f) =>
-      typeof f === 'string' ? resolutionOf(f) : parseInt(f.label, 10) || resolutionOf(f.src)
-    )
-  );
-  const bestHls = Math.max(...hlsByQuality.keys());
-  if (bestHls <= bestFile && files.length) return { ts: [], preferHLS: false };
-  const ts = Array.from(hlsByQuality.keys())
-    .sort((a, b) => b - a)
-    .map((q) => /** @type {string} */ (hlsByQuality.get(q)));
-  return { ts, preferHLS: true };
-};
-const resolutionOf = (src) => {
-  const path = src.split('?')[0];
-  return +(
-    /(\d{3,4})p(?=[._]|$)/i.exec(path.split('/').pop() ?? '')?.[1] ??
-    /\d+(?=P|p\.)/.exec(path)?.[0] ??
-    /\/(\d{3,4})\.(?:mp4|webm)$/.exec(path)?.[1] ??
-    0
-  );
-};
-/**
- * Sorts video urls by resolution, highest first.
- * @param {string} ma
- * @param {string} mb
- */
-const sortVideos = (ma, mb) => resolutionOf(mb) - resolutionOf(ma);
-/**
- * @param {string} str - Contents of a JSON string (without quotes)
- */
-const unescapeJSON = (str) => {
-  try {
-    return JSON.parse(`"${str}"`);
-  } catch {
-    return str;
-  }
-};
-// #region xHamster
-/**
- * xHamster hides the urls of its streams. `ciphertext = [algorithm, seed (int32, little endian), data...]`,
- * every byte of `data` is XORed with the next byte of a pseudo random sequence.
- *
- * Algorithms are the ones of the website player, see also the `xhamster` extractor of yt-dlp.
- * @type {Record<number, (state: { s: number }) => number>}
- */
-const XH_ALGORITHMS = {
-  1: (st) => (st.s = (Math.imul(st.s, 1664525) + 1013904223) | 0),
-  2: (st) => {
-    let s = st.s;
-    s ^= s << 13;
-    s ^= s >>> 17;
-    s ^= s << 5;
-    return (st.s = s | 0);
-  },
-  3: (st) => {
-    let s = (st.s = (st.s + 0x9e3779b9) | 0);
-    s ^= s >>> 16;
-    s = Math.imul(s, 0x85ebca77);
-    s ^= s >>> 13;
-    s = Math.imul(s, 0xc2b2ae3d);
-    return s ^ (s >>> 16);
-  },
-  4: (st) => {
-    let s = (st.s = (st.s + 0x6d2b79f5) | 0);
-    s = (s << 7) | (s >>> 25);
-    s = (s + 0x9e3779b9) | 0;
-    s ^= s >>> 11;
-    return Math.imul(s, 0x27d4eb2d);
-  },
-  5: (st) => {
-    let s = st.s;
-    s ^= s << 7;
-    s ^= s >>> 9;
-    s ^= s << 8;
-    return (st.s = (s + 0xa5a5a5a5) | 0);
-  },
-  6: (st) => {
-    const s = (st.s = (Math.imul(st.s, 0x2c9277b5) + 0xac564b05) | 0);
-    return (s ^ (s >>> 18)) >>> ((s >>> 27) & 31);
-  },
-  7: (st) => {
-    const s = (st.s = (st.s + 0x9e3779b9) | 0);
-    let e = s ^ (s << 5);
-    e = Math.imul(e, 0x7feb352d);
-    e ^= e >>> 15;
-    return Math.imul(e, 0x846ca68b);
-  }
-};
-/**
- * @param {string} hex
- * @returns {string | null} `null` for unknown algorithms
- */
-const xhDecipherHex = (hex) => {
-  const b = hex.match(/../g)?.map((x) => parseInt(x, 16)) ?? [];
-  const next = XH_ALGORITHMS[b[0]];
-  if (!next) return null;
-  const st = { s: b[1] | (b[2] << 8) | (b[3] << 16) | (b[4] << 24) | 0 };
-  let out = '';
-  for (let i = 5; i < b.length; i++) out += String.fromCharCode(b[i] ^ (next(st) & 0xff));
-  return out;
-};
-/**
- * The ciphertext is either the whole url or the first segment of its path.
- * @param {unknown} str
- * @returns {string | null} `null` when it is not a stream url (or the algorithm is unknown)
- */
-const xhDecipherURL = (str) => {
-  if (typeof str !== 'string') return null;
-  const hexRE = /^[0-9a-f]{12,}$/i;
-  let out = null;
-  if (hexRE.test(str)) {
-    out = xhDecipherHex(str);
-  } else {
-    try {
-      const u = new URL(str);
-      const [, hex, rest] = /^\/([0-9a-f]{12,})([/,].+)$/i.exec(u.pathname) ?? [];
-      const path = hex && xhDecipherHex(hex);
-      if (path) out = `${u.origin}/${path}${rest}${u.search}`;
-    } catch {
-      /* not a url */
-    }
-  }
-  return out && /^https?:\/\//.test(out) ? out : null;
-};
-/**
- * First balanced `{...}` or `[...]` of `txt` (from `from`), `window.initials={...};` -> object.
- * @param {string} txt
- * @param {number} [from]
- * @returns {any}
- */
-const extractJSON = (txt, from = 0) => {
-  const start = txt.slice(from).search(/[{[]/) + from;
-  let depth = 0;
-  let quoted = false;
-  for (let i = start; i >= from && i < txt.length; i++) {
-    const c = txt[i];
-    if (quoted) {
-      if (c === '\\') i++;
-      else if (c === '"') quoted = false;
-    } else if (c === '"') {
-      quoted = true;
-    } else if (c === '{' || c === '[') {
-      depth++;
-    } else if ((c === '}' || c === ']') && --depth === 0) {
-      return JSON.parse(txt.slice(start, i + 1));
-    }
-  }
-  throw new SyntaxError('No JSON found');
-};
-/**
- * Video sources of an xHamster page.
- * @param {any} initials - `window.initials`
- * @returns {{ title: string; files: string[]; hls: string[] }} `hls` lists master playlists, best choice first
- */
-const xhSources = (initials) => {
-  const sources = initials?.xplayerSettings?.sources ?? {};
-  /** @type {string[]} */
-  const files = [];
-  /** @type {Array<[string, string]>} */
-  const hls = [];
   /**
-   * @param {string} codec
-   * @param {any} entry
+   * Requests the page, resolves every video quality.
+   * @returns {Promise<VideoData>}
    */
-  const add = (codec, entry) => {
-    for (const key of ['url', 'fallback']) {
-      const u = xhDecipherURL(entry?.[key]);
-      if (!u) continue;
-      if (/\.m3u8(?:$|\?)/.test(u)) hls.push([codec, u]);
-      else if (!files.includes(u)) files.push(u);
+  async find(input) {
+    if (input) {
+      this.current = input;
+    }
+    if (this.webpage == null) {
+      throw new Error('"webpage" is null', { cause: 'Root:find()' });
+    }
+    const R = this.root;
+    const webpage = this.webpage.href;
+    // mydaddy.cc (hqporner's player iframe) rejects the request made through the userscript
+    // manager's own networking, a plain `fetch` with no cookies attached goes through instead
+    const doc = await (webpage.includes('mydaddy.cc')
+      ? Network.doc(this.webpage, { credentials: 'omit' }, true)
+      : Network.doc(this.webpage));
+    const meta = readMeta(doc, webpage);
+    /** @type {Set<string>} */
+    const files = new Set();
+    /** @type {Set<string>} */
+    const ts = new Set();
+    let title = '';
+    let poster = meta.poster;
+    let duration = meta.duration;
+    let preferHLS = false;
+    /** File labelled by the site itself, wins over a label guessed from its address */
+    const labelled = new Map();
+    if (R === 'hqporner') {
+      /** @type {?HTMLIFrameElement} */
+      const iframe = qs('.videoWrapper > iframe', doc);
+      if (iframe && !isEmpty(iframe.src)) {
+        return await this.find(iframe.src);
+      }
+    } else if (R === 'xhamster') {
+      /**
+       * Video sources of an xHamster page.
+       * @template {import("../typings/types.d.ts").xInitials} I
+       * @param {Partial<I>} initials - `window.initials`
+       * @returns {{ title: string; files: Set<string>; hls: Set<string> }} `hls` lists master playlists, best choice first
+       */
+      const xhSources = (initials) => {
+        /**
+         * The ciphertext is either the whole url or the first segment of its path.
+         * @param {unknown} str
+         * @returns {string | null} `null` when it is not a stream url (or the algorithm is unknown)
+         */
+        const xhDecipherURL = (str) => {
+          /**
+           * xHamster hides the urls of its streams. `ciphertext = [algorithm, seed (int32, little endian), data...]`,
+           * every byte of `data` is XORed with the next byte of a pseudo random sequence.
+           *
+           * Algorithms are the ones of the website player, see also the `xhamster` extractor of yt-dlp.
+           * @type {Record<number, (state: { s: number }) => number>}
+           */
+          const XH_ALGORITHMS = {
+            1: (st) => (st.s = (Math.imul(st.s, 1664525) + 1013904223) | 0),
+            2: (st) => {
+              let s = st.s;
+              s ^= s << 13;
+              s ^= s >>> 17;
+              s ^= s << 5;
+              return (st.s = s | 0);
+            },
+            3: (st) => {
+              let s = (st.s = (st.s + 0x9e3779b9) | 0);
+              s ^= s >>> 16;
+              s = Math.imul(s, 0x85ebca77);
+              s ^= s >>> 13;
+              s = Math.imul(s, 0xc2b2ae3d);
+              return s ^ (s >>> 16);
+            },
+            4: (st) => {
+              let s = (st.s = (st.s + 0x6d2b79f5) | 0);
+              s = (s << 7) | (s >>> 25);
+              s = (s + 0x9e3779b9) | 0;
+              s ^= s >>> 11;
+              return Math.imul(s, 0x27d4eb2d);
+            },
+            5: (st) => {
+              let s = st.s;
+              s ^= s << 7;
+              s ^= s >>> 9;
+              s ^= s << 8;
+              return (st.s = (s + 0xa5a5a5a5) | 0);
+            },
+            6: (st) => {
+              const s = (st.s = (Math.imul(st.s, 0x2c9277b5) + 0xac564b05) | 0);
+              return (s ^ (s >>> 18)) >>> ((s >>> 27) & 31);
+            },
+            7: (st) => {
+              const s = (st.s = (st.s + 0x9e3779b9) | 0);
+              let e = s ^ (s << 5);
+              e = Math.imul(e, 0x7feb352d);
+              e ^= e >>> 15;
+              return Math.imul(e, 0x846ca68b);
+            }
+          };
+          /**
+           * @param {string} hex
+           * @returns {string | null} `null` for unknown algorithms
+           */
+          const xhDecipherHex = (hex) => {
+            const b = hex.match(/../g)?.map((x) => parseInt(x, 16)) ?? [];
+            const next = XH_ALGORITHMS[b[0]];
+            if (!next) return null;
+            const st = { s: b[1] | (b[2] << 8) | (b[3] << 16) | (b[4] << 24) | 0 };
+            let out = '';
+            for (let i = 5; i < b.length; i++) out += String.fromCharCode(b[i] ^ (next(st) & 0xff));
+            return out;
+          };
+          if (typeof str !== 'string') return null;
+          const hexRE = /^[0-9a-f]{12,}$/i;
+          let out = null;
+          if (hexRE.test(str)) {
+            out = xhDecipherHex(str);
+          } else {
+            try {
+              const u = toURL(str);
+              const [, hex, rest] = /^\/([0-9a-f]{12,})([/,].+)$/i.exec(u.pathname) ?? [];
+              const path = hex && xhDecipherHex(hex);
+              if (path) out = `${u.origin}/${path}${rest}${u.search}`;
+            } catch {
+              /* not a url */
+            }
+          }
+          return out && /^https?:\/\//.test(out) ? out : null;
+        };
+        const sources = initials?.xplayerSettings?.sources;
+        /** @type {Set<string>} */
+        const _files = new Set();
+        /** @type {Map<string, string>} */
+        const _hls = new Map();
+        /**
+         * @template { import("../typings/types.d.ts").VideoSource } H
+         * @param {string} codec
+         * @param {H} entry
+         */
+        const add = (codec, entry) => {
+          for (const k of Object.keys(entry)) {
+            if (k === 'url' || k === 'fallback') {
+              const u = xhDecipherURL(entry[k]);
+              if (!u) continue;
+              if (/\.m3u8(?:$|\?)/.test(u)) {
+                _hls.set(codec, u);
+              } else if (!_files.has(u)) {
+                _files.add(u);
+              }
+            }
+          }
+        };
+        /**
+         * h264 plays everywhere, av1 is the last resort
+         */
+        const h264Sort = ([a], [b]) => Number(a !== 'h264') - Number(b !== 'h264');
+        if (isNull(sources)) {
+          return {
+            title,
+            files: _files,
+            hls: new Set()
+          };
+        }
+        for (const [codec, entry] of toArray(sources.hls, { entries: true }).sort(h264Sort))
+          add(codec, entry);
+        for (const [codec, list] of toArray(sources.standard, { entries: true }).sort(h264Sort)) {
+          for (const entry of list) add(codec, entry);
+        }
+        poster = String(initials?.videoModel?.thumbURL ?? poster);
+        return {
+          title: String(initials?.videoModel?.title ?? title),
+          files: _files,
+          hls: new Set(
+            toArray(_hls)
+              .sort(h264Sort)
+              .map(([, u]) => u)
+          )
+        };
+      };
+      const found = xhSources(
+        extractJSON(doc.getElementById('initials-script')?.textContent ?? '')
+      );
+      if (!Object.is(found.title.trim(), title.trim())) {
+        title = found.title;
+      }
+      preferHLS = true;
+      for (const f of found.files) {
+        files.add(f);
+      }
+      for (const h of found.hls) {
+        ts.add(h);
+      }
+    } else if (/\.(xnxx|xvideos)\./.test(webpage)) {
+      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').find((t) =>
+        t.includes('html5player.setVideo')
+      );
+      /** @param {string} name */
+      const setup = (name) =>
+        new RegExp(`html5player\\.${name}\\('((?:[^'\\\\]|\\\\.)*)'\\)`).exec(txt ?? '')?.[1];
+      const hls = setup('setVideoHLS');
+      return {
+        title: meta.title || htmlToText(setup('setVideoTitle')) || document.title,
+        poster: meta.poster ?? setup('setThumbUrl'),
+        duration: meta.duration,
+        // The file name tells the quality (`mp4_sd.mp4`), Low and High are often the same file
+        files: [setup('setVideoUrlHigh'), setup('setVideoUrlLow')].map((src = '') => ({
+          src,
+          label: /\/mp4_(\w+)\.mp4/.exec(src)?.[1].toUpperCase() ?? ''
+        })),
+        // The direct file is capped to one (low) quality, HLS carries the higher ones
+        ts: hls ? [hls] : [],
+        preferHLS: true
+      };
+    } else if (R === 'youjizz') {
+      // `dataEncodings` lists every quality twice: a direct file and its single-bitrate HLS
+      // equivalent, plus one "Auto" adaptive playlist bundling a few of those qualities together
+      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').find((t) =>
+        t.includes('dataEncodings')
+      );
+      /** @type {{ quality?: string; filename?: string }[]} */
+      let entries = [];
+      try {
+        entries = extractJSON(txt ?? '', (txt ?? '').indexOf('dataEncodings'));
+      } catch (ex) {
+        con.err(ex);
+      }
+      /** @type {{ src: string; label: string }[]} */
+      const files = [];
+      /** @type {Map<number, string>} */
+      const hlsByQuality = new Map();
+      for (const e of entries) {
+        const src = absURL(String(e.filename ?? ''), webpage);
+        const quality = parseInt(String(e.quality), 10) || 0;
+        if (!src || !quality) continue;
+        if (/\.m3u8/.test(src)) hlsByQuality.set(quality, src);
+        else files.push({ src, label: `${quality}p` });
+      }
+      return {
+        title: meta.title || document.title,
+        poster: meta.poster,
+        duration: meta.duration,
+        files,
+        ...pickHLS(files, hlsByQuality)
+      };
+    } else if (R === 'spankbang') {
+      /**
+       * Every quality SpankBang lists in the player setup.
+       * @param {Document} page
+       */
+      const spankBangFiles = (page) => {
+        for (const script of page.scripts) {
+          const [, raw] = /stream_data\s*=\s*(\{.*?\});/s.exec(script.textContent ?? '') ?? [];
+          if (!raw) continue;
+          try {
+            /** @type {Record<string, string[]>} */
+            const data = JSON.parse(raw.replaceAll("'", '"'));
+            return {
+              files: Object.entries(data)
+                .filter(([quality, list]) => /^(?:\d+p|4k)$/.test(quality) && list[0])
+                .map(([quality, list]) => ({
+                  src: list[0],
+                  label: quality === '4k' ? '2160p' : quality
+                })),
+              ts: toArray(data.m3u8).slice(0, 1)
+            };
+          } catch (ex) {
+            con.err(ex);
+          }
+        }
+        return { files: [], ts: [] };
+      };
+      let { files, ts } = spankBangFiles(doc);
+      if (isEmpty(files)) {
+        // The setup was not found, what the player shows
+        await waitFor(() => qs('video > source'), 10000);
+        files = Array.from(qsA('video > source'), ({ src = '' }) => ({
+          src,
+          label: ''
+        }));
+      }
+      // The named qualities top out below 1080p on some accounts, its one HLS playlist is
+      // adaptive and often reaches higher, but we can't read its ceiling without building it
+      const bestFile = Math.max(0, ...files.map((f) => parseInt(f.label, 10) || 0));
+      return {
+        title: meta.title || document.title,
+        poster: meta.poster,
+        duration: meta.duration,
+        files,
+        ts,
+        preferHLS: bestFile < 1080
+      };
+    } else if (R === 'missav') {
+      /**
+       * Source of a script packed with `eval(function(p,a,c,k,e,d){...})`, read without running it.
+       * @param {string} txt
+       * @returns {string} `txt` unchanged when nothing is packed
+       */
+      const unpackJS = (txt) => {
+        const [, p = '', a = '', c = '', k = ''] =
+          /\}\('((?:[^'\\]|\\.)*)',\s*(\d+),\s*(\d+),\s*'((?:[^'\\]|\\.)*)'\.split\('\|'\)/.exec(
+            txt
+          ) ?? [];
+        if (!p) return txt;
+        const radix = Number(a);
+        const words = k.split('|');
+        /** @param {number} n @returns {string} */
+        const encode = (n) =>
+          (n < radix ? '' : encode(Math.floor(n / radix))) +
+          (n % radix > 35 ? String.fromCharCode((n % radix) + 29) : (n % radix).toString(36));
+        /** @type {Map<string, string>} */
+        const dict = new Map();
+        for (let i = Number(c); i--;) dict.set(encode(i), words[i] || encode(i));
+        return p.replace(/\\(['\\])/g, '$1').replace(/\b\w+\b/g, (w) => dict.get(w) ?? w);
+      };
+      // A packed script sets `source` (adaptive), `source1280` (1080p) and `source842` (720p)
+      /** @param {Document} page */
+      const sources = (page) => {
+        for (const script of page.scripts) {
+          const txt = script.textContent ?? '';
+          if (!txt.includes('eval(function(p,a,c,k,e,d)') || !txt.includes('m3u8')) continue;
+          const setup = unpackJS(txt);
+          return ['source', 'source1280', 'source842']
+            .map((key) => new RegExp(`\\b${key}\\s*=\\s*'([^']+\\.m3u8[^']*)'`).exec(setup)?.[1])
+            .filter((u) => typeof u === 'string');
+        }
+        return [];
+      };
+      // Cloudflare can answer the request with a challenge, the open page has the same script
+      const found = sources(doc).length ? doc : document;
+      const _meta = readMeta(found, webpage);
+      return {
+        title: _meta.title || document.title,
+        poster: _meta.poster,
+        duration: _meta.duration,
+        ts: sources(found)
+      };
+    } else if (R === '91porn') {
+      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const [, encoded = ''] = /strencode2\("([^"]+)"\)/.exec(txt) ?? [];
+      const src = qs('source', parseHTML(decodeURIComponent(encoded)))?.getAttribute('src');
+      return {
+        title: doc.title
+          .replace(/\s+/g, ' ')
+          .replace(/\s*-\s*91porn\s*$/i, '')
+          .trim(),
+        poster: absURL(qs('video', doc)?.getAttribute('poster') ?? '', webpage) || undefined,
+        duration: toSeconds(/const videoDuration = ([\d.]+)/.exec(txt)?.[1]),
+        files: src ? [src] : []
+      };
+    } else if (R === '91porna') {
+      const decoder = (src) => {
+        if (!src) {
+          const s = [...doc.scripts].find((x) =>
+            x.textContent.includes('eval(function(p,a,c,k,e,d)')
+          );
+          if (!s) throw new Error('Packed script not found on this page');
+          src = s.textContent;
+        }
+        const m = src.match(/\}\('([\s\S]*)',\s*(\d+),\s*(\d+),\s*'([\s\S]*?)'\.split\('\|'\)/);
+        if (!m) throw new Error('Not a p,a,c,k,e,d blob');
+        const payload = m[1].replace(/\\(.)/g, '$1'); // undo \' and \\ escapes
+        const radix = +m[2],
+          count = +m[3],
+          words = m[4].split('|');
+        const enc = (c) =>
+          (c < radix ? '' : enc(Math.floor(c / radix))) +
+          ((c = c % radix) > 35 ? String.fromCharCode(c + 29) : c.toString(36));
+        const dict = {};
+        for (let i = 0; i < count; i++) dict[enc(i)] = words[i] || enc(i);
+        const code = payload.replace(/\b\w+\b/g, (w) => (w in dict ? dict[w] : w));
+        const grab = (re, s = code) => (s.match(re) || ['', ''])[1];
+        return { grab, code, src };
+      };
+      const decodeVideo = () => {
+        const d = decoder();
+        const poster = d.grab(/url\('([^']+)'\)/);
+        const img = decodeURIComponent(d.grab(/\?img=([^&"]+)/));
+        const ads = d.grab(/&amp;ads=([^&"]*)/);
+        const u = d.grab(/&u="\+encodeURIComponent\("([^"]*)"\)/);
+        const h = d.grab(/&h="\+encodeURIComponent\("([^"]*)"\)/);
+        const bucket = +d.grab(/\/(\d+)\)\+/) || 2100; // time bucket size (s)
+        const t = Math.floor(Date.now() / 1000 / bucket);
+        const path = d.grab(/src=\\"([^?]+)\?/) || '/index/detail_play';
+        const qs =
+          'img=' +
+          encodeURIComponent(img) +
+          '&ads=' +
+          ads +
+          '&u=' +
+          encodeURIComponent(u) +
+          '&h=' +
+          encodeURIComponent(h) +
+          '&t=' +
+          t;
+        const base = this.webpage.origin;
+        const [exp, rand, uid, md5] = (new URL(poster).searchParams.get('auth_key') || '').split(
+          '-'
+        );
+        return {
+          poster,
+          posterAuth: { expires: new Date(exp * 1000).toISOString(), rand, uid, md5 },
+          params: { img, ads, u, h, t, bucketSeconds: bucket },
+          scriptUrl: base + path + '?' + qs
+        };
+      };
+      const decodePlaylist = (src) => {
+        const d = decoder(src);
+        const url = d.grab(/\burl:'([^']+)'/);
+        const poster = d.grab(/\bposter:'([^']+)'/);
+        if (!url) throw new Error('No playlist URL in unpacked code');
+        const hevc = d.grab(/_dx_hevc_url\s*=\s*"([^"]*)"/, d.src);
+        const auth = (u) => {
+          if (!u) return null;
+          const p = new URL(u);
+          const [exp, rand, uid, md5] = (p.searchParams.get('auth_key') || '').split('-');
+          const expires = new Date(exp * 1000);
+          return {
+            expires: expires.toISOString(),
+            expired: expires < new Date(),
+            minutesLeft: Math.round((expires - Date.now()) / 60000),
+            rand,
+            uid,
+            md5
+          };
+        };
+        const q = new URL(url).searchParams;
+
+        return {
+          playlist: url,
+          hevc: hevc || null,
+          poster,
+          videoHash: d.grab(/\/([0-9a-f]{32})\.m3u8/, url),
+          via: { via: q.get('via'), via_bm: q.get('via_bm'), v: q.get('v'), time: q.get('time') },
+          playlistAuth: auth(url),
+          posterAuth: auth(poster)
+        };
+      };
+      const decoded = decodeVideo();
+      const obj = decodePlaylist(await Network.req(decoded.scriptUrl, 'GET', 'text'));
+      poster = decoded.poster || obj.poster || meta.poster;
+      return {
+        title: meta.title || doc.title.trim() || document.title,
+        poster,
+        duration: meta.duration,
+        ts: [obj.playlist]
+      };
+    } else if (R === 'jable') {
+      const obj = {};
+      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const [, hlsUrl = ''] = /hlsUrl = '([^']+)'/.exec(txt) ?? [];
+      if (!isEmpty(hlsUrl)) {
+        obj.ts = [hlsUrl];
+      }
+      for (const m of qsA('meta[property^="og:"]', doc)) {
+        if (m) {
+          const content = m.getAttribute('content')?.trim() ?? '';
+          if (content.startsWith('http')) {
+            obj.poster = content;
+          } else {
+            obj.title = content;
+          }
+        }
+      }
+      return obj;
+    } else if (R === 'eporner') {
+      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const arr = Array.from(
+        txt.matchAll(/EP\.video\.player\.(poster|vid|hash) = '(.*)'/g),
+        ([, a, b]) => [a, b]
+      );
+      const obj = {};
+      for (const [k, v] of arr) {
+        obj[k] = v;
+      }
+      const vidUrl = toURL(`/xhr/video/${obj.vid}`, this.webpage);
+      const sp = vidUrl.searchParams;
+      const toHash = (r) => {
+        return (
+          !(!r || 32 !== r.length) &&
+          parseInt(r.substring(0, 8), 16).toString(36) +
+            parseInt(r.substring(8, 16), 16).toString(36) +
+            parseInt(r.substring(16, 24), 16).toString(36) +
+            parseInt(r.substring(24, 32), 16).toString(36)
+        );
+      };
+      sp.append('hash', toHash(obj.hash));
+      sp.append('domain', this.webpage.hostname);
+      sp.append('pixelRatio', 0);
+      sp.append('playerHeight', 0);
+      sp.append('fallback', false);
+      sp.append('embed', false);
+      sp.append('supportedFormats', ['hls', 'dash', 'h265', 'vp9', 'av1', 'mp4']);
+      sp.append('_', new Date().getTime());
+      const req = await Network.req(vidUrl, 'GET', 'json', { credentials: 'include' });
+      const ts = req?.sources?.hls?.auto?.src;
+      const files = req?.sources?.mp4;
+      return {
+        title: meta.title || document.title,
+        poster,
+        duration: meta.duration,
+        files: files ? [files] : undefined,
+        ts: ts ? [ts] : undefined
+      };
+    } else {
+      /**
+       * @param {string} str - Contents of a JSON string (without quotes)
+       */
+      const unescapeJSON = (str) => {
+        try {
+          return JSON.parse(`"${str}"`);
+        } catch {
+          return str;
+        }
+      };
+      // Pornhub and its siblings: the player setup lists the streams, some of them are addresses
+      // that resolve (`"remote":true`) to the per-quality files instead of being one directly
+      for (const script of doc.getElementsByTagName('script')) {
+        const txt = script.textContent ?? '';
+        const at = txt.indexOf('"mediaDefinitions"');
+        if (at < 0) continue;
+        const [, name = ''] = /"video_title":"(.*?)",/.exec(txt) ?? [];
+        if (!isEmpty(name)) title = unescapeJSON(name);
+        /** @type {Array<{ format?: string; videoUrl?: string; remote?: boolean }>} */
+        let defs;
+        try {
+          defs = extractJSON(txt, at);
+        } catch (ex) {
+          con.err(ex);
+          continue;
+        }
+        /**
+         * Best quality found per format, only kept when it beats the files found directly
+         * @type {Map<number, string>}
+         */
+        const hlsByQuality = new Map();
+        for (const d of toArray(defs)) {
+          if (d?.format !== 'mp4' && d?.format !== 'hls') continue;
+          const u = absURL(String(d.videoUrl ?? ''), webpage);
+          if (!u) continue;
+          if (d.remote) {
+            try {
+              /** @type {Array<{ format?: string; videoUrl?: string; quality?: unknown }>} */
+              const list = await Network.req(u);
+              for (const q of toArray(list)) {
+                const qu = absURL(String(q?.videoUrl ?? ''), webpage);
+                if (!qu || Array.isArray(q.quality)) continue;
+                const quality = parseInt(String(q.quality), 10) || 0;
+                if (q.format === 'hls' || /\.m3u8/.test(qu)) hlsByQuality.set(quality, qu);
+                else if (/\.mp4[.?]/.test(qu)) files.add(qu);
+              }
+            } catch (ex) {
+              con.err(ex);
+            }
+          } else if (d.format === 'hls') {
+            ts.add(u);
+          } else if (/\.mp4/.test(u)) {
+            files.add(u);
+          }
+        }
+        const picked = pickHLS(files, hlsByQuality);
+        if (picked.preferHLS) {
+          preferHLS = true;
+          for (const u of picked.ts) ts.add(u);
+        }
+        if (files.size || ts.size) break;
+      }
+      if (files.size === 0) {
+        const txt = doc.documentElement.innerHTML;
+        // `do_pl()`-style embed (hqporner's player iframe): the video markup is a JS string
+        // built inline with escaped quotes, quality sits on each source's `title`. The string
+        // isn't valid HTML on its own (it's inline in a `<script>`, sometimes duplicated across
+        // an if/else), so its `<source>` tags are read directly rather than through parseHTML
+        const clean = txt.replace(/\\(["'])/g, '$1');
+        /** @param {string} tag @param {string} name */
+        const attr = (tag, name) => new RegExp(`${name}=["']([^"']*)["']`).exec(tag)?.[1];
+        const sources = toArray(clean.matchAll(/<source\b([^>]*)>/gi)).filter(
+          ([, attrs]) => /\bsrc=/.test(attrs) && /\btitle=/.test(attrs)
+        );
+        if (sources.length && /id=["']flvv["']/.test(clean)) {
+          const videoTag = /<video\b[^>]*\bid=["']flvv["'][^>]*>/i.exec(clean)?.[0] ?? '';
+          const [, min = 0, sec = 0] =
+            /duration is (\d+)min (\d+)sec/i.exec(
+              qs('meta[name="description"]')?.getAttribute('content') ?? ''
+            ) ?? [];
+          poster = absURL(attr(videoTag, 'poster') ?? '', webpage) || poster;
+          duration = Number(min) * 60 + Number(sec);
+          title =
+            document.title.replace(/\s*-\s*HQporner\.com$/i, '') || qs('h1')?.textContent?.trim();
+          for (const [, attrs] of sources) {
+            const src = absURL(attr(attrs, 'src') ?? '', webpage);
+            if (!src) continue;
+            files.add(src);
+            const label = attr(attrs, 'title');
+            if (label) labelled.set(src, label);
+          }
+        } else {
+          // KVS players (porntrex, analdin, ...)
+          /** @param {RegExp} reg */
+          const addAlt = (reg) => {
+            for (const r of txt.match(new RegExp(reg.source, 'g')) ?? []) {
+              const [, alt = ''] = reg.exec(r) ?? [];
+              if (!isEmpty(alt)) files.add(alt.replaceAll('function/0/', ''));
+            }
+          };
+          title = /video_title: '(.*?)'/.exec(txt)?.[1] || title;
+          if (!/porntrex/.test(webpage)) addAlt(/video_alt_url: '(.*?)'/);
+          addAlt(/video_alt_url\d+: '(.*?)'/);
+          const [, A, B, C] =
+            /(\w+)\.replaceAll\("\w+",(\w+)\+"pubs\/"\+(\w+)\+"\/"\)/.exec(txt) ?? [];
+          const [, videoHTML] = (A && new RegExp(`${A}="(<video.+</video>)"`).exec(txt)) || [];
+          if (videoHTML) {
+            const [b = '', c = ''] = [B, C].map(
+              (e) => new RegExp(`${e}="(.*?)"`).exec(txt)?.[1] ?? ''
+            );
+            const html = parseHTML(
+              videoHTML.replaceAll('nrpuv', `${b}pubs/${c}/`).replaceAll('\\"', '"')
+            );
+            poster = absURL(qs('video', html)?.getAttribute('poster') ?? '', webpage) || poster;
+            for (const source of qsA('source', html)) {
+              const src = absURL(source.getAttribute('src') ?? '', webpage);
+              if (src) files.add(src);
+            }
+          }
+        }
+      }
+    }
+    /**
+     * Sorts video urls by resolution, highest first.
+     * @param {string} ma
+     * @param {string} mb
+     */
+    const sortVideos = (ma, mb) => resolutionOf(mb) - resolutionOf(ma);
+    return {
+      page: webpage,
+      title: title || meta.title || doc.title,
+      poster,
+      duration,
+      preferHLS,
+      files: toArray(files)
+        .sort(sortVideos)
+        .map((src) => (labelled.has(src) ? { src, label: labelled.get(src) } : src)),
+      ts: toArray(ts)
+    };
+  }
+}
+
+class Post extends Base {
+  constructor() {
+    super();
+  }
+  /**
+   * @param {string} key
+   * @param {PostCard} post
+   * @param {MediaGroup} group
+   */
+  render(key, post, group) {
+    this.dataset.post = key;
+    const grid = make('mph-elem', 'post-media');
+    this.append(grid);
+    this._mph_ = { grid };
+    const { meta } = this._renderHead(post);
+    group.pane.append(this);
+    return { key, post, el: this, grid, meta, ids: new Set() };
+  }
+  /**
+   * Refreshes the header of the card (name, pills, text) with newer data, its tiles are kept.
+   * @param {PostEntry} entry
+   * @param {PostCard} post
+   */
+  update(entry, post) {
+    const { meta } = this._renderHead(post);
+    entry.post = post;
+    entry.meta = meta;
+    return entry;
+  }
+  /**
+   * Builds (or rebuilds) everything above the tiles.
+   * @param {PostCard} post
+   */
+  _renderHead(post) {
+    const { user } = post;
+    const avatar = make('mph-elem', 'avatar');
+    this._mph_.head?.remove();
+    this._mph_.text?.remove();
+    this.dataset.variant = post.variant;
+    this.dataset.search = `${user.name} ${post.text ?? ''}`.toLowerCase();
+    if (post.variant === 'video') IconSVG.load('video', avatar);
+    else avatar.textContent = (user.name || '?').slice(0, 1).toUpperCase();
+    if (user.avatar) {
+      const img = make('img', { src: user.avatar, alt: '', decoding: 'async' });
+      img.addEventListener('load', () => avatar.replaceChildren(img), { once: true });
+    }
+    const who = make('mph-elem', 'post-who');
+    const name = make('mph-elem', 'post-name', { textContent: user.name });
+    if (user.username) {
+      name.append(make('span', 'post-handle', { textContent: ` @${user.username}` }));
+    }
+    const meta = make('mph-elem', 'post-meta');
+    who.append(name, meta);
+    const head = make('mph-row', 'post-head');
+    head.append(avatar, who);
+    if (post.isMessage) {
+      head.append(make('mph-elem', 'pill muted', { textContent: i18n$('message') }));
+    }
+    if (post.isFree) {
+      head.append(make('mph-elem', 'pill free', { textContent: i18n$('free') }));
+    } else if (post.price) {
+      head.append(make('mph-elem', 'pill', { textContent: `$${post.price}` }));
+    }
+    if (post.original) {
+      head.append(MainBody.action('open', 'of-open', i18n$('open'), { webpage: post.original }));
+    }
+    const text = post.text
+      ? make('mph-elem', 'post-text', { textContent: post.text, title: post.text })
+      : undefined;
+    const { grid } = this._mph_;
+    grid.before(...[head, text].filter(Boolean));
+    Object.assign(this._mph_, { post, avatar, grid, head, meta, who, name, text });
+    return this._mph_;
+  }
+}
+
+/**
+ * Holds every video found on the page, owns the elements that display them.
+ *
+ * Everything is a card in the feed of a tab (the layout of an OnlyFans post):
+ *
+ * - `post`: an OnlyFans post, every tile is a media of the post
+ * - `video`: a video, every tile is a quality of it (or the HLS stream when that is all there is)
+ */
+class List extends Base {
+  /**
+   * @type { { body: MainBody } }
+   */
+  _mph_ = {
+    body: {}
+  };
+  constructor() {
+    super();
+  }
+  disconnectedCallback() {
+    if (this.body) {
+      const id = this.dataset.host;
+      for (const item of this.items) {
+        item.el.remove();
+        if (item.blob) URL.revokeObjectURL(item.src);
+        if (this.group) {
+          for (const i of this.group.items) {
+            const entry = this.body.posts.get(item.post);
+            if (entry) {
+              entry.ids.delete(i);
+              if (entry.ids.size === 0) {
+                entry.el.remove();
+                this.body.posts.delete(entry.key);
+              } else {
+                this.body._updatePost(entry);
+              }
+            }
+            this.body.items.delete(i);
+            this.body.updateCounts();
+          }
+        }
+      }
+      this.body.groups.delete(id);
+      this.body.updateCounts();
+    }
+  }
+  get body() {
+    return this._mph_.body;
+  }
+  set body(obj) {
+    this._mph_.body = obj;
+  }
+  get group() {
+    return this.body.groups.get(this.dataset.host);
+  }
+  /**
+   * @returns {MediaItem[]}
+   */
+  get items() {
+    return [...this.group.items].map((i) => this.body.items.get(i)).filter((i) => !isEmpty(i));
+  }
+  /**
+   * @returns {PostEntry[]}
+   */
+  get posts() {
+    return this.items.map((i) => this.body.posts.get(i.post)).filter((i) => !isEmpty(i));
+  }
+}
+
+class MainBody extends Base {
+  /**
+   * @type { { groups: Map<string, MediaGroup>; items: Map<string, MediaItem>; posts: Map<string, PostEntry>; } }
+   */
+  _mph_ = {
+    groups: new Map(),
+    items: new Map(),
+    posts: new Map()
+  };
+  constructor() {
+    super();
+  }
+  connectedCallback() {
+    con.log(this._mph_);
+  }
+  /**
+   * File extension of a media url.
+   * @param {string} src
+   * @param {string} [def]
+   */
+  static extFromURL(src, def = 'mp4') {
+    try {
+      const [, ext = ''] =
+        /\.(mp4|webm|m4v|mov|ts|m4s|gif|webp|jpe?g|png|avif|mp3|m4a)$/i.exec(toURL(src).pathname) ??
+        [];
+      return ext ? ext.toLowerCase() : def;
+    } catch {
+      return def;
+    }
+  }
+  get groups() {
+    return this._mph_.groups;
+  }
+  get items() {
+    return this._mph_.items;
+  }
+  get posts() {
+    return this._mph_.posts;
+  }
+  /**
+   * Replaces the HLS tile by the video that was built from it.
+   * @param {MediaItem} item - The HLS tile
+   * @param {Blob} blob
+   * @param {string} ext
+   */
+  addBlob(item, blob, ext) {
+    const entry = this.posts.get(item.post);
+    const group = this.groups.get(item.group);
+    if (!entry || !group) return;
+    this._addItem(entry, group, `${item.post}:${ext}`, {
+      id: ext,
+      type: 'video',
+      label: ext.toUpperCase(),
+      name: item.title,
+      src: URL.createObjectURL(blob),
+      blob,
+      ext,
+      poster: item.poster,
+      thumb: item.thumb,
+      duration: item.duration,
+      data: item.data
+    });
+    this.removeItem(item.id);
+    this._done();
+  }
+  /**
+   * Adds a video: one card, one tile per quality, or a single tile for the HLS stream when
+   * there is nothing else.
+   * @param {VideoData} video
+   * @param {boolean} [options] - `update`: refresh the card when it already exists
+   * @returns {boolean} `false` when the page has no video
+   */
+  addVideo(video, update = false) {
+    if (typeof container === 'undefined') return false;
+    video.postData ??= {};
+    const page = toURL(video.page ?? container.root.webpage);
+    const title = String(isEmpty(video.title) ? document.title || 'MagicPH' : video.title);
+    const shared = {
+      viewerOnly: video.viewerOnly === true,
+      poster: video.poster,
+      data: video.hermes ?? {}
+    };
+    const files = MainBody.qualities(video.files);
+    /** @type {PostMedia[]} */
+    const media = files.map(({ src, label }) => ({
+      ...shared,
+      id: label,
+      label,
+      src,
+      type: /^(?:gif|webp|jpe?g|png|avif)$/.test(MainBody.extFromURL(src, '')) ? 'photo' : 'video',
+      name: title
+    }));
+    const stream = toArray(video.ts);
+    if (
+      (stream.length && (media.length === 0 || video.preferHLS)) ||
+      stream.find((i) => i.includes('xhcdn.com'))
+    ) {
+      media.push({
+        ...shared,
+        id: 'hls',
+        label: 'HLS',
+        type: 'video',
+        stream: [...new Set(stream)],
+        name: title
+      });
+    }
+    if (Array.isArray(video.photos)) {
+      media.push(...video.photos);
+    }
+    if (media.length === 0) {
+      con.info('No video found:', page.href);
+      return false;
+    }
+    const id = video.id ?? page.href;
+    const groupKey = video.groupKey ?? title;
+    // Fetched data rarely knows the creator, an existing card keeps its own
+    const keepUser = update && this.posts.has(`${groupKey}:${id}`);
+    const postObj = {
+      id,
+      variant: 'video',
+      groupKey,
+      groupTitle: video.groupTitle ?? title,
+      user:
+        video.user ??
+        (keepUser ? undefined : { name: title, avatar: `${page.origin}/favicon.ico` }),
+      meta: [
+        getHostname(page.hostname),
+        video.duration ? fancyTimeFormat(video.duration) : ''
+      ].filter(Boolean),
+      media,
+      ...video.postData
+    };
+    const added = this.addPost(postObj, update);
+    const hls = added.find((i) => i.stream);
+    if (hls && cfg.autoHLS) container.loadHLS(hls.id).catch((ex) => con.err(ex));
+    return true;
+  }
+  /**
+   * Adds a card and its media, media that is already in the card is skipped.
+   *
+   * With `update`, an existing card takes the newer data instead: its header is refreshed, tiles
+   * whose source changed are replaced, tiles the new data no longer lists are removed (e.g. the
+   * placeholder of a `viewerOnly` card). Videos built from an HLS stream are always kept.
+   * @param {PostCard} post
+   * @param {boolean} [options]
+   * @returns {MediaItem[]} The tiles that were added
+   */
+  addPost(post, update = false) {
+    if (typeof container === 'undefined') return [];
+    if (update) {
+      const existing = this.posts.get(`${post.groupKey}:${post.id}`);
+      if (existing) return this._updatePostData(existing, post);
+    }
+    container.init();
+    const video = post.variant === 'video';
+    const activate = video || container.toolbar._active === null;
+    /** @type {MediaGroup} */
+    const group = this.groups.getOrInsertComputed(post.groupKey, (key) => {
+      /** @type {List} */
+      const pane = make('mph-list', 'mph-feed hidden', { dataset: { host: key } });
+      pane.body = this;
+      this.append(pane);
+      return {
+        key,
+        id: post.id,
+        title: post.groupTitle ?? key,
+        counted: !video,
+        items: new Set(),
+        pane,
+        tab: null
+      };
+    });
+    if (!group.tab || !group.tab.isConnected) {
+      group.tab = container.toolbar.create(post.groupKey, group.title, activate);
+    }
+    /**
+     * @param {string} key
+     * @param {PostCard} post
+     * @param {MediaGroup} group
+     */
+    const renderPost = (key, post, group) => {
+      /** @type {Post} */
+      const el = make('mph-post');
+      const entry = el.render(key, post, group);
+      this.posts.set(key, entry);
+      return entry;
+    };
+    /** @type {MediaItem[]} */
+    const added = [];
+    const key = `${group.key}:${post.id}`;
+    let entry = this.posts.get(key);
+    for (const m of post.media) {
+      const id = `${key}:${m.id}`;
+      if (this.items.has(id) || !(m.src || m.stream || m.drm)) continue;
+      entry ??= renderPost(key, post, group);
+      added.push(this._addItem(entry, group, id, m));
+    }
+    if (entry) this._updatePost(entry);
+    this._done();
+    return added;
+  }
+  /**
+   * @param {PostEntry} entry
+   * @param {MediaGroup} group
+   * @param {string} id
+   * @param {PostMedia} m
+   */
+  _addItem(entry, group, id, m) {
+    /** @type {Tile} */
+    const tile = make('mph-tile');
+    const item = tile.addItem(entry, group, id, m);
+    this.items.set(id, item);
+    return item;
+  }
+  /**
+   * Merges newer data into an existing card, see {@link MainBody.addPost}.
+   * @param {PostEntry} entry
+   * @param {PostCard} post
+   * @returns {MediaItem[]} The tiles that were added or replaced
+   */
+  _updatePostData(entry, post) {
+    const group = this.groups.get(post.groupKey);
+    if (!group) return [];
+    const prev = entry.post;
+    /** @type {PostCard} */
+    const merged = { ...prev };
+    for (const [k, v] of Object.entries(post)) {
+      // The variant decides what the card offers, it stays the one it was created with
+      if (v === undefined || k === 'variant' || k === 'user') continue;
+      merged[k] = v;
+    }
+    merged.user = {
+      ...prev.user,
+      ...Object.fromEntries(Object.entries(post.user ?? {}).filter(([, v]) => !isEmpty(v)))
+    };
+    entry.el.update(entry, merged);
+    /** @type {MediaItem[]} */
+    const added = [];
+    /** Ids the new data lists */
+    const fresh = new Set();
+    // Once a video is built from its stream, the stream is not offered again
+    const built = entry.ids.values().some((id) => this.items.get(id)?.blob);
+    for (const m of post.media) {
+      if (!(m.src || m.stream || m.drm) || (m.stream && built)) continue;
+      const id = `${entry.key}:${m.id}`;
+      fresh.add(id);
+      const old = this.items.get(id);
+      if (old) {
+        // Built videos and streams that are being built are left alone
+        if (old.blob || old.el.dataset.busy || MainBody.sameSource(old, m)) continue;
+        old.el.remove();
+      }
+      // Same id: keeps its place in the card and in the tab
+      added.push(this._addItem(entry, group, id, m));
+    }
+    if (fresh.size) {
+      for (const id of toArray(entry.ids)) {
+        const old = this.items.get(id);
+        if (!old || fresh.has(id) || old.blob || old.el.dataset.busy) continue;
+        this.removeItem(id);
+      }
+    }
+    this._layoutGrid(entry);
+    this._updatePost(entry);
+    this._done();
+    return added;
+  }
+  /**
+   * Re-applies the tile layout of a card: the first 4 tiles, plus the HLS ones.
+   * @param {PostEntry} entry
+   */
+  _layoutGrid(entry) {
+    /** @type {HTMLElement[]} */
+    const tiles = [];
+    for (const id of entry.ids) {
+      const item = this.items.get(id);
+      if (item && (tiles.length < 4 || item.label === 'HLS')) tiles.push(item.el);
+    }
+    entry.grid.replaceChildren(...tiles);
+  }
+  /**
+   * The tile already shows this media, replacing it would change nothing.
+   * @param {MediaItem} item
+   * @param {PostMedia} m
+   */
+  static sameSource(item, m) {
+    return (
+      item.src === (m.src ?? '') &&
+      String(item.stream ?? '') === String(m.stream ?? '') &&
+      !!item.drm === !!m.drm &&
+      item.label === m.label &&
+      item.poster === m.poster &&
+      item.thumb === m.thumb &&
+      !!item.el._mph_.m?.viewerOnly === !!m.viewerOnly
+    );
+  }
+  regroupMedia() {
+    /** @type {Map<string, MediaItem[]>} */
+    const m = new Map();
+    const groups = groupBy(toArray(this.items, { values: true }), (i) => {
+      return i.type === 'video' && !isEmpty(i.src) ? i.group : '_';
+    });
+    for (const [k, v] of Object.entries(groups)) {
+      if (v && !m.has(k)) {
+        m.set(k, v);
+      }
+    }
+    return m;
+  }
+  _done() {
+    if (typeof container === 'undefined') return;
+    this.updateCounts();
+    if (cfg.autoinject) container.inject();
+  }
+  /**
+   * @param {string} id
+   */
+  removeItem(id) {
+    const item = this.items.get(id);
+    if (!item) return false;
+    item.el.remove();
+    if (item.blob) URL.revokeObjectURL(item.src);
+    this.groups.get(item.group)?.items.delete(id);
+    this.items.delete(id);
+    const entry = this.posts.get(item.post);
+    if (entry) {
+      entry.ids.delete(id);
+      if (entry.ids.size === 0) {
+        entry.el.remove();
+        this.posts.delete(entry.key);
+      } else {
+        this._updatePost(entry);
+      }
+    }
+    this.updateCounts();
+    return true;
+  }
+  /**
+   * @param {string} postKey
+   */
+  removePost(postKey) {
+    for (const id of toArray(this.posts.get(postKey)?.ids ?? [])) this.removeItem(id);
+  }
+  /**
+   * Removes a group and everything it holds, does not touch the tab.
+   * @param {string} key
+   */
+  removeGroup(key) {
+    const group = this.groups.get(key);
+    if (group) group.pane.remove();
+  }
+  get feed() {
+    return toArray(this.items, { values: true }).filter(
+      (i) => this.posts.get(i.post)?.post.variant === 'post'
+    );
+  }
+  get media() {
+    return this.feed.filter((i) => i.src);
+  }
+  get count() {
+    return this.posts.size;
+  }
+  /**
+   * Refreshes every counter.
+   */
+  updateCounts() {
+    if (this._countsQueued) return;
+    this._countsQueued = true;
+    defer(() => {
+      this._countsQueued = false;
+      for (const group of this.groups.values()) {
+        const tabHost = group.tab?.firstElementChild;
+        if (tabHost) {
+          tabHost.setAttribute('title', group.title);
+          tabHost.textContent = group.counted
+            ? `${group.title} (${group.items.size})`
+            : group.title;
+        }
+      }
+      container.updateCounters();
+    });
+  }
+  /**
+   * Frees every object url, empties the library.
+   */
+  clear() {
+    for (const key of toArray(this.groups, { keys: true })) this.removeGroup(key);
+  }
+  /**
+   * One entry per quality, highest first. A file without a quality in its url is named after its format.
+   * @param {Array<string | { src: string; label?: string }>} [files]
+   * @returns {Array<{ src: string; label: string }>}
+   */
+  static qualities(files) {
+    /** @type {Map<string, string>} */
+    const seen = new Map();
+    /** @type {string[]} */
+    const other = [];
+    for (const file of toArray(files)) {
+      const { src, label = '' } = typeof file === 'string' ? { src: file } : file;
+      if (!src) continue;
+      const q = label || (resolutionOf(src) ? `${resolutionOf(src)}p` : '');
+      if (!q) other.push(src);
+      else if (!seen.has(q)) seen.set(q, src);
+    }
+    const out = Array.from(seen, ([label, src]) => ({ src, label })).sort(
+      (a, b) => (parseInt(b.label, 10) || 0) - (parseInt(a.label, 10) || 0)
+    );
+    for (const src of other) {
+      if (out.some((o) => o.src === src)) continue;
+      const ext = MainBody.extFromURL(src).toUpperCase();
+      let label = ext;
+      for (let n = 2; out.some((o) => o.label === label); n++) label = `${ext} ${n}`;
+      out.push({ src, label });
+    }
+    return out;
+  }
+  /**
+   * Playing it in the viewer works: nothing is offered that would only fail.
+   * @param {MediaItem} item
+   */
+  static playable(item) {
+    /**
+     * Can the browser play `mime`?
+     * @param {string} mime
+     */
+    const canPlay = (mime) => {
+      if (typeof mime === 'string') {
+        return !isEmpty(make('video').canPlayType(mime));
+      }
+      return false;
+    };
+    if (isObj(item)) {
+      if (typeof item.src === 'string' && item.src.startsWith('blob:')) return true;
+      if (item.stream) return canPlay('application/vnd.apple.mpegurl');
+      if (!item.src) return false;
+      return item.type === 'photo' || !item.blob || canPlay(item.blob.type || 'video/mp4');
+    }
+    return false;
+  }
+  /**
+   * Icon-only action button for a tile.
+   * @param {string} icon
+   * @param {string} command
+   * @param {string} text
+   * @param {Record<string, string>} [dataset]
+   */
+  static tileBtn(icon, command, text, dataset = {}) {
+    const btn = make('mph-btn', 'tile-btn', {
+      title: text,
+      role: 'button',
+      tabIndex: 0,
+      dataset: { command, ...dataset }
+    });
+    IconSVG.load(icon, btn);
+    return btn;
+  }
+  /**
+   * @param {string} icon
+   * @param {string} command
+   * @param {string} text
+   * @param {Record<string, string>} [dataset]
+   */
+  static action(icon, command, text, dataset = {}) {
+    const a = make('mph-a', {
+      title: text,
+      role: 'button',
+      tabIndex: 0,
+      dataset: { command, ...dataset }
+    });
+    IconSVG.load(icon, a);
+    a.append(document.createTextNode(` ${text}`));
+    return a;
+  }
+  /**
+   * Line under the name, counts and layout of the media, buttons that would do nothing are hidden.
+   * @param {PostEntry} entry
+   */
+  _updatePost(entry) {
+    const { post } = entry;
+    /** @type {string[]} */
+    let line;
+    if (post.variant === 'video') {
+      line = post.meta ?? [];
+    } else {
+      /** @type {Record<string, number>} */
+      const counts = {};
+      for (const id of entry.ids) {
+        const type = this.items.get(id)?.type ?? 'video';
+        counts[type] = (counts[type] ?? 0) + 1;
+      }
+      let date = '';
+      try {
+        if (post.date) {
+          date = new Intl.DateTimeFormat(navigator.language, { dateStyle: 'medium' }).format(
+            new Date(post.date)
+          );
+        }
+      } catch {
+        /* invalid date */
+      }
+      line = [
+        date,
+        ...Object.entries(counts).map(([type, n]) => `${n} ${i18n$(n === 1 ? type : `${type}s`)}`)
+      ];
+    }
+    entry.meta.textContent = line.filter(Boolean).join(' \u00b7 ');
+    entry.grid.dataset.count = String(entry.ids.size);
+    const downloadable = toArray(entry.ids).some((id) => this.items.get(id)?.src);
+    for (const btn of qsA('[data-command="post-download"], [data-command="post-copy"]', entry.el)) {
+      btn.classList.toggle('hidden', !downloadable);
+    }
+  }
+  /**
+   * Thumbnail of a media: its preview image, or the media itself (photo, first frame of a video).
+   *
+   * Appended right away, a lazy image outside of the document never loads.
+   * @param {MediaItem} item
+   * @returns {HTMLImageElement | HTMLVideoElement | HTMLElement}
+   */
+  static thumbnail(item) {
+    const none = () => {
+      const el = make('mph-elem', 'thumb-none');
+      IconSVG.load('video', el);
+      return el;
+    };
+    const fallback = () => {
+      if (!item.src || (item.blob && !MainBody.playable(item))) return none();
+      if (item.type === 'photo') {
+        return make('img', {
+          src: item.src,
+          alt: '',
+          loading: 'lazy',
+          decoding: 'async',
+          draggable: 'false'
+        });
+      }
+      const video = make('video', {
+        src: `${item.src}#t=0.1`,
+        preload: 'metadata',
+        muted: true,
+        playsInline: true,
+        disablePictureInPicture: true
+      });
+      video.addEventListener('error', () => video.replaceWith(none()), { once: true });
+      return video;
+    };
+    const src = item.thumb ?? item.poster;
+    if (!src) return fallback();
+    const img = make('img', {
+      src,
+      alt: '',
+      loading: 'lazy',
+      decoding: 'async',
+      draggable: 'false'
+    });
+    img.addEventListener('error', () => img.replaceWith(fallback()), { once: true });
+    return img;
+  }
+  *[Symbol.iterator]() {
+    const arr = Array.from(this._mph_.groups.values());
+    for (const group of arr) {
+      yield group.pane;
+    }
+  }
+}
+
+class ConfigElement extends Base {
+  /**
+   * @type { { built: boolean; rows: { key: string; elem: HTMLInputElement; type: string; }[]; file?: HTMLInputElement } }
+   */
+  _mph_ = {
+    built: false,
+    rows: []
+  };
+  constructor() {
+    super();
+  }
+  get built() {
+    return this._mph_.built;
+  }
+  set built(bol) {
+    this._mph_.built = bol;
+  }
+  get rows() {
+    return this._mph_.rows;
+  }
+  get fileElement() {
+    if (this._mph_.file) {
+      return this._mph_.file;
+    }
+    this._mph_.file = make('input', 'hidden', { type: 'file', accept: '.json,application/json' });
+    return this._mph_.file;
+  }
+  set fileElement(bol) {
+    this._mph_.file = bol;
+  }
+  /**
+   * Builds the settings page.
+   */
+  build() {
+    if (typeof container === 'undefined') return;
+    if (this.built) return;
+    this.built = true;
+    const savebtn = make('mph-btn', 'save', {
+      textContent: i18n$('save'),
+      role: 'button',
+      tabIndex: 0,
+      dataset: { command: 'save' },
+      disabled: false
+    });
+    const resetbtn = make('mph-btn', 'reset', {
+      textContent: i18n$('reset'),
+      role: 'button',
+      tabIndex: 0,
+      dataset: { command: 'reset' }
+    });
+    const cbtn = make('mu-js', 'mph-sty-flex');
+    cbtn.append(resetbtn, savebtn);
+    /**
+     * @param {string} name
+     * @param {string} text
+     * @param {boolean} [open]
+     */
+    const makesection = (name, text, open = false) => {
+      const sec = make('mph-section', open ? '' : 'collapsed', {
+        dataset: { command: 'section', name }
+      });
+      const lb = make('label');
+      lb.append(make('mu-js', { textContent: text }));
+      sec.append(lb);
+      this.append(sec);
+      return sec;
+    };
+    const sections = {
+      general: makesection('general', i18n$('general'), true),
+      theme: makesection('theme', i18n$('theme')),
+      exp: makesection('exp', i18n$('import_export'))
+    };
+    /**
+     * @param {HTMLElement} sec
+     * @param {string} label
+     * @param {string} key - Dotted path in the config
+     * @param {"checkbox" | "number" | "text" | "select"} type
+     * @param {Record<string, unknown>} [attrs]
+     */
+    const makeRow = (sec, label, key, type, attrs = {}) => {
+      const [group, sub] = key.split('.');
+      const get = () => (sub ? cfg[group][sub] : cfg[group]);
+      /** @param {unknown} v */
+      const set = (v) => {
+        if (sub) {
+          cfg[group][sub] = v;
+        } else {
+          cfg[group] = v;
+        }
+      };
+      const lb = make('label', 'sub-section', { dataset: { config: key } });
+      lb.append(make('mu-js', { textContent: label }));
+      const { options, ...rest } = attrs;
+      const inp = /** @type {HTMLInputElement} */ (
+        type === 'select'
+          ? make('select', { className: 'mph-select' })
+          : make('input', { type, ...rest })
+      );
+      if (type === 'select') {
+        for (const value of options)
+          inp.append(make('option', { value, textContent: i18n$(value) }));
+        inp.value = String(get());
+        lb.append(inp);
+        ael(inp, 'change', () => {
+          set(inp.value);
+          container.setTheme();
+        });
+      } else if (type === 'checkbox') {
+        const inlab = make('mu-js', 'mph-inlab');
+        inlab.append(inp, make('label', { onclick: () => inp.click() }));
+        lb.append(inlab);
+        inp.checked = !!get();
+        ael(inp, 'change', () => {
+          set(inp.checked);
+          if (key === 'autoexpand') container.setExpanded(inp.checked);
+        });
+      } else {
+        lb.append(inp);
+        inp.value = String(get() ?? '');
+        if (type === 'number') {
+          ael(inp, 'input', () => {
+            if (inp.validity.valid && !isEmpty(inp.value)) {
+              dom.cl.remove(inp, 'mph-invalid');
+              dom.prop(savebtn, 'disabled', false);
+              set(parseFloat(inp.value));
+            } else {
+              dom.cl.add(inp, 'mph-invalid');
+              dom.prop(savebtn, 'disabled', true);
+            }
+          });
+        } else {
+          inp.placeholder = getComputedStyle(container.frame)
+            .getPropertyValue(`--${sub ?? key}`)
+            .trim();
+          ael(inp, 'change', () => {
+            set(inp.value.trim());
+            container.setTheme();
+          });
+        }
+      }
+      sec.append(lb);
+      this.rows.push({ key, elem: inp, type });
+      return lb;
+    };
+    if ($GM.isGM) makeRow(sections.general, i18n$('userjs_autoinject'), 'autoinject', 'checkbox');
+    makeRow(sections.general, i18n$('userjs_fullscreen'), 'autoexpand', 'checkbox');
+    makeRow(sections.general, i18n$('clear_tab_cache'), 'clearTabCache', 'checkbox');
+    makeRow(sections.general, i18n$('position'), 'position', 'select', {
+      options: ['auto', 'top-left', 'top-right', 'bottom-left', 'bottom-right']
+    });
+    makeRow(sections.general, i18n$('limit_downloads'), 'limitDownloads', 'checkbox');
+    makeRow(sections.general, i18n$('auto_hls'), 'autoHLS', 'checkbox');
+    makeRow(sections.general, i18n$('concurrency'), 'concurrency', 'number', {
+      min: 1,
+      max: 16,
+      step: 1
+    });
+    makeRow(sections.general, `${i18n$('dtime')} (ms)`, 'time', 'number', { min: 0, step: 500 });
+    for (const k of Object.keys(DEFAULT_CONFIG.theme)) {
+      makeRow(sections.theme, k, `theme.${k}`, 'text', { spellcheck: false });
+    }
+    for (const type of ['import', 'export']) {
+      sections.exp.append(
+        make('mph-btn', `mph-${type} sub-section`, {
+          textContent: i18n$(`${type}_config`),
+          role: 'button',
+          tabIndex: 0,
+          dataset: { command: `${type}-config` }
+        })
+      );
+    }
+    ael(this.fileElement, 'change', async () => {
+      try {
+        const file = this.fileElement.files?.[0];
+        if (!file) return;
+        const imported = sanitizeConfig(JSON.parse(await file.text()));
+        cfg = { ...cfg, ...imported, theme: { ...cfg.theme, ...(imported.theme ?? {}) } };
+        this.reload();
+        msg('Config imported, press save to keep it', 4000);
+      } catch (ex) {
+        container.showError(new Error(`Failed to import config: ${errMsg(ex)}`, { cause: ex }));
+      } finally {
+        this.fileElement.value = '';
+      }
+    });
+    sections.exp.append(this.fileElement);
+    const about = make('mu-js', 'mph-sty-flex about');
+    const { script } = $GM.info;
+    for (const [text, webpage] of [
+      [
+        `GitHub (v${script.version})`,
+        script.namespace ?? 'https://github.com/magicoflolis/Magic-PH'
+      ],
+      [i18n$('issue'), script.bugs ?? 'https://github.com/magicoflolis/Magic-PH/issues']
+    ]) {
+      about.append(
+        make('mph-a', {
+          textContent: text,
+          role: 'button',
+          tabIndex: 0,
+          dataset: { command: 'open-tab', webpage }
+        })
+      );
+    }
+    this.append(cbtn, about);
+  }
+  /**
+   * Refreshes the settings page after `cfg` was replaced.
+   */
+  reload() {
+    if (!this.built) return;
+    if (typeof container === 'undefined') return;
+    for (const row of this.rows) {
+      const value = row.key.split('.').reduce((o, k) => o?.[k], cfg);
+      if (row.type === 'checkbox') {
+        row.elem.checked = !!value;
+      } else {
+        row.elem.value = value ?? '';
+      }
+    }
+    return container.setTheme();
+  }
+}
+
+class Tile extends Base {
+  _mph_ = {
+    /** @type {MediaItem} */
+    item: {}
+  };
+  constructor() {
+    super();
+  }
+  /**
+   * A thumbnail: opens the viewer, or builds the video when the browser cannot play the HLS stream.
+   * Tiles that cannot do anything have no buttons.
+   * @param {MediaItem} item
+   * @param {PostEntry} entry
+   */
+  render(item, entry) {
+    const playable = MainBody.playable(item);
+    const command = playable ? 'view-media' : !isEmpty(item.stream) ? 'load-ts' : '';
+    this.title = item.drm ? i18n$('drm_notice') : item.title;
+    this.dataset.id = item.id;
+    this.dataset.type = item.type;
+    if (command) {
+      Object.assign(this.dataset, { command });
+      this.setAttribute('role', 'button');
+      this.tabIndex = 0;
+    }
+    this.append(MainBody.thumbnail(item));
+    if (item.preview) {
+      this.append(make('mph-elem', 'badge top', { textContent: i18n$('free_preview') }));
+    }
+    const badge = make('mph-elem', 'badge');
+    if (item.drm) {
+      badge.textContent = 'DRM';
+      badge.classList.add('drm');
+    } else if (item.label) {
+      badge.textContent = item.label;
+    } else if (item.type === 'video') {
+      IconSVG.load('video', badge);
+      if (item.duration) badge.append(document.createTextNode(` ${item.duration}`));
+    } else if (item.type !== 'photo') {
+      badge.textContent = item.type.toUpperCase();
+    }
+    if (badge.hasChildNodes()) this.append(badge);
+    const actions = make('mph-elem', 'tile-actions');
+    if (item.stream && !playable) {
+      actions.append(MainBody.tileBtn('download', 'load-ts', i18n$('hls_load'), { id: item.id }));
+    } else if (item.src) {
+      actions.append(
+        MainBody.tileBtn('download', 'download-video', i18n$('download'), { id: item.id })
+      );
+    }
+    if (item.src && !item.blob) {
+      actions.append(MainBody.tileBtn('copy', 'copy', i18n$('copy'), { id: item.id }));
+    }
+    if (entry.post.variant === 'post') {
+      actions.append(MainBody.tileBtn('remove', 'of-remove', i18n$('remove'), { id: item.id }));
+    }
+    if (actions.hasChildNodes()) this.append(actions);
+  }
+  /**
+   * @param {MediaItem} [item]
+   * @param {number} i
+   */
+  renderViewer(item, i) {
+    if (!item) return;
+    const src = item.thumb ?? item.poster;
+    if (src) {
+      const img = make('img', { src, alt: '' });
+      img.setAttribute('draggable', 'false');
+      this.append(img);
+    } else if (!item.label) this.textContent = String(i + 1);
+    if (item.label) this.append(make('mph-elem', 'thumb-label', { textContent: item.label }));
+    this._mph_ = item;
+  }
+  /**
+   * @param {PostEntry} entry
+   * @param {MediaGroup} group
+   * @param {string} id
+   * @param {PostMedia} m
+   */
+  addItem(entry, group, id, m) {
+    /** @type {MediaItem} */
+    const item = {
+      id,
+      src: m.src ?? '',
+      title: m.name ?? `${entry.post.user.username || entry.post.user.name}-${m.id}`,
+      group: group.key,
+      post: entry.key,
+      type: m.type,
+      label: m.label,
+      blob: m.blob,
+      stream: m.stream,
+      drm: m.drm,
+      data: m.data ?? {},
+      ext: m.ext ?? MainBody.extFromURL(m.src ?? '', m.type === 'photo' ? 'jpg' : 'mp4'),
+      poster: m.poster,
+      thumb: m.thumb,
+      duration: m.duration,
+      preview: m.preview,
+      el: this
+    };
+    this._mph_.item = item;
+    this._mph_.entry = entry;
+    this._mph_.group = group;
+    this._mph_.id = id;
+    this._mph_.m = m;
+    this.render(item, entry);
+    if (entry.grid) {
+      if (entry.grid.childElementCount < 4 || m.label === 'HLS') entry.grid.append(this);
+    }
+    entry.ids.add(id);
+    group.items.add(id);
+    return item;
+  }
+}
+
+/**
+ * Tab strip. Every tab is identified by `dataset.host`.
+ *
+ * - `about:blank` is the "new tab", it accepts a URL / video id
+ * - `mujs:<name>` are internal pages, e.g. `mujs:settings`
+ * - anything else is a group of videos
+ */
+class Toolbar extends Base {
+  /**
+   * @type { { events: Set<{ type: keyof tabEvents; listener: tabEvents[keyof tabEvents];}>; pool: Set<HTMLElement>; protocal: "mujs:"; protoReg: RegExp | undefined; el: { add?: HTMLElement; head?: HTMLElement; [key: string]: HTMLElement; }; } }
+   */
+  _mph_ = {
+    events: new Set(),
+    pool: new Set(),
+    protocal: 'mujs:',
+    protoReg: undefined,
+    el: {
+      add: undefined,
+      head: undefined
     }
   };
-  // h264 plays everywhere, av1 is the last resort
-  /** @param {Array<[string, any]>} list */
-  const h264First = (list) => list.sort(([a], [b]) => Number(a !== 'h264') - Number(b !== 'h264'));
-  for (const [codec, entry] of h264First(Object.entries(sources.hls ?? {}))) add(codec, entry);
-  for (const [codec, list] of h264First(Object.entries(sources.standard ?? {}))) {
-    for (const entry of toArray(list)) add(codec, entry);
+  constructor() {
+    super();
+    defer(() => {
+      this.root.append(this.newTab);
+      ael(
+        this.root,
+        'wheel',
+        (e) => {
+          const r = this.root;
+          if (e.deltaX !== 0 || r.scrollWidth <= r.clientWidth) return;
+          e.preventDefault();
+          r.scrollLeft += e.deltaY;
+        },
+        { passive: false }
+      );
+      this.append(this.root);
+    });
   }
-  hls.sort(([a], [b]) => Number(a !== 'h264') - Number(b !== 'h264'));
-  return {
-    title: String(initials?.videoModel?.title ?? ''),
-    files,
-    hls: [...new Set(hls.map(([, u]) => u))]
-  };
-};
-// #endregion
+  get protoReg() {
+    if (this._mph_.protoReg) return this._mph_.protoReg;
+    this._mph_.protoReg = new RegExp(`${this._mph_.protocal}(.+)`, 'i');
+    return this._mph_.protoReg;
+  }
+  get newTab() {
+    if (this._mph_.el.add) return this._mph_.el.add;
+    this._mph_.el.add = make('tab-add', {
+      textContent: '+',
+      title: i18n$('newTab'),
+      dataset: {
+        command: 'new-tab'
+      }
+    });
+    return this._mph_.el.add;
+  }
+  get root() {
+    if (this._mph_.el.head) return this._mph_.el.head;
+    this._mph_.el.head = make('tab-root');
+    return this._mph_.el.head;
+  }
+  get pool() {
+    try {
+      return toArray(this._mph_.pool).filter((e) => !isNull(e));
+    } catch {
+      return [];
+    }
+  }
+  get _active() {
+    try {
+      return this.pool.find(({ classList }) => classList.contains('active')) || null;
+    } catch {
+      return null;
+    }
+  }
+  isBlank(tab = this._active) {
+    if (isElem(tab)) {
+      return tab.dataset.host === BLANK_PAGE;
+    }
+    return true;
+  }
+  /**
+   * @template H
+   * @param {H} hostname
+   */
+  getTab(hostname) {
+    try {
+      const host = this.validate(hostname);
+      return this.pool.find(({ dataset }) => dataset.host === host) || null;
+    } catch {
+      return null;
+    }
+  }
+  /**
+   * @template H
+   * @param {H} hostname
+   */
+  validate(hostname) {
+    if (typeof hostname === 'string') {
+      return hostname;
+    } else if (hostname instanceof URL || hostname instanceof Location) {
+      return hostname.toString();
+    }
+    return '';
+  }
+  /**
+   * @template {keyof tabEvents} K
+   * @param {K} type
+   * @param {tabEvents[K]} listener
+   */
+  addListener(type, listener) {
+    this._mph_.events.add({ type, listener });
+  }
+  /**
+   * @template {keyof tabEvents} K
+   * @param {K} type
+   * @param {...unknown} args
+   */
+  _dispatch(type, ...args) {
+    for (const evt of [...this._mph_.events].filter((event) => event.type === type)) {
+      try {
+        if (isFN(evt.listener)) {
+          /** @type {Function} */ (evt.listener).call(this, ...args);
+        }
+      } catch (ex) {
+        con.err(ex);
+      }
+    }
+  }
+  /**
+   * Handles internal protocols
+   * @template H
+   * @param {H} hostname
+   */
+  intFN(hostname) {
+    const h = this.validate(hostname);
+    const [, host] = this.protoReg.exec(h) || [];
+    this._dispatch('internal', host, h);
+  }
+  /**
+   * @template {HTMLElement} T
+   * @param {T} tab
+   * @param {boolean} [build]
+   */
+  active(tab, build = true) {
+    if (isElem(tab)) {
+      if (!this._mph_.pool.has(tab)) {
+        this._mph_.pool.add(tab);
+      }
+      this._dispatch('active', tab, build);
+    }
+  }
+  /**
+   * @template {HTMLElement} T
+   * @param {T} tab
+   */
+  close(tab) {
+    if (isElem(tab)) {
+      this._mph_.pool.delete(tab);
+      this._dispatch('close', tab);
+      tab.remove();
+    }
+  }
+  /**
+   * @param {string} [hostname] - `undefined` creates a "new tab"
+   * @param {string} [title] - Label of the tab
+   * @param {boolean} [activate] - Switch to the tab
+   */
+  create(hostname = undefined, title = undefined, activate = true) {
+    if (typeof hostname === 'string') {
+      const createdTab = this.getTab(hostname);
+      if (createdTab) {
+        if (activate) this.active(createdTab);
+        return createdTab;
+      }
+    }
+    const tab = make('tab-content', {
+      dataset: {
+        command: 'switch-tab'
+      },
+      style: `order: ${this.root.childElementCount};`
+    });
+    const tabClose = make('tab-close', {
+      dataset: {
+        command: 'close-tab'
+      },
+      title: i18n$('close'),
+      textContent: 'X'
+    });
+    const tabHost = make('tab-host');
+    tab.append(tabHost, tabClose);
+    const [, host] = this.protoReg.exec(hostname ?? '') ?? [];
+    if (isNull(hostname)) {
+      tab.dataset.host = BLANK_PAGE;
+      tabHost.title = tabHost.textContent = i18n$('newTab');
+    } else if (host) {
+      tab.dataset.host = hostname;
+      tabHost.title = tabHost.textContent = i18n$(host);
+    } else {
+      tab.dataset.host = hostname;
+      tabHost.title = tabHost.textContent = title ?? hostname;
+    }
+    this.root.append(tab);
+    this._mph_.pool.add(tab);
+    if (activate) this.active(tab, true);
+    return tab;
+  }
+}
+
+/**
+ * Every custom element of this UserJS, defined once through `defineElement`
+ */
+const customElementMap = new Map([
+  ['mph-userjs', MainUserJS],
+  ['mph-root', Root],
+  ['mph-post', Post],
+  ['mph-list', List],
+  ['mph-body', MainBody],
+  ['mph-config', ConfigElement],
+  ['mph-toolbar', Toolbar],
+  ['mph-tile', Tile]
+]);
+for (const [name, constructor] of customElementMap.entries()) {
+  try {
+    window.customElements.define(name, constructor);
+  } catch (e) {
+    con.err(e);
+  }
+}
+//#endregion
+//#region Media
 /**
  * HTTP Live Streaming, merges the segments of a playlist into a single file.
  */
 class mphHLS {
   /**
    * @param {string[]} playlists - URLs of the (master) playlist, mirrors are tried in order
-   * @param {Record<string, any>} [data] - Request options
+   * @param {Record<string, unknown>} [data] - Request options
    * @param {?HTMLElement} [$el] - Element that displays the progress
    * @param {string} [root] - Website "root" name
    */
-  constructor(playlists, data = {}, $el = null, root = HP.root) {
+  constructor(playlists, data = {}, $el = null, root = container.root.root) {
     this.urls = playlists;
     this.data = data;
     this.$el = $el;
@@ -2107,14 +3892,14 @@ class mphHLS {
    * @param {string} from
    */
   resolve(ref, from) {
-    return new URL(ref, from).href.replace(/m3u8\/\//g, 'm3u8/');
+    return toURL(ref, from).href.replace(/m3u8\/\//g, 'm3u8/');
   }
   /**
    * @param {string} playlistURL
    * @returns {Promise<string>}
    */
-  async req(playlistURL) {
-    return (await Network.req(playlistURL, 'GET', 'text', this.data)).trim();
+  async req(playlistURL, responseType = 'text') {
+    return await Network.req(playlistURL, 'GET', responseType, this.data);
   }
   /**
    * Reads a playlist: every line that is not a tag is a URI (RFC 8216), of a variant in a master playlist
@@ -2122,7 +3907,7 @@ class mphHLS {
    * @param {string} text
    */
   static parse(text) {
-    /** @type {Array<{ uri: string; height: number; bandwidth: number }>} */
+    /** @type {{ uri: string; height: number; bandwidth: number }[]} */
     const variants = [];
     /** @type {string[]} */
     const segments = [];
@@ -2185,9 +3970,6 @@ class mphHLS {
    * @param {string} playlistURL
    */
   async merge(playlist, playlistURL) {
-    if (playlist.encrypted) {
-      throw new Error('Encrypted HLS streams are not supported', { cause: 'mphHLS.merge' });
-    }
     if (isEmpty(playlist.segments)) throw new Error('No segments found', { cause: 'mphHLS.merge' });
     /** @type {BlobPart[]} */
     const parts = [];
@@ -2200,11 +3982,60 @@ class mphHLS {
     const frags = playlist.segments.map((s) => this.resolve(s, playlistURL));
     const limit = cfg?.limitDownloads || isMobile ? 1 : Math.max(1, Number(cfg?.concurrency) || 4);
     let done = 0;
+    if (playlist.encrypted) {
+      const encryptedHls = async (m3u8Url) => {
+        // parse segment URLs (absolute or relative)
+        const base = toURL(m3u8Url);
+        const text = (await this.req(base)).trim();
+        // parse key + IV
+        const keyLine = text.match(/#EXT-X-KEY:([^\n]+)/)[1];
+        const keyUri = keyLine.match(/URI="([^"]+)"/)[1];
+        const ivHex = keyLine.match(/IV=0x([0-9a-fA-F]+)/)[1];
+        const iv = new Uint8Array(ivHex.match(/../g).map((b) => parseInt(b, 16)));
+        const segs = text
+          .split('\n')
+          .filter((l) => l && !l.startsWith('#'))
+          .map((l) => toURL(l.trim(), base).href);
+
+        /**
+         * Get key
+         * @type {ArrayBuffer}
+         */
+        const keyBuf = await this.req(
+          keyUri.includes('//') ? keyUri : toURL(keyUri, base),
+          'arraybuffer'
+        );
+        const cryptoKey = await crypto.subtle.importKey('raw', keyBuf, { name: 'AES-CBC' }, false, [
+          'decrypt'
+        ]);
+
+        const parts = [];
+        for (const url of segs) {
+          /**
+           * @type {ArrayBuffer}
+           */
+          const enc = await this.req(url, 'arraybuffer');
+          const dec = await crypto.subtle.decrypt({ name: 'AES-CBC', iv }, cryptoKey, enc);
+          parts.push(new Uint8Array(dec));
+          done++;
+          msg(`Merging decrypted segments for "${name}" (${done}/${frags.length})`);
+        }
+        const total = parts.reduce((n, p) => n + p.length, 0);
+        const out = new Uint8Array(total);
+        let off = 0;
+        for (const p of parts) {
+          out.set(p, off);
+          off += p.length;
+        }
+        return new Blob([out], { type: 'video/mp2t' });
+      };
+      return await encryptedHls(playlistURL).catch(con.err);
+    }
     const chunks = await runPool(frags, limit, async (f) => {
       const part = await this.segment(f);
       done++;
       if (this.$el) this.$el.textContent = `${done}/${frags.length}`;
-      msg(`[MagicPH] Merging segments for "${name}" (${done}/${frags.length})`);
+      msg(`Merging segments for "${name}" (${done}/${frags.length})`);
       return part;
     });
     parts.push(...chunks.flat());
@@ -2215,7 +4046,7 @@ class mphHLS {
    * @returns {Promise<?Blob>} `null` on failure
    */
   async start() {
-    msg('[MagicPH] Creating cache using "Fetch API"', 2500);
+    msg('Creating cache using "Fetch API"', 2500);
     /** @type {unknown} */
     let last = new Error('No playlist', { cause: 'mphHLS.start' });
     for (const url of this.urls) {
@@ -2226,7 +4057,7 @@ class mphHLS {
         con.err(ex);
       }
     }
-    msg(`[MagicPH] Error occured while creating cache: ${errMsg(last)}`, 4000);
+    msg(`Error occured while creating cache: ${errMsg(last)}`, 4000);
     return null;
   }
   /**
@@ -2236,25 +4067,22 @@ class mphHLS {
    */
   async build(url) {
     let base = url;
-    let text = await this.req(base);
+    let text = (await this.req(base)).trim();
     if (text.startsWith('[{')) {
       // Pornhub lists the playlists as JSON
-      const hls = JSON.parse(text).find(
-        (/** @type {any} */ e) => e.format === 'hls' && e.defaultQuality
-      );
+      const hls = JSON.parse(text).find((e) => e.format === 'hls' && e.defaultQuality);
       base = hls?.videoUrl;
-      text = await this.req(base);
+      text = (await this.req(base)).trim();
     }
     const master = mphHLS.parse(text);
-    /** @type {unknown} */
     let last = new Error('No qualities found', { cause: 'mphHLS.build' });
     for (const uri of master.variants.length ? master.variants.map((v) => v.uri) : [null]) {
       try {
         const playlistURL = uri ? this.resolve(uri, base) : base;
-        const playlist = uri ? mphHLS.parse(await this.req(playlistURL)) : master;
-        msg(`[MagicPH] Building cache for "${playlistURL.split(/[/?]/).filter(Boolean).pop()}"`);
+        const playlist = uri ? mphHLS.parse((await this.req(playlistURL)).trim()) : master;
+        msg(`Building cache for "${playlistURL.split(/[/?]/).filter(Boolean).pop()}"`);
         const blob = await this.merge(playlist, playlistURL);
-        msg('[MagicPH] Cache complete!', 2500);
+        msg('Cache complete!', 2500);
         return blob;
       } catch (ex) {
         last = ex;
@@ -2264,863 +4092,12 @@ class mphHLS {
     throw last;
   }
 }
-/**
- * Absolute address of `ref`.
- * @param {string} ref
- * @param {string | URL} base
- * @returns {string} Empty when `ref` is not an address
- */
-const absURL = (ref, base) => {
-  try {
-    return ref ? new URL(ref, base).href : '';
-  } catch {
-    return '';
-  }
-};
-/**
- * JSON-LD objects of a page.
- * @param {Document} doc
- * @returns {Array<Record<string, any>>}
- */
-const ldNodes = (doc) => {
-  /** @type {Array<Record<string, any>>} */
-  const nodes = [];
-  for (const node of qsA('script[type="application/ld+json"]', doc)) {
-    try {
-      const json = JSON.parse(node.textContent ?? '');
-      nodes.push(...[].concat(json?.['@graph'] ?? json).filter(isObj));
-    } catch {
-      /* not JSON */
-    }
-  }
-  return nodes;
-};
-/**
- * Title, thumbnail and duration a page announces to search engines and social networks (JSON-LD, Open Graph).
- * @param {Document} doc
- * @param {string | URL} base - Address of the page, thumbnails may be relative
- * @returns {{ title?: string; poster?: string; duration: number }}
- */
-const readMeta = (doc, base) => {
-  /** @param {string} selector */
-  const meta = (selector) => qs(selector, doc)?.getAttribute('content')?.trim() || undefined;
-  const video = ldNodes(doc).find((n) => /VideoObject/.test(String([].concat(n['@type']))));
-  const thumb = [].concat(video?.thumbnailUrl ?? []).find((t) => typeof t === 'string' || t?.url);
-  const poster =
-    (typeof thumb === 'string' ? thumb : thumb?.url) ||
-    meta('meta[property="og:image"]') ||
-    meta('meta[name="twitter:image"]') ||
-    qs('link[rel="image_src"]', doc)?.getAttribute('href');
-  return {
-    title:
-      (video?.name && htmlToText(video.name)) || meta('meta[property="og:title"]') || undefined,
-    poster: poster ? absURL(poster, base) || undefined : undefined,
-    duration: toSeconds(
-      video?.duration ||
-        meta('meta[property="og:video:duration"]') ||
-        meta('meta[property="video:duration"]') ||
-        meta('meta[property="og:duration"]') ||
-        meta('meta[itemprop="duration"]')
-    )
-  };
-};
-/**
- * Finds the video files of a page.
- *
- * The page is requested and parsed (`Network.doc`), what the website keeps in its own variables
- * can be changed or removed at any time.
- */
-class mphMedia {
-  /**
-   * @param {string | URL | Location} [webpage] - Page that contains the video
-   */
-  constructor(webpage = HP.webpage) {
-    /** @type {string} */
-    this.webpage = HandlePage.toURL(webpage).href;
-    this.site = HandlePage.resolve(this.webpage);
-  }
-  /**
-   * Requests the page, resolves every video quality.
-   * @returns {Promise<import("../typings/types.d.ts").VideoData>}
-   */
-  async find() {
-    const { webpage } = this;
-    // mydaddy.cc (hqporner's player iframe) rejects the request made through the userscript
-    // manager's own networking, a plain `fetch` with no cookies attached goes through instead
-    const doc = await (webpage.includes('mydaddy.cc')
-      ? Network.doc(webpage, { credentials: 'omit' }, true)
-      : Network.doc(webpage));
-    const meta = readMeta(doc, webpage);
-    /** @type {Set<string>} */
-    const files = new Set();
-    /** @type {Set<string>} */
-    const ts = new Set();
-    let title = '';
-    let poster = meta.poster;
-    let preferHLS = false;
-    /** File labelled by the site itself, wins over a label guessed from its address */
-    const labelled = new Map();
-    if (/xhamster/.test(webpage)) {
-      const found = xhSources(
-        extractJSON(doc.getElementById('initials-script')?.textContent ?? '')
-      );
-      title = found.title;
-      for (const f of found.files) files.add(f);
-      for (const h of found.hls) ts.add(h);
-    } else {
-      // Pornhub and its siblings: the player setup lists the streams, some of them are addresses
-      // that resolve (`"remote":true`) to the per-quality files instead of being one directly
-      for (const script of doc.getElementsByTagName('script')) {
-        const txt = script.textContent ?? '';
-        const at = txt.indexOf('"mediaDefinitions"');
-        if (at < 0) continue;
-        const [, name = ''] = /"video_title":"(.*?)",/.exec(txt) ?? [];
-        if (name) title = unescapeJSON(name);
-        /** @type {Array<{ format?: string; videoUrl?: string; remote?: boolean }>} */
-        let defs;
-        try {
-          defs = extractJSON(txt, at);
-        } catch (ex) {
-          con.err(ex);
-          continue;
-        }
-        /** Best quality found per format, only kept when it beats the files found directly */
-        const hlsByQuality = new Map();
-        for (const d of toArray(defs)) {
-          if (d?.format !== 'mp4' && d?.format !== 'hls') continue;
-          const u = absURL(String(d.videoUrl ?? ''), webpage);
-          if (!u) continue;
-          if (d.remote) {
-            try {
-              /** @type {Array<{ format?: string; videoUrl?: string; quality?: unknown }>} */
-              const list = await Network.req(u);
-              for (const q of toArray(list)) {
-                const qu = absURL(String(q?.videoUrl ?? ''), webpage);
-                if (!qu || Array.isArray(q.quality)) continue;
-                const quality = parseInt(String(q.quality), 10) || 0;
-                if (q.format === 'hls' || /\.m3u8/.test(qu)) hlsByQuality.set(quality, qu);
-                else if (/\.mp4[.?]/.test(qu)) files.add(qu);
-              }
-            } catch (ex) {
-              con.err(ex);
-            }
-          } else if (d.format === 'hls') {
-            ts.add(u);
-          } else if (/\.mp4/.test(u)) {
-            files.add(u);
-          }
-        }
-        const picked = pickHLS(Array.from(files), hlsByQuality);
-        if (picked.preferHLS) {
-          preferHLS = true;
-          for (const u of picked.ts) ts.add(u);
-        }
-        if (files.size || ts.size) break;
-      }
-      if (files.size === 0) {
-        const txt = doc.documentElement.innerHTML;
-        // `do_pl()`-style embed (hqporner's player iframe): the video markup is a JS string
-        // built inline with escaped quotes, quality sits on each source's `title`. The string
-        // isn't valid HTML on its own (it's inline in a `<script>`, sometimes duplicated across
-        // an if/else), so its `<source>` tags are read directly rather than through parseHTML
-        const clean = txt.replace(/\\(["'])/g, '$1');
-        /** @param {string} tag @param {string} name */
-        const attr = (tag, name) => new RegExp(`${name}=["']([^"']*)["']`).exec(tag)?.[1];
-        const sources = Array.from(clean.matchAll(/<source\b([^>]*)>/gi)).filter(
-          ([, attrs]) => /\bsrc=/.test(attrs) && /\btitle=/.test(attrs)
-        );
-        if (sources.length && /id=["']flvv["']/.test(clean)) {
-          const videoTag = /<video\b[^>]*\bid=["']flvv["'][^>]*>/i.exec(clean)?.[0] ?? '';
-          poster = absURL(attr(videoTag, 'poster') ?? '', webpage) || poster;
-          for (const [, attrs] of sources) {
-            const src = absURL(attr(attrs, 'src') ?? '', webpage);
-            if (!src) continue;
-            files.add(src);
-            const label = attr(attrs, 'title');
-            if (label) labelled.set(src, label);
-          }
-        } else {
-          // KVS players (porntrex, analdin, ...)
-          /** @param {RegExp} reg */
-          const addAlt = (reg) => {
-            for (const r of txt.match(new RegExp(reg.source, 'g')) ?? []) {
-              const [, alt = ''] = reg.exec(r) ?? [];
-              if (!isEmpty(alt)) files.add(alt.replaceAll('function/0/', ''));
-            }
-          };
-          title = /video_title: '(.*?)'/.exec(txt)?.[1] || title;
-          if (!/porntrex/.test(webpage)) addAlt(/video_alt_url: '(.*?)'/);
-          addAlt(/video_alt_url\d+: '(.*?)'/);
-          const [, A, B, C] =
-            /(\w+)\.replaceAll\("\w+",(\w+)\+"pubs\/"\+(\w+)\+"\/"\)/.exec(txt) ?? [];
-          const [, videoHTML] = (A && new RegExp(`${A}="(<video.+</video>)"`).exec(txt)) || [];
-          if (videoHTML) {
-            const [b = '', c = ''] = [B, C].map(
-              (e) => new RegExp(`${e}="(.*?)"`).exec(txt)?.[1] ?? ''
-            );
-            const html = parseHTML(
-              videoHTML.replaceAll('nrpuv', `${b}pubs/${c}/`).replaceAll('\\"', '"')
-            );
-            poster = absURL(qs('video', html)?.getAttribute('poster') ?? '', webpage) || poster;
-            for (const source of qsA('source', html)) {
-              const src = absURL(source.getAttribute('src') ?? '', webpage);
-              if (src) files.add(src);
-            }
-          }
-        }
-      }
-    }
-    return {
-      page: webpage,
-      title: title || meta.title || doc.title,
-      poster,
-      duration: meta.duration,
-      preferHLS,
-      files: Array.from(files)
-        .sort(sortVideos)
-        .map((src) =>
-          labelled.has(src) ? { src, label: /** @type {string} */ (labelled.get(src)) } : src
-        ),
-      ts: Array.from(ts)
-    };
-  }
-}
-// #endregion
-// #region Library
-/**
- * File extension of a media url.
- * @param {string} src
- * @param {string} [def]
- */
-const extFromURL = (src, def = 'mp4') => {
-  try {
-    const [, ext = ''] =
-      /\.(mp4|webm|m4v|mov|ts|m4s|gif|webp|jpe?g|png|avif|mp3|m4a)$/i.exec(new URL(src).pathname) ??
-      [];
-    return ext ? ext.toLowerCase() : def;
-  } catch {
-    return def;
-  }
-};
-/**
- * Request options (`fetch` style) required to download media of `root`.
- * @param {string} root
- * @returns {Record<string, any>}
- */
-const requestOptions = (root) => {
-  if (/xhamster/.test(root)) {
-    return { credentials: 'omit', referrer: `${HP.webpage.protocol}//${HP.host}/` };
-  }
-  return {};
-};
-/**
- * Progress reporter for a transfer, updates the notice at most 4 times per second.
- * @param {string} name
- * @returns {(evt: { loaded: number; total: number }) => void}
- */
-const progressNotice = (name) => {
-  let last = 0;
-  return (evt) => {
-    const now = Date.now();
-    if (now - last < 250 && evt.loaded !== evt.total) return;
-    last = now;
-    msg(`[MagicPH] (${Network.prog(evt)}) Downloading "${name}" using "Fetch API"`);
-  };
-};
-/**
- * Type of a media, an image is a photo.
- * @param {string} src
- * @returns {import("../typings/types.d.ts").MediaType}
- */
-const typeFromURL = (src) =>
-  /^(?:gif|webp|jpe?g|png|avif)$/.test(extFromURL(src, '')) ? 'photo' : 'video';
-/**
- * Holds every video found on the page, owns the elements that display them.
- *
- * Everything is a card in the feed of a tab (the layout of an OnlyFans post):
- *
- * - `post`: an OnlyFans post, every tile is a media of the post
- * - `video`: a video, every tile is a quality of it (or the HLS stream when that is all there is)
- */
-class Library {
-  /** @type {Map<string, import("../typings/types.d.ts").MediaGroup>} */
-  groups = new Map();
-  /** @type {Map<string, import("../typings/types.d.ts").MediaItem>} */
-  items = new Map();
-  /** @type {Map<string, import("../typings/types.d.ts").PostEntry>} */
-  posts = new Map();
-  /** @type {?HTMLVideoElement} */
-  static #probe = null;
-  /**
-   * @param {Container} container
-   */
-  constructor(container) {
-    this.container = container;
-  }
-  /**
-   * Returns the group for `key`, creates it (pane + tab) when missing.
-   * @param {string} key
-   * @param {{ title?: string; counted?: boolean; activate?: boolean }} [opts]
-   */
-  group(key, opts = {}) {
-    const { container } = this;
-    container.init();
-    let group = this.groups.get(key);
-    if (!group) {
-      const pane = make('mujs-list', 'mph-feed hidden', { dataset: { host: key } });
-      container.tbody.append(pane);
-      group = {
-        key,
-        title: opts.title ?? key,
-        counted: opts.counted ?? false,
-        items: new Set(),
-        pane,
-        tab: null
-      };
-      this.groups.set(key, group);
-    }
-    if (!group.tab || !group.tab.isConnected) {
-      group.tab = container.Tabs.create(key, group.title, opts.activate ?? true);
-    }
-    return group;
-  }
-  /**
-   * Adds a video: one card, one tile per quality, or a single tile for the HLS stream when
-   * there is nothing else.
-   * @param {import("../typings/types.d.ts").VideoData} video
-   * @returns {boolean} `false` when the page has no video
-   */
-  addVideo(video) {
-    const page = HandlePage.toURL(video.page ?? HP.webpage);
-    const title = String(isEmpty(video.title) ? document.title || 'MagicPH' : video.title);
-    const shared = { poster: video.poster, data: video.hermes ?? {} };
-    const files = Library.qualities(video.files);
-    /** @type {import("../typings/types.d.ts").PostMedia[]} */
-    const media = files.map(({ src, label }) => ({
-      ...shared,
-      id: label,
-      label,
-      src,
-      type: typeFromURL(src),
-      name: files.length > 1 ? `${title} (${label})` : title
-    }));
-    const stream = toArray(video.ts);
-    if (stream.length && (media.length === 0 || video.preferHLS) || stream.find((i) => i.includes('xhcdn.com'))) {
-      media.push({ ...shared, id: 'hls', label: 'HLS', type: 'video', stream, name: title });
-    }
-    if (media.length === 0) {
-      con.info('No video found:', page.href);
-      return false;
-    }
-    const added = this.addPost({
-      id: video.id ?? page.href,
-      variant: 'video',
-      groupKey: title,
-      groupTitle: title,
-      user: { name: title, avatar: `${page.origin}/favicon.ico` },
-      meta: [
-        getHostname(page.hostname),
-        video.duration ? fancyTimeFormat(video.duration) : ''
-      ].filter(Boolean),
-      media
-    });
-    const hls = added.find((i) => i.stream);
-    if (hls && cfg.autoHLS) this.container.loadHLS(hls.id).catch((ex) => con.err(ex));
-    return true;
-  }
-  /**
-   * Adds a card and its media, media that is already in the card is skipped.
-   * @param {import("../typings/types.d.ts").Post} post
-   * @returns {import("../typings/types.d.ts").MediaItem[]} The tiles that were added
-   */
-  addPost(post) {
-    const video = post.variant === 'video';
-    const group = this.group(post.groupKey, {
-      title: post.groupTitle,
-      counted: !video,
-      activate: video || this.container.Tabs._active === null
-    });
-    const key = `${group.key}:${post.id}`;
-    let entry = this.posts.get(key);
-    /** @type {import("../typings/types.d.ts").MediaItem[]} */
-    const added = [];
-    for (const m of post.media) {
-      const id = `${key}:${m.id}`;
-      if (this.items.has(id) || !(m.src || m.stream || m.drm)) continue;
-      entry ??= this.#renderPost(key, post, group);
-      added.push(this.#addItem(entry, group, id, m));
-    }
-    if (entry) this.#updatePost(entry);
-    this.#done();
-    return added;
-  }
-  /**
-   * Replaces the HLS tile by the video that was built from it.
-   * @param {import("../typings/types.d.ts").MediaItem} item - The HLS tile
-   * @param {Blob} blob
-   * @param {string} ext
-   */
-  addBlob(item, blob, ext) {
-    const entry = this.posts.get(item.post);
-    const group = this.groups.get(item.group);
-    if (!entry || !group) return;
-    this.#addItem(entry, group, `${item.post}:${ext}`, {
-      id: ext,
-      type: 'video',
-      label: ext.toUpperCase(),
-      name: item.title,
-      src: URL.createObjectURL(blob),
-      blob,
-      ext,
-      poster: item.poster,
-      thumb: item.thumb,
-      duration: item.duration,
-      data: item.data
-    });
-    this.removeItem(item.id);
-    this.#done();
-  }
-  /**
-   * @param {import("../typings/types.d.ts").PostEntry} entry
-   * @param {import("../typings/types.d.ts").MediaGroup} group
-   * @param {string} id
-   * @param {import("../typings/types.d.ts").PostMedia} m
-   */
-  #addItem(entry, group, id, m) {
-    const { user } = entry.post;
-    /** @type {import("../typings/types.d.ts").MediaItem} */
-    const item = {
-      id,
-      src: m.src ?? '',
-      title: m.name ?? `${user.username || user.name}-${m.id}`,
-      group: group.key,
-      post: entry.key,
-      type: m.type,
-      label: m.label,
-      blob: m.blob,
-      stream: m.stream,
-      drm: m.drm,
-      data: m.data ?? {},
-      ext: m.ext ?? extFromURL(m.src ?? '', m.type === 'photo' ? 'jpg' : 'mp4'),
-      poster: m.poster,
-      thumb: m.thumb,
-      duration: m.duration,
-      preview: m.preview,
-      el: /** @type {any} */ (null)
-    };
-    item.el = this.#renderTile(item, entry);
-    entry.grid.append(item.el);
-    entry.ids.add(id);
-    group.items.add(id);
-    this.items.set(id, item);
-    return item;
-  }
-  #done() {
-    this.updateCounts();
-    if (cfg.autoinject) this.container.inject();
-  }
-  /**
-   * @param {string} id
-   */
-  removeItem(id) {
-    const item = this.items.get(id);
-    if (!item) return false;
-    item.el.remove();
-    if (item.blob) URL.revokeObjectURL(item.src);
-    this.groups.get(item.group)?.items.delete(id);
-    this.items.delete(id);
-    const entry = this.posts.get(item.post);
-    if (entry) {
-      entry.ids.delete(id);
-      if (entry.ids.size === 0) {
-        entry.el.remove();
-        this.posts.delete(entry.key);
-      } else {
-        this.#updatePost(entry);
-      }
-    }
-    this.updateCounts();
-    return true;
-  }
-  /**
-   * @param {string} postKey
-   */
-  removePost(postKey) {
-    for (const id of Array.from(this.posts.get(postKey)?.ids ?? [])) this.removeItem(id);
-  }
-  /**
-   * Removes a group and everything it holds, does not touch the tab.
-   * @param {string} key
-   */
-  removeGroup(key) {
-    const group = this.groups.get(key);
-    if (!group) return false;
-    for (const id of Array.from(group.items)) this.removeItem(id);
-    group.pane.remove();
-    this.groups.delete(key);
-    this.updateCounts();
-    return true;
-  }
-  /**
-   * Every media of the OnlyFans posts.
-   */
-  get feed() {
-    return Array.from(this.items.values()).filter(
-      (i) => this.posts.get(i.post)?.post.variant === 'post'
-    );
-  }
-  /**
-   * Every OnlyFans media that can be downloaded.
-   */
-  get media() {
-    return this.feed.filter((i) => i.src);
-  }
-  /**
-   * Number of videos: the media of the OnlyFans posts + the videos of the other websites.
-   */
-  get count() {
-    let total = 0;
-    for (const { post, ids } of this.posts.values())
-      total += post.variant === 'post' ? ids.size : 1;
-    return total;
-  }
-  /**
-   * Refreshes every counter.
-   */
-  updateCounts() {
-    for (const group of this.groups.values()) {
-      const tabHost = group.tab?.firstElementChild;
-      if (tabHost) {
-        tabHost.setAttribute('title', group.title);
-        tabHost.textContent = group.counted ? `${group.title} (${group.items.size})` : group.title;
-      }
-    }
-    this.container.updateCounters();
-  }
-  /**
-   * Frees every object url, empties the library.
-   */
-  clear() {
-    for (const key of Array.from(this.groups.keys())) this.removeGroup(key);
-  }
-  /**
-   * One entry per quality, highest first. A file without a quality in its url is named after its format.
-   * @param {Array<string | { src: string; label?: string }>} [files]
-   * @returns {Array<{ src: string; label: string }>}
-   */
-  static qualities(files) {
-    /** @type {Map<string, string>} */
-    const seen = new Map();
-    /** @type {string[]} */
-    const other = [];
-    for (const file of toArray(files)) {
-      const { src, label = '' } = typeof file === 'string' ? { src: file } : file;
-      if (!src) continue;
-      const q = label || (resolutionOf(src) ? `${resolutionOf(src)}p` : '');
-      if (!q) other.push(src);
-      else if (!seen.has(q)) seen.set(q, src);
-    }
-    const out = Array.from(seen, ([label, src]) => ({ src, label })).sort(
-      (a, b) => (parseInt(b.label, 10) || 0) - (parseInt(a.label, 10) || 0)
-    );
-    for (const src of other) {
-      if (out.some((o) => o.src === src)) continue;
-      const ext = extFromURL(src).toUpperCase();
-      let label = ext;
-      for (let n = 2; out.some((o) => o.label === label); n++) label = `${ext} ${n}`;
-      out.push({ src, label });
-    }
-    return out;
-  }
-  /**
-   * Can the browser play `mime`?
-   * @param {string} mime
-   */
-  static canPlay(mime) {
-    Library.#probe ??= /** @type {HTMLVideoElement} */ (make('video'));
-    return Boolean(Library.#probe.canPlayType(mime));
-  }
-  /**
-   * Playing it in the viewer works: nothing is offered that would only fail.
-   * @param {import("../typings/types.d.ts").MediaItem} item
-   */
-  static playable(item) {
-    if (item.stream) return Library.canPlay('application/vnd.apple.mpegurl');
-    if (!item.src) return false;
-    return item.type === 'photo' || !item.blob || Library.canPlay(item.blob.type || 'video/mp4');
-  }
-  /**
-   * Icon-only action button for a tile.
-   * @param {string} icon
-   * @param {string} command
-   * @param {string} text
-   * @param {Record<string, string>} [dataset]
-   */
-  static tileBtn(icon, command, text, dataset = {}) {
-    const btn = make('mujs-btn', 'tile-btn', {
-      title: text,
-      role: 'button',
-      tabIndex: 0,
-      dataset: { command, ...dataset }
-    });
-    IconSVG.load(/** @type {any} */ (icon), btn);
-    return btn;
-  }
-  /**
-   * @param {string} icon
-   * @param {string} command
-   * @param {string} text
-   * @param {Record<string, string>} [dataset]
-   */
-  static action(icon, command, text, dataset = {}) {
-    const a = make('mujs-a', {
-      title: text,
-      role: 'button',
-      tabIndex: 0,
-      dataset: { command, ...dataset }
-    });
-    IconSVG.load(/** @type {any} */ (icon), a);
-    a.append(document.createTextNode(` ${text}`));
-    return a;
-  }
-  /**
-   * @param {string} key
-   * @param {import("../typings/types.d.ts").Post} post
-   * @param {import("../typings/types.d.ts").MediaGroup} group
-   */
-  #renderPost(key, post, group) {
-    const { user } = post;
-    const video = post.variant === 'video';
-    const el = make('mujs-post', {
-      dataset: {
-        post: key,
-        variant: post.variant,
-        search: `${user.name} ${post.text ?? ''}`.toLowerCase()
-      }
-    });
-    const avatar = make('mujs-elem', 'avatar');
-    if (video) IconSVG.load('video', avatar);
-    else avatar.textContent = (user.name || '?').slice(0, 1).toUpperCase();
-    if (user.avatar) {
-      const img = make('img', { src: user.avatar, alt: '', decoding: 'async' });
-      img.addEventListener('load', () => avatar.replaceChildren(img), { once: true });
-    }
-    const who = make('mujs-elem', 'post-who');
-    const name = make('mujs-elem', 'post-name', { textContent: user.name });
-    if (user.username) {
-      name.append(make('span', 'post-handle', { textContent: ` @${user.username}` }));
-    }
-    const meta = make('mujs-elem', 'post-meta');
-    who.append(name, meta);
-    const head = make('mujs-row', 'post-head');
-    head.append(avatar, who);
-    if (post.isMessage) {
-      head.append(make('mujs-elem', 'pill muted', { textContent: i18n$('message') }));
-    }
-    if (post.isFree) {
-      head.append(make('mujs-elem', 'pill free', { textContent: i18n$('free') }));
-    } else if (post.price) {
-      head.append(make('mujs-elem', 'pill', { textContent: `$${post.price}` }));
-    }
-    if (post.original) {
-      head.append(Library.action('open', 'of-open', i18n$('open'), { webpage: post.original }));
-    }
-    el.append(head);
-    if (post.text) {
-      el.append(make('mujs-elem', 'post-text', { textContent: post.text, title: post.text }));
-    }
-    const grid = make('mujs-elem', 'post-media');
-    el.append(grid);
-    group.pane.append(el);
-    const entry = { key, post, el, grid, meta, ids: new Set() };
-    this.posts.set(key, entry);
-    return entry;
-  }
-  /**
-   * Line under the name, counts and layout of the media, buttons that would do nothing are hidden.
-   * @param {import("../typings/types.d.ts").PostEntry} entry
-   */
-  #updatePost(entry) {
-    const { post } = entry;
-    /** @type {string[]} */
-    let line;
-    if (post.variant === 'video') {
-      line = post.meta ?? [];
-    } else {
-      /** @type {Record<string, number>} */
-      const counts = {};
-      for (const id of entry.ids) {
-        const type = this.items.get(id)?.type ?? 'video';
-        counts[type] = (counts[type] ?? 0) + 1;
-      }
-      let date = '';
-      try {
-        if (post.date) {
-          date = new Intl.DateTimeFormat(navigator.language, { dateStyle: 'medium' }).format(
-            new Date(post.date)
-          );
-        }
-      } catch {
-        /* invalid date */
-      }
-      line = [
-        date,
-        ...Object.entries(counts).map(([type, n]) => `${n} ${i18n$(n === 1 ? type : `${type}s`)}`)
-      ];
-    }
-    entry.meta.textContent = line.filter(Boolean).join(' \u00b7 ');
-    entry.grid.dataset.count = String(entry.ids.size);
-    const downloadable = Array.from(entry.ids).some((id) => this.items.get(id)?.src);
-    for (const btn of qsA('[data-command="post-download"], [data-command="post-copy"]', entry.el)) {
-      btn.classList.toggle('hidden', !downloadable);
-    }
-  }
-  /**
-   * Thumbnail of a media: its preview image, or the media itself (photo, first frame of a video).
-   *
-   * Appended right away, a lazy image outside of the document never loads.
-   * @param {import("../typings/types.d.ts").MediaItem} item
-   * @returns {HTMLElement}
-   */
-  static thumbnail(item) {
-    const none = () => {
-      const el = make('mujs-elem', 'thumb-none');
-      IconSVG.load('video', el);
-      return el;
-    };
-    const fallback = () => {
-      if (!item.src || (item.blob && !Library.playable(item))) return none();
-      if (item.type === 'photo') {
-        return make('img', { src: item.src, alt: '', loading: 'lazy', decoding: 'async' });
-      }
-      const video = make('video', {
-        src: `${item.src}#t=0.1`,
-        preload: 'metadata',
-        muted: true,
-        playsInline: true,
-        disablePictureInPicture: true
-      });
-      video.addEventListener('error', () => video.replaceWith(none()), { once: true });
-      return video;
-    };
-    const src = item.thumb ?? item.poster;
-    if (!src) return fallback();
-    const img = make('img', { src, alt: '', loading: 'lazy', decoding: 'async' });
-    img.addEventListener('error', () => img.replaceWith(fallback()), { once: true });
-    return img;
-  }
-  /**
-   * A thumbnail: opens the viewer, or builds the video when the browser cannot play the HLS stream.
-   * Tiles that cannot do anything have no buttons.
-   * @param {import("../typings/types.d.ts").MediaItem} item
-   * @param {import("../typings/types.d.ts").PostEntry} entry
-   */
-  #renderTile(item, entry) {
-    const playable = Library.playable(item);
-    const command = playable ? 'view-media' : item.stream ? 'load-ts' : '';
-    const tile = make('mujs-tile', {
-      title: item.drm ? i18n$('drm_notice') : item.title,
-      dataset: { id: item.id, type: item.type }
-    });
-    if (command) {
-      Object.assign(tile.dataset, { command });
-      tile.setAttribute('role', 'button');
-      tile.tabIndex = 0;
-    }
-    tile.append(Library.thumbnail(item));
-    if (item.preview) {
-      tile.append(make('mujs-elem', 'badge top', { textContent: i18n$('free_preview') }));
-    }
-    const badge = make('mujs-elem', 'badge');
-    if (item.drm) {
-      badge.textContent = 'DRM';
-      badge.classList.add('drm');
-    } else if (item.label) {
-      badge.textContent = item.label;
-    } else if (item.type === 'video') {
-      IconSVG.load('video', badge);
-      if (item.duration) badge.append(document.createTextNode(` ${item.duration}`));
-    } else if (item.type !== 'photo') {
-      badge.textContent = item.type.toUpperCase();
-    }
-    if (badge.hasChildNodes()) tile.append(badge);
-    const actions = make('mujs-elem', 'tile-actions');
-    if (item.stream && !playable) {
-      actions.append(Library.tileBtn('download', 'load-ts', i18n$('hls_load'), { id: item.id }));
-    } else if (item.src) {
-      actions.append(
-        Library.tileBtn('download', 'download-video', i18n$('download'), { id: item.id })
-      );
-    }
-    if (item.src && !item.blob) {
-      actions.append(Library.tileBtn('copy', 'copy', i18n$('copy'), { id: item.id }));
-    }
-    if (entry.post.variant === 'post') {
-      actions.append(Library.tileBtn('remove', 'of-remove', i18n$('remove'), { id: item.id }));
-    }
-    if (actions.hasChildNodes()) tile.append(actions);
-    return tile;
-  }
-}
-// #endregion
-// #region Config
-/**
- * Keeps only known keys with the expected type, protects against corrupted storage / bad imports.
- * @template {Record<string, any>} T
- * @param {unknown} input
- * @param {T} [defaults]
- * @returns {Partial<T>}
- */
-const sanitizeConfig = (input, defaults = /** @type {any} */ (DEFAULT_CONFIG)) => {
-  /** @type {Record<string, any>} */
-  const out = {};
-  if (!isObj(input)) return /** @type {any} */ (out);
-  const source = /** @type {Record<string, any>} */ (input);
-  for (const [key, def] of Object.entries(defaults)) {
-    if (!(key in source)) continue;
-    const value = source[key];
-    if (isObj(def)) {
-      out[key] = sanitizeConfig(value, def);
-    } else if (typeof def === 'number') {
-      if (typeof value === 'number' && Number.isFinite(value)) out[key] = value;
-    } else if (typeof value === typeof def) {
-      out[key] = value;
-    }
-  }
-  return /** @type {any} */ (out);
-};
-// #endregion
-// #region OnlyFans
-/**
- * OnlyFans is a single page application (Vue), navigation goes through its router.
- */
-const OnlyFans = {
-  /** @type {{ push: (path: string) => unknown } | null} */
-  router: null,
-  /**
-   * @param {string} path
-   * @returns {boolean}
-   */
-  navigate(path) {
-    try {
-      const { router } = OnlyFans;
-      if (!router || isEmpty(path)) return false;
-      const result = router.push(path);
-      // Vue Router rejects duplicate navigations, not an error
-      if (result instanceof Promise) result.catch(BLANK_FN);
-      return true;
-    } catch (ex) {
-      con.err(ex);
-    }
-    return false;
-  }
-};
-// #endregion
-// #region Container
+//#endregion
+//#region Container
 class Container {
-  /** @type {?HTMLElement} */
+  /** @type {?MainUserJS} */
   #frame = null;
-  /** @type {?HTMLElement} */
+  /** @type {?Root} */
   #root = null;
   /** @type {Set<string>} */
   #errors = new Set();
@@ -3128,107 +4105,43 @@ class Container {
   opacityMax = '1';
   /** Frame is idle */
   opacityMin = '0.4';
-  injected = false;
   elementsReady = false;
   /** @type {?HTMLElement} */
   viewer = null;
   viewerIndex = 0;
   /** @type {string[]} */
   viewerList = [];
-  cfgBuilt = false;
+  timeouts = {
+    frame: new Timeout(),
+    toast: new Timeout()
+  };
   constructor() {
     this.webpage = url;
-    this.host = getHostname(url.hostname ?? BLANK_PAGE);
-    /** @type { { [key: string]: Timeout } } */
-    this.timeouts = {
-      frame: new Timeout(),
-      toast: new Timeout()
-    };
-    /** @type {Array<{ key: string; elem: HTMLInputElement; type: string }>} */
-    this.cfgRows = [];
-    this.library = new Library(this);
+    this.host = getHostname(url.hostname);
     con.onError = (...msg) => this.showError(...msg);
     window.addEventListener('pagehide', this, false);
   }
   /**
    * The element inserted into the page.
-   * @returns {HTMLElement}
+   * @returns {MainUserJS}
    */
   get frame() {
-    if (this.#frame == null) this.#createFrame();
-    return /** @type {HTMLElement} */ (this.#frame);
+    if (this.#frame) return this.#frame;
+    this.#createFrame();
+    return this.#frame;
   }
   /**
    * Root of the interface, lives inside the shadow tree.
-   * @returns {HTMLElement}
+   * @returns {Root}
    */
   get root() {
-    if (this.#root == null) this.#createFrame();
-    return /** @type {HTMLElement} */ (this.#root);
+    if (this.#root) return this.#root;
+    this.#createFrame();
+    return this.#root;
   }
   #createFrame() {
-    const frame = make('mph-userjs', {
-      dataset: { insertedBy: $GM.info.script.name, role: 'primary-container' }
-    });
-    /** @type {ShadowRoot | HTMLElement} */
-    let shadow = frame;
-    try {
-      // `closed`, the website cannot reach into the interface
-      if (isFN(frame.attachShadow)) shadow = frame.attachShadow({ mode: 'closed' });
-    } catch (ex) {
-      con.err(ex);
-    }
-    const root = make('mujs-root');
-    if (isMobile) root.dataset.mobile = '';
-    // Keep page level shortcuts / popunders from reacting to input inside the interface
-    for (const type of [
-      'click',
-      'mousedown',
-      'mouseup',
-      'pointerdown',
-      'pointerup',
-      'touchstart',
-      'touchend',
-      'keydown',
-      'keyup',
-      'keypress',
-      'contextmenu'
-    ]) {
-      frame.addEventListener(type, (evt) => evt.stopPropagation());
-    }
-    this.#frame = frame;
-    this.#root = root;
-    this.loadCSS(main_css, 'primary-stylesheet', shadow);
-    shadow.append(root);
-  }
-  /**
-   * Inserts a stylesheet.
-   * @param {string} css
-   * @param {string} role - Name of the stylesheet
-   * @param {ParentNode & Node} parent
-   * @returns {?HTMLStyleElement}
-   */
-  loadCSS(css, role, parent) {
-    try {
-      if (typeof css !== 'string' || isBlank(css)) {
-        throw new Error(`"${role}" contains an empty CSS string`, { cause: 'loadCSS' });
-      }
-      /** @type {?Element} */
-      let sty = null;
-      if ($GM.isGM) {
-        sty = $GM.addElement(parent, 'style', { textContent: css });
-      }
-      if (!(sty instanceof HTMLStyleElement)) {
-        sty = make('style', { textContent: css });
-        parent.append(sty);
-      }
-      sty.dataset.insertedBy = $GM.info.script.name;
-      sty.dataset.role = role;
-      return /** @type {HTMLStyleElement} */ (sty);
-    } catch (ex) {
-      con.err(ex);
-    }
-    return null;
+    this.#frame = make('mph-userjs');
+    this.#root = this.#frame._mph_.root;
   }
   /**
    * Builds the interface, safe to call multiple times.
@@ -3236,10 +4149,9 @@ class Container {
   init() {
     if (this.elementsReady) return true;
     try {
-      const root = this.root;
-      // #region Elements
-      this.toastElem = make('mujs-toast');
-      this.mainframe = make('mujs-mainframe', 'mainframe', {
+      //#region Elements
+      this.toastElem = make('mph-toast');
+      this.mainframe = make('mph-frame', 'mainframe', {
         title: 'Magic PH',
         style: `opacity: ${this.opacityMax};`,
         role: 'button',
@@ -3249,21 +4161,24 @@ class Container {
       this.mainbtn = make('count-frame', 'mainbtn', { textContent: '0' });
       IconSVG.load('download', this.mainframe);
       this.mainframe.append(this.mainbtn);
-      this.urlBar = make('input', 'mujs-url-bar', {
+      this.urlBar = make('input', 'mph-url-bar', {
         autocomplete: 'off',
         spellcheck: false,
         type: 'text',
         placeholder: i18n$('search_placeholder')
       });
-      this.footer = make('mujs-row', 'mujs-footer');
-      this.toolbar = make('mujs-toolbar');
-      this.header = make('mujs-header');
-      this.tbody = make('mujs-body');
-      this.main = make('mujs-main', 'hidden');
-      this.urlContainer = make('mujs-url');
-      this.btnHandles = make('mujs-column', 'btn-handles');
-      this.cfgpage = make('mujs-config', 'hidden');
-      this.emptyElem = make('mujs-empty', { textContent: i18n$('empty') });
+      this.footer = make('mph-row', 'mph-footer');
+      /** @type {Toolbar} */
+      this.toolbar = make('mph-toolbar');
+      this.header = make('mph-header');
+      /** @type {MainBody} */
+      this.library = make('mph-body');
+      this.main = make('mph-main', 'hidden');
+      this.urlContainer = make('mph-url');
+      this.btnHandles = make('mph-column', 'btn-handles');
+      /** @type {ConfigElement} */
+      this.cfgpage = make('mph-config', 'hidden');
+      this.emptyElem = make('mph-empty', { textContent: i18n$('empty') });
       /**
        * @param {string} cls
        * @param {string} title
@@ -3272,53 +4187,44 @@ class Container {
        * @param {Record<string, string>} [dataset]
        */
       const button = (cls, title, command, icon, dataset = {}) => {
-        const btn = make('mujs-btn', cls, {
+        const btn = make('mph-btn', cls, {
           title,
           role: 'button',
           tabIndex: 0,
           dataset: { command, ...dataset }
         });
-        IconSVG.load(/** @type {any} */ (icon), btn);
+        IconSVG.load(icon, btn);
         return btn;
       };
       this.btnHide = button('hide-list', i18n$('min'), 'hide-list', 'minus');
       this.btnfullscreen = button('fullscreen', i18n$('max'), 'fullscreen', 'expand');
       this.closebtn = button('close', i18n$('close'), 'close', 'close');
       this.btncfg = button('settings', i18n$('settings'), 'settings', 'gear');
-      // OnlyFans
-      this.ofHeader = make('mujs-row', 'of-actions hidden');
-      this.ofdwn = make('mujs-btn', 'of_btn', {
+      this.ofHeader = make('mph-row', 'of-actions hidden');
+      this.ofdwn = make('mph-btn', 'of_btn', {
         title: i18n$('download_all'),
         textContent: `${i18n$('download')} (0)`,
         role: 'button',
         tabIndex: 0,
         dataset: { command: 'of-download-all' }
       });
-      this.ofcopy = make('mujs-btn', 'of_btn', {
-        title: i18n$('copy_all'),
-        textContent: `${i18n$('copy')} (0)`,
-        role: 'button',
-        tabIndex: 0,
-        dataset: { command: 'of-copy-all' }
-      });
-      this.ofrm = make('mujs-btn', 'of_btn', {
+      this.ofrm = make('mph-btn', 'of_btn', {
         title: i18n$('remove_all'),
         textContent: `${i18n$('remove')} (0)`,
         role: 'button',
         tabIndex: 0,
         dataset: { command: 'of-remove-all' }
       });
-      this.ofHeader.append(this.ofcopy, this.ofdwn, this.ofrm);
-      // #endregion
+      this.ofHeader.append(this.ofdwn, this.ofrm);
+      //#endregion
       // Always in the toolbar, next to the tabs, on every screen size
       this.btnHandles.append(this.btncfg, this.btnHide, this.btnfullscreen, this.closebtn);
-      this.Tabs = new Tabs(this.toolbar);
       this.toolbar.append(this.btnHandles);
       this.urlContainer.append(this.urlBar);
       this.header.append(this.urlContainer, this.ofHeader);
-      this.tbody.append(this.emptyElem, this.cfgpage);
-      this.main.append(this.toolbar, this.header, this.tbody, this.footer);
-      root.append(this.toastElem, this.mainframe, this.main);
+      this.library.append(this.emptyElem, this.cfgpage);
+      this.main.append(this.toolbar, this.header, this.library, this.footer);
+      this.root.append(this.toastElem, this.mainframe, this.main);
       this.#bindTabs();
       this.#bindEvents();
       this.setTheme();
@@ -3330,41 +4236,40 @@ class Container {
     return this.elementsReady;
   }
   #bindTabs() {
-    const { Tabs: tabs } = this;
-    tabs.addListener('active', (tab) => {
-      const host = tab.dataset.host ?? tabs.blank;
-      dom.cl.remove(tabs.pool, 'active');
-      dom.cl.add(tab, 'active');
+    if (!this.library || !this.toolbar) return;
+    const { library: L, toolbar: T } = this;
+    T.addListener('active', (tab) => {
+      const host = tab.dataset.host ?? BLANK_PAGE;
+      dom.cl.remove(T.pool, 'active').add(tab, 'active');
       tab.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
-      dom.cl.add(qsA('mujs-list', this.tbody), 'hidden');
-      dom.cl.add([this.cfgpage, this.emptyElem], 'hidden');
+      dom.cl.add([this.cfgpage, this.emptyElem, ...Array.from(L)], 'hidden');
       this.urlBar.value = '';
       this.applyFilter('');
-      if (host === tabs.blank) {
+      if (host === BLANK_PAGE) {
         this.urlBar.placeholder = i18n$('newTab');
         this.emptyElem.textContent = i18n$('newtab_hint');
         dom.cl.remove(this.emptyElem, 'hidden');
         this.urlBar.focus?.({ preventScroll: true });
-      } else if (host.startsWith(tabs.protocal)) {
-        tabs.intFN(host);
+      } else if (host.startsWith(T._mph_.protocal)) {
+        T.intFN(host);
       } else {
         this.urlBar.placeholder = i18n$('search_placeholder');
-        dom.cl.remove(this.library.groups.get(host)?.pane ?? [], 'hidden');
+        dom.cl.remove(L.groups.get(host)?.pane ?? [], 'hidden');
       }
     });
-    tabs.addListener('internal', (host) => {
+    T.addListener('internal', (host) => {
       if (host === 'settings') {
-        this.buildConfig();
+        this.cfgpage.build();
         this.urlBar.placeholder = i18n$('search_settings');
         dom.cl.remove(this.cfgpage, 'hidden');
       }
     });
-    tabs.addListener('close', (tab) => {
-      const host = tab.dataset.host ?? tabs.blank;
-      const group = this.library.groups.get(host);
+    T.addListener('close', (tab) => {
+      const host = tab.dataset.host ?? BLANK_PAGE;
+      const group = L.groups.get(host);
       if (group) {
         if (cfg.clearTabCache) {
-          this.library.removeGroup(host);
+          L.removeGroup(host);
         } else {
           group.tab = null;
         }
@@ -3376,16 +4281,14 @@ class Container {
           )
         );
         if (sibling) {
-          tabs.active(sibling);
+          T.active(sibling);
         } else {
-          dom.cl.add(qsA('mujs-list', this.tbody), 'hidden');
-          this.emptyElem.textContent = this.library.items.size
-            ? i18n$('newtab_hint')
-            : i18n$('empty');
+          dom.cl.add(Array.from(L), 'hidden');
+          this.emptyElem.textContent = L.items.size ? i18n$('newtab_hint') : i18n$('empty');
           dom.cl.remove(this.emptyElem, 'hidden');
         }
       }
-      this.library.updateCounts();
+      L.updateCounts();
     });
   }
   #bindEvents() {
@@ -3395,18 +4298,15 @@ class Container {
     });
     ael(root, 'auxclick', (evt) => {
       // Middle click closes a tab
-      if (/** @type {MouseEvent} */ (evt).button !== 1) return;
-      const tab = /** @type {?HTMLElement} */ (
-        /** @type {HTMLElement} */ (evt.target)?.closest?.('tab-content')
-      );
+      if (evt.button !== 1) return;
+      const tab = evt.target?.closest?.('tab-content');
       if (tab) {
         evt.preventDefault();
-        this.Tabs.close(tab);
+        this.toolbar.close(tab);
       }
     });
-    ael(root, 'keydown', (evt) => {
-      const e = /** @type {KeyboardEvent} */ (evt);
-      const target = /** @type {HTMLElement} */ (e.target);
+    ael(root, 'keydown', (e) => {
+      const target = e.target;
       if (this.viewerOpen) {
         if (e.key === 'Escape') this.closeViewer();
         else if (e.key === 'ArrowLeft') this.showMedia(this.viewerIndex - 1);
@@ -3432,15 +4332,34 @@ class Container {
       ael(mainframe, 'mouseleave', () => this.fade());
     }
     ael(this.urlBar, 'input', () => {
-      if (this.Tabs._active?.dataset.host === this.Tabs.blank) return;
+      if (this.toolbar.isBlank()) return;
       this.applyFilter(this.urlBar.value);
     });
     ael(this.urlBar, 'change', () => {
-      const tab = this.Tabs._active;
-      if (tab?.dataset.host !== this.Tabs.blank) return;
+      if (!this.toolbar.isBlank()) return;
+      const tab = this.toolbar._active;
       const value = this.urlBar.value.trim();
       if (isEmpty(value)) return;
-      this.loadFromInput(value, tab).catch((ex) => this.showError(ex));
+      const target = Container.resolveInput(value);
+      if (!target) throw new Error(`Unsupported URL or id: "${value}"`, { cause: 'loadFromInput' });
+      if (target.path) {
+        if (!this.root.navigate(target.path)) {
+          throw new Error('Please navigate to "onlyfans.com"', { cause: 'loadFromInput' });
+        }
+        this.toolbar.close(tab);
+        return;
+      }
+      if (target.url.includes('onlyfans')) {
+        if (!this.root.router) {
+          throw new Error('Please navigate to "onlyfans.com"', { cause: 'loadFromInput' });
+        }
+        this.toolbar.close(tab);
+        return;
+      }
+      this.root.current = target.url;
+      runSite()
+        .catch((ex) => this.showError(ex))
+        .finally(() => this.toolbar.close(tab));
     });
   }
   /**
@@ -3448,10 +4367,13 @@ class Container {
    * @param {string} text
    */
   applyFilter(text) {
-    const needle = text.trim().toLowerCase();
-    for (const el of qsA('[data-search]', this.tbody)) {
-      const hit = isEmpty(needle) || (el.dataset.search ?? '').includes(needle);
-      el.classList.toggle('hidden', !hit);
+    if (typeof text === 'string') {
+      const needle = text.trim().toLowerCase();
+      for (const { el } of this.library.posts.values()) {
+        if (!el) continue;
+        const hit = isEmpty(needle) || (el.dataset.search ?? '').includes(needle);
+        el.classList.toggle('hidden', !hit);
+      }
     }
   }
   /**
@@ -3464,22 +4386,14 @@ class Container {
   }
   /**
    * Adds the interface to the page.
-   * @param {Document} [doc]
    */
-  inject(doc = document) {
-    try {
-      if (!this.init()) return this;
-      const parent = doc.documentElement;
-      if (parent && !parent.contains(this.frame)) parent.append(this.frame);
-      if (!this.injected) {
-        this.injected = true;
-        if (cfg.autoexpand) this.setExpanded(true);
-        this.fade();
-      }
-    } catch (ex) {
-      con.err(ex);
-    }
-    return this;
+  inject() {
+    if (!this.init()) return;
+    if (this.frame.injected) return;
+    const parent = document.documentElement;
+    if (parent && !parent.contains(this.frame)) parent.append(this.frame);
+    if (cfg.autoexpand) this.setExpanded(true);
+    this.fade();
   }
   /**
    * Removes the interface and frees every video.
@@ -3488,8 +4402,7 @@ class Container {
     this.library.clear();
     this.timeouts.frame.clearAll();
     this.timeouts.toast.clearAll();
-    dom.remove(this.#frame ?? []);
-    this.injected = false;
+    dom.remove(this.#frame);
     return this;
   }
   /**
@@ -3497,10 +4410,10 @@ class Container {
    */
   setTheme() {
     const { style } = this.frame;
-    const base = { ...HP.palette, ...HandlePage.placement(cfg?.position, HP.root) };
+    const base = { ...this.root.palette, ...Root.placement(cfg?.position, this.root.root) };
     for (const [k, v] of Object.entries(base)) style.setProperty(`--${k}`, v);
     // The panel opens on the side of the button
-    this.root.dataset.side = base['mujs-position-left'] === 'auto' ? 'right' : 'left';
+    this.root.dataset.side = base['mph-position-left'] === 'auto' ? 'right' : 'left';
     for (const [k, v] of Object.entries(cfg?.theme ?? {})) {
       if (typeof v === 'string' && !isEmpty(v)) {
         style.setProperty(`--${k}`, v);
@@ -3517,20 +4430,18 @@ class Container {
     const { btnfullscreen, main } = this;
     const on = expanded ?? !dom.cl.has(main, 'expanded');
     dom.cl[on ? 'add' : 'remove']([btnfullscreen, main], 'expanded');
-    dom.rmChildren(btnfullscreen);
+    btnfullscreen.textContent = '';
     IconSVG.load(on ? 'collapse' : 'expand', btnfullscreen);
     return on;
   }
   showPanel() {
     this.inject();
-    dom.cl.remove(this.main, 'hidden');
-    dom.cl.add(this.mainframe, 'hidden');
+    dom.cl.remove(this.main, 'hidden').add(this.mainframe, 'hidden');
     if (cfg.autoexpand) this.setExpanded(true);
     return this;
   }
   hidePanel() {
-    dom.cl.add(this.main, 'hidden');
-    dom.cl.remove(this.mainframe, 'hidden');
+    dom.cl.add(this.main, 'hidden').remove(this.mainframe, 'hidden');
     this.fade();
     return this;
   }
@@ -3542,10 +4453,9 @@ class Container {
     const { frame } = this.timeouts;
     frame.clearAll();
     this.mainframe.style.opacity = this.opacityMax;
-    if (typeof time !== 'number' || !(time > 0)) return this;
+    if (typeof time !== 'number' || !(time > 0)) return;
     await frame.set(time);
     this.mainframe.style.opacity = this.opacityMin;
-    return this;
   }
   /**
    * Notice in the top corner of the page.
@@ -3608,31 +4518,33 @@ class Container {
    */
   updateCounters() {
     if (!this.elementsReady) return;
+    const active = this.toolbar._active;
     const { library } = this;
-    const { length: all } = library.feed;
-    const media = library.media.length;
+    const media = active
+      ? toArray(library.posts.keys()).filter((k) => k.includes(active.dataset.host ?? '')).length
+      : library.groups.size;
     this.mainbtn.textContent = String(library.count);
     this.ofdwn.textContent = `${i18n$('download')} (${media})`;
-    this.ofcopy.textContent = `${i18n$('copy')} (${media})`;
-    this.ofrm.textContent = `${i18n$('remove')} (${all})`;
-    this.ofHeader.classList.toggle('hidden', all === 0);
-    for (const btn of [this.ofdwn, this.ofcopy]) btn.classList.toggle('hidden', media === 0);
-    if (this.Tabs._active === null) {
+    this.ofrm.textContent = `${i18n$('remove')} (${media})`;
+    this.ofHeader.classList.toggle('hidden', media === 0);
+    this.ofdwn.classList.toggle('hidden', media === 0);
+    if (active === null) {
       this.emptyElem.textContent = library.groups.size ? i18n$('newtab_hint') : i18n$('empty');
     }
   }
-  // #region Commands
+  //#region Commands
   /**
    * @param {MouseEvent} evt
    */
   async handleClick(evt) {
-    const t = /** @type {?HTMLElement} */ (evt.target);
-    const target = /** @type {?HTMLElement} */ (t?.closest?.('[data-command]'));
+    if (!evt.target) return;
+    /** @type {?HTMLElement} */
+    const target = evt.target.closest('[data-command]');
     if (!target) return;
     const { dataset } = target;
     const cmd = dataset.command ?? '';
     const item = dataset.id ? this.library.items.get(dataset.id) : undefined;
-    const { Tabs: tabs, library } = this;
+    const { toolbar: T, library: L } = this;
     switch (cmd) {
       case 'toggle-list':
         this.showPanel();
@@ -3649,22 +4561,22 @@ class Container {
         this.setExpanded();
         break;
       case 'settings':
-        tabs.create('mujs:settings');
+        T.create('mujs:settings');
         break;
       case 'open-tab':
         if (dataset.webpage) $GM.openInTab(dataset.webpage);
         break;
       case 'new-tab':
-        tabs.create();
+        T.create();
         break;
       case 'switch-tab':
-        tabs.active(target);
+        T.active(target);
         break;
       case 'close-tab':
-        if (target.parentElement) tabs.close(target.parentElement);
+        if (target.parentElement) T.close(target.parentElement);
         break;
       case 'section': {
-        target.parentElement?.classList.toggle('collapsed');
+        target.classList.toggle('collapsed');
         break;
       }
       case 'save':
@@ -3672,7 +4584,7 @@ class Container {
         break;
       case 'reset':
         cfg = copyObject(DEFAULT_CONFIG);
-        this.reloadConfig();
+        this.cfgpage.reload();
         break;
       case 'export-config':
         saveAs(
@@ -3681,7 +4593,7 @@ class Container {
         );
         break;
       case 'import-config':
-        this.cfgFile?.click();
+        this.cfgpage.fileElement.click();
         break;
       case 'copy':
         if (item) await this.copyItem(item);
@@ -3693,7 +4605,7 @@ class Container {
         await this.loadHLS(dataset.id ?? '');
         break;
       case 'view-media':
-        if (item) this.openViewer(item.id);
+        if (item) await this.viewMedia(item);
         break;
       case 'viewer-close':
         this.closeViewer();
@@ -3708,32 +4620,32 @@ class Container {
         this.showMedia(Number(dataset.index));
         break;
       case 'post-download': {
-        await this.downloadAll(library.media.filter((i) => i.post === dataset.post));
+        await this.downloadAll(L.media.filter((i) => i.post === dataset.post));
         break;
       }
       case 'post-copy': {
-        const urls = library.media.filter((i) => i.post === dataset.post).map((i) => i.src);
-        if (urls.length && (await writeClipboard(urls.join('\n'))))
-          msg('[MagicPH] Copied URLs to Clipboard', 2500);
+        const urls = L.media.filter((i) => i.post === dataset.post).map((i) => i.src);
+        if (urls.length && (await $GM.setClipboard(urls.join('\n'))))
+          msg('Copied URLs to Clipboard', 2500);
         break;
       }
       case 'post-remove':
-        library.removePost(dataset.post ?? '');
+        L.removePost(dataset.post ?? '');
         break;
       case 'of-remove':
-        if (item && library.removeItem(item.id)) {
-          msg(`[MagicPH] Deleted Video Id: ${item.title}`, 2500);
+        if (item && L.removeItem(item.id)) {
+          msg(`Deleted Video Id: ${item.title}`, 2500);
         }
         break;
       case 'of-open':
-        if (dataset.webpage && !OnlyFans.navigate(dataset.webpage)) {
-          $GM.openInTab(new URL(dataset.webpage, window.location.origin).href);
+        if (dataset.webpage && !this.root.navigate(dataset.webpage)) {
+          $GM.openInTab(toURL(dataset.webpage, Page.location.origin).href);
         }
         break;
       case 'of-copy-all': {
-        const urls = library.media.map((i) => i.src);
-        if (urls.length && (await writeClipboard(urls.join('\n')))) {
-          msg('[MagicPH] Copied URLs to Clipboard', 2500);
+        const urls = L.media.map((i) => i.src);
+        if (urls.length && (await $GM.setClipboard(urls.join('\n')))) {
+          msg('Copied URLs to Clipboard', 2500);
         }
         break;
       }
@@ -3741,21 +4653,66 @@ class Container {
         await this.downloadAll();
         break;
       case 'of-remove-all':
-        for (const g of Array.from(library.posts.keys())) library.removePost(g);
+        for (const g of toArray(L.posts, { keys: true })) L.removePost(g);
         break;
       default:
         break;
     }
   }
   /**
-   * @param {import("../typings/types.d.ts").MediaItem} item
+   * Opens a tile in the viewer.
+   *
+   * A `viewerOnly` tile only knows the page of its video: the page is fetched first and the card is
+   * updated with what it holds (qualities, HLS, poster, title...), then the viewer opens on it.
+   * @param {MediaItem} item
    */
-  async copyItem(item) {
-    const copied = await writeClipboard(item.src);
-    msg(`[MagicPH] ${copied ? 'Copied URL to Clipboard' : 'Failed to copy to Clipboard'}`, 2500);
+  async viewMedia(item) {
+    const { el } = item;
+    if (!el?._mph_?.m?.viewerOnly) {
+      this.openViewer(item.id);
+      return;
+    }
+    // A click while the page is being fetched would fetch it twice
+    if (el.dataset.fetching) return;
+    el.dataset.fetching = 'true';
+    const { library: L, root: R } = this;
+    const { post } = el._mph_.entry;
+    msg(`Loading from source: "${item.src}"`, 2500);
+    try {
+      // `find(input)` replaces the site context of the page (router included), it only reads it
+      // before its first `await`, so it is given back right away: other clicks and the viewer keep
+      // the page's own context, even while several tiles are loading
+      R._mph_ = R.current;
+      const data = await R.find(item.src);
+      const updated = L.addVideo(
+        {
+          ...data,
+          id: post.id,
+          groupKey: post.groupKey,
+          groupTitle: post.groupTitle
+        },
+        true
+      );
+      if (!updated) throw new Error('Nothing playable was found on the page');
+      const entry = L.posts.get(item.post);
+      const first = entry?.ids.values().find((id) => MainBody.playable(L.items.get(id)));
+      if (first) this.openViewer(first);
+    } catch (ex) {
+      this.showError(new Error(`Failed to load "${item.src}": ${errMsg(ex)}`, { cause: ex }));
+    } finally {
+      // The tile is gone when the update replaced it, it may still be there when it failed
+      delete el.dataset.fetching;
+    }
   }
   /**
-   * @param {import("../typings/types.d.ts").MediaItem} item
+   * @param {MediaItem} item
+   */
+  async copyItem(item) {
+    const copied = await $GM.setClipboard(item.src);
+    msg(copied ? 'Copied URL to Clipboard' : 'Failed to copy to Clipboard', 2500);
+  }
+  /**
+   * @param {MediaItem} item
    */
   async downloadItem(item) {
     if (!item.src) {
@@ -3764,83 +4721,80 @@ class Container {
     const name = `${sanitizeFilename(item.title)}.${item.ext}`;
     if (item.blob) {
       saveAs(item.blob, name);
-      msg('[MagicPH] Download complete', 2500);
-      return;
-    }
-    try {
-      await Network.download({ name, url: item.src, data: item.data }, progressNotice(name));
-      msg('[MagicPH] Download complete', 2500);
-    } catch (ex) {
-      msg(`[MagicPH] Failed to download "${name}"`, 4000);
-      throw new Error(`Failed to download "${name}": ${errMsg(ex)}`, { cause: ex });
+      msg('Download complete', 2500);
+    } else {
+      /**
+       * Progress reporter for a transfer, updates the notice at most 4 times per second.
+       * @returns {(evt: { loaded: number; total: number }) => void}
+       */
+      const progressNotice = () => {
+        let last = 0;
+        return (evt) => {
+          const now = Date.now();
+          if (now - last < 250 && evt.loaded !== evt.total) return;
+          last = now;
+          msg(`(${Network.prog(evt)}) Downloading "${name}" using "Fetch API"`);
+        };
+      };
+      try {
+        const getBlob = async () => {
+          try {
+            const { chunks } = await Network.fetchChunks(item.src, item.data, progressNotice());
+            return new Blob(chunks, { type: 'application/octet-stream' });
+          } catch (ex) {
+            // Most commonly CORS, a userscript manager request is not bound by it
+            if (!$GM.isGM) throw ex;
+            con.info('Fetch failed, retrying with "xmlHttpRequest":', errMsg(ex));
+            return Network.gmBlob(item.src, item.data, progressNotice()).catch(con.err);
+          }
+        };
+        const blob = await getBlob();
+        if (blob) saveAs(blob, name);
+        item.blob = blob;
+        msg('Download complete', 2500);
+      } catch (ex) {
+        msg(`Failed to download "${name}"`, 4000);
+        throw new Error(`Failed to download "${name}": ${errMsg(ex)}`, { cause: ex });
+      }
     }
   }
   /**
    * Downloads every OnlyFans media (or the given ones), the downloaded media is removed.
-   * @param {import("../typings/types.d.ts").MediaItem[]} [cards]
+   * @param {MediaItem[]} [cards]
    */
   async downloadAll(cards = this.library.media) {
-    const { library } = this;
     if (isEmpty(cards)) return;
     const limit =
       cfg.limitDownloads || cards.length > 16 || isMobile ? 1 : Math.max(1, cfg.concurrency);
     await runPool(cards, limit, async (item) => {
       try {
         await this.downloadItem(item);
-        library.removeItem(item.id);
+        this.library.removeItem(item.id);
       } catch (ex) {
         this.showError(ex);
       }
     });
-    msg('[MagicPH] Downloads complete!', 2500);
+    msg('Downloads complete!', 2500);
   }
   /**
    * Builds the video from the HLS playlist of a tile, the tile is replaced by the video.
    * @param {string} id
    */
   async loadHLS(id) {
-    const { library } = this;
-    const item = library.items.get(id);
+    const item = this.library.items.get(id);
     if (!item?.stream || item.el.dataset.busy) return;
     item.el.dataset.busy = 'true';
     const badge = qs('.badge:not(.top)', item.el);
     const label = badge?.textContent ?? '';
-    const hls = new mphHLS(item.stream, item.data, badge, HP.root);
+    const hls = new mphHLS(item.stream, item.data, badge, this.root.root);
     const blob = await hls.start();
     if (blob) {
       if (this.viewerOpen) this.closeViewer();
-      library.addBlob(item, blob, hls.ext);
+      this.library.addBlob(item, blob, hls.ext);
     } else {
       delete item.el.dataset.busy;
       if (badge) badge.textContent = label;
     }
-  }
-  /**
-   * Turns whatever was typed in the "new tab" into videos.
-   * @param {string} value - URL, path or id
-   * @param {HTMLElement} tab - The "new tab"
-   */
-  async loadFromInput(value, tab) {
-    const target = Container.resolveInput(value);
-    if (!target) throw new Error(`Unsupported URL or id: "${value}"`, { cause: 'loadFromInput' });
-    if (target.path) {
-      if (!OnlyFans.navigate(target.path)) {
-        throw new Error('Please navigate to "onlyfans.com"', { cause: 'loadFromInput' });
-      }
-      this.Tabs.close(tab);
-      return;
-    }
-    con.log(target);
-    if (target.url.includes('onlyfans')) {
-      if (!OnlyFans.router) {
-        throw new Error('Please navigate to "onlyfans.com"', { cause: 'loadFromInput' });
-      }
-      this.Tabs.close(tab);
-      return;
-    }
-    HP.setCurrent(target.url);
-    await runSite();
-    this.Tabs.close(tab);
   }
   /**
    * @param {string} value
@@ -3848,7 +4802,7 @@ class Container {
    */
   static resolveInput(value) {
     const val = value.trim();
-    const { root, webpage } = HP;
+    const { root, webpage } = this.root;
     /**
      * @param {string} pathname
      */
@@ -3862,7 +4816,7 @@ class Container {
     };
     if (val.startsWith('http')) {
       try {
-        const u = new URL(val);
+        const u = toURL(val);
         if (root === 'onlyfans' && isEmpty(ofArr(u.pathname))) {
           return null;
         } else {
@@ -3896,8 +4850,8 @@ class Container {
     }
     return null;
   }
-  // #endregion
-  // #region Viewer
+  //#endregion
+  //#region Viewer
   get viewerOpen() {
     return !!this.viewer && !dom.cl.has(this.viewer, 'hidden');
   }
@@ -3906,25 +4860,21 @@ class Container {
    * @param {string} id
    */
   openViewer(id) {
-    const { library } = this;
-    const item = library.items.get(id);
+    const item = this.library.items.get(id);
     if (!item) return;
-    const entry = library.posts.get(item.post);
-    this.viewerList = Array.from(entry?.ids ?? [id]).filter((key) => {
-      const i = library.items.get(key);
-      return i && Library.playable(i);
-    });
+    const entry = this.library.posts.get(item.post);
+    this.viewerList = toArray(entry?.ids ?? [id]).filter((key) =>
+      MainBody.playable(this.library.items.get(key))
+    );
     if (!this.viewer) this.#buildViewer();
     this.strip.textContent = '';
-    this.viewerList.forEach((key, index) => {
-      const thumb = library.items.get(key);
-      const tile = make('mujs-tile', 'thumb', {
-        dataset: { command: 'viewer-goto', index: String(index) }
+    this.viewerList.forEach((key, i) => {
+      const item = this.library.items.get(key);
+      /** @type {Tile} */
+      const tile = make('mph-tile', 'thumb', {
+        dataset: { command: 'viewer-goto', index: String(i) }
       });
-      const src = thumb?.thumb ?? thumb?.poster;
-      if (src) tile.append(make('img', { src, alt: '' }));
-      else if (!thumb?.label) tile.textContent = String(index + 1);
-      if (thumb?.label) tile.append(make('mujs-elem', 'thumb-label', { textContent: thumb.label }));
+      tile.renderViewer(item, i);
       this.strip.append(tile);
     });
     dom.cl.remove(this.viewer, 'hidden');
@@ -3932,7 +4882,7 @@ class Container {
   }
   closeViewer() {
     if (!this.viewer) return;
-    this.stage.textContent = '';
+    if (this.stage) this.stage.textContent = '';
     dom.cl.add(this.viewer, 'hidden');
   }
   /**
@@ -3944,36 +4894,141 @@ class Container {
     this.viewerIndex = (index + n) % n;
     const item = this.library.items.get(this.viewerList[this.viewerIndex]);
     if (!item) return this.closeViewer();
-    this.stage.textContent = '';
+    const siteRoot = this.root.current.root;
     const src = item.src || item.stream?.[0];
-    /** @type {HTMLElement} */
+    /** @type {HTMLImageElement | HTMLAudioElement | HTMLVideoElement} */
     let el;
-    if (item.type === 'photo') {
-      el = make('img', { src, alt: '' });
-    } else if (item.type === 'audio') {
-      el = make('audio', { src, controls: true, autoplay: true });
-    } else {
-      const gif = item.type === 'gif';
-      el = make('video', {
+    const error = () => {
+      this.stage.textContent = '';
+      this.stage.append(make('mph-elem', 'viewer-msg', { textContent: i18n$('play_error') }));
+    };
+    /**
+     * @type {?HTMLVideoElement}
+     */
+    const vidElem = qs('video', this.stage);
+    if (vidElem && /video/.test(item.type) && vidElem.dataset.type !== 'gif') {
+      vidElem.textContent = '';
+      if (this.stage) dom.remove(qs('.viewer-msg', this.stage));
+      const source = make('source', {
         src,
-        poster: item.poster ?? item.thumb,
-        controls: !gif,
-        loop: gif,
-        muted: gif,
-        autoplay: true,
-        playsInline: true,
-        disablePictureInPicture: true
+        type: `${item.type}/${item.ext}`,
+        dataset: {
+          label: item.label
+        },
+        error
       });
+      vidElem.append(source);
+      vidElem.load();
+      el = vidElem;
+    } else {
+      this.stage.textContent = '';
     }
-    // The browser refused the media (format, expired address, ...)
-    el.addEventListener(
-      'error',
-      () => el.replaceWith(make('mujs-elem', 'viewer-msg', { textContent: i18n$('play_error') })),
-      { once: true }
-    );
-    this.stage.append(el);
+    if (!el) {
+      if (item.type === 'photo') {
+        el = make('img', { src, alt: '', draggable: 'false', dataset: { type: item.type } });
+      } else if (item.type === 'audio') {
+        el = make('audio', { src, controls: true, autoplay: true, dataset: { type: item.type } });
+      } else {
+        /** @type {?HTMLVideoElement} */
+        let vid;
+        const gif = item.type === 'gif';
+        if (/xnxx|sxyprn|xvideos|porntrex/.test(siteRoot)) {
+          vid = make('video', {
+            src: gif ? src : undefined,
+            preload: 'auto',
+            poster: item.poster ?? item.thumb,
+            controls: !gif,
+            loop: gif,
+            muted: gif,
+            autoplay: true,
+            disablePictureInPicture: true,
+            playsInline: true,
+            dataset: {
+              type: item.type
+            }
+          });
+          el = vid;
+        } else {
+          const vp = make('video-player');
+          const vs = make('video-skin', {
+            style: 'display: block; width: 100%; height: 100%; aspect-ratio: 16 / 9;'
+          });
+          vp.append(vs);
+          const special = toArray(this.library.items.values()).at(-1);
+          if (special && !isEmpty(special.stream)) {
+            vid = make('mux-video', {
+              src: special.stream[0],
+              preload: 'auto',
+              poster: item.poster ?? item.thumb,
+              loop: gif,
+              muted: gif,
+              autoplay: true,
+              disablePictureInPicture: true,
+              playsInline: true,
+              dataset: {
+                type: item.type
+              },
+              source: {
+                src: special.stream[0],
+                minAutoResolution: item.label
+              }
+            });
+            if (vid.source)
+              vid.source.playback ??= {
+                minAutoResolution: item.label
+              };
+          } else {
+            vid = make('video', {
+              src: gif ? src : undefined,
+              preload: 'auto',
+              poster: item.poster ?? item.thumb,
+              loop: gif,
+              muted: gif,
+              autoplay: true,
+              disablePictureInPicture: true,
+              playsInline: true,
+              dataset: {
+                type: item.type
+              }
+            });
+          }
+          vs.append(vid);
+          el = vp;
+        }
+        if (!gif) {
+          const source = make('source', {
+            src,
+            type: `${item.type}/${item.ext}`,
+            dataset: {
+              label: item.label,
+              type: item.type
+            },
+            error
+          });
+          vid.append(source);
+        }
+
+        const vidMsg = make('mph-elem', 'viewer-msg', {
+          textContent: 'Loading your video...'
+        });
+        ael(vid, 'emptied', () => {
+          this.stage.append(vidMsg);
+          vid.setAttribute('style', 'display: none;');
+        });
+        ael(vid, 'loadeddata', () => {
+          vidMsg.remove();
+          vid.setAttribute('style', '');
+        });
+        ael(vid, 'loadstart', () => {
+          this.stage.append(vidMsg);
+          vid.setAttribute('style', 'display: none;');
+        });
+      }
+      ael(el, 'error', error, { once: true });
+      this.stage.append(el);
+    }
     this.viewerCount.textContent = `${this.viewerIndex + 1} / ${n}`;
-    this.viewerTitle.textContent = this.library.posts.get(item.post)?.post.text ?? item.title;
+    this.viewerTitle.textContent = `${this.library.posts.get(item.post)?.post.text ?? item.title} (${item.label})`;
     Object.assign(this.viewerDownload.dataset, {
       id: item.id,
       command: item.stream ? 'load-ts' : 'download-video'
@@ -3985,11 +5040,13 @@ class Container {
     this.viewerCopy.classList.toggle('hidden', !remote);
     // A website that checks where the request comes from refuses a new tab
     this.viewerLink.classList.toggle('hidden', !remote || Boolean(item.data.referrer));
-    dom.cl.toggle([this.viewerPrev, this.viewerNext, this.strip], 'hidden', n === 1);
-    Array.from(this.strip.children).forEach((c, i) =>
-      c.classList.toggle('active', i === this.viewerIndex)
-    );
-    this.strip.children[this.viewerIndex]?.scrollIntoView?.({ block: 'nearest', inline: 'center' });
+    dom.cl.toggle(this.strip, 'hidden', n === 1);
+    dom.cl.remove(qsA('mph-tile', this.strip), 'active');
+    const activeElem = qs(`mph-tile[data-index="${this.viewerIndex}"]`, this.strip);
+    dom.cl.add(activeElem, 'active');
+    if (activeElem) {
+      activeElem.scrollIntoView({ block: 'nearest', inline: 'center' });
+    }
   }
   #buildViewer() {
     /**
@@ -3999,26 +5056,22 @@ class Container {
      * @param {string} [icon]
      */
     const button = (cls, command, text, icon) => {
-      const btn = make('mujs-btn', cls, {
+      const btn = make('mph-btn', cls, {
         title: text,
         role: 'button',
         tabIndex: 0,
         dataset: { command }
       });
-      if (icon) IconSVG.load(/** @type {any} */ (icon), btn);
+      if (icon) IconSVG.load(/** @type {unknown} */ (icon), btn);
       else btn.textContent = text;
       return btn;
     };
-    this.viewerCount = make('mujs-elem', 'viewer-count');
-    this.viewerTitle = make('mujs-elem', 'viewer-title');
+    this.viewerCount = make('mph-elem', 'viewer-count');
+    this.viewerTitle = make('mph-elem', 'viewer-title');
     this.viewerLink = button('', 'open-tab', i18n$('open'), 'open');
     this.viewerDownload = button('', 'download-video', i18n$('download'), 'download');
     this.viewerCopy = button('', 'copy', i18n$('copy'), 'copy');
-    this.viewerPrev = button('viewer-nav prev', 'viewer-prev', i18n$('prev'));
-    this.viewerNext = button('viewer-nav next', 'viewer-next', i18n$('next'));
-    this.viewerPrev.textContent = '\u2039';
-    this.viewerNext.textContent = '\u203a';
-    const bar = make('mujs-row', 'viewer-bar');
+    const bar = make('mph-row', 'viewer-bar');
     bar.append(
       this.viewerCount,
       this.viewerTitle,
@@ -4027,22 +5080,31 @@ class Container {
       this.viewerCopy,
       button('', 'viewer-close', i18n$('close'), 'close')
     );
-    this.stage = make('mujs-elem', 'viewer-stage');
-    const stageWrap = make('mujs-elem', 'viewer-wrap');
-    stageWrap.append(this.stage, this.viewerPrev, this.viewerNext);
-    this.strip = make('mujs-elem', 'viewer-strip');
-    this.viewer = make('mujs-viewer', 'hidden');
-    this.viewer.append(bar, stageWrap, this.strip);
-    // Click on the backdrop closes, swipe changes the media
-    ael(stageWrap, 'click', (evt) => {
-      if (evt.target === stageWrap || evt.target === this.stage) this.closeViewer();
-    });
+    this.stage = make('mph-elem', 'viewer-stage');
+    const stageWrap = make('mph-elem', 'viewer-wrap');
+    /**
+     * @param {HTMLElement} target
+     */
+    const stageCB = (target, args) => {
+      /** @type { HTMLVideoElement } */
+      const video = target.closest('[data-type="video"]');
+      /** @type { HTMLImageElement } */
+      const img = target.closest('[data-type="photo"]');
+      /** @type { HTMLAudioElement } */
+      const audio = target.closest('[data-type="audio"]');
+      /** @type { HTMLVideoElement } */
+      const gif = target.closest('[data-type="gif"]');
+      if (img || gif || (audio && audio.paused === true) || (video && video.paused === true)) {
+        if (this.library.items.size > 1) this.showMedia(args);
+      }
+    };
     let x = 0;
+    let y = 0;
     ael(
       stageWrap,
       'touchstart',
       (evt) => {
-        x = /** @type {TouchEvent} */ (evt).changedTouches[0].clientX;
+        x = evt.changedTouches[0].clientX;
       },
       { passive: true }
     );
@@ -4050,20 +5112,47 @@ class Container {
       stageWrap,
       'touchend',
       (evt) => {
-        const dx = /** @type {TouchEvent} */ (evt).changedTouches[0].clientX - x;
-        if (Math.abs(dx) > 60) this.showMedia(this.viewerIndex + (dx < 0 ? 1 : -1));
+        evt.preventDefault();
+        const dx = evt.changedTouches[0].clientX - x;
+        if (Math.abs(dx) > 60) {
+          const target = evt.target;
+          if (!target) return;
+          stageCB(target, this.viewerIndex + (dx < 0 ? 1 : -1));
+        }
       },
       { passive: true }
     );
+    stageWrap.append(this.stage);
+    this.strip = make('mph-elem', 'viewer-strip');
+    this.viewer = make('mph-viewer', 'hidden', {
+      // Click on the backdrop closes, swipe changes the media
+      click: (evt) => {
+        const target = evt.target;
+        if (target === bar || target === this.strip || target === this.stage) this.closeViewer();
+      }
+    });
+    /**
+     * @param {WheelEvent} evt
+     */
+    const wheelFn = (evt) => {
+      evt.preventDefault();
+      const direction = evt.deltaY * -0.01;
+      y = direction < 0 ? 1 : -1;
+      const target = evt.target;
+      if (!target) return;
+      stageCB(target, this.viewerIndex + y);
+    };
+    ael(this.viewer, 'wheel', wheelFn);
+    this.viewer.append(bar, stageWrap, this.strip);
     this.root.append(this.viewer);
   }
-  // #endregion
-  // #region Settings
+  //#endregion
+  //#region Settings
   async save() {
     const config = copyObject(cfg);
     /**
-     * @param {Record<string, any>} conf
-     * @param {Record<string, any>} def
+     * @param {Record<string, unknown>} conf
+     * @param {Record<string, unknown>} def
      */
     const strip = (conf, def) => {
       for (const [key, value] of Object.entries(conf)) {
@@ -4081,199 +5170,10 @@ class Container {
     await jsStorage.setValue('Config', isEmpty(config) ? '{}' : config);
     con.info('Saved config:', { config, cfg });
     this.setTheme();
-    msg('[MagicPH] Settings saved', 2500);
+    msg('Settings saved', 2500);
     return cfg;
   }
-  /**
-   * Refreshes the settings page after `cfg` was replaced.
-   */
-  reloadConfig() {
-    for (const row of this.cfgRows) {
-      const value = row.key.split('.').reduce((o, k) => o?.[k], /** @type {any} */ (cfg));
-      if (row.type === 'checkbox') {
-        row.elem.checked = !!value;
-      } else {
-        row.elem.value = value ?? '';
-      }
-    }
-    return this.setTheme();
-  }
-  /**
-   * Builds the settings page.
-   */
-  buildConfig() {
-    if (this.cfgBuilt) return;
-    this.cfgBuilt = true;
-    const savebtn = make('mujs-btn', 'save', {
-      textContent: i18n$('save'),
-      role: 'button',
-      tabIndex: 0,
-      dataset: { command: 'save' },
-      disabled: false
-    });
-    const resetbtn = make('mujs-btn', 'reset', {
-      textContent: i18n$('reset'),
-      role: 'button',
-      tabIndex: 0,
-      dataset: { command: 'reset' }
-    });
-    const cbtn = make('mu-js', 'mujs-sty-flex');
-    cbtn.append(resetbtn, savebtn);
-    /**
-     * @param {string} name
-     * @param {string} text
-     * @param {boolean} [open]
-     */
-    const makesection = (name, text, open = false) => {
-      const sec = make('mujs-section', open ? '' : 'collapsed', { dataset: { name } });
-      const lb = make('label', { dataset: { command: 'section' } });
-      lb.append(make('mu-js', { textContent: text }));
-      sec.append(lb);
-      this.cfgpage.append(sec);
-      return sec;
-    };
-    const sections = {
-      general: makesection('general', i18n$('general'), true),
-      theme: makesection('theme', i18n$('theme')),
-      exp: makesection('exp', i18n$('import_export'))
-    };
-    /**
-     * @param {HTMLElement} sec
-     * @param {string} label
-     * @param {string} key - Dotted path in the config
-     * @param {"checkbox" | "number" | "text" | "select"} type
-     * @param {Record<string, unknown>} [attrs]
-     */
-    const makeRow = (sec, label, key, type, attrs = {}) => {
-      const [group, sub] = key.split('.');
-      const get = () =>
-        sub ? /** @type {any} */ (cfg)[group][sub] : /** @type {any} */ (cfg)[group];
-      /** @param {unknown} v */
-      const set = (v) => {
-        if (sub) {
-          /** @type {any} */ (cfg)[group][sub] = v;
-        } else {
-          /** @type {any} */ (cfg)[group] = v;
-        }
-      };
-      const lb = make('label', 'sub-section', { dataset: { config: key } });
-      lb.append(make('mu-js', { textContent: label }));
-      const { options, ...rest } = /** @type {Record<string, any>} */ (attrs);
-      const inp = /** @type {HTMLInputElement} */ (
-        type === 'select'
-          ? make('select', { className: 'mujs-select' })
-          : make('input', { type, ...rest })
-      );
-      if (type === 'select') {
-        for (const value of options)
-          inp.append(make('option', { value, textContent: i18n$(value) }));
-        inp.value = String(get());
-        lb.append(inp);
-        ael(inp, 'change', () => {
-          set(inp.value);
-          this.setTheme();
-        });
-      } else if (type === 'checkbox') {
-        const inlab = make('mu-js', 'mujs-inlab');
-        inlab.append(inp, make('label', { onclick: () => inp.click() }));
-        lb.append(inlab);
-        inp.checked = !!get();
-        ael(inp, 'change', () => {
-          set(inp.checked);
-          if (key === 'autoexpand') this.setExpanded(inp.checked);
-        });
-      } else {
-        lb.append(inp);
-        inp.value = String(get() ?? '');
-        if (type === 'number') {
-          ael(inp, 'input', () => {
-            if (inp.validity.valid && !isEmpty(inp.value)) {
-              dom.cl.remove(inp, 'mujs-invalid');
-              dom.prop(savebtn, 'disabled', false);
-              set(parseFloat(inp.value));
-            } else {
-              dom.cl.add(inp, 'mujs-invalid');
-              dom.prop(savebtn, 'disabled', true);
-            }
-          });
-        } else {
-          inp.placeholder = getComputedStyle(this.frame)
-            .getPropertyValue(`--${sub ?? key}`)
-            .trim();
-          ael(inp, 'change', () => {
-            set(inp.value.trim());
-            this.setTheme();
-          });
-        }
-      }
-      sec.append(lb);
-      this.cfgRows.push({ key, elem: inp, type });
-      return lb;
-    };
-    if ($GM.isGM) makeRow(sections.general, i18n$('userjs_autoinject'), 'autoinject', 'checkbox');
-    makeRow(sections.general, i18n$('userjs_fullscreen'), 'autoexpand', 'checkbox');
-    makeRow(sections.general, i18n$('clear_tab_cache'), 'clearTabCache', 'checkbox');
-    makeRow(sections.general, i18n$('position'), 'position', 'select', {
-      options: ['auto', 'top-left', 'top-right', 'bottom-left', 'bottom-right']
-    });
-    makeRow(sections.general, i18n$('limit_downloads'), 'limitDownloads', 'checkbox');
-    makeRow(sections.general, i18n$('auto_hls'), 'autoHLS', 'checkbox');
-    makeRow(sections.general, i18n$('concurrency'), 'concurrency', 'number', {
-      min: 1,
-      max: 16,
-      step: 1
-    });
-    makeRow(sections.general, `${i18n$('dtime')} (ms)`, 'time', 'number', { min: 0, step: 500 });
-    for (const k of Object.keys(DEFAULT_CONFIG.theme)) {
-      makeRow(sections.theme, k, `theme.${k}`, 'text', { spellcheck: false });
-    }
-    for (const type of ['import', 'export']) {
-      sections.exp.append(
-        make('mujs-btn', `mujs-${type} sub-section`, {
-          textContent: i18n$(`${type}_config`),
-          role: 'button',
-          tabIndex: 0,
-          dataset: { command: `${type}-config` }
-        })
-      );
-    }
-    this.cfgFile = make('input', 'hidden', { type: 'file', accept: '.json,application/json' });
-    ael(this.cfgFile, 'change', async () => {
-      try {
-        const file = this.cfgFile.files?.[0];
-        if (!file) return;
-        const imported = sanitizeConfig(JSON.parse(await file.text()));
-        cfg = { ...cfg, ...imported, theme: { ...cfg.theme, ...(imported.theme ?? {}) } };
-        this.reloadConfig();
-        msg('[MagicPH] Config imported, press save to keep it', 4000);
-      } catch (ex) {
-        this.showError(new Error(`Failed to import config: ${errMsg(ex)}`, { cause: ex }));
-      } finally {
-        this.cfgFile.value = '';
-      }
-    });
-    sections.exp.append(this.cfgFile);
-    const about = make('mu-js', 'mujs-sty-flex about');
-    const { script } = $GM.info;
-    for (const [text, webpage] of [
-      [
-        `GitHub (v${script.version})`,
-        script.namespace ?? 'https://github.com/magicoflolis/Magic-PH'
-      ],
-      [i18n$('issue'), script.bugs ?? 'https://github.com/magicoflolis/Magic-PH/issues']
-    ]) {
-      about.append(
-        make('mujs-a', {
-          textContent: text,
-          role: 'button',
-          tabIndex: 0,
-          dataset: { command: 'open-tab', webpage }
-        })
-      );
-    }
-    this.cfgpage.append(cbtn, about);
-  }
-  // #endregion
+  //#endregion
 }
 const container = new Container();
 /**
@@ -4282,264 +5182,492 @@ const container = new Container();
  * @param {number} [time] - ms
  */
 const msg = (text, time) => container.toast(text, time).catch(BLANK_FN);
-// #endregion
-// #region Site Director
-/**
- * Pornhub, YouPorn, RedTube, Tube8, Thumbzilla videos.
- */
-const geekVideos = async () => {
-  container.library.addVideo(await new mphMedia(HP.webpage).find());
-};
-/**
- * Pornhub GIFs.
- */
-const geekGifs = async () => {
-  const page = HP.webpage;
-  const doc = await Network.doc(page);
-  const nodes = ldNodes(doc).filter((n) => n.contentUrl || n.thumbnailUrl);
-  container.library.addVideo({
-    title: nodes[0]?.name ?? doc.title,
-    poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), page) : undefined,
-    files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), page)).filter(Boolean)
-  });
-};
-/**
- * Pornhub Shorties, videos are loaded while scrolling.
- */
-const geekShorts = async () => {
-  const doc = await Network.doc(HP.webpage);
-  const token = qs('.slider-container', doc)?.dataset.token;
-  /** @type {Set<string>} */
-  const seen = new Set();
-  let page = 1;
-  let busy = false;
-  let lastY = window.scrollY;
-  /**
-   * @param {Array<Record<string, any>>} shorties
-   */
-  const makeData = async (shorties) => {
-    for (const s of toArray(shorties)) {
-      try {
-        const [def] = toArray(s.mediaDefinitions).filter((m) => m.format === 'mp4');
-        if (!def) continue;
-        /** @type {Array<{ videoUrl: string }>} */
-        const list = await Network.req(absURL(def.videoUrl, HP.webpage));
-        const files = toArray(list)
-          .map((v) => v.videoUrl)
-          .filter((v) => /\.mp4[.?]/.test(v) && !seen.has(v));
-        for (const v of files) seen.add(v);
-        container.library.addVideo({
-          id: String(s.videoId ?? s.id ?? def.videoUrl),
-          title: s.videoTitle,
-          poster: s.thumb ?? s.thumbnail ?? s.imageUrl ?? s.image_url,
-          files
-        });
-      } catch (ex) {
-        con.err(ex);
-      }
-    }
-  };
-  for (const script of doc.scripts) {
-    const txt = script.textContent ?? '';
-    const at = txt.search(/JSON_SHORTIES\s*=/);
-    if (at < 0) continue;
-    try {
-      await makeData(extractJSON(txt, txt.indexOf('=', at)));
-    } catch (ex) {
-      con.err(ex);
-    }
-    break;
-  }
-  window.addEventListener(
-    'scroll',
-    async () => {
-      const y = window.scrollY;
-      const down = y > lastY;
-      lastY = y;
-      if (busy || !down || !token) return;
-      if (window.innerHeight + y < document.body.scrollHeight - 200) return;
-      busy = true;
-      try {
-        page++;
-        const params = new URLSearchParams({ page: String(page), token });
-        const next = await Network.req(new URL(`/shorties/get?${params}`, HP.webpage.origin));
-        await makeData(next);
-      } catch (ex) {
-        con.err(ex);
-      } finally {
-        busy = false;
-      }
-    },
-    { passive: true }
-  );
-};
-/**
- * Every quality SpankBang lists in the player setup.
- * @param {Document} page
- */
-const spankBangFiles = (page) => {
-  for (const script of page.scripts) {
-    const [, raw] = /stream_data\s*=\s*(\{.*?\});/s.exec(script.textContent ?? '') ?? [];
-    if (!raw) continue;
-    try {
-      /** @type {Record<string, string[]>} */
-      const data = JSON.parse(raw.replaceAll("'", '"'));
-      return {
-        files: Object.entries(data)
-          .filter(([quality, list]) => /^(?:\d+p|4k)$/.test(quality) && list[0])
-          .map(([quality, list]) => ({
-            src: list[0],
-            label: quality === '4k' ? '2160p' : quality
-          })),
-        ts: toArray(data.m3u8).slice(0, 1)
-      };
-    } catch (ex) {
-      con.err(ex);
-    }
-  }
-  return { files: [], ts: [] };
-};
+//#endregion
+//#region Site Director
 /**
  * Runs the handler of the current website.
- * @param {Document} [doc]
+ * @param {string} [input]
  */
-const runSite = async (doc = document) => {
-  const { root, pathType } = HP.current;
-  const { library } = container;
-  if (root === 'onlyfans') {
-    await runOnlyFans();
-  } else if (/^(porntrex|analdin|porn00|xhamster)$/.test(root)) {
-    library.addVideo({ ...(await new mphMedia(HP.webpage).find()), hermes: requestOptions(root) });
-  } else if (root === 'spankbang') {
-    const page = await Network.doc(HP.webpage);
-    const meta = readMeta(page, HP.webpage);
-    let { files, ts } = spankBangFiles(page);
-    if (isEmpty(files)) {
-      // The setup was not found, what the player shows
-      await waitFor(() => qs('video > source'), 10000);
-      files = Array.from(qsA('video > source'), (e) => ({
-        src: /** @type {HTMLSourceElement} */ (e).src,
-        label: ''
-      }));
+const runSite = async (input) => {
+  const { library: L, root: R } = container;
+  if (!isEmpty(input)) {
+    R.current = input;
+  }
+  const { root, path } = R.current;
+  const getUsername = (str) => {
+    return (str ?? root)
+      .split('/')
+      .filter((i) => !isBlank(i))
+      .at(-1);
+  };
+  /**
+   * @template {Partial<VideoData>} O
+   * @param {O} obj
+   * @param {number} i
+   * @returns {O}
+   */
+  const toLibrary = (obj, i) => {
+    const n = `${root}-${i ?? obj?.id ?? 0}`;
+    const data = {
+      id: n,
+      groupKey: root,
+      groupTitle: root,
+      user: {
+        name: n,
+        username: n
+      },
+      viewerOnly: true,
+      ...obj
+    };
+    L.addVideo(data);
+    return data;
+  };
+
+  con.log(root, path);
+
+  if (path.includes('Video')) {
+    L.addVideo(await R.find());
+  } else if (path === 'GIF') {
+    const page = R.webpage;
+    const doc = await Network.doc(page);
+    const nodes = ldNodes(doc).filter((n) => n.contentUrl || n.thumbnailUrl);
+    L.addVideo({
+      title: nodes[0]?.name ?? doc.title,
+      poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), page) : undefined,
+      files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), page)).filter(Boolean)
+    });
+  } else if (path === 'Shorties') {
+    const doc = await Network.doc(R.webpage);
+    const token = qs('.slider-container', doc)?.dataset.token;
+    /** @type {Set<string>} */
+    const seen = new Set();
+    let page = 1;
+    let busy = false;
+    let lastY = window.scrollY;
+    /**
+     * @param {Array<Record<string, unknown>>} shorties
+     */
+    const makeData = async (shorties) => {
+      for (const s of toArray(shorties)) {
+        try {
+          const [def] = toArray(s.mediaDefinitions).filter((m) => m.format === 'mp4');
+          if (!def) continue;
+          /** @type {Array<{ videoUrl: string }>} */
+          const list = await Network.req(absURL(def.videoUrl, R.webpage));
+          const files = toArray(list)
+            .map((v) => v.videoUrl)
+            .filter((v) => /\.mp4[.?]/.test(v) && !seen.has(v));
+          for (const v of files) seen.add(v);
+          L.addVideo({
+            id: String(s.videoId ?? s.id ?? def.videoUrl),
+            title: s.videoTitle,
+            poster: s.thumb ?? s.thumbnail ?? s.imageUrl ?? s.image_url,
+            files
+          });
+        } catch (ex) {
+          con.err(ex);
+        }
+      }
+    };
+    for (const script of doc.scripts) {
+      const txt = script.textContent ?? '';
+      const at = txt.search(/JSON_SHORTIES\s*=/);
+      if (at < 0) continue;
+      try {
+        await makeData(extractJSON(txt, txt.indexOf('=', at)));
+      } catch (ex) {
+        con.err(ex);
+      }
+      break;
     }
-    // The named qualities top out below 1080p on some accounts, its one HLS playlist is
-    // adaptive and often reaches higher, but we can't read its ceiling without building it
-    const bestFile = Math.max(0, ...files.map((f) => parseInt(f.label, 10) || 0));
-    library.addVideo({
-      title: meta.title || doc.title,
-      poster: meta.poster,
-      duration: meta.duration,
-      files,
-      ts,
-      preferHLS: bestFile < 1080
-    });
-  } else if (root === '91porn') {
-    // The player writes the <source> from a percent encoded string that is in the page
-    const page = await Network.doc(HP.webpage);
-    const txt = Array.from(page.scripts, (e) => e.textContent ?? '').join('\n');
-    const [, encoded = ''] = /strencode2\("([^"]+)"\)/.exec(txt) ?? [];
-    const src = qs('source', parseHTML(decodeURIComponent(encoded)))?.getAttribute('src');
-    library.addVideo({
-      title: page.title
-        .replace(/\s+/g, ' ')
-        .replace(/\s*-\s*91porn\s*$/i, '')
-        .trim(),
-      poster: absURL(qs('video', page)?.getAttribute('poster') ?? '', HP.webpage) || undefined,
-      duration: toSeconds(/const videoDuration = ([\d.]+)/.exec(txt)?.[1]),
-      files: src ? [src] : []
-    });
-  } else if (root === 'hqporner') {
-    const iframe = /** @type {?HTMLIFrameElement} */ (qs('.videoWrapper > iframe'));
-    if (!iframe) return;
-    const found = await new mphMedia(iframe.src).find();
-    const [, min = 0, sec = 0] =
-      /duration is (\d+)min (\d+)sec/i.exec(
-        qs('meta[name="description"]', doc)?.getAttribute('content') ?? ''
-      ) ?? [];
-    library.addVideo({
-      ...found,
-      page: HP.webpage,
-      title: doc.title.replace(/\s*-\s*HQporner\.com$/i, '') || qs('h1', doc)?.textContent?.trim(),
-      duration: Number(min) * 60 + Number(sec)
-    });
-  } else if (/^(xnxx|xvideos)$/.test(root)) {
-    const page = await Network.doc(HP.webpage);
-    const txt = Array.from(page.scripts, (e) => e.textContent ?? '').find((t) =>
-      t.includes('html5player.setVideo')
+    window.addEventListener(
+      'scroll',
+      async () => {
+        const y = window.scrollY;
+        const down = y > lastY;
+        lastY = y;
+        if (busy || !down || !token) return;
+        if (window.innerHeight + y < document.body.scrollHeight - 200) return;
+        busy = true;
+        try {
+          page++;
+          const params = Page.toSearchParams({ page: String(page), token });
+          const next = await Network.req(toURL(`/shorties/get?${params}`, R.webpage.origin));
+          await makeData(next);
+        } catch (ex) {
+          con.err(ex);
+        } finally {
+          busy = false;
+        }
+      },
+      { passive: true }
     );
-    /** @param {string} name */
-    const setup = (name) =>
-      new RegExp(`html5player\\.${name}\\('((?:[^'\\\\]|\\\\.)*)'\\)`).exec(txt ?? '')?.[1];
-    const meta = readMeta(page, HP.webpage);
-    const hls = setup('setVideoHLS');
-    library.addVideo({
-      title: meta.title || htmlToText(setup('setVideoTitle')) || doc.title,
-      poster: meta.poster ?? setup('setThumbUrl'),
-      duration: meta.duration,
-      // The file name tells the quality (`mp4_sd.mp4`), Low and High are often the same file
-      files: [setup('setVideoUrlHigh'), setup('setVideoUrlLow')].map((src = '') => ({
+  } else if (root === 'onlyfans') {
+    // `__vue__` is only reliable once the content of the page is rendered
+    await query('main[id="content"]');
+    const app = await query('[id="app"]');
+    if (!app) return;
+    const appVue = await waitFor(() => app.__vue__, 120000, 250);
+    if (!appVue) {
+      con.err('OnlyFans: unable to find the Vue instance');
+      return;
+    }
+    R.router = appVue._routerRoot?.$options?.router ?? appVue.$router ?? null;
+    /**
+     * Media of an OnlyFans post, the API changed its shape over time: `full` / `thumb` / `source` used to be
+     * on the media itself, they are in `files` now.
+     * @param {Record<string, unknown>} m
+     * @returns {?PostMedia}
+     */
+    const ofMedia = (m) => {
+      if (!m || m.canView === false || m.hasError || m.isReady === false) return null;
+      const f = m.files ?? {};
+      /** @param {unknown} v */
+      const url = (v) => {
+        const u = typeof v === 'string' ? v : v?.url;
+        return typeof u === 'string' && u ? u : undefined;
+      };
+      const type = /^(video|photo|gif|audio)$/.test(m.type) ? m.type : 'video';
+      const preview = url(f.preview) ?? url(m.preview);
+      const thumb = url(f.thumb) ?? url(m.thumb) ?? url(f.squarePreview) ?? url(m.squarePreview);
+      // The original, otherwise the highest quality
+      const [best] = Object.entries(m.videoSources ?? {})
+        .map(([quality, v]) => [parseInt(quality, 10) || 0, url(v)])
+        .filter(([, u]) => u)
+        .sort(([a], [b]) => Number(b) - Number(a));
+      let src =
+        url(m.full) ??
+        url(f.full) ??
+        url(m.src) ??
+        (type === 'photo' ? preview : undefined) ??
+        best?.[1];
+      // A protected video has nothing to play or download, only its preview image
+      const drm = !src && Boolean(url(f.drm?.manifest?.hls));
+      if (!src && !drm) return null;
+      if (f.drm && 'manifest' in f.drm) {
+        const type = 'dash';
+        const u = toURL(f.drm.manifest[type]);
+        u.pathname = u.pathname.replace(/\.mpd/, '_source.mp4');
+        const sp = u.searchParams;
+        for (const [k, v] of Object.entries(f.drm.signature[type])) {
+          if (k.includes('Policy')) {
+            sp.append('Policy', v);
+          } else if (k.includes('Signature')) {
+            sp.append('Signature', v);
+          } else if (k.includes('Key-Pair-Id')) {
+            sp.append('Key-Pair-Id', v);
+          }
+        }
+        src = u.toString();
+      }
+      const duration = m.duration ?? m.source?.duration;
+      return {
+        id: String(m.id),
+        type,
         src,
-        label: /\/mp4_(\w+)\.mp4/.exec(src)?.[1].toUpperCase() ?? ''
-      })),
-      // The direct file is capped to one (low) quality, HLS carries the higher ones
-      ts: hls ? [hls] : [],
-      preferHLS: true
+        drm,
+        preview: !isEmpty(preview),
+        poster: preview ?? thumb,
+        thumb: thumb ?? preview,
+        duration: duration ? fancyTimeFormat(duration) : undefined
+      };
+    };
+    /** Post id + number of media, a post is read again when its media change @type {Set<string>} */
+    const seen = new Set();
+    /** @type {Map<string, Record<string, unknown>>} */
+    const users = new Map();
+    /** `author` / `fromUser` are either an id or a user object @param {unknown} v */
+    const userOf = (v) => users.get(String(isObj(v) ? v.id : v));
+    /**
+     * @param {unknown[]} posts
+     */
+    const filterPosts = (posts) => {
+      for (const p of posts) {
+        if (!isObj(p) || !Array.isArray(p.media) || p.isMediaReady === false) continue;
+        const sig = `${p.id}:${p.media.length}`;
+        if (seen.has(sig)) continue;
+        const user =
+          userOf(p.author) ?? userOf(p.fromUser) ?? userOf(p.withUser) ?? userOf(p.chatId);
+        // The post is retried once its user is known
+        if (!user?.name) continue;
+        seen.add(sig);
+        const previews = new Set(toArray(p.previews).map(String));
+        const media = p.media
+          .map(ofMedia)
+          .filter((m) => m !== null)
+          .map((m) => ({ ...m, preview: previews.has(m.id) }));
+        if (isEmpty(media)) continue;
+        L.addPost({
+          id: String(p.id),
+          variant: 'post',
+          groupKey: String(user.id),
+          groupTitle: user.name,
+          user: { name: user.name, username: user.username, avatar: user.avatar },
+          date: p.postedAt ?? p.createdAt,
+          price: p.price,
+          isFree: p.isFree,
+          isMessage: p.responseType === 'message' || 'fromUser' in p,
+          text: htmlToText(p.text),
+          original:
+            p.responseType === 'message' || 'fromUser' in p
+              ? `/my/chats/chat/${user.id}/?firstId=${p.id}`
+              : `/${p.id}/${user.username}`,
+          media
+        });
+      }
+    };
+    appVue.$store.watch((/** @type {Record<string, unknown>} */ a) => {
+      try {
+        for (const u of Object.values(a.users?.items ?? {})) {
+          if (isObj(u) && u.id != null) users.set(String(u.id), u);
+        }
+        /** @type {unknown[]} */
+        const toGrab = [
+          ...Object.values(a.posts?.items ?? {}),
+          ...Object.values(a.chats?.items ?? {}),
+          ...Object.values(a.chats?.messages ?? {})
+        ];
+        filterPosts(toGrab);
+      } catch (ex) {
+        con.dbg('OnlyFans store:', errMsg(ex));
+      }
+      return undefined;
     });
-  } else if (pathType === 'Video') {
-    await geekVideos();
-  } else if (pathType === 'GIF') {
-    await geekGifs();
-  } else if (pathType === 'Shorties') {
-    await geekShorts();
+  } else if (root === '91porna') {
+    const arr = toArray(qsA('.video-item'));
+    for (let i = 0; i < arr.length; i++) {
+      const li = arr[i];
+      const img = qs('.poster > img', li);
+      const vid = qs('a[href^="/comic/index/detail?video_key="]', li)?.href;
+      const title = img?.alt ?? qs('div > a > div', li)?.textContent?.trim();
+      const poster = img?.dataset?.src ?? img?.src;
+      if (isEmpty(vid) || isEmpty(poster)) continue;
+      toLibrary(
+        {
+          files: [vid],
+          title,
+          poster,
+          postData: {
+            original: vid,
+            text: title,
+            variant: 'post'
+          }
+        },
+        i
+      );
+    }
+  } else if (root === '91porn') {
+    const arr = toArray(qsA(`a[href^="https://${R.host}/view_video.php?viewkey="]`));
+    for (let i = 0; i < arr.length; i++) {
+      const li = arr[i];
+      const title = qs('.video-title', li)?.textContent?.trim();
+      const overlay = qs('.thumb-overlay', li);
+      const poster = qs('img', overlay)?.src;
+      toLibrary(
+        {
+          id: overlay?.id,
+          files: [li.href],
+          title,
+          poster,
+          postData: {
+            original: li.href,
+            text: title,
+            variant: 'post'
+          }
+        },
+        i
+      );
+    }
+  } else if (root === 'hqporner') {
+    const arr = toArray(qsA('section.box.feature'));
+    for (let i = 0; i < arr.length; i++) {
+      const li = arr[i];
+      const img = qs('img', li);
+      const vid = qs('a[href]', li)?.href;
+      const title = img?.alt ?? qs('.meta-data-title > a', li)?.textContent?.trim();
+      const poster = img?.src;
+      if (isEmpty(vid) || isEmpty(poster)) continue;
+      toLibrary(
+        {
+          files: [vid],
+          title,
+          poster,
+          postData: {
+            original: vid,
+            text: title,
+            variant: 'post'
+          }
+        },
+        i
+      );
+    }
+  } else if (root === 'jable') {
+    const arr = toArray(qsA('.video-img-box'));
+    for (let i = 0; i < arr.length; i++) {
+      const li = arr[i];
+      const img = qs('img', li);
+      const vid = qs('a[href]', li)?.href;
+      const title = img?.alt ?? qs('.title > a', li)?.textContent?.trim();
+      const poster = img?.dataset?.src ?? img?.src;
+      if (isEmpty(vid) || isEmpty(poster)) continue;
+      toLibrary(
+        {
+          files: [vid],
+          title,
+          poster,
+          postData: {
+            original: vid,
+            text: title,
+            variant: 'post'
+          }
+        },
+        i
+      );
+    }
+  } else if (root === 'beeg') {
+    // `__vue__` is only reliable once the content of the page is rendered
+    await query('main.v-main');
+    const app = await query('[id="app"]');
+    if (!app) return;
+    const appVue = await waitFor(() => app.__vue_app__, 120000, 250);
+    if (!appVue) {
+      con.err('Beeg: unable to find the Vue instance');
+      return;
+    }
+    R.router = app.__vue_app__?.config?.globalProperties?.$router ?? null;
+    const pathname = R.webpage.pathname;
+    /** @type {Partial<VideoData>} */
+    const fallback = {
+      groupKey: 'beeg',
+      groupTitle: 'beeg',
+      files: [],
+      preferHLS: true,
+      postData: {},
+      user: {
+        name: 'MagicPH'
+      }
+    };
+    /**
+     * @param {Record<string, unknown>} obj
+     */
+    const getVideo = (obj) => {
+      if (!isObj(obj)) return;
+      const { fc_facts, file } = obj;
+      /** @type {VideoData} */
+      const videoData = {
+        id: `${file.id}`,
+        photos: [],
+        ...fallback
+      };
+      if (Array.isArray(fc_facts)) {
+        for (const fact of fc_facts) {
+          if (Array.isArray(fact.fc_thumbs)) {
+            for (const thumb of fact.fc_thumbs) {
+              videoData.photos.push({
+                id: `${fact.id ?? videoData.id}:${thumb}`,
+                src: `https://thumbs.externulls.com/videos/${file.id}/${thumb}.webp`,
+                thumb: `https://thumbs.externulls.com/videos/${file.id}/${thumb}.webp`,
+                type: 'photo'
+              });
+            }
+          }
+        }
+        videoData.poster = videoData.photos.at(-1).src;
+        videoData.date = fc_facts.at(-1).fc_created;
+      }
+      if (Array.isArray(obj.tags)) {
+        const person = obj.tags.find((o) => o.is_owner === true);
+        if (person) {
+          const thumb = person.thumbs.at(-1);
+          if (thumb && thumb.id) {
+            const crop = thumb.crops.at(-1);
+            if (crop && crop.id) {
+              videoData.user = {
+                name: person.tg_name ?? 'MagicPH',
+                username: person.tg_slug,
+                avatar: `https://thumbs.externulls.com/photos/${thumb.id}/to.webp?crop_id=${crop.id}&size_new=320x320`
+              };
+            }
+          }
+          // videoData.groupKey = String(person.id);
+          // videoData.groupTitle = person.tg_name ?? person.tg_slug ?? 'MagicPH';
+        }
+      }
+      if ('hls_resources' in file) {
+        videoData.title = `${file.data[0]?.cd_value}`;
+        videoData.duration = file.fl_duration;
+        videoData.ts = [`https://video.beeg.com/${file.hls_resources.fl_cdn_multi}`];
+        videoData.postData.original = `/-0${file.id}`;
+        videoData.postData.text = `${file.data[0]?.cd_value}`;
+        videoData.postData.variant = 'post';
+        videoData.photos = videoData.photos.filter((p) => p.src !== videoData.poster);
+        L.addVideo(videoData);
+      }
+    };
+    if (pathname === '/') {
+      const homepage = await Network.req(
+        'https://store.externulls.com/tag/videos/index?limit=48&offset=0'
+      );
+      if (Array.isArray(homepage)) {
+        for (const o of homepage) {
+          getVideo(o);
+        }
+      }
+    } else if (pathname.includes('/-0')) {
+      const videoId = pathname.replace(/^\/-0/, '');
+      getVideo(await Network.req(`https://store.externulls.com/facts/file/${videoId}`));
+    } else if (
+      !/^\/(auth|tmp-*|contributor|account|saved|reacted|clipped|following|contact|copyright|2257|creators|terms|privacy|takedown|ip-holder|claim)/.test(
+        pathname
+      )
+    ) {
+      const slug = pathname.replace('/', '');
+      const primTag = await Network.req(`https://store.externulls.com/tag?slug=${slug}`);
+      if (isObj(primTag)) {
+        const thumb = primTag.thumbs.at(-1);
+        if (thumb && thumb.id) {
+          const crop = thumb.crops.at(-1);
+          if (crop && crop.id) {
+            fallback.user = {
+              name: primTag.tg_name ?? 'MagicPH',
+              username: primTag.tg_slug,
+              avatar: `https://thumbs.externulls.com/photos/${thumb.id}/to.webp?crop_id=${crop.id}&size_new=320x320`
+            };
+          }
+        }
+      }
+      const tagPage = await Network.req(
+        `https://store.externulls.com/tag/videos/${slug}?limit=100&offset=0`
+      );
+      if (Array.isArray(tagPage)) {
+        for (const o of tagPage) {
+          getVideo(o);
+        }
+      }
+    }
   } else if (root === 'eporner') {
-    // h264 plays everywhere, the AV1 download next to each quality is the last resort
-    const page = await Network.doc(HP.webpage);
-    const meta = readMeta(page, HP.webpage);
-    const files = Array.from(qsA('#hd-porn-dload a[href]', page))
-      .filter((a) => a.closest('.download-h264'))
-      .map((a) => ({
-        src: absURL(a.getAttribute('href') ?? '', HP.webpage),
-        label: /\((\d+p)/.exec(a.textContent ?? '')?.[1] ?? ''
-      }));
-    library.addVideo({
-      title: meta.title || doc.title,
-      poster: meta.poster,
-      duration: meta.duration,
-      files
-    });
-  } else if (root === 'youjizz') {
-    // `dataEncodings` lists every quality twice: a direct file and its single-bitrate HLS
-    // equivalent, plus one "Auto" adaptive playlist bundling a few of those qualities together
-    const page = await Network.doc(HP.webpage);
-    const meta = readMeta(page, HP.webpage);
-    const txt = Array.from(page.scripts, (e) => e.textContent ?? '').find((t) =>
-      t.includes('dataEncodings')
-    );
-    /** @type {Array<{ quality?: string; filename?: string }>} */
-    let entries = [];
-    try {
-      entries = extractJSON(txt ?? '', (txt ?? '').indexOf('dataEncodings'));
-    } catch (ex) {
-      con.err(ex);
+    const arr = toArray(qsA('[data-id][data-vp]'));
+    for (let i = 0; i < arr.length; i++) {
+      const li = arr[i];
+      const img = qs('img', li);
+      const vid = qs('a[href^="/video-"]', li)?.href;
+      const title = img?.alt ?? qs('.mbtit > a', li)?.textContent?.trim();
+      const poster = img?.dataset?.src ?? img?.src;
+      if (isEmpty(vid) || isEmpty(poster)) continue;
+      toLibrary(
+        {
+          files: [vid],
+          title,
+          poster,
+          postData: {
+            original: vid,
+            text: title,
+            variant: 'post'
+          }
+        },
+        i
+      );
     }
-    /** @type {Array<{ src: string; label: string }>} */
-    const files = [];
-    /** @type {Map<number, string>} */
-    const hlsByQuality = new Map();
-    for (const e of entries) {
-      const src = absURL(String(e.filename ?? ''), HP.webpage);
-      const quality = parseInt(String(e.quality), 10) || 0;
-      if (!src || !quality) continue;
-      if (/\.m3u8/.test(src)) hlsByQuality.set(quality, src);
-      else files.push({ src, label: `${quality}p` });
-    }
-    library.addVideo({
-      title: meta.title || doc.title,
-      poster: meta.poster,
-      duration: meta.duration,
-      files,
-      ...pickHLS(files, hlsByQuality)
-    });
   } else if (root === 'sxyprn') {
     // The address of the video is set by the scripts of the page
     const player = await waitFor(() => {
@@ -4548,182 +5676,258 @@ const runSite = async (doc = document) => {
     }, 30000);
     if (!player) return;
     const title = (qs('.post_text')?.textContent ?? '').trim();
-    library.addVideo({
-      title: isEmpty(title) ? doc.title : title.slice(0, 150),
+    L.addVideo({
+      title: isEmpty(title) ? document.title : title.slice(0, 150),
       poster: player.poster || undefined,
       files: [player.src]
     });
-  }
-};
-/**
- * Media of an OnlyFans post, the API changed its shape over time: `full` / `thumb` / `source` used to be
- * on the media itself, they are in `files` now.
- * @param {Record<string, any>} m
- * @returns {import("../typings/types.d.ts").PostMedia | null}
- */
-const ofMedia = (m) => {
-  if (!m || m.canView === false || m.hasError || m.isReady === false) return null;
-  const f = m.files ?? {};
-  /** @param {unknown} v */
-  const url = (v) => {
-    const u = typeof v === 'string' ? v : /** @type {any} */ (v)?.url;
-    return typeof u === 'string' && u ? u : undefined;
-  };
-  const type = /^(video|photo|gif|audio)$/.test(m.type) ? m.type : 'video';
-  const preview = url(f.preview) ?? url(m.preview);
-  // The original, otherwise the highest quality
-  const [best] = Object.entries(m.videoSources ?? {})
-    .map(([quality, v]) => [parseInt(quality, 10) || 0, url(v)])
-    .filter(([, u]) => u)
-    .sort(([a], [b]) => Number(b) - Number(a));
-  const src =
-    url(m.full) ??
-    url(f.full) ??
-    url(m.src) ??
-    (type === 'photo' ? preview : undefined) ??
-    best?.[1];
-  // A protected video has nothing to play or download, only its preview image
-  const drm = !src && Boolean(url(f.drm?.manifest?.hls));
-  if (!src && !drm) return null;
-  const duration = m.duration ?? m.source?.duration;
-  return {
-    id: String(m.id),
-    type,
-    src: /** @type {string | undefined} */ (src),
-    drm,
-    poster: preview ?? url(m.thumb),
-    thumb: url(f.squarePreview) ?? url(f.thumb) ?? url(m.thumb) ?? preview,
-    duration: duration ? fancyTimeFormat(duration) : undefined
-  };
-};
-/**
- * OnlyFans, posts are read from the Vue store of the website.
- */
-const runOnlyFans = async () => {
-  // `__vue__` is only reliable once the content of the page is rendered
-  await query('main[id="content"]', document, 60000);
-  const app = await query('[id="app"]', document, 60000);
-  if (!app) return;
-  const appVue = await waitFor(() => $GM.unwrap(app).__vue__, 120000, 250);
-  if (!appVue) {
-    con.err('OnlyFans: unable to find the Vue instance');
-    return;
-  }
-  OnlyFans.router = appVue._routerRoot?.$options?.router ?? appVue.$router ?? null;
-  /** Post id + number of media, a post is read again when its media change @type {Set<string>} */
-  const seen = new Set();
-  /** @type {Map<string, Record<string, any>>} */
-  const users = new Map();
-  /** `author` / `fromUser` are either an id or a user object @param {unknown} v */
-  const userOf = (v) => users.get(String(isObj(v) ? /** @type {any} */ (v).id : v));
-  /**
-   * @param {any[]} posts
-   */
-  const filterPosts = (posts) => {
-    for (const p of posts) {
-      if (!isObj(p) || !Array.isArray(p.media) || p.isMediaReady === false) continue;
-      const sig = `${p.id}:${p.media.length}`;
-      if (seen.has(sig)) continue;
-      const user = userOf(p.author) ?? userOf(p.fromUser) ?? userOf(p.withUser) ?? userOf(p.chatId);
-      // The post is retried once its user is known
-      if (!user?.name) continue;
-      seen.add(sig);
-      const previews = new Set(toArray(p.previews).map(String));
-      const media = p.media
-        .map(ofMedia)
-        .filter((m) => m !== null)
-        .map((m) => ({ ...m, preview: previews.has(m.id) }));
-      if (isEmpty(media)) continue;
-      container.library.addPost({
-        id: String(p.id),
-        variant: 'post',
-        groupKey: String(user.id),
-        groupTitle: user.name,
-        user: { name: user.name, username: user.username, avatar: user.avatar },
-        date: p.postedAt ?? p.createdAt,
-        price: p.price,
-        isFree: p.isFree,
-        isMessage: p.responseType === 'message' || 'fromUser' in p,
-        text: htmlToText(p.text),
-        original:
-          p.responseType === 'message' || 'fromUser' in p
-            ? `/my/chats/chat/${user.id}/`
-            : `/${p.id}/${user.username}`,
-        media
+  } else if (root === 'youjizz') {
+    const arr = toArray(qsA('[data-videoid]'));
+    for (let i = 0; i < arr.length; i++) {
+      const li = arr[i];
+      const vid = qs('a[data-video-id]', li)?.href;
+      const title = qs('.video-title > a', li)?.textContent?.trim();
+      const poster = qs('.frame-wrapper img', li)?.dataset?.original;
+      if (isEmpty(vid)) continue;
+      toLibrary(
+        {
+          id: `${li.dataset.videoid}`,
+          files: [vid],
+          title,
+          poster,
+          postData: {
+            original: vid,
+            text: title,
+            variant: 'post'
+          }
+        },
+        i
+      );
+    }
+  } else if (root === 'pornhub') {
+    const arr = toArray(qsA('ul[id] > li[id]'));
+    for (let i = 0; i < arr.length; i++) {
+      const li = arr[i];
+      const dataset = li.dataset;
+      if (dataset.videoVkey) {
+        const userElem = qs('.usernameWrap > a', li);
+        const userName = isEmpty(userElem?.title?.trim())
+          ? userElem?.textContent?.trim()
+          : userElem?.title?.trim();
+        const title = (qs('.title', li)?.title ?? qs('.title', li)?.textContent ?? root).trim();
+        toLibrary(
+          {
+            id: `${dataset.id}`,
+            groupKey: dataset.eventLabel?.trim() ?? root,
+            groupTitle: dataset.eventLabel?.trim() ?? root,
+            files: [`/view_video.php?viewkey=${dataset.videoVkey}`],
+            title,
+            poster: qs('img', li).src,
+            postData: {
+              original: `/view_video.php?viewkey=${dataset.videoVkey}`,
+              text: title,
+              variant: 'post'
+            },
+            user: {
+              name: userName ?? root,
+              username: getUsername(userElem?.href)
+            }
+          },
+          i
+        );
+      }
+    }
+  } else if (root === 'thumbzilla') {
+    const arr = toArray(qsA('[data-video-id]'));
+    for (let i = 0; i < arr.length; i++) {
+      const li = arr[i];
+      const dataset = li.dataset;
+      if (dataset.videoId) {
+        const a = qs('a[href]:not(.author-title-text)', li)?.href;
+        if (isEmpty(a)) continue;
+        const userElem = qs('a.author-title-text', li);
+        const title = li.ariaLabel;
+        const p = qs('.thumb-image', li);
+        toLibrary(
+          {
+            id: `${dataset.videoId}`,
+            files: [a],
+            title,
+            poster: p?.dataset?.src ?? p?.src,
+            postData: {
+              original: a,
+              text: title,
+              variant: 'post'
+            },
+            user: {
+              name: userElem?.textContent?.trim() ?? root,
+              username: getUsername(userElem?.href)
+            }
+          },
+          i
+        );
+      }
+    }
+  } else if (root === 'youporn') {
+    const vidInfo = toURL(R.webpage.href);
+    vidInfo.pathname = '/getVideoInfo';
+    const sp = vidInfo.searchParams;
+    for (const article of qsA('article.video-box')) {
+      const dataset = article.dataset;
+      if (dataset) {
+        sp.append('videos[]', dataset.videoId);
+      }
+    }
+    const req = await Network.req(vidInfo);
+    if (Array.isArray(req)) {
+      for (let i = 0; i < req.length; i++) {
+        const o = req[i];
+        toLibrary(
+          {
+            id: `${o.id}`,
+            files: [o.link],
+            postData: {
+              original: o.link,
+              text: o.title,
+              variant: 'post'
+            },
+            duration: o.duration,
+            title: o.title,
+            poster: isMobile ? o.thumbMobile : o.thumbPC,
+            user: {
+              name: o.uploaderName,
+              username: getUsername(o.uploaderUrl)
+            }
+          },
+          i
+        );
+      }
+    }
+  } else if (root === 'redtube') {
+    for (const li of qsA('ul.videos_grid > li[id]')) {
+      const title = qs('.tm_video_title', li)?.textContent?.trim();
+      const poster = (qs('.video_thumb_image > source', li)?.dataset?.srcset ?? '')
+        .split(/ |,/g)
+        .filter((i) => i.startsWith('http'))
+        .at(-1);
+      toLibrary({
+        id: `${li.dataset.videoId}`,
+        files: [`/${li.dataset.videoId}`],
+        title,
+        poster,
+        postData: {
+          original: `/${li.dataset.videoId}`,
+          text: title,
+          variant: 'post'
+        },
+        user: {
+          name: li.dataset.uploaderName,
+          username: getUsername(qs('.author-title-text ', li)?.href)
+        }
       });
     }
-  };
-  // Vuex re-runs the getter every time something it read changes, a callback is never needed
-  appVue.$store.watch((/** @type {Record<string, any>} */ a) => {
-    try {
-      for (const u of Object.values(a.users?.items ?? {})) {
-        if (isObj(u) && u.id != null) users.set(String(u.id), u);
+  } else if (root === 'xhamster') {
+    for (const elem of qsA('.thumb-list > [data-video-id]')) {
+      const a = qs('.thumb-image-container', elem);
+      if (a && a.href) {
+        const userName = qs('.video-uploader__name', elem);
+        const avatar = qs('.video-uploader-logo', elem)?.dataset?.backgroundImage;
+        toLibrary({
+          id: `${elem.dataset.videoId}`,
+          title: a.ariaLabel.trim(),
+          files: [a.href],
+          postData: {
+            original: a.href,
+            text: a.ariaLabel.trim(),
+            variant: 'post'
+          },
+          user: {
+            name: userName?.textContent?.trim() ?? root,
+            username: getUsername(userName?.href),
+            avatar
+          },
+          poster: qs('.thumb-image-container__image', elem)?.src
+        });
       }
-      /** @type {any[]} */
-      const toGrab = [
-        ...Object.values(a.posts?.items ?? {}),
-        // Chats hold messages, some builds keep them in `chats.items` directly
-        ...Object.values(a.chats?.items ?? {}),
-        ...Object.values(a.chats?.messages ?? {})
-      ];
-      filterPosts(toGrab);
-    } catch (ex) {
-      con.dbg('OnlyFans store:', errMsg(ex));
     }
-    return undefined;
-  });
+  } else if (root === 'spankbang') {
+    for (const li of qsA('[data-id]')) {
+      const poster = qs('img[x-ref]', li)?.src;
+      const thumbUnder = qs('a[href]', li);
+      if (!(thumbUnder?.href ?? '').includes('/video/')) continue;
+      toLibrary({
+        id: `${li.dataset.id}`,
+        title: poster?.alt,
+        files: [thumbUnder?.href],
+        postData: {
+          original: thumbUnder?.href,
+          text: poster?.alt,
+          variant: 'post'
+        },
+        poster
+      });
+    }
+  } else if (/^(xnxx|xvideos)$/.test(root)) {
+    for (const li of qsA('div[data-id]')) {
+      const p = qs('img[data-videoid]', li);
+      const poster = p?.dataset?.src ?? p?.src;
+      const thumbUnder = qs('.thumb-under > p > a', li);
+      const uploader = qs('.uploader > a', li) ?? qs('.thumb-under .metadata a', li);
+      if (isEmpty(thumbUnder?.href)) continue;
+      toLibrary({
+        id: `${li.dataset.id}`,
+        title: thumbUnder?.title,
+        files: [thumbUnder?.href],
+        postData: {
+          original: thumbUnder?.href,
+          text: thumbUnder?.title,
+          variant: 'post'
+        },
+        user: {
+          name: uploader?.textContent?.trim() ?? root,
+          username: getUsername(uploader?.href)
+        },
+        poster
+      });
+    }
+  }
+  //else if (/^(porntrex|analdin|porn00|xhamster)$/.test(root)) {
+  // porntrex: .video-list
+  // /**
+  //  * Request options (`fetch` style) required to download media of `root`.
+  //  * @param {string} root
+  //  * @returns {Record<string, unknown>}
+  //  */
+  // const requestOptions = (root) => {
+  //   if (/xhamster/.test(root)) {
+  //     return { credentials: 'omit', referrer: `${R.webpage.protocol}//${R.host}/` };
+  //   }
+  //   return {};
+  // };
+  // L.addVideo({ ...(await R.find()), hermes: requestOptions(root) });
+  //}
 };
-// #endregion
-// #region Init
+//#endregion
+//#region Init
 /**
  * Runs `onDomReady` once the DOM is available.
  * @template { Function } F
  * @param { (this: F, doc: Document) => * } onDomReady
  */
 const loadDOM = (onDomReady) => {
-  if (isFN(onDomReady)) {
+  if (typeof onDomReady === 'function') {
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
-      onDomReady(document);
+      defer(() => onDomReady(document));
     } else {
-      document.addEventListener(
-        'DOMContentLoaded',
-        (evt) => onDomReady(/** @type {Document} */ (evt.target)),
-        {
-          once: true
-        }
-      );
+      document.addEventListener('DOMContentLoaded', (evt) => onDomReady(evt.target), {
+        once: true
+      });
     }
   }
 };
-/**
- * Websites that change the video without reloading the page.
- */
-const SPA_ROOTS = new Set(['xhamster', 'sxyprn']);
-/**
- * Runs the site handler again whenever the address of a single page application changes.
- * @param {Document} doc
- */
-const watchNavigation = (doc) => {
-  if (!SPA_ROOTS.has(HP.root)) return;
-  let last = window.location.href;
-  let busy = false;
-  setInterval(async () => {
-    if (busy || window.location.href === last) return;
-    last = window.location.href;
-    busy = true;
-    try {
-      HP.setCurrent(last);
-      await runSite(doc);
-    } catch (ex) {
-      con.err(ex);
-    } finally {
-      busy = false;
-    }
-  }, 1000);
-};
 async function init() {
-  const stored = sanitizeConfig(await jsStorage.getValue('Config', DEFAULT_CONFIG));
   const defaults = copyObject(DEFAULT_CONFIG);
+  const stored = sanitizeConfig(await jsStorage.getValue('Config', DEFAULT_CONFIG));
   cfg = { ...defaults, ...stored, theme: { ...defaults.theme, ...(stored.theme ?? {}) } };
   con.dbg('Config:', cfg);
   loadDOM((doc) => {
@@ -4731,13 +5935,44 @@ async function init() {
       con.err('The document is not available, reload the webpage or use a different one');
       return;
     }
-    if (HP.mobileFix()) return;
+    for (const src of [
+      'https://cdn.jsdelivr.net/npm/@videojs/cdn@10.0.1/video.js',
+      'https://cdn.jsdelivr.net/npm/@videojs/cdn@10.0.1/media/mux-video.js'
+    ]) {
+      const script = make('script', { src, type: 'module' });
+      if (doc.head) doc.head.append(script);
+    }
+    if (container.root.mobileFix()) return;
     $GM.registerMenuCommand(i18n$('userjs_inject'), () => container.showPanel());
     $GM.registerMenuCommand(i18n$('userjs_close'), () => container.remove());
-    if (cfg.autoinject) container.inject(doc);
-    runSite(doc).catch((ex) => con.err(ex));
-    watchNavigation(doc);
+    if (cfg.autoinject) container.inject();
+    runSite().catch(con.err);
+    /**
+     * Websites that change the video without reloading the page.
+     */
+    const SPA_ROOTS = new Set(['sxyprn', 'beeg', 'analdin']);
+    /**
+     * Runs the site handler again whenever the address of a single page application changes.
+     */
+    const watchNavigation = () => {
+      let last = Page.location.href;
+      let busy = false;
+      con.dbg(`Watching this site: ${last}`);
+      setInterval(async () => {
+        if (busy || Page.location.href === last) return;
+        last = Page.location.href;
+        busy = true;
+        try {
+          await runSite(last);
+        } catch (ex) {
+          con.err(ex);
+        } finally {
+          busy = false;
+        }
+      }, 1000);
+    };
+    if (SPA_ROOTS.has(container.root.root)) watchNavigation();
   });
 }
-init().catch((ex) => con.err(ex));
-// #endregion
+init().catch(con.err);
+//#endregion
