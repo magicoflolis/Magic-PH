@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      5.1.0
+// @version      5.1.1
 // @name         MagicPH
 // @description  A video downloader for various adult websites.
 // @author       Magic <magicoflolis@tuta.io>
@@ -101,8 +101,6 @@ if (
 /** [i18n directory](https://github.com/magicoflolis/Magic-PH/tree/master/src/_locales) */
 const translations = {
  "en": {
-  "userjs_inject": "Show Magic PH",
-  "userjs_close": "Close Magic PH",
   "userjs_autoinject": "Show the button on page load",
   "userjs_fullscreen": "Open maximized",
   "newTab": "New Tab",
@@ -132,6 +130,7 @@ const translations = {
   "clear_tab_cache": "Delete the videos of a tab when it is closed",
   "limit_downloads": "Download one video at a time",
   "auto_hls": "Build HLS videos automatically",
+  "native_player": "Prefer native video player",
   "concurrency": "Simultaneous downloads",
   "dtime": "Time before the button fades",
   "hls_load": "Get from HLS stream",
@@ -322,6 +321,7 @@ const DEFAULT_CONFIG = {
   clearTabCache: true,
   limitDownloads: false,
   autoHLS: false,
+  nativePlayer: false,
   position: 'auto',
   concurrency: 4,
   time: 10000,
@@ -2042,6 +2042,9 @@ class Root extends Base {
   get host() {
     return this.current.host ?? null;
   }
+  get path() {
+    return this.current.path ?? null;
+  }
   get root() {
     return this.current.root ?? null;
   }
@@ -2062,45 +2065,6 @@ class Root extends Base {
     return Root.palette(this.current.root);
   }
   /**
-   * @param {string} path
-   * @returns {boolean}
-   */
-  navigate(path) {
-    try {
-      if (!this.router || isEmpty(path)) return false;
-      const result = this.router.push(path);
-      // Vue Router rejects duplicate navigations, not an error
-      if (result instanceof Promise) result.catch(BLANK_FN);
-      if (typeof container !== 'undefined') {
-        container.hidePanel();
-      }
-      return true;
-    } catch (ex) {
-      con.err(ex);
-    }
-    return false;
-  }
-  /**
-   * Mobile websites redirect to "Continue to video" (interstitial), skip it.
-   * @returns {boolean} `true` when the page is being redirected
-   */
-  mobileFix() {
-    if (!isMobile || this.root !== 'pornhub') return false;
-    try {
-      document.cookie = `views=0; path=/; domain=.${this.host}`;
-      const { webpage } = this;
-      if (webpage.pathname.startsWith('/interstitial') && webpage.searchParams.has('viewkey')) {
-        const videoURL = `${webpage.origin}/view_video.php?viewkey=${encodeURIComponent(webpage.searchParams.get('viewkey') ?? '')}`;
-        con.info(`Redirecting to "${videoURL}"`);
-        window.location.href = videoURL;
-        return true;
-      }
-    } catch (ex) {
-      con.err(ex);
-    }
-    return false;
-  }
-  /**
    * Requests the page, resolves every video quality.
    * @returns {Promise<VideoData>}
    */
@@ -2111,14 +2075,13 @@ class Root extends Base {
     if (this.webpage == null) {
       throw new Error('"webpage" is null', { cause: 'Root:find()' });
     }
-    const R = this.root;
-    const webpage = this.webpage.href;
+    const { root: R, webpage: U, path: P } = this;
     // mydaddy.cc (hqporner's player iframe) rejects the request made through the userscript
     // manager's own networking, a plain `fetch` with no cookies attached goes through instead
-    const doc = await (webpage.includes('mydaddy.cc')
-      ? Network.doc(this.webpage, { credentials: 'omit' }, true)
-      : Network.doc(this.webpage));
-    const meta = readMeta(doc, webpage);
+    const doc = await (U.href.includes('mydaddy.cc')
+      ? Network.doc(U, { credentials: 'omit' }, true)
+      : Network.doc(U));
+    const meta = readMeta(doc, U);
     /** @type {Set<string>} */
     const files = new Set();
     /** @type {Set<string>} */
@@ -2129,7 +2092,14 @@ class Root extends Base {
     let preferHLS = false;
     /** File labelled by the site itself, wins over a label guessed from its address */
     const labelled = new Map();
-    if (R === 'hqporner') {
+    if (P === 'GIF') {
+      const nodes = ldNodes(doc).filter((n) => n.contentUrl || n.thumbnailUrl);
+      return {
+        title: nodes[0]?.name ?? doc.title,
+        poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), U) : undefined,
+        files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), U)).filter(Boolean)
+      };
+    } else if (R === 'hqporner') {
       /** @type {?HTMLIFrameElement} */
       const iframe = qs('.videoWrapper > iframe', doc);
       if (iframe && !isEmpty(iframe.src)) {
@@ -2292,7 +2262,7 @@ class Root extends Base {
       for (const h of found.hls) {
         ts.add(h);
       }
-    } else if (/\.(xnxx|xvideos)\./.test(webpage)) {
+    } else if (/\.(xnxx|xvideos)\./.test(U.href)) {
       const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').find((t) =>
         t.includes('html5player.setVideo')
       );
@@ -2331,7 +2301,7 @@ class Root extends Base {
       /** @type {Map<number, string>} */
       const hlsByQuality = new Map();
       for (const e of entries) {
-        const src = absURL(String(e.filename ?? ''), webpage);
+        const src = absURL(String(e.filename ?? ''), U);
         const quality = parseInt(String(e.quality), 10) || 0;
         if (!src || !quality) continue;
         if (/\.m3u8/.test(src)) hlsByQuality.set(quality, src);
@@ -2429,7 +2399,7 @@ class Root extends Base {
       };
       // Cloudflare can answer the request with a challenge, the open page has the same script
       const found = sources(doc).length ? doc : document;
-      const _meta = readMeta(found, webpage);
+      const _meta = readMeta(found, U);
       return {
         title: _meta.title || document.title,
         poster: _meta.poster,
@@ -2445,7 +2415,7 @@ class Root extends Base {
           .replace(/\s+/g, ' ')
           .replace(/\s*-\s*91porn\s*$/i, '')
           .trim(),
-        poster: absURL(qs('video', doc)?.getAttribute('poster') ?? '', webpage) || undefined,
+        poster: absURL(qs('video', doc)?.getAttribute('poster') ?? '', U) || undefined,
         duration: toSeconds(/const videoDuration = ([\d.]+)/.exec(txt)?.[1]),
         files: src ? [src] : []
       };
@@ -2637,14 +2607,14 @@ class Root extends Base {
         const hlsByQuality = new Map();
         for (const d of toArray(defs)) {
           if (d?.format !== 'mp4' && d?.format !== 'hls') continue;
-          const u = absURL(String(d.videoUrl ?? ''), webpage);
+          const u = absURL(String(d.videoUrl ?? ''), U);
           if (!u) continue;
           if (d.remote) {
             try {
               /** @type {Array<{ format?: string; videoUrl?: string; quality?: unknown }>} */
               const list = await Network.req(u);
               for (const q of toArray(list)) {
-                const qu = absURL(String(q?.videoUrl ?? ''), webpage);
+                const qu = absURL(String(q?.videoUrl ?? ''), U);
                 if (!qu || Array.isArray(q.quality)) continue;
                 const quality = parseInt(String(q.quality), 10) || 0;
                 if (q.format === 'hls' || /\.m3u8/.test(qu)) hlsByQuality.set(quality, qu);
@@ -2684,12 +2654,12 @@ class Root extends Base {
             /duration is (\d+)min (\d+)sec/i.exec(
               qs('meta[name="description"]')?.getAttribute('content') ?? ''
             ) ?? [];
-          poster = absURL(attr(videoTag, 'poster') ?? '', webpage) || poster;
+          poster = absURL(attr(videoTag, 'poster') ?? '', U) || poster;
           duration = Number(min) * 60 + Number(sec);
           title =
             document.title.replace(/\s*-\s*HQporner\.com$/i, '') || qs('h1')?.textContent?.trim();
           for (const [, attrs] of sources) {
-            const src = absURL(attr(attrs, 'src') ?? '', webpage);
+            const src = absURL(attr(attrs, 'src') ?? '', U);
             if (!src) continue;
             files.add(src);
             const label = attr(attrs, 'title');
@@ -2705,7 +2675,7 @@ class Root extends Base {
             }
           };
           title = /video_title: '(.*?)'/.exec(txt)?.[1] || title;
-          if (!/porntrex/.test(webpage)) addAlt(/video_alt_url: '(.*?)'/);
+          if (!/porntrex/.test(U.href)) addAlt(/video_alt_url: '(.*?)'/);
           addAlt(/video_alt_url\d+: '(.*?)'/);
           const [, A, B, C] =
             /(\w+)\.replaceAll\("\w+",(\w+)\+"pubs\/"\+(\w+)\+"\/"\)/.exec(txt) ?? [];
@@ -2717,9 +2687,9 @@ class Root extends Base {
             const html = parseHTML(
               videoHTML.replaceAll('nrpuv', `${b}pubs/${c}/`).replaceAll('\\"', '"')
             );
-            poster = absURL(qs('video', html)?.getAttribute('poster') ?? '', webpage) || poster;
+            poster = absURL(qs('video', html)?.getAttribute('poster') ?? '', U) || poster;
             for (const source of qsA('source', html)) {
-              const src = absURL(source.getAttribute('src') ?? '', webpage);
+              const src = absURL(source.getAttribute('src') ?? '', U);
               if (src) files.add(src);
             }
           }
@@ -2733,7 +2703,7 @@ class Root extends Base {
      */
     const sortVideos = (ma, mb) => resolutionOf(mb) - resolutionOf(ma);
     return {
-      page: webpage,
+      page: U.href,
       title: title || meta.title || doc.title,
       poster,
       duration,
@@ -2743,6 +2713,45 @@ class Root extends Base {
         .map((src) => (labelled.has(src) ? { src, label: labelled.get(src) } : src)),
       ts: toArray(ts)
     };
+  }
+  /**
+   * @param {string} path
+   * @returns {boolean}
+   */
+  navigate(path) {
+    try {
+      if (!this.router || isEmpty(path)) return false;
+      const result = this.router.push(path);
+      // Vue Router rejects duplicate navigations, not an error
+      if (result instanceof Promise) result.catch(BLANK_FN);
+      if (typeof container !== 'undefined') {
+        container.hidePanel();
+      }
+      return true;
+    } catch (ex) {
+      con.err(ex);
+    }
+    return false;
+  }
+  /**
+   * Mobile websites redirect to "Continue to video" (interstitial), skip it.
+   * @returns {boolean} `true` when the page is being redirected
+   */
+  mobileFix() {
+    if (!isMobile || this.root !== 'pornhub') return false;
+    try {
+      document.cookie = `views=0; path=/; domain=.${this.host}`;
+      const { webpage } = this;
+      if (webpage.pathname.startsWith('/interstitial') && webpage.searchParams.has('viewkey')) {
+        const videoURL = `${webpage.origin}/view_video.php?viewkey=${encodeURIComponent(webpage.searchParams.get('viewkey') ?? '')}`;
+        con.info(`Redirecting to "${videoURL}"`);
+        window.location.href = videoURL;
+        return true;
+      }
+    } catch (ex) {
+      con.err(ex);
+    }
+    return false;
   }
 }
 
@@ -3609,6 +3618,7 @@ class ConfigElement extends Base {
     });
     makeRow(sections.general, i18n$('limit_downloads'), 'limitDownloads', 'checkbox');
     makeRow(sections.general, i18n$('auto_hls'), 'autoHLS', 'checkbox');
+    makeRow(sections.general, i18n$('native_player'), 'nativePlayer', 'checkbox');
     makeRow(sections.general, i18n$('concurrency'), 'concurrency', 'number', {
       min: 1,
       max: 16,
@@ -5091,7 +5101,7 @@ class Container {
         /** @type {?HTMLVideoElement} */
         let vid;
         const gif = item.type === 'gif';
-        if (/xnxx|sxyprn|xvideos|porntrex/.test(siteRoot)) {
+        if (cfg.nativePlayer || /xnxx|sxyprn|xvideos|porntrex/.test(siteRoot)) {
           vid = make('video', {
             src: gif ? src : undefined,
             preload: 'auto',
@@ -5384,83 +5394,141 @@ const runSite = async (input) => {
 
   con.log(root, path);
 
-  if (path.includes('Video')) {
-    L.addVideo(await R.find());
-  } else if (path === 'GIF') {
-    const page = R.webpage;
-    const doc = await Network.doc(page);
-    const nodes = ldNodes(doc).filter((n) => n.contentUrl || n.thumbnailUrl);
+  if (root === 'sxyprn') {
+    // The address of the video is set by the scripts of the page
+    const player = await waitFor(() => {
+      /** @type {?HTMLVideoElement} */
+      const el = qs('#player_el');
+      return el?.src && el.src !== window.location.href ? el : null;
+    }, 30000);
+    if (!player) return;
+    const title = (qs('.post_text')?.textContent ?? '').trim();
     L.addVideo({
-      title: nodes[0]?.name ?? doc.title,
-      poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), page) : undefined,
-      files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), page)).filter(Boolean)
+      title: isEmpty(title) ? document.title : title.slice(0, 150),
+      poster: player.poster,
+      files: [player.src]
     });
-  } else if (path === 'Shorties') {
-    const doc = await Network.doc(R.webpage);
-    const token = qs('.slider-container', doc)?.dataset.token;
-    /** @type {Set<string>} */
-    const seen = new Set();
-    let page = 1;
-    let busy = false;
-    let lastY = window.scrollY;
-    /**
-     * @param {Array<Record<string, unknown>>} shorties
-     */
-    const makeData = async (shorties) => {
-      for (const s of toArray(shorties)) {
-        try {
-          const [def] = toArray(s.mediaDefinitions).filter((m) => m.format === 'mp4');
-          if (!def) continue;
-          /** @type {Array<{ videoUrl: string }>} */
-          const list = await Network.req(absURL(def.videoUrl, R.webpage));
-          const files = toArray(list)
-            .map((v) => v.videoUrl)
-            .filter((v) => /\.mp4[.?]/.test(v) && !seen.has(v));
-          for (const v of files) seen.add(v);
-          L.addVideo({
-            id: String(s.videoId ?? s.id ?? def.videoUrl),
-            title: s.videoTitle,
-            poster: s.thumb ?? s.thumbnail ?? s.imageUrl ?? s.image_url,
-            files
-          });
-        } catch (ex) {
-          con.err(ex);
-        }
+  } else if (root === 'beeg') {
+    // `__vue__` is only reliable once the content of the page is rendered
+    await query('main.v-main');
+    const app = await query('[id="app"]');
+    if (!app) return;
+    const appVue = await waitFor(() => app.__vue_app__, 120000, 250);
+    if (!appVue) {
+      con.err('Beeg: unable to find the Vue instance');
+      return;
+    }
+    R.router = app.__vue_app__?.config?.globalProperties?.$router ?? null;
+    const pathname = R.webpage.pathname;
+    /** @type {Partial<VideoData>} */
+    const fallback = {
+      groupKey: 'beeg',
+      groupTitle: 'beeg',
+      files: [],
+      preferHLS: true,
+      postData: {},
+      user: {
+        name: 'MagicPH'
       }
     };
-    for (const script of doc.scripts) {
-      const txt = script.textContent ?? '';
-      const at = txt.search(/JSON_SHORTIES\s*=/);
-      if (at < 0) continue;
-      try {
-        await makeData(extractJSON(txt, txt.indexOf('=', at)));
-      } catch (ex) {
-        con.err(ex);
-      }
-      break;
-    }
-    window.addEventListener(
-      'scroll',
-      async () => {
-        const y = window.scrollY;
-        const down = y > lastY;
-        lastY = y;
-        if (busy || !down || !token) return;
-        if (window.innerHeight + y < document.body.scrollHeight - 200) return;
-        busy = true;
-        try {
-          page++;
-          const params = Page.toSearchParams({ page: String(page), token });
-          const next = await Network.req(toURL(`/shorties/get?${params}`, R.webpage.origin));
-          await makeData(next);
-        } catch (ex) {
-          con.err(ex);
-        } finally {
-          busy = false;
+    /**
+     * @param {Record<string, unknown>} obj
+     */
+    const getVideo = (obj) => {
+      if (!isObj(obj)) return;
+      const { fc_facts, file } = obj;
+      /** @type {VideoData} */
+      const videoData = {
+        id: `${file.id}`,
+        photos: [],
+        ...fallback
+      };
+      if (Array.isArray(fc_facts)) {
+        for (const fact of fc_facts) {
+          if (Array.isArray(fact.fc_thumbs)) {
+            for (const thumb of fact.fc_thumbs) {
+              videoData.photos.push({
+                id: `${fact.id ?? videoData.id}:${thumb}`,
+                src: `https://thumbs.externulls.com/videos/${file.id}/${thumb}.webp`,
+                thumb: `https://thumbs.externulls.com/videos/${file.id}/${thumb}.webp`,
+                type: 'photo'
+              });
+            }
+          }
         }
-      },
-      { passive: true }
-    );
+        videoData.poster = videoData.photos.at(-1).src;
+        videoData.date = fc_facts.at(-1).fc_created;
+      }
+      if (Array.isArray(obj.tags)) {
+        const person = obj.tags.find((o) => o.is_owner === true);
+        if (person) {
+          const thumb = person.thumbs.at(-1);
+          if (thumb && thumb.id) {
+            const crop = thumb.crops.at(-1);
+            if (crop && crop.id) {
+              videoData.user = {
+                name: person.tg_name ?? 'MagicPH',
+                username: person.tg_slug,
+                avatar: `https://thumbs.externulls.com/photos/${thumb.id}/to.webp?crop_id=${crop.id}&size_new=320x320`
+              };
+            }
+          }
+          // videoData.groupKey = String(person.id);
+          // videoData.groupTitle = person.tg_name ?? person.tg_slug ?? 'MagicPH';
+        }
+      }
+      if ('hls_resources' in file) {
+        videoData.title = `${file.data[0]?.cd_value}`;
+        videoData.duration = file.fl_duration;
+        videoData.ts = [`https://video.beeg.com/${file.hls_resources.fl_cdn_multi}`];
+        videoData.postData.original = `/-0${file.id}`;
+        videoData.postData.text = `${file.data[0]?.cd_value}`;
+        videoData.postData.variant = 'post';
+        videoData.photos = videoData.photos.filter((p) => p.src !== videoData.poster);
+        L.addVideo(videoData);
+      }
+    };
+    if (pathname === '/') {
+      const homepage = await Network.req(
+        'https://store.externulls.com/tag/videos/index?limit=48&offset=0'
+      );
+      if (Array.isArray(homepage)) {
+        for (const o of homepage) {
+          getVideo(o);
+        }
+      }
+    } else if (pathname.includes('/-0')) {
+      const videoId = pathname.replace(/^\/-0/, '');
+      getVideo(await Network.req(`https://store.externulls.com/facts/file/${videoId}`));
+    } else if (
+      !/^\/(auth|tmp-*|contributor|account|saved|reacted|clipped|following|contact|copyright|2257|creators|terms|privacy|takedown|ip-holder|claim)/.test(
+        pathname
+      )
+    ) {
+      const slug = pathname.replace('/', '');
+      const primTag = await Network.req(`https://store.externulls.com/tag?slug=${slug}`);
+      if (isObj(primTag)) {
+        const thumb = primTag.thumbs.at(-1);
+        if (thumb && thumb.id) {
+          const crop = thumb.crops.at(-1);
+          if (crop && crop.id) {
+            fallback.user = {
+              name: primTag.tg_name ?? 'MagicPH',
+              username: primTag.tg_slug,
+              avatar: `https://thumbs.externulls.com/photos/${thumb.id}/to.webp?crop_id=${crop.id}&size_new=320x320`
+            };
+          }
+        }
+      }
+      const tagPage = await Network.req(
+        `https://store.externulls.com/tag/videos/${slug}?limit=100&offset=0`
+      );
+      if (Array.isArray(tagPage)) {
+        for (const o of tagPage) {
+          getVideo(o);
+        }
+      }
+    }
   } else if (root === 'onlyfans') {
     // `__vue__` is only reliable once the content of the page is rendered
     await query('main[id="content"]');
@@ -5592,6 +5660,85 @@ const runSite = async (input) => {
       }
       return undefined;
     });
+  }
+
+  if (path.includes('Video')) {
+    L.addVideo(await R.find());
+  } else if (path === 'GIF') {
+    const page = R.webpage;
+    const doc = await Network.doc(page);
+    const nodes = ldNodes(doc).filter((n) => n.contentUrl || n.thumbnailUrl);
+    L.addVideo({
+      title: nodes[0]?.name ?? doc.title,
+      poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), page) : undefined,
+      files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), page)).filter(Boolean)
+    });
+  } else if (path === 'Shorties') {
+    const doc = await Network.doc(R.webpage);
+    const token = qs('.slider-container', doc)?.dataset.token;
+    /** @type {Set<string>} */
+    const seen = new Set();
+    let page = 1;
+    let busy = false;
+    let lastY = window.scrollY;
+    /**
+     * @param {Array<Record<string, unknown>>} shorties
+     */
+    const makeData = async (shorties) => {
+      for (const s of toArray(shorties)) {
+        try {
+          const [def] = toArray(s.mediaDefinitions).filter((m) => m.format === 'mp4');
+          if (!def) continue;
+          /** @type {Array<{ videoUrl: string }>} */
+          const list = await Network.req(absURL(def.videoUrl, R.webpage));
+          const files = toArray(list)
+            .map((v) => v.videoUrl)
+            .filter((v) => /\.mp4[.?]/.test(v) && !seen.has(v));
+          for (const v of files) seen.add(v);
+          L.addVideo({
+            id: String(s.videoId ?? s.id ?? def.videoUrl),
+            title: s.videoTitle,
+            poster: s.thumb ?? s.thumbnail ?? s.imageUrl ?? s.image_url,
+            files
+          });
+        } catch (ex) {
+          con.err(ex);
+        }
+      }
+    };
+    for (const script of doc.scripts) {
+      const txt = script.textContent ?? '';
+      const at = txt.search(/JSON_SHORTIES\s*=/);
+      if (at < 0) continue;
+      try {
+        await makeData(extractJSON(txt, txt.indexOf('=', at)));
+      } catch (ex) {
+        con.err(ex);
+      }
+      break;
+    }
+    window.addEventListener(
+      'scroll',
+      async () => {
+        const y = window.scrollY;
+        const down = y > lastY;
+        lastY = y;
+        if (busy || !down || !token) return;
+        if (window.innerHeight + y < document.body.scrollHeight - 200) return;
+        busy = true;
+        try {
+          page++;
+          const params = Page.toSearchParams({ page: String(page), token });
+          const next = await Network.req(toURL(`/shorties/get?${params}`, R.webpage.origin));
+          await makeData(next);
+        } catch (ex) {
+          con.err(ex);
+        } finally {
+          busy = false;
+        }
+      },
+      { passive: true }
+    );
   } else if (root === '91porna') {
     const arr = toArray(qsA('.video-item'));
     for (let i = 0; i < arr.length; i++) {
@@ -5683,127 +5830,6 @@ const runSite = async (input) => {
         i
       );
     }
-  } else if (root === 'beeg') {
-    // `__vue__` is only reliable once the content of the page is rendered
-    await query('main.v-main');
-    const app = await query('[id="app"]');
-    if (!app) return;
-    const appVue = await waitFor(() => app.__vue_app__, 120000, 250);
-    if (!appVue) {
-      con.err('Beeg: unable to find the Vue instance');
-      return;
-    }
-    R.router = app.__vue_app__?.config?.globalProperties?.$router ?? null;
-    const pathname = R.webpage.pathname;
-    /** @type {Partial<VideoData>} */
-    const fallback = {
-      groupKey: 'beeg',
-      groupTitle: 'beeg',
-      files: [],
-      preferHLS: true,
-      postData: {},
-      user: {
-        name: 'MagicPH'
-      }
-    };
-    /**
-     * @param {Record<string, unknown>} obj
-     */
-    const getVideo = (obj) => {
-      if (!isObj(obj)) return;
-      const { fc_facts, file } = obj;
-      /** @type {VideoData} */
-      const videoData = {
-        id: `${file.id}`,
-        photos: [],
-        ...fallback
-      };
-      if (Array.isArray(fc_facts)) {
-        for (const fact of fc_facts) {
-          if (Array.isArray(fact.fc_thumbs)) {
-            for (const thumb of fact.fc_thumbs) {
-              videoData.photos.push({
-                id: `${fact.id ?? videoData.id}:${thumb}`,
-                src: `https://thumbs.externulls.com/videos/${file.id}/${thumb}.webp`,
-                thumb: `https://thumbs.externulls.com/videos/${file.id}/${thumb}.webp`,
-                type: 'photo'
-              });
-            }
-          }
-        }
-        videoData.poster = videoData.photos.at(-1).src;
-        videoData.date = fc_facts.at(-1).fc_created;
-      }
-      if (Array.isArray(obj.tags)) {
-        const person = obj.tags.find((o) => o.is_owner === true);
-        if (person) {
-          const thumb = person.thumbs.at(-1);
-          if (thumb && thumb.id) {
-            const crop = thumb.crops.at(-1);
-            if (crop && crop.id) {
-              videoData.user = {
-                name: person.tg_name ?? 'MagicPH',
-                username: person.tg_slug,
-                avatar: `https://thumbs.externulls.com/photos/${thumb.id}/to.webp?crop_id=${crop.id}&size_new=320x320`
-              };
-            }
-          }
-          // videoData.groupKey = String(person.id);
-          // videoData.groupTitle = person.tg_name ?? person.tg_slug ?? 'MagicPH';
-        }
-      }
-      if ('hls_resources' in file) {
-        videoData.title = `${file.data[0]?.cd_value}`;
-        videoData.duration = file.fl_duration;
-        videoData.ts = [`https://video.beeg.com/${file.hls_resources.fl_cdn_multi}`];
-        videoData.postData.original = `/-0${file.id}`;
-        videoData.postData.text = `${file.data[0]?.cd_value}`;
-        videoData.postData.variant = 'post';
-        videoData.photos = videoData.photos.filter((p) => p.src !== videoData.poster);
-        L.addVideo(videoData);
-      }
-    };
-    if (pathname === '/') {
-      const homepage = await Network.req(
-        'https://store.externulls.com/tag/videos/index?limit=48&offset=0'
-      );
-      if (Array.isArray(homepage)) {
-        for (const o of homepage) {
-          getVideo(o);
-        }
-      }
-    } else if (pathname.includes('/-0')) {
-      const videoId = pathname.replace(/^\/-0/, '');
-      getVideo(await Network.req(`https://store.externulls.com/facts/file/${videoId}`));
-    } else if (
-      !/^\/(auth|tmp-*|contributor|account|saved|reacted|clipped|following|contact|copyright|2257|creators|terms|privacy|takedown|ip-holder|claim)/.test(
-        pathname
-      )
-    ) {
-      const slug = pathname.replace('/', '');
-      const primTag = await Network.req(`https://store.externulls.com/tag?slug=${slug}`);
-      if (isObj(primTag)) {
-        const thumb = primTag.thumbs.at(-1);
-        if (thumb && thumb.id) {
-          const crop = thumb.crops.at(-1);
-          if (crop && crop.id) {
-            fallback.user = {
-              name: primTag.tg_name ?? 'MagicPH',
-              username: primTag.tg_slug,
-              avatar: `https://thumbs.externulls.com/photos/${thumb.id}/to.webp?crop_id=${crop.id}&size_new=320x320`
-            };
-          }
-        }
-      }
-      const tagPage = await Network.req(
-        `https://store.externulls.com/tag/videos/${slug}?limit=100&offset=0`
-      );
-      if (Array.isArray(tagPage)) {
-        for (const o of tagPage) {
-          getVideo(o);
-        }
-      }
-    }
   } else if (root === 'eporner') {
     const arr = toArray(qsA('[data-id][data-vp]'));
     for (let i = 0; i < arr.length; i++) {
@@ -5827,19 +5853,6 @@ const runSite = async (input) => {
         i
       );
     }
-  } else if (root === 'sxyprn') {
-    // The address of the video is set by the scripts of the page
-    const player = await waitFor(() => {
-      const el = /** @type {?HTMLVideoElement} */ (qs('#player_el'));
-      return el?.src && el.src !== window.location.href ? el : null;
-    }, 30000);
-    if (!player) return;
-    const title = (qs('.post_text')?.textContent ?? '').trim();
-    L.addVideo({
-      title: isEmpty(title) ? document.title : title.slice(0, 150),
-      poster: player.poster || undefined,
-      files: [player.src]
-    });
   } else if (root === 'youjizz') {
     const arr = toArray(qsA('[data-videoid]'));
     for (let i = 0; i < arr.length; i++) {
@@ -6102,8 +6115,8 @@ async function init() {
       if (doc.head) doc.head.append(script);
     }
     if (container.root.mobileFix()) return;
-    $GM.registerMenuCommand(i18n$('userjs_inject'), () => container.showPanel());
-    $GM.registerMenuCommand(i18n$('userjs_close'), () => container.remove());
+    $GM.registerMenuCommand(i18n$('open'), () => container.showPanel());
+    $GM.registerMenuCommand(i18n$('close'), () => container.remove());
     if (cfg.autoinject) container.inject();
     runSite().catch(con.err);
     /**

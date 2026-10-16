@@ -17,12 +17,6 @@
   "userjs_description": {
     "message": "A video downloader for various adult websites. Clean, easy, simple, and quick."
   },
-  "userjs_inject": {
-    "message": "Show Magic PH"
-  },
-  "userjs_close": {
-    "message": "Close Magic PH"
-  },
   "userjs_autoinject": {
     "message": "Show the button on page load"
   },
@@ -109,6 +103,9 @@
   },
   "auto_hls": {
     "message": "Build HLS videos automatically"
+  },
+  "native_player": {
+    "message": "Prefer native video player"
   },
   "concurrency": {
     "message": "Simultaneous downloads"

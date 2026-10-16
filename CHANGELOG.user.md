@@ -3,7 +3,12 @@
 Known Issues:
 
 * Thumbnails may not load on 91porna
-* Not all websites and browsers support video playback
+* Not all browsers support video codecs; _"The browser cannot play this video. Download it instead."_
+
+## v5.1.1
+
+* Fixed sxyprn
+* Added option to toggle between [video.js](https://videojs.org/) and native video player
 
 ## v5.1.0
 

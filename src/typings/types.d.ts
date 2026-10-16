@@ -121,6 +121,7 @@ export interface MPHConfig {
   limitDownloads: boolean;
   /** Build HLS videos without waiting for the user */
   autoHLS: boolean;
+  nativePlayer: boolean;
   /** Corner of the floating button, `auto` picks it depending on the device */
   position: 'auto' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   /** Simultaneous downloads / segments */
@@ -277,7 +278,7 @@ export interface SiteInfo {
   /** Name of the website, `pornhub`, `blank` when unsupported */
   root: string;
   /** `Video`, `GIF`, `Shorties` or `Unknown` */
-  pathType: string;
+  path: string;
   router?: { push: (path: string) => unknown };
 }
 
