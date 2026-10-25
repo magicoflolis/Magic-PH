@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "アダルト動画の視聴体験を向上します。クリーン、高速、簡単。"
+  },
+  "extShortDesc": {
+    "message": "クリーン、高速、簡単"
+  },
+  "copy": {
+    "message": "コピー"
+  },
+  "remove": {
+    "message": "削除"
+  },
+  "close": {
+    "message": "閉じる"
+  },
+  "download": {
+    "message": "ダウンロード"
+  },
+  "open": {
+    "message": "開く"
+  },
+  "min": {
+    "message": "最小化"
+  },
+  "max": {
+    "message": "最大化"
+  },
+  "settings": {
+    "message": "設定"
+  },
+  "save": {
+    "message": "保存"
+  },
+  "reset": {
+    "message": "リセット"
+  },
+  "general": {
+    "message": "一般"
+  },
+  "theme": {
+    "message": "テーマ"
+  },
+  "free": {
+    "message": "無料"
+  },
+  "prev": {
+    "message": "前へ"
+  },
+  "next": {
+    "message": "次へ"
+  },
+  "auto": {
+    "message": "自動"
+  },
+  "video": {
+    "message": "動画"
+  },
+  "videos": {
+    "message": "動画"
+  },
+  "photo": {
+    "message": "写真"
+  },
+  "photos": {
+    "message": "写真"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "音声"
+  },
+  "audios": {
+    "message": "音声"
+  },
+  "message": {
+    "message": "メッセージ"
+  },
+  "search": {
+    "message": "検索"
+  },
+  "issue": {
+    "message": "新しいIssue"
+  },
+  "autoinject": {
+    "message": "ページ読み込み時にボタンを表示"
+  },
+  "fullscreen": {
+    "message": "最大化して開く"
+  },
+  "newTab": {
+    "message": "新しいタブ"
+  },
+  "newtab_hint": {
+    "message": "アドレスバーに動画のURLまたはIDを入力または貼り付けて、Enterキーを押してください。"
+  },
+  "empty": {
+    "message": "このページに動画は見つかりませんでした。"
+  },
+  "copy_all": {
+    "message": "すべての動画のURLをコピー"
+  },
+  "download_all": {
+    "message": "すべての動画をダウンロード"
+  },
+  "remove_all": {
+    "message": "すべての動画を削除"
+  },
+  "import_export": {
+    "message": "インポート / エクスポート"
+  },
+  "import_config": {
+    "message": "設定をインポート"
+  },
+  "export_config": {
+    "message": "設定をエクスポート"
+  },
+  "clear_tab_cache": {
+    "message": "タブを閉じたときにそのタブの動画を削除"
+  },
+  "limit_downloads": {
+    "message": "動画を1つずつダウンロード"
+  },
+  "auto_hls": {
+    "message": "HLS動画を自動的に作成"
+  },
+  "native_player": {
+    "message": "ネイティブ動画プレーヤーを優先"
+  },
+  "concurrency": {
+    "message": "同時ダウンロード数"
+  },
+  "dtime": {
+    "message": "ボタンが薄くなるまでの時間"
+  },
+  "hls_load": {
+    "message": "HLSストリームから取得"
+  },
+  "position": {
+    "message": "ボタンの位置"
+  },
+  "free_preview": {
+    "message": "無料プレビュー"
+  },
+  "drm_notice": {
+    "message": "DRMで保護されています。再生もダウンロードもできません。"
+  },
+  "play_error": {
+    "message": "ブラウザーでこの動画を再生できません。代わりにダウンロードしてください。"
+  }
+}

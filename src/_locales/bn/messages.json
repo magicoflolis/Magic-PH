@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "প্রাপ্তবয়স্কদের দেখার অভিজ্ঞতা আরও উন্নত করে: পরিষ্কার, দ্রুত ও সহজ।"
+  },
+  "extShortDesc": {
+    "message": "পরিষ্কার, দ্রুত ও সহজ"
+  },
+  "copy": {
+    "message": "কপি করুন"
+  },
+  "remove": {
+    "message": "সরান"
+  },
+  "close": {
+    "message": "বন্ধ করুন"
+  },
+  "download": {
+    "message": "ডাউনলোড করুন"
+  },
+  "open": {
+    "message": "খুলুন"
+  },
+  "min": {
+    "message": "ছোট করুন"
+  },
+  "max": {
+    "message": "বড় করুন"
+  },
+  "settings": {
+    "message": "সেটিংস"
+  },
+  "save": {
+    "message": "সংরক্ষণ করুন"
+  },
+  "reset": {
+    "message": "রিসেট করুন"
+  },
+  "general": {
+    "message": "সাধারণ"
+  },
+  "theme": {
+    "message": "থিম"
+  },
+  "free": {
+    "message": "বিনামূল্যে"
+  },
+  "prev": {
+    "message": "আগের"
+  },
+  "next": {
+    "message": "পরবর্তী"
+  },
+  "auto": {
+    "message": "স্বয়ংক্রিয়"
+  },
+  "video": {
+    "message": "ভিডিও"
+  },
+  "videos": {
+    "message": "ভিডিও"
+  },
+  "photo": {
+    "message": "ছবি"
+  },
+  "photos": {
+    "message": "ছবি"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "অডিও"
+  },
+  "audios": {
+    "message": "অডিও"
+  },
+  "message": {
+    "message": "বার্তা"
+  },
+  "search": {
+    "message": "খুঁজুন"
+  },
+  "issue": {
+    "message": "নতুন ইস্যু"
+  },
+  "autoinject": {
+    "message": "পেজ লোড হলে বোতামটি দেখান"
+  },
+  "fullscreen": {
+    "message": "বড় করে খুলুন"
+  },
+  "newTab": {
+    "message": "নতুন ট্যাব"
+  },
+  "newtab_hint": {
+    "message": "অ্যাড্রেস বারে ভিডিওর URL বা ID টাইপ বা পেস্ট করে Enter চাপুন।"
+  },
+  "empty": {
+    "message": "এই পেজে কোনো ভিডিও পাওয়া যায়নি।"
+  },
+  "copy_all": {
+    "message": "সব ভিডিওর URL কপি করুন"
+  },
+  "download_all": {
+    "message": "সব ভিডিও ডাউনলোড করুন"
+  },
+  "remove_all": {
+    "message": "সব ভিডিও সরান"
+  },
+  "import_export": {
+    "message": "ইমপোর্ট / এক্সপোর্ট"
+  },
+  "import_config": {
+    "message": "কনফিগ ইমপোর্ট করুন"
+  },
+  "export_config": {
+    "message": "কনফিগ এক্সপোর্ট করুন"
+  },
+  "clear_tab_cache": {
+    "message": "ট্যাব বন্ধ হলে তার ভিডিও মুছে ফেলুন"
+  },
+  "limit_downloads": {
+    "message": "একবারে একটি ভিডিও ডাউনলোড করুন"
+  },
+  "auto_hls": {
+    "message": "HLS ভিডিও স্বয়ংক্রিয়ভাবে তৈরি করুন"
+  },
+  "native_player": {
+    "message": "নেটিভ ভিডিও প্লেয়ারকে অগ্রাধিকার দিন"
+  },
+  "concurrency": {
+    "message": "একসঙ্গে ডাউনলোড"
+  },
+  "dtime": {
+    "message": "বোতাম ম্লান হওয়ার আগের সময়"
+  },
+  "hls_load": {
+    "message": "HLS স্ট্রিম থেকে নিন"
+  },
+  "position": {
+    "message": "বোতামের অবস্থান"
+  },
+  "free_preview": {
+    "message": "বিনামূল্যে প্রিভিউ"
+  },
+  "drm_notice": {
+    "message": "DRM সুরক্ষিত: চালানো বা ডাউনলোড করার কিছু নেই।"
+  },
+  "play_error": {
+    "message": "ব্রাউজার এই ভিডিও চালাতে পারছে না। এর পরিবর্তে ডাউনলোড করুন।"
+  }
+}

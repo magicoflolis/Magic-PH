@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Улучшает просмотр контента для взрослых: чисто, быстро и просто."
+  },
+  "extShortDesc": {
+    "message": "Чисто, быстро и просто"
+  },
+  "copy": {
+    "message": "Копировать"
+  },
+  "remove": {
+    "message": "Удалить"
+  },
+  "close": {
+    "message": "Закрыть"
+  },
+  "download": {
+    "message": "Скачать"
+  },
+  "open": {
+    "message": "Открыть"
+  },
+  "min": {
+    "message": "Свернуть"
+  },
+  "max": {
+    "message": "Развернуть"
+  },
+  "settings": {
+    "message": "Настройки"
+  },
+  "save": {
+    "message": "Сохранить"
+  },
+  "reset": {
+    "message": "Сбросить"
+  },
+  "general": {
+    "message": "Общие"
+  },
+  "theme": {
+    "message": "Тема"
+  },
+  "free": {
+    "message": "Бесплатно"
+  },
+  "prev": {
+    "message": "Предыдущий"
+  },
+  "next": {
+    "message": "Следующий"
+  },
+  "auto": {
+    "message": "Автоматически"
+  },
+  "video": {
+    "message": "видео"
+  },
+  "videos": {
+    "message": "видео"
+  },
+  "photo": {
+    "message": "фото"
+  },
+  "photos": {
+    "message": "фото"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "аудио"
+  },
+  "audios": {
+    "message": "аудио"
+  },
+  "message": {
+    "message": "Сообщение"
+  },
+  "search": {
+    "message": "Поиск"
+  },
+  "issue": {
+    "message": "Новая проблема"
+  },
+  "autoinject": {
+    "message": "Показывать кнопку при загрузке страницы"
+  },
+  "fullscreen": {
+    "message": "Открывать в развёрнутом виде"
+  },
+  "newTab": {
+    "message": "Новая вкладка"
+  },
+  "newtab_hint": {
+    "message": "Введите или вставьте URL или ID видео в адресную строку и нажмите Enter."
+  },
+  "empty": {
+    "message": "На этой странице видео не найдены."
+  },
+  "copy_all": {
+    "message": "Скопировать URL каждого видео"
+  },
+  "download_all": {
+    "message": "Скачать все видео"
+  },
+  "remove_all": {
+    "message": "Удалить все видео"
+  },
+  "import_export": {
+    "message": "Импорт / экспорт"
+  },
+  "import_config": {
+    "message": "Импортировать настройки"
+  },
+  "export_config": {
+    "message": "Экспортировать настройки"
+  },
+  "clear_tab_cache": {
+    "message": "Удалять видео вкладки при её закрытии"
+  },
+  "limit_downloads": {
+    "message": "Скачивать по одному видео"
+  },
+  "auto_hls": {
+    "message": "Автоматически собирать HLS-видео"
+  },
+  "native_player": {
+    "message": "Предпочитать встроенный видеоплеер"
+  },
+  "concurrency": {
+    "message": "Одновременные загрузки"
+  },
+  "dtime": {
+    "message": "Время до скрытия кнопки"
+  },
+  "hls_load": {
+    "message": "Получить из HLS-потока"
+  },
+  "position": {
+    "message": "Положение кнопки"
+  },
+  "free_preview": {
+    "message": "Бесплатный просмотр"
+  },
+  "drm_notice": {
+    "message": "Защита DRM: нечего воспроизводить или скачивать."
+  },
+  "play_error": {
+    "message": "Браузер не может воспроизвести это видео. Скачайте его."
+  }
+}

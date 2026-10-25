@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "ยกระดับประสบการณ์การรับชมสำหรับผู้ใหญ่ ให้สะอาด รวดเร็ว และง่ายดาย"
+  },
+  "extShortDesc": {
+    "message": "สะอาด รวดเร็ว และง่ายดาย"
+  },
+  "copy": {
+    "message": "คัดลอก"
+  },
+  "remove": {
+    "message": "ลบ"
+  },
+  "close": {
+    "message": "ปิด"
+  },
+  "download": {
+    "message": "ดาวน์โหลด"
+  },
+  "open": {
+    "message": "เปิด"
+  },
+  "min": {
+    "message": "ย่อเล็กสุด"
+  },
+  "max": {
+    "message": "ขยายใหญ่สุด"
+  },
+  "settings": {
+    "message": "การตั้งค่า"
+  },
+  "save": {
+    "message": "บันทึก"
+  },
+  "reset": {
+    "message": "รีเซ็ต"
+  },
+  "general": {
+    "message": "ทั่วไป"
+  },
+  "theme": {
+    "message": "ธีม"
+  },
+  "free": {
+    "message": "ฟรี"
+  },
+  "prev": {
+    "message": "ก่อนหน้า"
+  },
+  "next": {
+    "message": "ถัดไป"
+  },
+  "auto": {
+    "message": "อัตโนมัติ"
+  },
+  "video": {
+    "message": "วิดีโอ"
+  },
+  "videos": {
+    "message": "วิดีโอ"
+  },
+  "photo": {
+    "message": "รูปภาพ"
+  },
+  "photos": {
+    "message": "รูปภาพ"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "เสียง"
+  },
+  "audios": {
+    "message": "เสียง"
+  },
+  "message": {
+    "message": "ข้อความ"
+  },
+  "search": {
+    "message": "ค้นหา"
+  },
+  "issue": {
+    "message": "ปัญหาใหม่"
+  },
+  "autoinject": {
+    "message": "แสดงปุ่มเมื่อโหลดหน้า"
+  },
+  "fullscreen": {
+    "message": "เปิดแบบขยายใหญ่สุด"
+  },
+  "newTab": {
+    "message": "แท็บใหม่"
+  },
+  "newtab_hint": {
+    "message": "พิมพ์หรือวาง URL หรือ ID ของวิดีโอในแถบที่อยู่ แล้วกด Enter"
+  },
+  "empty": {
+    "message": "ไม่พบวิดีโอในหน้านี้"
+  },
+  "copy_all": {
+    "message": "คัดลอก URL ของวิดีโอทั้งหมด"
+  },
+  "download_all": {
+    "message": "ดาวน์โหลดวิดีโอทั้งหมด"
+  },
+  "remove_all": {
+    "message": "ลบวิดีโอทั้งหมด"
+  },
+  "import_export": {
+    "message": "นำเข้า / ส่งออก"
+  },
+  "import_config": {
+    "message": "นำเข้าการกำหนดค่า"
+  },
+  "export_config": {
+    "message": "ส่งออกการกำหนดค่า"
+  },
+  "clear_tab_cache": {
+    "message": "ลบวิดีโอของแท็บเมื่อปิดแท็บ"
+  },
+  "limit_downloads": {
+    "message": "ดาวน์โหลดทีละวิดีโอ"
+  },
+  "auto_hls": {
+    "message": "สร้างวิดีโอ HLS อัตโนมัติ"
+  },
+  "native_player": {
+    "message": "ใช้โปรแกรมเล่นวิดีโอของเบราว์เซอร์เป็นหลัก"
+  },
+  "concurrency": {
+    "message": "ดาวน์โหลดพร้อมกัน"
+  },
+  "dtime": {
+    "message": "เวลาก่อนที่ปุ่มจะจางลง"
+  },
+  "hls_load": {
+    "message": "ดึงจากสตรีม HLS"
+  },
+  "position": {
+    "message": "ตำแหน่งปุ่ม"
+  },
+  "free_preview": {
+    "message": "ตัวอย่างฟรี"
+  },
+  "drm_notice": {
+    "message": "ป้องกันด้วย DRM: ไม่มีสิ่งที่เล่นหรือดาวน์โหลดได้"
+  },
+  "play_error": {
+    "message": "เบราว์เซอร์เล่นวิดีโอนี้ไม่ได้ โปรดดาวน์โหลดแทน"
+  }
+}

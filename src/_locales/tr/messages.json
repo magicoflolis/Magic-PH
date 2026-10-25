@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Yetişkinlere yönelik izleme deneyimini iyileştirir: temiz, hızlı ve kolay."
+  },
+  "extShortDesc": {
+    "message": "Temiz, hızlı ve kolay"
+  },
+  "copy": {
+    "message": "Kopyala"
+  },
+  "remove": {
+    "message": "Kaldır"
+  },
+  "close": {
+    "message": "Kapat"
+  },
+  "download": {
+    "message": "İndir"
+  },
+  "open": {
+    "message": "Aç"
+  },
+  "min": {
+    "message": "Küçült"
+  },
+  "max": {
+    "message": "Büyüt"
+  },
+  "settings": {
+    "message": "Ayarlar"
+  },
+  "save": {
+    "message": "Kaydet"
+  },
+  "reset": {
+    "message": "Sıfırla"
+  },
+  "general": {
+    "message": "Genel"
+  },
+  "theme": {
+    "message": "Tema"
+  },
+  "free": {
+    "message": "Ücretsiz"
+  },
+  "prev": {
+    "message": "Önceki"
+  },
+  "next": {
+    "message": "Sonraki"
+  },
+  "auto": {
+    "message": "Otomatik"
+  },
+  "video": {
+    "message": "video"
+  },
+  "videos": {
+    "message": "video"
+  },
+  "photo": {
+    "message": "fotoğraf"
+  },
+  "photos": {
+    "message": "fotoğraf"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "ses"
+  },
+  "audios": {
+    "message": "ses"
+  },
+  "message": {
+    "message": "Mesaj"
+  },
+  "search": {
+    "message": "Ara"
+  },
+  "issue": {
+    "message": "Yeni sorun"
+  },
+  "autoinject": {
+    "message": "Sayfa yüklendiğinde düğmeyi göster"
+  },
+  "fullscreen": {
+    "message": "Büyütülmüş aç"
+  },
+  "newTab": {
+    "message": "Yeni Sekme"
+  },
+  "newtab_hint": {
+    "message": "Adres çubuğuna bir video URL'si veya kimliği yazın ya da yapıştırın ve Enter'a basın."
+  },
+  "empty": {
+    "message": "Bu sayfada video bulunamadı."
+  },
+  "copy_all": {
+    "message": "Her videonun URL'sini kopyala"
+  },
+  "download_all": {
+    "message": "Tüm videoları indir"
+  },
+  "remove_all": {
+    "message": "Tüm videoları kaldır"
+  },
+  "import_export": {
+    "message": "İçe / Dışa Aktar"
+  },
+  "import_config": {
+    "message": "Yapılandırmayı içe aktar"
+  },
+  "export_config": {
+    "message": "Yapılandırmayı dışa aktar"
+  },
+  "clear_tab_cache": {
+    "message": "Sekme kapatıldığında videolarını sil"
+  },
+  "limit_downloads": {
+    "message": "Aynı anda bir video indir"
+  },
+  "auto_hls": {
+    "message": "HLS videolarını otomatik oluştur"
+  },
+  "native_player": {
+    "message": "Yerel video oynatıcıyı tercih et"
+  },
+  "concurrency": {
+    "message": "Eş zamanlı indirmeler"
+  },
+  "dtime": {
+    "message": "Düğme solmadan önceki süre"
+  },
+  "hls_load": {
+    "message": "HLS akışından al"
+  },
+  "position": {
+    "message": "Düğme konumu"
+  },
+  "free_preview": {
+    "message": "Ücretsiz önizleme"
+  },
+  "drm_notice": {
+    "message": "DRM korumalı: oynatılacak veya indirilecek bir şey yok."
+  },
+  "play_error": {
+    "message": "Tarayıcı bu videoyu oynatamıyor. Bunun yerine indirin."
+  }
+}

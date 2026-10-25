@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "పెద్దలకు వీక్షణ అనుభవాన్ని మెరుగుపరుస్తుంది: శుభ్రంగా, వేగంగా, సులభంగా."
+  },
+  "extShortDesc": {
+    "message": "శుభ్రంగా, వేగంగా, సులభంగా"
+  },
+  "copy": {
+    "message": "కాపీ చేయండి"
+  },
+  "remove": {
+    "message": "తీసివేయండి"
+  },
+  "close": {
+    "message": "మూసివేయండి"
+  },
+  "download": {
+    "message": "డౌన్‌లోడ్ చేయండి"
+  },
+  "open": {
+    "message": "తెరవండి"
+  },
+  "min": {
+    "message": "కనిష్టీకరించండి"
+  },
+  "max": {
+    "message": "గరిష్టీకరించండి"
+  },
+  "settings": {
+    "message": "సెట్టింగ్‌లు"
+  },
+  "save": {
+    "message": "సేవ్ చేయండి"
+  },
+  "reset": {
+    "message": "రీసెట్ చేయండి"
+  },
+  "general": {
+    "message": "సాధారణం"
+  },
+  "theme": {
+    "message": "థీమ్"
+  },
+  "free": {
+    "message": "ఉచితం"
+  },
+  "prev": {
+    "message": "మునుపటి"
+  },
+  "next": {
+    "message": "తదుపరి"
+  },
+  "auto": {
+    "message": "స్వయంచాలకం"
+  },
+  "video": {
+    "message": "వీడియో"
+  },
+  "videos": {
+    "message": "వీడియోలు"
+  },
+  "photo": {
+    "message": "ఫోటో"
+  },
+  "photos": {
+    "message": "ఫోటోలు"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIFలు"
+  },
+  "audio": {
+    "message": "ఆడియో"
+  },
+  "audios": {
+    "message": "ఆడియోలు"
+  },
+  "message": {
+    "message": "సందేశం"
+  },
+  "search": {
+    "message": "శోధించండి"
+  },
+  "issue": {
+    "message": "కొత్త ఇష్యూ"
+  },
+  "autoinject": {
+    "message": "పేజీ లోడ్ అయినప్పుడు బటన్‌ను చూపండి"
+  },
+  "fullscreen": {
+    "message": "గరిష్ఠంగా తెరవండి"
+  },
+  "newTab": {
+    "message": "కొత్త ట్యాబ్"
+  },
+  "newtab_hint": {
+    "message": "అడ్రస్ బార్‌లో వీడియో URL లేదా IDని టైప్ చేయండి లేదా పేస్ట్ చేసి Enter నొక్కండి."
+  },
+  "empty": {
+    "message": "ఈ పేజీలో వీడియోలు ఏవీ కనుగొనబడలేదు."
+  },
+  "copy_all": {
+    "message": "ప్రతి వీడియో URLని కాపీ చేయండి"
+  },
+  "download_all": {
+    "message": "ప్రతి వీడియోను డౌన్‌లోడ్ చేయండి"
+  },
+  "remove_all": {
+    "message": "ప్రతి వీడియోను తీసివేయండి"
+  },
+  "import_export": {
+    "message": "దిగుమతి / ఎగుమతి"
+  },
+  "import_config": {
+    "message": "కాన్ఫిగ్‌ను దిగుమతి చేయండి"
+  },
+  "export_config": {
+    "message": "కాన్ఫిగ్‌ను ఎగుమతి చేయండి"
+  },
+  "clear_tab_cache": {
+    "message": "ట్యాబ్ మూసివేసినప్పుడు దాని వీడియోలను తొలగించండి"
+  },
+  "limit_downloads": {
+    "message": "ఒకేసారి ఒక వీడియోను డౌన్‌లోడ్ చేయండి"
+  },
+  "auto_hls": {
+    "message": "HLS వీడియోలను స్వయంచాలకంగా రూపొందించండి"
+  },
+  "native_player": {
+    "message": "స్థానిక వీడియో ప్లేయర్‌కు ప్రాధాన్యత ఇవ్వండి"
+  },
+  "concurrency": {
+    "message": "ఏకకాల డౌన్‌లోడ్‌లు"
+  },
+  "dtime": {
+    "message": "బటన్ మసకబారడానికి ముందు సమయం"
+  },
+  "hls_load": {
+    "message": "HLS స్ట్రీమ్ నుండి పొందండి"
+  },
+  "position": {
+    "message": "బటన్ స్థానం"
+  },
+  "free_preview": {
+    "message": "ఉచిత ప్రివ్యూ"
+  },
+  "drm_notice": {
+    "message": "DRM రక్షితం: ప్లే చేయడానికి లేదా డౌన్‌లోడ్ చేయడానికి ఏమీ లేదు."
+  },
+  "play_error": {
+    "message": "బ్రౌజర్ ఈ వీడియోను ప్లే చేయలేదు. బదులుగా డౌన్‌లోడ్ చేయండి."
+  }
+}

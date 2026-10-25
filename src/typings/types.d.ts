@@ -282,6 +282,749 @@ export interface SiteInfo {
   router?: { push: (path: string) => unknown };
 }
 
+/**
+ * Users store state.
+ *
+ * Merged from two snapshots. Entries in `items` come in several shapes,
+ * depending on where the user was loaded from (see `view` / `_view`):
+ *   - minimal chat-list card   (`view.cl`, `_view: "m"`)
+ *   - recommendation / friend card (`view.r`)
+ *   - full profile page        (`view.f`, `_view: "a"`)
+ *   - the authenticated user   (`view.f`, `isAuth: true`)
+ * Fields present on every entry are required; everything else is optional.
+ */
+export interface OFUsers {
+  needResetCheckOnlines: boolean;
+  deferredOnlines: number[];
+  /** User IDs whose online status is polled */
+  checkOnlines: number[];
+
+  /** Users keyed by user ID */
+  items: {
+    [userId: string]: {
+      // ── Present on every entry ─────────────────────────────────────────
+      id: number;
+      name: string;
+      username: string;
+      displayName: string;
+      avatar: string | null;
+      avatarThumbs: {
+        c50: string;
+        c144: string;
+      } | null;
+      openseaInfo: {
+        isConnected: boolean;
+        permalink: string | null;
+        openseaProfileLink: string | null;
+        hasNft: boolean;
+      };
+      /** Load timestamps (ms) keyed by source: cl = chat list, m = messages, f = full, r = recommendations */
+      view: {
+        cl?: number;
+        m?: number;
+        f?: number;
+        r?: number;
+      };
+      canLookStory: boolean;
+      canCommentStory: boolean;
+      hasNotViewedStory: boolean;
+      isVerified: boolean;
+      canPayInternal: boolean;
+      friendsList: unknown[];
+
+      // ── View markers ───────────────────────────────────────────────────
+      _view?: 'm' | 'a' | (string & {});
+      _views?: string[];
+
+      // ── Header image ───────────────────────────────────────────────────
+      header?: string | null;
+      headerSize?: {
+        width: number;
+        height: number;
+      } | null;
+      headerThumbs?: {
+        w480: string;
+        w760: string;
+      } | null;
+
+      // ── Card / creator fields ──────────────────────────────────────────
+      hasStories?: boolean;
+      hasStream?: boolean;
+      hasScheduledStream?: boolean;
+      canEarn?: boolean;
+      canAddSubscriber?: boolean;
+      isPerformer?: boolean;
+      isRealPerformer?: boolean;
+      isAdultContent?: boolean;
+      canTrialSend?: boolean;
+      isBlocked?: boolean;
+      isRestricted?: boolean;
+      canRestrict?: boolean;
+      canReport?: boolean;
+      isFriend?: boolean;
+      isActive?: boolean;
+      isSuspended?: boolean;
+      isPaywallRequired?: boolean;
+      isFree?: boolean;
+      hasPromotion?: boolean;
+      notice?: string;
+      allowIncomingCalls?: boolean;
+      /** ISO 8601 */
+      lastSeen?: string | null;
+
+      // ── Tips / pricing ─────────────────────────────────────────────────
+      tipsEnabled?: boolean;
+      tipsTextEnabled?: boolean;
+      tipsMin?: number;
+      tipsMinInternal?: number;
+      tipsMax?: number;
+      subscribePrice?: number;
+      currentSubscribePrice?: number | null;
+      subscriptionBundles?: number[];
+      promotions?: unknown[];
+
+      // ── Subscription state ─────────────────────────────────────────────
+      /** You are subscribed to this user */
+      subscribedBy?: boolean | null;
+      subscribedByExpire?: boolean | null;
+      /** ISO 8601 */
+      subscribedByExpireDate?: string | null;
+      subscribedByAutoprolong?: boolean | null;
+      subscribedIsExpiredNow?: boolean | null;
+      subscribedByData?: unknown;
+      /** This user is subscribed to you */
+      subscribedOn?: boolean;
+      subscribedOnExpire?: boolean | null;
+      subscribedOnExpiredNow?: boolean | null;
+      /** e.g. "3 months" */
+      subscribedOnDuration?: string | null;
+      subscribedOnData?: unknown;
+      isPendingAutoprolong?: boolean;
+      canUnsubscribe?: boolean;
+
+      listsStates?: Array<{
+        /** "following" | "fans" | "purchased", or a numeric list ID as a string */
+        id: string;
+        type: 'following' | 'bookmarks' | 'fans' | 'purchased' | (string & {});
+        name: string;
+        hasUser: boolean;
+        canAddUser: boolean;
+        cannotAddUserReason: 'ALREADY_EXISTS' | (string & {}) | null;
+      }>;
+
+      // ── Full profile fields ────────────────────────────────────────────
+      /** ISO 8601 */
+      joinDate?: string;
+      /** HTML */
+      about?: string;
+      isMarkdownDisabledForAbout?: boolean;
+      website?: string | null;
+      wishlist?: string | null;
+      location?: string | null;
+      isReferrerAllowed?: boolean;
+      postsCount?: number;
+      archivedPostsCount?: number;
+      privateArchivedPostsCount?: number;
+      photosCount?: number;
+      videosCount?: number;
+      audiosCount?: number;
+      mediasCount?: number;
+      favoritesCount?: number;
+      favoritedCount?: number;
+      subscribersCount?: number;
+      showPostsInFeed?: boolean;
+      showSubscribersCount?: boolean;
+      showMediaCount?: boolean;
+      canReceiveChatMessage?: boolean;
+      canChat?: boolean;
+      canInitiateCall?: boolean;
+      isSpotifyConnected?: boolean;
+      isSpringConnected?: boolean;
+      hasPinnedPosts?: boolean;
+      hasLabels?: boolean;
+      hasLinks?: boolean;
+      hasFriends?: boolean;
+      avatarHeaderConverterUpload?: boolean;
+      isPrivateRestriction?: boolean;
+      canCreatePromotion?: boolean;
+      canCreateTrial?: boolean;
+      finishedStreamsCount?: number;
+      shouldShowFinishedStreams?: boolean;
+      hasSavedStreams?: boolean;
+      /** ISO 8601 */
+      firstPublishedPostDate?: string;
+      isSwedenFan?: boolean;
+
+      // ── Authenticated user only ────────────────────────────────────────
+      isAuth?: boolean;
+      csrf?: string;
+      email?: string;
+      isEmailChecked?: boolean;
+      isEmailRequired?: boolean;
+      upload?: {
+        geoUploadArgs: {
+          preset: string;
+          protected_preset: string;
+          preset_public: string;
+          preset_png: string;
+          isDelay: boolean;
+          needThumbs: boolean;
+          additional: {
+            user: string;
+          };
+        };
+      };
+      wsUrl?: string;
+      /** JWT */
+      wsAuthToken?: string;
+      isMediaAvatarPending?: boolean;
+      isMediaHeaderPending?: boolean;
+      canUploadMedia?: boolean;
+      canUploadAvatarHeader?: boolean;
+      canSendChatToAll?: boolean;
+      canCreateLists?: boolean;
+      canPinPost?: boolean;
+      pinnedPostsCount?: number;
+      maxPinnedPostsCount?: number;
+      isPaywallPassed?: boolean;
+      isOnline?: boolean;
+      isVisibleOnline?: boolean;
+      isWantComments?: boolean;
+      isDeleteInitiated?: boolean;
+      subscribesCount?: number;
+      hasPurchasedPosts?: boolean;
+      hasRecentlyExpired?: boolean;
+      paidFeed?: boolean;
+      advBlock?: unknown[];
+      hasScenario?: boolean;
+      enabledImageEditorForChat?: boolean;
+      unreadTips?: number;
+
+      // Credits / wallet / payments
+      creditsMin?: number;
+      creditsMax?: number;
+      creditsMinAlternatives?: number;
+      creditBalance?: number;
+      isCreditsEnabled?: boolean;
+      isMakePayment?: boolean;
+      hasInternalPayments?: boolean;
+      payPalStatus?: unknown[];
+      isPaymentCardConnected?: boolean;
+      isRealCardConnected?: boolean;
+      canAddCard?: boolean;
+      isWalletAutorecharge?: boolean;
+      walletAutorechargeAmount?: number;
+      walletAutorechargeMin?: number;
+      walletFirstRebills?: boolean;
+      canAlternativeWalletTopUp?: boolean;
+      payoutLegalApproveState?: 'none' | (string & {});
+      isLegalApprovedAllowed?: boolean;
+
+      // Notifications / counters
+      notificationsCount?: number;
+      chatMessagesCount?: number;
+      countPinnedChat?: number;
+      countPriorityChat?: number;
+      countCallRequestChat?: number;
+      newTagsCount?: number;
+      hasTags?: boolean;
+      hasNewAlerts?: boolean;
+      hasNewHints?: boolean;
+      hasNewChangedPriceSubscriptions?: boolean;
+      hasSystemNotifications?: boolean;
+      hasNewTicketReplies?: {
+        open: boolean;
+        solved: boolean;
+        closed: boolean;
+        appeal_form: boolean;
+      };
+
+      // Watermark
+      watermarkText?: string;
+      hasWatermarkPhoto?: boolean;
+      hasWatermarkVideo?: boolean;
+      watermarkPosition?: 'bottom_right' | (string & {});
+
+      // Social / connected accounts
+      isTwitterConnected?: boolean;
+      twitterUsername?: string | null;
+      isAllowTweets?: boolean;
+      connectedOfAccounts?: unknown[];
+      canConnectOfAccount?: boolean;
+
+      // Verification / consent / security
+      isAgeVerified?: boolean;
+      ageVerificationRequired?: boolean;
+      isOtpEnabled?: boolean;
+      needConsent?: boolean;
+      needConsentState?: unknown | null;
+      consentStatus?: unknown | null;
+      needIVApprove?: boolean;
+      ivStatus?: string | null;
+      ivDocExpired?: boolean;
+      ivFailReason?: string | null;
+      ivCountry?: string | null;
+      ivFlow?: 'default' | (string & {});
+      faceIdRegular?: unknown[];
+    };
+  };
+  notFoundUsers: unknown[];
+  /** ID of the profile currently being viewed */
+  currentUser: number | null;
+  modalUser: unknown | null;
+  modalPost: unknown | null;
+  modalStory: unknown | null;
+  online: number[];
+  recommendedUsers: unknown[];
+  recentlyExpiredUsers: unknown[];
+  recommendedAuthor: unknown | null;
+  isRecommendsFree: boolean;
+  userAlert: unknown | null;
+  blocked: unknown[];
+  restricted: unknown[];
+  blockedOffset: number;
+  restrictedOffset: number;
+  // Search
+  search: unknown[];
+  searchQuery: string;
+  searchRequestId: number;
+  searchAutocomplete: unknown[];
+  /** Misspelling is in the source data */
+  purchasedAuthorAutocmoplete: unknown[];
+  settingsPost: {
+    isEnabled: boolean;
+    currentCode: string | null;
+    options: unknown[];
+  };
+  settingsChat: {
+    isEnabled: boolean;
+    currentCode: string | null;
+    options: unknown[];
+  };
+  subscriptionsCount: {
+    subscriptions: {
+      active: number | null;
+      muted: number | null;
+      restricted: number | null;
+      expired: number | null;
+      all: number | null;
+      attention: number | null;
+      blocked: number | null;
+    };
+    subscribers: {
+      active: number | null;
+      muted: number | null;
+      restricted: number | null;
+      expired: number | null;
+      all: number | null;
+      blocked: number | null;
+      activeOnline: number | null;
+    };
+  };
+  subscriptionsCountTimestamp: number;
+  isFetchingSubscriptionsCount: boolean;
+  // Friends (keyed by profile user ID → friend user IDs)
+  friends: Record<string, number[]>;
+  pinnedFriends: Record<string, number[]>;
+  friendsLoading: boolean;
+  hasMoreFriends: boolean;
+  forceFriendsReload: boolean;
+  /** Social links keyed by profile user ID */
+  socialButtons: Record<
+    string,
+    Array<{
+      id: number;
+      sort: number;
+      label: string;
+      username: string;
+      socialMedia: 'instagram' | 'x' | (string & {});
+      link: string;
+      url: string;
+      isValid: boolean;
+    }>
+  >;
+  links: unknown[];
+  userLinks: unknown | null;
+  nfts: unknown[];
+  profileDataLoadingError: boolean;
+  // Notifications
+  notifications: unknown[];
+  notificationsType: string;
+  notificationsCounts: {
+    all: number;
+    commented: number;
+    favorited: number;
+    mentioned: number;
+    tags: number;
+    message: number;
+    purchases: number;
+    subscribed: number;
+    tip: number;
+    deactivated_media: number;
+    memories: number;
+  };
+  notificationsOrder: string[];
+  notificationIsSearch: boolean;
+  banners: unknown[];
+  isBannersLoading: boolean;
+  customDataSaving: boolean;
+  streamSettings: {
+    data: Record<string, unknown>;
+    dataLoaded: boolean;
+  };
+  preLoginSubscriptionData: unknown | null;
+  privateCallSettings: {
+    allowIncomingCalls: boolean;
+    audioCallsPrice: number | null;
+    videoCallsPrice: number | null;
+  };
+}
+
+export interface OFChatMedia {
+  id: number;
+  type: 'video' | 'photo' | 'gif' | 'audio' | 'stream';
+  convertedToVideo: boolean;
+  canView: boolean;
+  hasError: boolean;
+  createdAt: string | null;
+  isReady: boolean;
+  /** Seconds; 0 for photos */
+  duration: number;
+  hasCustomPreview: boolean;
+  /** Keyed by resolution ("240", "720", ...) */
+  videoSources: {
+    [resolution: string]: string | null;
+  };
+  files: {
+    full: {
+      url: string | null;
+      width: number;
+      height: number;
+      size: number;
+      sources: unknown[];
+    };
+    thumb: {
+      url: string | null;
+      width: number;
+      height: number;
+      size: number;
+    };
+    preview: {
+      url: string | null;
+      width: number;
+      height: number;
+      size: number;
+    };
+    squarePreview: {
+      url: string | null;
+      width: number;
+      height: number;
+      size: number;
+    };
+    /** Present on DRM-protected video */
+    drm?: {
+      manifest: {
+        hls: string;
+        dash: string;
+      };
+      signature: {
+        hls: {
+          'CloudFront-Policy': string;
+          'CloudFront-Signature': string;
+          'CloudFront-Key-Pair-Id': string;
+        };
+        dash: {
+          'CloudFront-Policy': string;
+          'CloudFront-Signature': string;
+          'CloudFront-Key-Pair-Id': string;
+        };
+      };
+    };
+  };
+}
+
+export interface OFMedia {
+  id: number;
+  type: 'video' | 'photo' | 'gif' | 'audio' | 'stream';
+  convertedToVideo: boolean;
+  canView: boolean;
+  hasError: boolean;
+  createdAt: string | null;
+  isReady: boolean;
+  /** Seconds */
+  duration: number;
+  hasCustomPreview: boolean;
+  /** Keyed by resolution ("240", "720", ...) */
+  videoSources: {
+    [resolution: string]: string | null;
+  };
+  files: {
+    full: {
+      url: string | null;
+      width: number;
+      height: number;
+      size: number;
+      sources: unknown[];
+    };
+    thumb: {
+      url: string | null;
+      width: number;
+      height: number;
+      size: number;
+    };
+    preview: {
+      url: string | null;
+      width: number;
+      height: number;
+      size: number;
+    };
+    squarePreview: {
+      url: string | null;
+      width: number;
+      height: number;
+      size: number;
+    };
+    drm?: {
+      manifest: {
+        hls: string;
+        dash: string;
+      };
+      signature: {
+        hls: {
+          'CloudFront-Policy': string;
+          'CloudFront-Signature': string;
+          'CloudFront-Key-Pair-Id': string;
+        };
+        dash: {
+          'CloudFront-Policy': string;
+          'CloudFront-Signature': string;
+          'CloudFront-Key-Pair-Id': string;
+        };
+      };
+    };
+  };
+}
+
+/**
+ * Chats / messages store state.
+ *
+ * Merged from two snapshots of the same store (a chat open vs. no chat open).
+ * Message entries come in two shapes: a slim list preview (the last message
+ * of each chat) and a fully loaded message (inside an opened chat). Fields
+ * only present on fully loaded messages are optional.
+ */
+export interface OFChats {
+  /** Chat user IDs in list order */
+  chats: number[];
+
+  /** Chat metadata keyed by the other user's ID */
+  items: {
+    [userId: string]: {
+      withUser: number;
+      canNotSendReason: string | null;
+      canSendMessage: boolean;
+      canGoToProfile: boolean;
+      /** Observed as a number, or `false` when there are none */
+      unreadMessagesCount: number | false;
+      hasUnreadTips: boolean;
+      isMutedNotifications: boolean;
+      /** ID of the latest message (key into `messages`) */
+      lastMessage: number;
+      /** Observed as both a numeric string and a number */
+      lastReadMessageId: string | number;
+      hasPurchasedFeed: boolean;
+      countPinnedMessages: number;
+      isCallReady: boolean;
+      /** Loaded message IDs for this chat (empty until the chat is opened) */
+      messages: number[];
+      typing: boolean;
+      /** Absent, null, a numeric string, or a number */
+      newMessageId?: string | number | null;
+    };
+  };
+
+  /** User ID of the open chat, as a string; null when none is open */
+  currentChat: string | null;
+
+  /** Messages keyed by message ID */
+  messages: {
+    [messageId: string]: {
+      // Present on every message (list previews and full messages)
+      id: number;
+      isOpened: boolean;
+      /** ISO 8601 */
+      createdAt: string;
+      /** HTML-formatted body */
+      text: string;
+      giphyId: string | null;
+      lockedText: boolean;
+      isFree: boolean;
+      mediaCount: number;
+      isTip: boolean;
+      fromUser: number;
+      likePrevent: boolean;
+      isMediaPlayed: boolean;
+
+      // Present only on fully loaded messages
+      responseType?: 'message';
+      price?: number;
+      isMediaReady?: boolean;
+      previews?: unknown[];
+      releaseForms?: unknown[];
+      isReportedByMe?: boolean;
+      isCouplePeopleMedia?: boolean;
+      isMarkdownDisabled?: boolean;
+      queueId?: number;
+      isFromQueue?: boolean;
+      canUnsendQueue?: boolean;
+      unsendSecondsQueue?: number;
+      isCanceled?: boolean;
+      isNew?: boolean;
+      /** ISO 8601 */
+      changedAt?: string;
+      cancelSeconds?: number;
+      isLiked?: boolean;
+      canPurchase?: boolean;
+      canPurchaseReason?: 'free' | 'not_available' | (string & {});
+      canReport?: boolean;
+      canBePinned?: boolean;
+      isPinned?: boolean;
+      isAddedToBookmarks?: boolean;
+      chatUserId?: number;
+      chatId?: number;
+      /** ID of the message being replied to */
+      replyToMessage?: number;
+
+      media?: Array<OFChatMedia>;
+    };
+  };
+
+  /** Pagination flags for loaded chats, keyed by chat user ID */
+  messagesHasMore: {
+    [userId: string]: {
+      top: boolean;
+      bottom: boolean;
+    };
+  };
+
+  // Loading / UI state
+  chatsLoading: boolean;
+  chatsListLoading: boolean;
+  sendMessageLoading: boolean;
+  chatsListHasMore: boolean;
+  emptyMessagesList: boolean;
+  firstLoadingChatsList: boolean;
+  firstLoadingMessagesList: boolean;
+  hasMoreUsers: boolean;
+  nextOffset: number;
+  messageIdToCentered: number | null;
+
+  // Search
+  searchIds: unknown[];
+  currentSearchIndex: number | null;
+  searchQuery: string;
+
+  // Sorting / filtering
+  chatsSort: 'newest' | (string & {});
+  chatsFilter: string | null;
+
+  // Mass messaging / queue
+  usersTotal: number;
+  selectedUsersIdsCount: number;
+  selectedUsers: unknown[];
+  queueIds: unknown[];
+  queueItems: Record<string, unknown>;
+  queueBuyersMarker: number;
+  queueBuyersIds: unknown[];
+  queueBuyersError: boolean;
+  scheduleQueueMessage: unknown | null;
+  showViewAllInclude: boolean;
+  selectViewAllInclude: unknown[];
+  showViewAllExclude: boolean;
+  selectViewAllExclude: unknown[];
+  media: unknown[];
+}
+
+/**
+ * Posts response keyed by post ID (stringified numeric ID).
+ */
+export interface OFPosts {
+  [postId: string]: {
+    id: number;
+    author: number;
+    responseType: 'post';
+    // responseType: 'post' | (string & {});
+
+    // Permissions
+    canComment: boolean;
+    canDelete: boolean;
+    canEdit: boolean;
+    canEditExpire: boolean;
+    canEditMedia: boolean;
+    canEditSchedule: boolean;
+    canEditText: boolean;
+    canEditVote: boolean;
+    canReport: boolean;
+    canToggleFavorite: boolean;
+    canViewMedia: boolean;
+
+    // Counts
+    commentsCount: number;
+    favoritesCount: number;
+    mediaCount: number;
+
+    // State flags
+    hasUrl: boolean;
+    hasVoting: boolean;
+    isAddedToBookmarks: boolean;
+    isArchived: boolean;
+    isDeleted: boolean;
+    isFavorite: boolean;
+    isMediaReady: boolean;
+    isOpened: boolean;
+    isPinned: boolean;
+    isPrivateArchived: boolean;
+    isPublishedWithPeriod: boolean;
+    isMarkdownDisabled: boolean;
+    lockedText: boolean;
+
+    // Timestamps
+    /** ISO 8601, e.g. "2026-10-18T14:00:02+00:00" */
+    postedAt: string;
+    /** Unix seconds with fractional part, as a string, e.g. "1792332002.000000" */
+    postedAtPrecise: string;
+    /** ISO 8601 or null */
+    expiredAt: string | null;
+
+    // Content
+    /** HTML-formatted post body */
+    text: string;
+    rawText: string;
+    price: number | null;
+    streamId: number | null;
+    /** Empty object when the post has no poll */
+    voting: Record<string, unknown>;
+    media: Array<OFMedia>;
+    // Arrays that were empty in the sample — element shape unknown
+    preview: unknown[];
+    labelStates: unknown[];
+    linkedPosts: unknown[];
+    linkedUsers: unknown[];
+    mentionedUsers: unknown[];
+    releaseForms: unknown[];
+    streamEvents: unknown[];
+    favoritesList: unknown[];
+    tipsList: unknown[];
+    buyersList: unknown[];
+  };
+}
+
+export interface OFStore {
+  posts?: OFPosts;
+  chats?: OFChats;
+  users?: OFUsers;
+}
+
 //#region xHampster
 
 // ─── Primitives ──────────────────────────────────────────────────────────────
@@ -1455,6 +2198,82 @@ declare global {
     'tab-content': HTMLElement;
     'tab-host': HTMLElement;
     'tab-root': HTMLElement;
+  }
+
+  interface Map<K, V> {
+    /**
+     * Returns the value associated with `key`. If `key` is not present,
+     * stores `value` under `key` and returns it.
+     *
+     * - `value` is evaluated eagerly at the call site, even when `key`
+     *   already exists. Use `getOrInsertComputed()` for expensive defaults.
+     * - A key of `-0` is normalized to `+0` before lookup and insertion.
+     *
+     * @example
+     * const counts = new Map<string, number>();
+     * counts.set("a", counts.getOrInsert("a", 0) + 1);
+     *
+     * @param key The key to look up.
+     * @param value The value to insert when `key` is missing.
+     * @returns The existing or newly inserted value.
+     */
+    getOrInsert(key: K, value: V): V;
+
+    /**
+     * Returns the value associated with `key`. If `key` is not present,
+     * calls `callbackfn(key)`, stores the result under `key`, and returns it.
+     *
+     * - The callback runs only when the key is absent (lazy initialization).
+     * - A key of `-0` is normalized to `+0` before lookup, insertion,
+     *   and being passed to the callback.
+     * - If the callback itself inserts `key`, the callback's return value
+     *   still overwrites that entry.
+     *
+     * @example
+     * const groups = new Map<string, string[]>();
+     * groups.getOrInsertComputed("fruits", () => []).push("apple");
+     *
+     * @param key The key to look up.
+     * @param callbackfn Computes the value to insert when `key` is missing.
+     * @returns The existing or newly inserted value.
+     */
+    getOrInsertComputed(key: K, callbackfn: (key: K) => V): V;
+  }
+
+  interface WeakMap<K extends WeakKey, V> {
+    /**
+     * Returns the value associated with `key`. If `key` is not present,
+     * stores `value` under `key` and returns it.
+     *
+     * Throws a `TypeError` if `key` cannot be held weakly (i.e. it is not
+     * an object or a non-registered symbol).
+     *
+     * @example
+     * const visits = new WeakMap<object, number>();
+     * visits.set(node, visits.getOrInsert(node, 0) + 1);
+     *
+     * @param key The key to look up; must be a valid weak key.
+     * @param value The value to insert when `key` is missing.
+     * @returns The existing or newly inserted value.
+     */
+    getOrInsert(key: K, value: V): V;
+
+    /**
+     * Returns the value associated with `key`. If `key` is not present,
+     * calls `callbackfn(key)`, stores the result under `key`, and returns it.
+     *
+     * Throws a `TypeError` *before* invoking the callback if `key` cannot be
+     * held weakly (i.e. it is not an object or a non-registered symbol).
+     *
+     * @example
+     * const cache = new WeakMap<object, Metadata>();
+     * const meta = cache.getOrInsertComputed(node, (n) => computeMetadata(n));
+     *
+     * @param key The key to look up; must be a valid weak key.
+     * @param callbackfn Computes the value to insert when `key` is missing.
+     * @returns The existing or newly inserted value.
+     */
+    getOrInsertComputed(key: K, callbackfn: (key: K) => V): V;
   }
 }
 

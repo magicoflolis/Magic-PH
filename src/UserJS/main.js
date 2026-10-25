@@ -40,6 +40,10 @@
  * @typedef { import("../typings/types.d.ts").MPHConfig } MPHConfig
  */
 
+/**
+ * @typedef { import("../typings/types.d.ts").OFStore } OFStore
+ */
+
 //#region Console
 /**
  * Prefixed `console` wrapper.
@@ -411,6 +415,14 @@ class $GM extends null {
   static get isGM() {
     return typeof GM !== 'undefined';
   }
+  static get env() {
+    if ($GM.isGM) {
+      return 'GM';
+    } else if (typeof GM_xmlhttpRequest !== 'undefined') {
+      return 'deprecated';
+    }
+    return 'native';
+  }
   /**
    * @returns {VMScriptGMInfoObject | Partial<VMScriptGMInfoObject>}
    */
@@ -672,7 +684,12 @@ const make = (tagName, ...attributes) => {
  * @type { import("../typings/types.d.ts").ael }
  */
 const ael = (el, type, listener, options) => {
-  const opts = typeof options === 'object' && options !== null ? options : { capture: !!options };
+  const opts =
+    typeof options === 'boolean' ? options : isObj(options) ? options : { capture: !!options };
+  if (el instanceof Window || el instanceof Document) {
+    el.addEventListener(type, listener, opts);
+    return;
+  }
   for (const elem of toArray(el).filter(isHTML)) {
     elem.addEventListener(type, listener, opts);
   }
@@ -825,10 +842,7 @@ const ttPolicy = (() => {
  */
 const parseHTML = (html) => {
   const str = String(html);
-  return new DOMParser().parseFromString(
-    /** @type {string} */ (ttPolicy.createHTML(str)),
-    'text/html'
-  );
+  return new DOMParser().parseFromString(ttPolicy.createHTML(str), 'text/html');
 };
 /**
  * Plain text of an HTML fragment.
@@ -1377,6 +1391,256 @@ class jsStorage extends null {
 }
 //#endregion
 //#region Network
+// class Net {
+//   /**
+//    * @template {string | Request | URL} R
+//    * @template {string | object | Document | ArrayBuffer | Blob} T
+//    * @param {R} requestURL
+//    * @param {string} method
+//    * @param {VMScriptResponseType} responseType
+//    * @param {VMScriptGMXHRDetails<T> | RequestInit} data
+//    * @param {boolean} useFetch
+//    * @returns {Promise<T>}
+//    */
+//   static req(requestURL, method = 'GET', responseType = 'json', data, useFetch = false) {
+//     const params = Object.assign({}, data);
+//     if (typeof method === 'string') {
+//       params.method = method.toUpperCase().replaceAll(/\W/g, '');
+//     }
+//     if (typeof responseType === 'string') {
+//       responseType = responseType.toLowerCase().replaceAll(/\W/g, '');
+//     }
+//     if (params.credentials && $GM.isGM && !useFetch) {
+//       params.anonymous = Object.is(params.credentials, 'omit');
+//       delete params.credentials;
+//     } else if (params.onprogress) {
+//       delete params.onprogress;
+//     }
+//     return new Promise((resolve, reject) => {
+//       if (useFetch) {
+//         const _request =
+//           requestURL instanceof Request ? requestURL : new Request(requestURL, params);
+//         fetch(_request)
+//           .then((resp) => {
+//             if (resp.ok) {
+//               if (/array|buffer/i.test(responseType)) {
+//                 resolve(resp.arrayBuffer());
+//               } else if (/json/i.test(responseType)) {
+//                 resolve(resp.json());
+//               } else if (/text/i.test(responseType)) {
+//                 resolve(resp.text());
+//               } else if (/blob/i.test(responseType)) {
+//                 resolve(resp.blob());
+//               } else if (/form|data/i.test(responseType)) {
+//                 resolve(resp.formData());
+//               } else if (/clone|copy/i.test(responseType)) {
+//                 resolve(resp.clone());
+//               } else if (/document/i.test(responseType)) {
+//                 const responseText = resp.text();
+//                 const domParser = new DOMParser();
+//                 if (responseText instanceof Promise) {
+//                   responseText.then((txt) => {
+//                     const doc = domParser.parseFromString(txt, 'text/html');
+//                     resolve(doc);
+//                   });
+//                 } else {
+//                   const doc = domParser.parseFromString(responseText, 'text/html');
+//                   resolve(doc);
+//                 }
+//               } else {
+//                 resolve(resp);
+//               }
+//             } else {
+//               reject(resp);
+//             }
+//           })
+//           .catch(reject);
+//       } else {
+//         const fallback = () =>
+//           Network.req(requestURL, method, responseType, data, true).then(resolve, reject);
+//         /** @type {VMScriptGMXHRDetails<typeof responseType>} */
+//         const DETAILS = {
+//           url: requestURL,
+//           responseType,
+//           ...params,
+//           onerror() {
+//             fallback();
+//           },
+//           onload(r_1) {
+//             if (r_1.status !== 200) {
+//               fallback();
+//             } else if (/basic/i.test(responseType)) {
+//               resolve(r_1);
+//             } else {
+//               resolve(r_1.response);
+//             }
+//           }
+//         };
+//         $GM.xmlHttpRequest(DETAILS);
+//       }
+//     });
+//   }
+//   /**
+//    * @template { { baseURL: string | URL; data?: Record<PropertyKey, unknown>; useFetch?: boolean; } } CreateBody
+//    * @param {CreateBody} config
+//    */
+//   create(config = {}) {
+//     const { baseURL, data, useFetch } = config;
+//     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+//     /**
+//      * @template {string | URL} U
+//      * @param {U} pageURL
+//      * @param {VMScriptResponseType} [responseType]
+//      */
+//     async function req(pageURL, responseType, _data, _useFetch) {
+//       return await Net.req(
+//         toURL(pageURL, baseURL),
+//         'GET',
+//         responseType,
+//         _data ?? data,
+//         _useFetch ?? useFetch
+//       );
+//     }
+//     /**
+//      * @template {ArrayBuffer} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function arrayBuffer(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'arraybuffer', _data, _useFetch);
+//     }
+//     /**
+//      * @template {Document} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function doc(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'document', _data, _useFetch);
+//     }
+//     /**
+//      * @template {Record<PropertyKey, unknown>} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function json(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'json', _data, _useFetch);
+//     }
+//     /**
+//      * @template {string} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function text(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'text', _data, _useFetch);
+//     }
+//     /**
+//      * @template {Response} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function basic(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'basic', _data, _useFetch);
+//     }
+//     return {
+//       sizes,
+//       req,
+//       arrayBuffer,
+//       doc,
+//       json,
+//       text,
+//       basic,
+//       /**
+//        * @param {number} bytes
+//        * @param {number} [decimals]
+//        * @returns {string}
+//        */
+//       format(bytes, decimals = 2) {
+//         if (Number.isNaN(bytes) || !Number.isFinite(bytes) || bytes <= 0)
+//           return `0 ${sizes[0]}`;
+//         const k = 1024;
+//         const dm = decimals < 0 ? 0 : decimals;
+//         const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1);
+//         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+//       },
+//       /**
+//        * @param { { loaded: number; total: number; } } evt
+//        */
+//       prog(evt) {
+//         return !evt.total
+//           ? Net.format(evt.loaded)
+//           : `${+((evt.loaded / evt.total) * 100).toFixed(2)}%`;
+//       },
+//       /**
+//        * @param {string | URL} chunkURL
+//        * @param {VMScriptGMXHRDetails<Response> | RequestInit} [data]
+//        * @param {(evt: { loaded: number; total: number; }) => void} onProgress
+//        * @returns {Promise<{ chunks: Uint8Array[]; size: number }>}
+//        */
+//       async fetchChunks(chunkURL, data, onProgress) {
+//         /** @type {Response} */
+//         const resp = await req(chunkURL, 'basic', { timeout: 0, ...data }, true);
+//         const total = Number(resp.headers.get('Content-Length')) || 0;
+//         if (!resp.body || !isFN(resp.body.getReader)) {
+//           const buf = new Uint8Array(await resp.arrayBuffer());
+//           if (isFN(onProgress)) onProgress({ loaded: buf.length, total: buf.length });
+//           return { chunks: [buf], size: buf.length };
+//         }
+//         /** @type {Uint8Array[]} */
+//         const chunks = [];
+//         let loaded = 0;
+//         const reader = resp.body.getReader();
+//         try {
+//           while (true) {
+//             const { done, value } = await reader.read();
+//             if (done) break;
+//             chunks.push(value);
+//             loaded += value.length;
+//             if (isFN(onProgress)) onProgress({ loaded, total });
+//           }
+//         } finally {
+//           reader.releaseLock();
+//         }
+//         return { chunks, size: loaded };
+//       },
+//       /**
+//        *
+//        * @param {string | URL} blobURL
+//        * @param {Record<string, unknown>} [data]
+//        * @param {(evt: { loaded: number; total: number; }) => void} [onprogress]
+//        * @returns {Promise<Blob>}
+//        */
+//       gmBlob(blobURL, data, onprogress) {
+//         return new Promise((resolve, reject) => {
+//           /**
+//            * @param {string | number} status
+//            */
+//           const fail = (status) =>
+//             reject(
+//               new Error(`status: ${status} finalURL: ${blobURL}`, { cause: 'Network.gmBlob' })
+//             );
+//           $GM.xmlHttpRequest({
+//             url: blobURL,
+//             method: 'GET',
+//             responseType: 'blob',
+//             anonymous: Object.is(data?.credentials, 'omit'),
+//             headers: data?.referrer ? { Referer: data.referrer } : undefined,
+//             onprogress,
+//             onload(r) {
+//               if (r.status >= 200 && r.status < 300 && r.response) {
+//                 resolve(r.response);
+//               } else {
+//                 fail(r.status);
+//               }
+//             },
+//             onerror: (r) => fail(r?.status ?? 0),
+//             ontimeout: () => fail('timeout'),
+//             onabort: () => fail('aborted')
+//           });
+//         });
+//       }
+//     };
+//   }
+// }
 class Network extends null {
   static sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
   /**
@@ -1405,9 +1669,7 @@ class Network extends null {
     }
     return new Promise((resolve, reject) => {
       if (useFetch) {
-        const _request =
-          requestURL instanceof Request ? requestURL : new Request(requestURL, params);
-        fetch(_request)
+        fetch(requestURL instanceof Request ? requestURL : new Request(requestURL, params))
           .then((resp) => {
             if (resp.ok) {
               if (/array|buffer/i.test(responseType)) {
@@ -1423,13 +1685,15 @@ class Network extends null {
               } else if (/clone|copy/i.test(responseType)) {
                 resolve(resp.clone());
               } else if (/document/i.test(responseType)) {
-                const responseText = resp.text();
                 const domParser = new DOMParser();
+                const responseText = resp.text();
                 if (responseText instanceof Promise) {
-                  responseText.then((txt) => {
-                    const doc = domParser.parseFromString(txt, 'text/html');
-                    resolve(doc);
-                  });
+                  responseText
+                    .then((txt) => {
+                      const doc = domParser.parseFromString(txt, 'text/html');
+                      resolve(doc);
+                    })
+                    .catch(() => reject(resp));
                 } else {
                   const doc = domParser.parseFromString(responseText, 'text/html');
                   resolve(doc);
@@ -1468,6 +1732,159 @@ class Network extends null {
     });
   }
   /**
+   * @template { { baseURL: string | URL; data: Record<PropertyKey, unknown>; useFetch: boolean; } } CreateBody
+   * @param {Partial<CreateBody>} config
+   */
+  static create(config = {}) {
+    if (isEmpty(config.baseURL)) config.baseURL = window.location.href;
+    if (isEmpty(config.data)) config.data = {};
+    if (!(typeof config.useFetch === 'boolean')) config.useFetch = !$GM.isGM;
+    /**
+     * @template R
+     * @param {string | URL} pageURL
+     * @param {VMScriptResponseType} [responseType]
+     * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+     * @param {boolean} [_useFetch]
+     */
+    async function get(pageURL, responseType, _data, _useFetch) {
+      if (isEmpty(_data) || isObj(_data) & !Object.is(_data, config.data))
+        _data = sanitizeConfig(_data, config.data);
+      if (!(typeof _useFetch === 'boolean')) _useFetch = config.useFetch;
+      return await Network.req(
+        toURL(pageURL, config.baseURL),
+        'GET',
+        responseType,
+        _data,
+        _useFetch
+      );
+    }
+    return {
+      get,
+      /**
+       * @template {ArrayBuffer} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async arrayBuffer(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'arraybuffer', _data, _useFetch);
+      },
+      /**
+       * @template {Document} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async doc(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'document', _data, _useFetch);
+      },
+      /**
+       * @template {Record<PropertyKey, unknown>} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async json(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'json', _data, _useFetch);
+      },
+      /**
+       * @template {string} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async text(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'text', _data, _useFetch);
+      },
+      /**
+       * @template {Response} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async basic(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'basic', _data, _useFetch);
+      },
+      /**
+       * @template {Response} R
+       * @param {string | URL} chunkURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {(evt: { loaded: number; total: number; }) => void} onProgress
+       * @returns {Promise<{ chunks: Uint8Array[]; size: number }>}
+       */
+      async $chunks(chunkURL, _data, onProgress) {
+        if (isEmpty(_data) || isObj(_data) & !Object.is(_data, config.data))
+          _data = sanitizeConfig(_data, config.data);
+        const resp = await fetch(new Request(chunkURL, _data));
+        const total = Number(resp.headers.get('Content-Length')) || 0;
+        if (!resp.body || !isFN(resp.body.getReader)) {
+          const buf = new Uint8Array(await resp.arrayBuffer());
+          if (isFN(onProgress)) onProgress({ loaded: buf.length, total: buf.length });
+          return { chunks: [buf], size: buf.length };
+        }
+        /** @type {Uint8Array[]} */
+        const chunks = [];
+        let loaded = 0;
+        const reader = resp.body.getReader();
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            loaded += value.length;
+            if (isFN(onProgress)) onProgress({ loaded, total });
+          }
+        } finally {
+          reader.releaseLock();
+        }
+        return { chunks, size: loaded };
+      },
+      /**
+       *
+       * @param {string | URL} blobURL
+       * @param {Record<string, unknown>} [_data]
+       * @param {(evt: { loaded: number; total: number; }) => void} [onprogress]
+       * @returns {Promise<Blob>}
+       */
+      $blob(blobURL, _data, onprogress) {
+        return new Promise((resolve, reject) => {
+          if (isEmpty(_data) || isObj(_data) & !Object.is(_data, config.data))
+            _data = sanitizeConfig(_data, config.data);
+          /**
+           * @param {string | number} status
+           */
+          const fail = (status) =>
+            reject(
+              new Error(`status: ${status} finalURL: ${blobURL}`, { cause: 'Network.gmBlob' })
+            );
+          $GM.xmlHttpRequest({
+            url: blobURL,
+            method: 'GET',
+            responseType: 'blob',
+            anonymous: Object.is(_data?.credentials, 'omit'),
+            headers: _data?.referrer ? { Referer: _data.referrer } : undefined,
+            onprogress,
+            onload(r) {
+              if (r.status >= 200 && r.status < 300 && r.response) {
+                resolve(r.response);
+              } else {
+                fail(r.status);
+              }
+            },
+            onerror: (r) => fail(r?.status ?? 0),
+            ontimeout: () => fail('timeout'),
+            onabort: () => fail('aborted')
+          });
+        });
+      }
+    };
+  }
+  /**
    * @param {number} bytes
    * @param {number} [decimals]
    * @returns {string}
@@ -1488,25 +1905,13 @@ class Network extends null {
       : `${+((evt.loaded / evt.total) * 100).toFixed(2)}%`;
   }
   /**
-   *
-   * @param {string | URL} pageURL
-   * @param {VMScriptGMXHRDetails<Document> | RequestInit} [data]
-   * @param {boolean} [useFetch]
-   * @returns {Promise<Document>}
-   */
-  static async doc(pageURL, data, useFetch) {
-    return await Network.req(pageURL, 'GET', 'document', data, useFetch);
-  }
-  /**
-   *
    * @param {string | URL} chunkURL
    * @param {VMScriptGMXHRDetails<Response> | RequestInit} [data]
    * @param {(evt: { loaded: number; total: number; }) => void} onProgress
    * @returns {Promise<{ chunks: Uint8Array[]; size: number }>}
    */
-  static async fetchChunks(chunkURL, data, onProgress) {
-    /** @type {Response} */
-    const resp = await Network.req(chunkURL, 'GET', 'basic', { timeout: 0, ...data }, true);
+  static async $chunks(chunkURL, data, onProgress) {
+    const resp = await fetch(new Request(chunkURL, data));
     const total = Number(resp.headers.get('Content-Length')) || 0;
     if (!resp.body || !isFN(resp.body.getReader)) {
       const buf = new Uint8Array(await resp.arrayBuffer());
@@ -1537,7 +1942,7 @@ class Network extends null {
    * @param {(evt: { loaded: number; total: number; }) => void} [onprogress]
    * @returns {Promise<Blob>}
    */
-  static gmBlob(blobURL, data, onprogress) {
+  static $blob(blobURL, data, onprogress) {
     return new Promise((resolve, reject) => {
       /**
        * @param {string | number} status
@@ -1563,6 +1968,56 @@ class Network extends null {
         onabort: () => fail('aborted')
       });
     });
+  }
+  /**
+   * @template {ArrayBuffer} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<R>}
+   */
+  static async arrayBuffer(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'arraybuffer', data, useFetch);
+  }
+  /**
+   * @template {Document} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<R>}
+   */
+  static async doc(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'document', data, useFetch);
+  }
+  /**
+   * @template {Record<PropertyKey, unknown>} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<R>}
+   */
+  static async json(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'json', data, useFetch);
+  }
+  /**
+   * @template {string} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<R>}
+   */
+  static async text(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'text', data, useFetch);
+  }
+  /**
+   * @template {Response} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+   * @param {boolean} [_useFetch]
+   * @returns {Promise<R>}
+   */
+  static async basic(pageURL, _data, _useFetch) {
+    return await Network.req(pageURL, 'basic', _data, _useFetch);
   }
 }
 //#endregion
@@ -1632,8 +2087,8 @@ class MainUserJS extends Base {
           sty = make('style', { textContent: css });
           parent.append(sty);
         }
-        sty.dataset.insertedBy = $GM.info.script.name;
         sty.dataset.role = role;
+        sty.dataset.insertedBy = $GM.info.script.name;
         return sty;
       } catch (ex) {
         con.err(ex);
@@ -1649,8 +2104,8 @@ class MainUserJS extends Base {
     shadow.append(root);
     this._mph_.root = root;
     defer(() => {
-      this.dataset.insertedBy = $GM.info.script.name;
       this.dataset.role = 'primary-container';
+      this.dataset.insertedBy = $GM.info.script.name;
     });
   }
   get injected() {
@@ -1696,13 +2151,22 @@ class Root extends Base {
     jable: { domains: ['jable.tv', 'fs1.app'] },
     missav: { domains: ['missav.ai', 'missav.ws', 'missav.com'] }
   };
+  constructor() {
+    super();
+    this.current = url;
+  }
   /**
-   * Resolves `input` without touching any state.
-   * @template {string | URL | Location} I
-   * @param {I} [input]
    * @returns {Omit<SiteInfo, "router">}
    */
-  static resolve(input = Page.location.href) {
+  get current() {
+    return this._mph_;
+  }
+  /**
+   * @template {string | URL | Location} I
+   * @param {I} [input]
+   */
+  set current(input) {
+    let obj = {};
     try {
       const webpage = toURL(input);
       const host = getHostname(webpage.hostname);
@@ -1759,17 +2223,40 @@ class Root extends Base {
         [...routes].find(([, reg]) =>
           isRegExp(reg) ? reg.test(webpage.pathname) : reg === webpage.pathname
         )?.[0] ?? 'Unknown';
-      return { webpage, host, root, path };
+      obj = { webpage, host, root, path };
     } catch {
-      return { webpage: new URL(BLANK_PAGE), host: 'blank', root: 'blank', path: 'Unknown' };
+      obj = { webpage: new URL(BLANK_PAGE), host: 'blank', root: 'blank', path: 'Unknown' };
+    } finally {
+      this._mph_ = obj;
     }
   }
+  get webpage() {
+    return this.current.webpage ?? null;
+  }
+  get host() {
+    return this.current.host ?? null;
+  }
+  get path() {
+    return this.current.path ?? null;
+  }
+  get root() {
+    return this.current.root ?? null;
+  }
+  get router() {
+    return this.current.router ?? null;
+  }
   /**
-   * Site palette, applied as CSS variables.
-   * @param {string} root
-   * @returns {Record<string, string>}
+   * @param {{ push: (path: string) => unknown } | null} pageRouter
    */
-  static palette(root) {
+  set router(pageRouter) {
+    if (isNull(pageRouter)) {
+      this.current.router = null;
+    } else {
+      this.current.router = pageRouter;
+    }
+  }
+  get palette() {
+    const { root = '' } = this.current;
     if (/tube8/.test(root)) {
       return {
         'mph-site-color': 'hsl(201, 64%, 40%)',
@@ -1824,89 +2311,6 @@ class Root extends Base {
     };
   }
   /**
-   * Where the floating button sits, as `--mph-position-*` values.
-   * @param {string} [corner] - `auto` (website default), `top-left`, `top-right`, `bottom-left` or `bottom-right`
-   * @param {string} [root] - Website
-   * @param {boolean} [mobile]
-   * @returns {Record<string, string>}
-   */
-  static placement(corner = 'auto', root = 'default', mobile = isMobile) {
-    /**
-     * Default spot of the floating button, `[corner, distance from the edge in rem]`.
-     *
-     * Keeps it clear of what websites pin to their corners: bottom navigation bars on phones,
-     * "live cams" / chat popups on desktop.
-     * @type {Record<string, { desktop: [string, number]; mobile: [string, number] }>}
-     */
-    const SPOTS = {
-      default: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 4.5] },
-      onlyfans: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 5] },
-      xhamster: { desktop: ['bottom-left', 1], mobile: ['bottom-right', 4.5] }
-    };
-    const spot = (SPOTS[root] ?? SPOTS.default)[mobile ? 'mobile' : 'desktop'];
-    const [where, lift] = /^(top|bottom)-(left|right)$/.test(corner) ? [corner, 1] : spot;
-    const [vertical, horizontal] = where.split('-');
-    const safe = (/** @type {string} */ edge) => `env(safe-area-inset-${edge}, 0px)`;
-    /** @param {string} edge @param {number} rem */
-    const at = (edge, rem) => `calc(${rem}rem + ${safe(edge)})`;
-    return {
-      'mph-position-top': vertical === 'top' ? at('top', lift) : 'auto',
-      'mph-position-bottom': vertical === 'bottom' ? at('bottom', lift) : 'auto',
-      'mph-position-left': horizontal === 'left' ? at('left', 1) : 'auto',
-      'mph-position-right': horizontal === 'right' ? at('right', 1) : 'auto'
-    };
-  }
-  constructor() {
-    super();
-
-    this.current = url;
-  }
-  /**
-   * @returns {SiteInfo}
-   */
-  get current() {
-    return this._mph_;
-  }
-  /**
-   * @template {string | URL | Location} I
-   * @param {I} [input]
-   */
-  set current(input) {
-    try {
-      this._mph_ = Root.resolve(input);
-    } catch {
-      this._mph_ = {};
-    }
-  }
-  get webpage() {
-    return this.current.webpage ?? null;
-  }
-  get host() {
-    return this.current.host ?? null;
-  }
-  get path() {
-    return this.current.path ?? null;
-  }
-  get root() {
-    return this.current.root ?? null;
-  }
-  get router() {
-    return this.current.router ?? null;
-  }
-  /**
-   * @param {{ push: (path: string) => unknown } | null} pageRouter
-   */
-  set router(pageRouter) {
-    if (isNull(pageRouter)) {
-      this.current.router = null;
-    } else {
-      this.current.router = pageRouter;
-    }
-  }
-  get palette() {
-    return Root.palette(this.current.root);
-  }
-  /**
    * Requests the page, resolves every video quality.
    * @returns {Promise<VideoData>}
    */
@@ -1918,12 +2322,12 @@ class Root extends Base {
       throw new Error('"webpage" is null', { cause: 'Root:find()' });
     }
     const { root: R, webpage: U, path: P } = this;
+    const params = U.href.includes('mydaddy.cc') ? [{ credentials: 'omit' }, true] : [];
     // mydaddy.cc (hqporner's player iframe) rejects the request made through the userscript
     // manager's own networking, a plain `fetch` with no cookies attached goes through instead
-    const doc = await (U.href.includes('mydaddy.cc')
-      ? Network.doc(U, { credentials: 'omit' }, true)
-      : Network.doc(U));
+    const doc = await Network.doc(U, ...params);
     const meta = readMeta(doc, U);
+    const docScripts = Array.from(doc.scripts, (e) => e?.textContent ?? '');
     /** @type {Set<string>} */
     const files = new Set();
     /** @type {Set<string>} */
@@ -2105,12 +2509,10 @@ class Root extends Base {
         ts.add(h);
       }
     } else if (/\.(xnxx|xvideos)\./.test(U.href)) {
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').find((t) =>
-        t.includes('html5player.setVideo')
-      );
+      const txt = docScripts.find((t) => t.includes('html5player.setVideo')) ?? '';
       /** @param {string} name */
       const setup = (name) =>
-        new RegExp(`html5player\\.${name}\\('((?:[^'\\\\]|\\\\.)*)'\\)`).exec(txt ?? '')?.[1];
+        new RegExp(`html5player\\.${name}\\('((?:[^'\\\\]|\\\\.)*)'\\)`).exec(txt)?.[1];
       const hls = setup('setVideoHLS');
       return {
         title: meta.title || htmlToText(setup('setVideoTitle')) || document.title,
@@ -2128,13 +2530,11 @@ class Root extends Base {
     } else if (R === 'youjizz') {
       // `dataEncodings` lists every quality twice: a direct file and its single-bitrate HLS
       // equivalent, plus one "Auto" adaptive playlist bundling a few of those qualities together
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').find((t) =>
-        t.includes('dataEncodings')
-      );
+      const txt = docScripts.find((t) => t.includes('dataEncodings')) ?? '';
       /** @type {{ quality?: string; filename?: string }[]} */
       let entries = [];
       try {
-        entries = extractJSON(txt ?? '', (txt ?? '').indexOf('dataEncodings'));
+        entries = extractJSON(txt, txt.indexOf('dataEncodings'));
       } catch (ex) {
         con.err(ex);
       }
@@ -2162,8 +2562,8 @@ class Root extends Base {
        * @param {Document} page
        */
       const spankBangFiles = (page) => {
-        for (const script of page.scripts) {
-          const [, raw] = /stream_data\s*=\s*(\{.*?\});/s.exec(script.textContent ?? '') ?? [];
+        for (const script of Array.from(page.scripts, (e) => e?.textContent ?? '')) {
+          const [, raw] = /stream_data\s*=\s*(\{.*?\});/s.exec(script) ?? [];
           if (!raw) continue;
           try {
             /** @type {Record<string, string[]>} */
@@ -2229,8 +2629,7 @@ class Root extends Base {
       // A packed script sets `source` (adaptive), `source1280` (1080p) and `source842` (720p)
       /** @param {Document} page */
       const sources = (page) => {
-        for (const script of page.scripts) {
-          const txt = script.textContent ?? '';
+        for (const txt of Array.from(page.scripts, (e) => e?.textContent ?? '')) {
           if (!txt.includes('eval(function(p,a,c,k,e,d)') || !txt.includes('m3u8')) continue;
           const setup = unpackJS(txt);
           return ['source', 'source1280', 'source842']
@@ -2249,7 +2648,7 @@ class Root extends Base {
         ts: sources(found)
       };
     } else if (R === '91porn') {
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const txt = docScripts.join('\n');
       const [, encoded = ''] = /strencode2\("([^"]+)"\)/.exec(txt) ?? [];
       const src = qs('source', parseHTML(decodeURIComponent(encoded)))?.getAttribute('src');
       return {
@@ -2264,11 +2663,9 @@ class Root extends Base {
     } else if (R === '91porna') {
       const decoder = (src) => {
         if (!src) {
-          const s = [...doc.scripts].find((x) =>
-            x.textContent.includes('eval(function(p,a,c,k,e,d)')
-          );
+          const s = docScripts.find((x) => x.includes('eval(function(p,a,c,k,e,d)'));
           if (!s) throw new Error('Packed script not found on this page');
-          src = s.textContent;
+          src = s;
         }
         const m = src.match(/\}\('([\s\S]*)',\s*(\d+),\s*(\d+),\s*'([\s\S]*?)'\.split\('\|'\)/);
         if (!m) throw new Error('Not a p,a,c,k,e,d blob');
@@ -2350,7 +2747,7 @@ class Root extends Base {
         };
       };
       const decoded = decodeVideo();
-      const obj = decodePlaylist(await Network.req(decoded.scriptUrl, 'GET', 'text'));
+      const obj = decodePlaylist(await Network.text(decoded.scriptUrl));
       poster = decoded.poster || obj.poster || meta.poster;
       return {
         title: meta.title || doc.title.trim() || document.title,
@@ -2360,7 +2757,7 @@ class Root extends Base {
       };
     } else if (R === 'jable') {
       const obj = {};
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const txt = docScripts.join('\n');
       const [, hlsUrl = ''] = /hlsUrl = '([^']+)'/.exec(txt) ?? [];
       if (!isEmpty(hlsUrl)) {
         obj.ts = [hlsUrl];
@@ -2377,7 +2774,7 @@ class Root extends Base {
       }
       return obj;
     } else if (R === 'eporner') {
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const txt = docScripts.join('\n');
       const arr = Array.from(
         txt.matchAll(/EP\.video\.player\.(poster|vid|hash) = '(.*)'/g),
         ([, a, b]) => [a, b]
@@ -2405,7 +2802,7 @@ class Root extends Base {
       sp.append('embed', false);
       sp.append('supportedFormats', ['hls', 'dash', 'h265', 'vp9', 'av1', 'mp4']);
       sp.append('_', new Date().getTime());
-      const req = await Network.req(vidUrl, 'GET', 'json', { credentials: 'include' });
+      const req = await Network.json(vidUrl, { credentials: 'include' });
       const ts = req?.sources?.hls?.auto?.src;
       const files = req?.sources?.mp4;
       return {
@@ -2594,6 +2991,48 @@ class Root extends Base {
       con.err(ex);
     }
     return false;
+  }
+  /**
+   * Where the floating button sits, as `--mph-position-*` values.
+   * @param {string} [corner] - `auto` (website default), `top-left`, `top-right`, `bottom-left` or `bottom-right`
+   * @returns {Record<string, string>}
+   */
+  placement(corner = 'auto') {
+    /**
+     * Default spot of the floating button, `[corner, distance from the edge in rem]`.
+     *
+     * Keeps it clear of what websites pin to their corners: bottom navigation bars on phones,
+     * "live cams" / chat popups on desktop.
+     * @type {Record<string, { desktop: [string, number]; mobile: [string, number] }>}
+     */
+    const SPOTS = {
+      default: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 4.5] },
+      onlyfans: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 5] },
+      xhamster: { desktop: ['bottom-left', 1], mobile: ['bottom-right', 4.5] }
+    };
+    const spot = (SPOTS[this.root] ?? SPOTS.default)[isMobile ? 'mobile' : 'desktop'];
+    const [where, lift] = /^(top|bottom)-(left|right)$/.test(corner) ? [corner, 1] : spot;
+    const [vertical, horizontal] = where.split('-');
+    /**
+     * @template {string} E
+     * @param {E} edge
+     * @returns { `env(safe-area-inset-${E}, 0px)` }
+     */
+    const safe = (edge) => `env(safe-area-inset-${edge}, 0px)`;
+    /**
+     * @template {string} E
+     * @template {number} R
+     * @param {E} edge
+     * @param {R} rem
+     * @returns { `calc(${R}rem + ${E})` }
+     */
+    const at = (edge, rem) => `calc(${rem}rem + ${safe(edge)})`;
+    return {
+      'mph-position-top': vertical === 'top' ? at('top', lift) : 'auto',
+      'mph-position-bottom': vertical === 'bottom' ? at('bottom', lift) : 'auto',
+      'mph-position-left': horizontal === 'left' ? at('left', 1) : 'auto',
+      'mph-position-right': horizontal === 'right' ? at('right', 1) : 'auto'
+    };
   }
 }
 
@@ -2897,7 +3336,6 @@ class MainBody extends Base {
     container.init();
     const video = post.variant === 'video';
     const activate = video || container.toolbar._active === null;
-    /** @type {MediaGroup} */
     const group = this.groups.getOrInsertComputed(post.groupKey, (key) => {
       /** @type {List} */
       const pane = make('mph-list', 'mph-feed hidden', { dataset: { host: key } });
@@ -3342,8 +3780,7 @@ class ConfigElement extends Base {
    * Builds the settings page.
    */
   build() {
-    if (typeof container === 'undefined') return;
-    if (this.built) return;
+    if (this.built || typeof container === 'undefined') return;
     this.built = true;
     const savebtn = make('mph-btn', 'save', {
       textContent: i18n$('save'),
@@ -3401,11 +3838,10 @@ class ConfigElement extends Base {
       const lb = make('label', 'sub-section', { dataset: { config: key } });
       lb.append(make('mu-js', { textContent: label }));
       const { options, ...rest } = attrs;
-      const inp = /** @type {HTMLInputElement} */ (
+      const inp =
         type === 'select'
           ? make('select', { className: 'mph-select' })
-          : make('input', { type, ...rest })
-      );
+          : make('input', { type, ...rest });
       if (type === 'select') {
         for (const value of options)
           inp.append(make('option', { value, textContent: i18n$(value) }));
@@ -3452,8 +3888,8 @@ class ConfigElement extends Base {
       this.rows.push({ key, elem: inp, type });
       return lb;
     };
-    if ($GM.isGM) makeRow(sections.general, i18n$('userjs_autoinject'), 'autoinject', 'checkbox');
-    makeRow(sections.general, i18n$('userjs_fullscreen'), 'autoexpand', 'checkbox');
+    if ($GM.isGM) makeRow(sections.general, i18n$('autoinject'), 'autoinject', 'checkbox');
+    makeRow(sections.general, i18n$('fullscreen'), 'autoexpand', 'checkbox');
     makeRow(sections.general, i18n$('clear_tab_cache'), 'clearTabCache', 'checkbox');
     makeRow(sections.general, i18n$('position'), 'position', 'select', {
       options: ['auto', 'top-left', 'top-right', 'bottom-left', 'bottom-right']
@@ -3769,7 +4205,7 @@ class Toolbar extends Base {
     for (const evt of [...this._mph_.events].filter((event) => event.type === type)) {
       try {
         if (isFN(evt.listener)) {
-          /** @type {Function} */ (evt.listener).call(this, ...args);
+          evt.listener.call(this, ...args);
         }
       } catch (ex) {
         con.err(ex);
@@ -3882,20 +4318,22 @@ for (const [name, constructor] of customElementMap.entries()) {
  * HTTP Live Streaming, merges the segments of a playlist into a single file.
  */
 class mphHLS {
+  /** @type {ReturnType<typeof Network.create>} */
+  net;
   /**
    * @param {string[]} playlists - URLs of the (master) playlist, mirrors are tried in order
    * @param {Record<string, unknown>} [data] - Request options
    * @param {?HTMLElement} [$el] - Element that displays the progress
    * @param {string} [root] - Website "root" name
    */
-  constructor(playlists, data = {}, $el = null, root = container.root.root) {
+  constructor(playlists = [], data = {}, $el = null, root = container.root.root) {
     this.urls = playlists;
-    this.data = data;
     this.$el = $el;
     /** File extension of the merged file */
     this.ext = 'ts';
     /** Use the userscript manager for segments, `fetch` is usually blocked by CORS */
     this.viaGM = /xhamster/.test(root);
+    this.net = Network.create({ data });
   }
   /**
    * Resolves a playlist entry against the playlist that lists it.
@@ -3904,13 +4342,6 @@ class mphHLS {
    */
   resolve(ref, from) {
     return toURL(ref, from).href.replace(/m3u8\/\//g, 'm3u8/');
-  }
-  /**
-   * @param {string} playlistURL
-   * @returns {Promise<string>}
-   */
-  async req(playlistURL, responseType = 'text') {
-    return await Network.req(playlistURL, 'GET', responseType, this.data);
   }
   /**
    * Reads a playlist: every line that is not a tag is a URI (RFC 8216), of a variant in a master playlist
@@ -3955,19 +4386,20 @@ class mphHLS {
    * @returns {Promise<BlobPart[]>}
    */
   async segment(segmentURL) {
+    const { net } = this;
     /** @type {unknown} */
     let last;
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         if (!this.viaGM) {
           try {
-            return (await Network.fetchChunks(segmentURL, this.data)).chunks;
+            return (await net.$chunks(segmentURL)).chunks;
           } catch (ex) {
             if (!$GM.isGM) throw ex;
             this.viaGM = true;
           }
         }
-        return [await Network.gmBlob(segmentURL, this.data)];
+        return [await net.$blob(segmentURL)];
       } catch (ex) {
         last = ex;
         await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
@@ -3982,6 +4414,7 @@ class mphHLS {
    */
   async merge(playlist, playlistURL) {
     if (isEmpty(playlist.segments)) throw new Error('No segments found', { cause: 'mphHLS.merge' });
+    const { net } = this;
     /** @type {BlobPart[]} */
     const parts = [];
     if (playlist.map) {
@@ -3997,7 +4430,7 @@ class mphHLS {
       const encryptedHls = async (m3u8Url) => {
         // parse segment URLs (absolute or relative)
         const base = toURL(m3u8Url);
-        const text = (await this.req(base)).trim();
+        const text = (await net.text(base)).trim();
         // parse key + IV
         const keyLine = text.match(/#EXT-X-KEY:([^\n]+)/)[1];
         const keyUri = keyLine.match(/URI="([^"]+)"/)[1];
@@ -4010,22 +4443,15 @@ class mphHLS {
 
         /**
          * Get key
-         * @type {ArrayBuffer}
          */
-        const keyBuf = await this.req(
-          keyUri.includes('//') ? keyUri : toURL(keyUri, base),
-          'arraybuffer'
-        );
+        const keyBuf = await net.arrayBuffer(keyUri.includes('//') ? keyUri : toURL(keyUri, base));
         const cryptoKey = await crypto.subtle.importKey('raw', keyBuf, { name: 'AES-CBC' }, false, [
           'decrypt'
         ]);
 
         const parts = [];
         for (const url of segs) {
-          /**
-           * @type {ArrayBuffer}
-           */
-          const enc = await this.req(url, 'arraybuffer');
+          const enc = await net.arrayBuffer(url);
           const dec = await crypto.subtle.decrypt({ name: 'AES-CBC', iv }, cryptoKey, enc);
           parts.push(new Uint8Array(dec));
           done++;
@@ -4077,20 +4503,21 @@ class mphHLS {
    * @returns {Promise<Blob>}
    */
   async build(url) {
+    const { net } = this;
     let base = url;
-    let text = (await this.req(base)).trim();
+    let text = (await net.text(base)).trim();
     if (text.startsWith('[{')) {
       // Pornhub lists the playlists as JSON
       const hls = JSON.parse(text).find((e) => e.format === 'hls' && e.defaultQuality);
       base = hls?.videoUrl;
-      text = (await this.req(base)).trim();
+      text = (await net.text(base)).trim();
     }
     const master = mphHLS.parse(text);
     let last = new Error('No qualities found', { cause: 'mphHLS.build' });
     for (const uri of master.variants.length ? master.variants.map((v) => v.uri) : [null]) {
       try {
         const playlistURL = uri ? this.resolve(uri, base) : base;
-        const playlist = uri ? mphHLS.parse((await this.req(playlistURL)).trim()) : master;
+        const playlist = uri ? mphHLS.parse((await net.text(playlistURL)).trim()) : master;
         msg(`Building cache for "${playlistURL.split(/[/?]/).filter(Boolean).pop()}"`);
         const blob = await this.merge(playlist, playlistURL);
         msg('Cache complete!', 2500);
@@ -4127,10 +4554,8 @@ class Container {
     toast: new Timeout()
   };
   constructor() {
-    this.webpage = url;
-    this.host = getHostname(url.hostname);
     con.onError = (...msg) => this.showError(...msg);
-    window.addEventListener('pagehide', this, false);
+    ael(window, 'pagehide', this, false);
   }
   /**
    * The element inserted into the page.
@@ -4176,7 +4601,7 @@ class Container {
         autocomplete: 'off',
         spellcheck: false,
         type: 'text',
-        placeholder: i18n$('search_placeholder')
+        placeholder: i18n$('search')
       });
       this.footer = make('mph-row', 'mph-footer');
       /** @type {Toolbar} */
@@ -4264,14 +4689,14 @@ class Container {
       } else if (host.startsWith(T._mph_.protocal)) {
         T.intFN(host);
       } else {
-        this.urlBar.placeholder = i18n$('search_placeholder');
+        this.urlBar.placeholder = i18n$('search');
         dom.cl.remove(L.groups.get(host)?.pane ?? [], 'hidden');
       }
     });
     T.addListener('internal', (host) => {
       if (host === 'settings') {
         this.cfgpage.build();
-        this.urlBar.placeholder = i18n$('search_settings');
+        this.urlBar.placeholder = i18n$('settings');
         dom.cl.remove(this.cfgpage, 'hidden');
       }
     });
@@ -4286,10 +4711,9 @@ class Container {
         }
       }
       if (tab.classList.contains('active')) {
-        const sibling = /** @type {?HTMLElement} */ (
-          [tab.nextElementSibling, tab.previousElementSibling].find(
-            (e) => e?.localName === 'tab-content'
-          )
+        /** @type {?HTMLElement} */
+        const sibling = [tab.nextElementSibling, tab.previousElementSibling].find(
+          (e) => e?.localName === 'tab-content'
         );
         if (sibling) {
           T.active(sibling);
@@ -4305,7 +4729,7 @@ class Container {
   #bindEvents() {
     const { root, mainframe } = this;
     ael(root, 'click', (evt) => {
-      this.handleClick(/** @type {MouseEvent} */ (evt)).catch((ex) => this.showError(ex));
+      this.handleClick(evt).catch((ex) => this.showError(ex));
     });
     ael(root, 'auxclick', (evt) => {
       // Middle click closes a tab
@@ -4391,7 +4815,7 @@ class Container {
    * @param {Event} event
    */
   handleEvent(event) {
-    if (event.type === 'pagehide' && !(/** @type {PageTransitionEvent} */ (event).persisted)) {
+    if (event.type === 'pagehide' && !event.persisted) {
       this.library.clear();
     }
   }
@@ -4421,7 +4845,7 @@ class Container {
    */
   setTheme() {
     const { style } = this.frame;
-    const base = { ...this.root.palette, ...Root.placement(cfg?.position, this.root.root) };
+    const base = { ...this.root.palette, ...this.root.placement(cfg?.position) };
     for (const [k, v] of Object.entries(base)) style.setProperty(`--${k}`, v);
     // The panel opens on the side of the button
     this.root.dataset.side = base['mph-position-left'] === 'auto' ? 'right' : 'left';
@@ -4478,7 +4902,7 @@ class Container {
     toast.clearAll();
     if (text === undefined || (typeof text === 'number' && time === undefined)) {
       if (typeof text === 'number') await toast.set(text);
-      this.toastElem?.classList.remove('show');
+      this.toastElem.classList.remove('show');
       return this;
     }
     if (!this.init()) return this;
@@ -4750,13 +5174,13 @@ class Container {
       try {
         const getBlob = async () => {
           try {
-            const { chunks } = await Network.fetchChunks(item.src, item.data, progressNotice());
+            const { chunks } = await Network.$chunks(item.src, item.data, progressNotice());
             return new Blob(chunks, { type: 'application/octet-stream' });
           } catch (ex) {
             // Most commonly CORS, a userscript manager request is not bound by it
             if (!$GM.isGM) throw ex;
             con.info('Fetch failed, retrying with "xmlHttpRequest":', errMsg(ex));
-            return Network.gmBlob(item.src, item.data, progressNotice()).catch(con.err);
+            return Network.$blob(item.src, item.data, progressNotice()).catch(con.err);
           }
         };
         const blob = await getBlob();
@@ -5073,7 +5497,7 @@ class Container {
         tabIndex: 0,
         dataset: { command }
       });
-      if (icon) IconSVG.load(/** @type {unknown} */ (icon), btn);
+      if (icon) IconSVG.load(icon, btn);
       else btn.textContent = text;
       return btn;
     };
@@ -5204,12 +5628,19 @@ const runSite = async (input) => {
   if (!isEmpty(input)) {
     R.current = input;
   }
-  const { root, path } = R.current;
-  const getUsername = (str) => {
-    return (str ?? root)
-      .split('/')
-      .filter((i) => !isBlank(i))
-      .at(-1);
+  const { root, path, webpage: pgUrl } = R.current;
+  /**
+   * @template {string} S
+   * @param {S} str
+   */
+  const getUser = (str) => {
+    if (isEmpty(str)) str = root;
+    return (
+      str
+        .split('/')
+        .filter((i) => !isBlank(i))
+        .at(-1) ?? root
+    );
   };
   /**
    * @template {Partial<VideoData>} O
@@ -5217,7 +5648,7 @@ const runSite = async (input) => {
    * @param {number} i
    * @returns {O}
    */
-  const toLibrary = (obj, i) => {
+  const toCard = (obj, i) => {
     const n = `${root}-${i ?? obj?.id ?? 0}`;
     const data = {
       id: n,
@@ -5236,22 +5667,294 @@ const runSite = async (input) => {
 
   con.log(root, path);
 
-  if (root === 'sxyprn') {
-    // The address of the video is set by the scripts of the page
-    const player = await waitFor(() => {
-      /** @type {?HTMLVideoElement} */
-      const el = qs('#player_el');
-      return el?.src && el.src !== window.location.href ? el : null;
-    }, 30000);
-    if (!player) return;
-    const title = (qs('.post_text')?.textContent ?? '').trim();
-    L.addVideo({
-      title: isEmpty(title) ? document.title : title.slice(0, 150),
-      poster: player.poster,
-      files: [player.src]
-    });
-  } else if (root === 'beeg') {
+  if (root === 'onlyfans') {
+    /**
+     * Media of an OnlyFans post, the API changed its shape over time: `full` / `thumb` / `source` used to be
+     * on the media itself, they are in `files` now.
+     * @param {Record<string, unknown>} m
+     * @returns {?PostMedia}
+     */
+    const ofMedia = (m) => {
+      if (!m || m.canView === false || m.hasError || m.isReady === false) return null;
+      const f = m.files ?? {};
+      /**
+       * @param {*} v
+       * @returns {string | undefined}
+       */
+      const url = (v) => {
+        return typeof v === 'string' ? v : isObj(v) && !isEmpty(v?.url) ? v.url : undefined;
+      };
+      const type = /^(video|photo|gif|audio)$/.test(m.type) ? m.type : 'video';
+      const preview = url(f.preview) ?? url(m.preview);
+      const thumb = url(f.thumb) ?? url(m.thumb) ?? url(f.squarePreview) ?? url(m.squarePreview);
+      // The original, otherwise the highest quality
+      const [best] = Object.entries(m.videoSources ?? {})
+        .map(([quality, v]) => [parseInt(quality, 10) || 0, url(v)])
+        .filter(([, u]) => u)
+        .sort(([a], [b]) => Number(b) - Number(a));
+      let src =
+        url(m.full) ??
+        url(f.full) ??
+        url(m.src) ??
+        (type === 'photo' ? preview : undefined) ??
+        best?.[1];
+      // A protected video has nothing to play or download, only its preview image
+      const drm = !src && Boolean(url(f.drm?.manifest?.hls));
+      if (!src && !drm) return null;
+      if (f.drm && 'manifest' in f.drm) {
+        const type = 'dash';
+        const u = toURL(f.drm.manifest[type]);
+        u.pathname = u.pathname.replace(/\.mpd/, '_source.mp4');
+        const sp = u.searchParams;
+        for (const [k, v] of Object.entries(f.drm.signature[type])) {
+          if (k.includes('Policy')) {
+            sp.append('Policy', v);
+          } else if (k.includes('Signature')) {
+            sp.append('Signature', v);
+          } else if (k.includes('Key-Pair-Id')) {
+            sp.append('Key-Pair-Id', v);
+          }
+        }
+        src = u.toString();
+      }
+      const duration = m.duration ?? m.source?.duration;
+      return {
+        id: String(m.id),
+        type,
+        src,
+        drm,
+        preview: !isEmpty(preview),
+        poster: preview ?? thumb,
+        thumb: thumb ?? preview,
+        duration: duration ? fancyTimeFormat(duration) : undefined
+      };
+    };
+    /** Post id + number of media, a post is read again when its media change @type {Set<string>} */
+    const seen = new Set();
+    /** @type {Map<string, Record<string, unknown>>} */
+    const users = new Map();
+    /** `author` / `fromUser` are either an id or a user object @param {unknown} v */
+    const userOf = (v) => users.get(String(isObj(v) ? v.id : v));
+    /**
+     * @param {Record<string, unknown>[]} posts
+     */
+    const filterPosts = (posts) => {
+      for (const p of posts) {
+        if (!isObj(p) || !Array.isArray(p.media) || p.isMediaReady === false) continue;
+        const sig = `${p.id}:${p.media.length}`;
+        if (seen.has(sig)) continue;
+        const user =
+          userOf(p.author) ?? userOf(p.fromUser) ?? userOf(p.withUser) ?? userOf(p.chatId);
+        // The post is retried once its user is known
+        if (!user?.name) continue;
+        seen.add(sig);
+        const previews = new Set(toArray(p.previews).map(String));
+        const media = p.media
+          .map(ofMedia)
+          .filter((m) => m !== null)
+          .map((m) => ({ ...m, preview: previews.has(m.id) }));
+        if (isEmpty(media)) continue;
+        L.addPost({
+          id: String(p.id),
+          variant: 'post',
+          groupKey: String(user.id),
+          groupTitle: user.name,
+          user: { name: user.name, username: user.username, avatar: user.avatar },
+          date: p.postedAt ?? p.createdAt,
+          price: p.price,
+          isFree: p.isFree,
+          isMessage: p.responseType === 'message' || 'fromUser' in p,
+          text: htmlToText(p.text),
+          original:
+            p.responseType === 'message' || 'fromUser' in p
+              ? `/my/chats/chat/${user.id}/?firstId=${p.id}`
+              : `/${p.id}/${user.username}`,
+          media
+        });
+      }
+    };
+    const ofDiag = (() => {
+      const RULES_URL =
+        'https://raw.githubusercontent.com/DATAHOARDERS/dynamic-rules/refs/heads/main/onlyfans.json';
+      const DROPPABLE = new Set([]);
+      function normalizeRules(r) {
+        let prefix = r.prefix ?? r.start,
+          suffix = r.suffix ?? r.end;
+        if ((prefix == null || suffix == null) && typeof r.format === 'string') {
+          const p = r.format.split(':');
+          prefix ??= p[0];
+          suffix ??= p[p.length - 1];
+        }
+        return {
+          static_param: r.static_param,
+          checksum_indexes: r.checksum_indexes,
+          checksum_constant: r.checksum_constant,
+          prefix,
+          suffix,
+          app_token: r.app_token,
+          remove_headers: (r.remove_headers ?? []).filter((h) => DROPPABLE.has(h))
+        };
+      }
+      async function sha1hex(s) {
+        const d = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(s));
+        return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
+      }
+      async function makeSign({ path, userId, rules, time }) {
+        const t = String(time);
+        const sha1 = await sha1hex([rules.static_param, t, path, String(userId)].join('\n'));
+        const checksum =
+          rules.checksum_indexes.reduce((a, i) => a + sha1.charCodeAt(i), 0) +
+          rules.checksum_constant;
+        return {
+          sign: [rules.prefix, sha1, Math.abs(checksum).toString(16), rules.suffix].join(':'),
+          time: t
+        };
+      }
+      const getRules = async () =>
+        normalizeRules(await (await fetch(RULES_URL, { cache: 'no-store' })).json());
+      // Definitive staleness test: can the current feed reproduce a sign you captured in Network tab?
+      async function verifyAgainst({ time, path, userId, sign }) {
+        const rules = await getRules();
+        const mine = (await makeSign({ path, userId, rules, time })).sign;
+        const ok = mine === sign;
+        con.log(
+          ok
+            ? '✅ MATCH — feed reproduces your captured sign; signer is correct.'
+            : '❌ MISMATCH — feed cannot reproduce it; rules are stale/rotated.'
+        );
+        if (!ok) {
+          const a = sign.split(':'),
+            b = mine.split(':');
+          con.log('  captured:', sign);
+          con.log('  computed:', mine);
+          con.log(
+            '  prefix',
+            a[0],
+            '→',
+            b[0],
+            '| suffix',
+            a[3],
+            '→',
+            b[3],
+            '| sha1',
+            a[1] === b[1] ? 'same' : 'DIFF',
+            '| checksum',
+            a[2],
+            '→',
+            b[2]
+          );
+        }
+        return ok;
+      }
+      async function buildHeaders(reqURL) {
+        const rules = await getRules();
+        const userId = localStorage.getItem('user');
+        const c = qs('meta[property="og:image"]')?.getAttribute('content')?.trim() ?? '';
+        const [, ofRev] = /\/f\/(.*)\/images/.exec(c) || [];
+        const hash = (
+          await (await fetch(`https://cdn2.onlyfans.com/hash/?u=${userId}`)).text()
+        ).trim();
+        const u = typeof reqURL === 'string' ? toURL(reqURL) : reqURL;
+        const s = await makeSign({ path: u.pathname + u.search, userId, rules, time: Date.now() });
+        const headers = {
+          Accept: 'application/json, text/plain, */*',
+          'app-token': rules.app_token || '33d57ade8c02dbc5a333db99ff9ae26a',
+          'user-id': userId,
+          'x-bc': localStorage.getItem('bcTokenSha'),
+          'x-of-rev': ofRev,
+          'x-hash': hash,
+          ...s
+        };
+        for (const h of rules.remove_headers) delete headers[h];
+        return headers;
+      }
+      async function run(reqURL) {
+        if (typeof reqURL === 'string') reqURL = toURL(reqURL);
+        const headers = await buildHeaders(reqURL);
+        const resp = await fetch(reqURL, { credentials: 'include', headers });
+        const body = await resp.text();
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} — ${body.slice(0, 300)}`);
+        const data = JSON.parse(body);
+        return data;
+      }
+      return { run, verifyAgainst, buildHeaders };
+    })();
+    // `&beforePublishTime=${li.postedAtPrecise}`
+    const initArr = await Promise.all([
+      ofDiag.run('/api2/v2/posts?limit=100&order=publish_date_desc&format=infinite'),
+      ofDiag.run('/api2/v2/posts/paid/all?limit=100&format=infinite&offset=0')
+    ]);
+    for (const i of initArr) {
+      if (isObj(i) && Array.isArray(i.list)) {
+        /** @type {Promise<any>[]} */
+        const fetchArr = [];
+        const list = i.list.filter((li) => li.media.filter((m) => m.canView === true).length > 0);
+        for (const a of list) {
+          const author = a.author ?? a.fromUser ?? a.withUser ?? a.chatId;
+          if (!author) continue;
+          if ('email' in author) continue;
+          const id = String(author.id);
+          if (!users.has(id)) {
+            users.set(id, author);
+            fetchArr.push(
+              ofDiag.run(
+                `/api2/v2/users/${id}/posts?limit=100&order=publish_date_desc&skip_users=all&format=infinite&pinned=0&counters=0`
+              )
+            );
+            fetchArr.push(
+              ofDiag.run(`/api2/v2/chats/${id}/messages?limit=100&order=desc&skip_users=all`)
+            );
+            fetchArr.push(
+              ofDiag.run(
+                `/api2/v2/users/${id}/posts/streams?limit=100&order=publish_date_desc&skip_users=all&format=infinite&counters=0`
+              )
+            );
+          }
+        }
+        filterPosts(list);
+        Promise.all(fetchArr)
+          .then((arr) => {
+            for (const o of arr) {
+              if (isObj(o) && Array.isArray(o.list)) filterPosts(o.list);
+            }
+          })
+          .catch(con.err);
+      }
+    }
     // `__vue__` is only reliable once the content of the page is rendered
+    await query('main[id="content"]');
+    const app = await query('[id="app"]');
+    if (!app) return;
+    const appVue = await waitFor(() => app.__vue__, 120000, 250);
+    if (!appVue) {
+      con.err('OnlyFans: unable to find the Vue instance');
+      return;
+    }
+    R.router = appVue._routerRoot?.$options?.router ?? appVue.$router ?? null;
+    appVue.$store.watch((/** @type {OFStore} */ a) => {
+      // a.auth.user
+      // a.auth.visitorId
+      // a.init.currentRev
+      // a.hash.hash
+      try {
+        for (const u of Object.values(a.users?.items ?? {})) {
+          if (isObj(u) && u.id != null && !('email' in u)) users.set(String(u.id), u);
+        }
+        const toGrab = [
+          ...Object.values(a.posts?.items ?? {}),
+          ...Object.values(a.chats?.items ?? {}),
+          ...Object.values(a.chats?.messages ?? {})
+        ];
+        filterPosts(toGrab);
+      } catch (ex) {
+        con.dbg('Store:', errMsg(ex));
+      }
+      return undefined;
+    });
+    return;
+  }
+  if (root === 'beeg') {
+    // `__vue_app__` is only reliable once the content of the page is rendered
     await query('main.v-main');
     const app = await query('[id="app"]');
     if (!app) return;
@@ -5261,7 +5964,7 @@ const runSite = async (input) => {
       return;
     }
     R.router = app.__vue_app__?.config?.globalProperties?.$router ?? null;
-    const pathname = R.webpage.pathname;
+    const { pathname } = pgUrl;
     /** @type {Partial<VideoData>} */
     const fallback = {
       groupKey: 'beeg',
@@ -5371,152 +6074,38 @@ const runSite = async (input) => {
         }
       }
     }
-  } else if (root === 'onlyfans') {
-    // `__vue__` is only reliable once the content of the page is rendered
-    await query('main[id="content"]');
-    const app = await query('[id="app"]');
-    if (!app) return;
-    const appVue = await waitFor(() => app.__vue__, 120000, 250);
-    if (!appVue) {
-      con.err('OnlyFans: unable to find the Vue instance');
-      return;
-    }
-    R.router = appVue._routerRoot?.$options?.router ?? appVue.$router ?? null;
-    /**
-     * Media of an OnlyFans post, the API changed its shape over time: `full` / `thumb` / `source` used to be
-     * on the media itself, they are in `files` now.
-     * @param {Record<string, unknown>} m
-     * @returns {?PostMedia}
-     */
-    const ofMedia = (m) => {
-      if (!m || m.canView === false || m.hasError || m.isReady === false) return null;
-      const f = m.files ?? {};
-      /** @param {unknown} v */
-      const url = (v) => {
-        const u = typeof v === 'string' ? v : v?.url;
-        return typeof u === 'string' && u ? u : undefined;
-      };
-      const type = /^(video|photo|gif|audio)$/.test(m.type) ? m.type : 'video';
-      const preview = url(f.preview) ?? url(m.preview);
-      const thumb = url(f.thumb) ?? url(m.thumb) ?? url(f.squarePreview) ?? url(m.squarePreview);
-      // The original, otherwise the highest quality
-      const [best] = Object.entries(m.videoSources ?? {})
-        .map(([quality, v]) => [parseInt(quality, 10) || 0, url(v)])
-        .filter(([, u]) => u)
-        .sort(([a], [b]) => Number(b) - Number(a));
-      let src =
-        url(m.full) ??
-        url(f.full) ??
-        url(m.src) ??
-        (type === 'photo' ? preview : undefined) ??
-        best?.[1];
-      // A protected video has nothing to play or download, only its preview image
-      const drm = !src && Boolean(url(f.drm?.manifest?.hls));
-      if (!src && !drm) return null;
-      if (f.drm && 'manifest' in f.drm) {
-        const type = 'dash';
-        const u = toURL(f.drm.manifest[type]);
-        u.pathname = u.pathname.replace(/\.mpd/, '_source.mp4');
-        const sp = u.searchParams;
-        for (const [k, v] of Object.entries(f.drm.signature[type])) {
-          if (k.includes('Policy')) {
-            sp.append('Policy', v);
-          } else if (k.includes('Signature')) {
-            sp.append('Signature', v);
-          } else if (k.includes('Key-Pair-Id')) {
-            sp.append('Key-Pair-Id', v);
-          }
-        }
-        src = u.toString();
-      }
-      const duration = m.duration ?? m.source?.duration;
-      return {
-        id: String(m.id),
-        type,
-        src,
-        drm,
-        preview: !isEmpty(preview),
-        poster: preview ?? thumb,
-        thumb: thumb ?? preview,
-        duration: duration ? fancyTimeFormat(duration) : undefined
-      };
-    };
-    /** Post id + number of media, a post is read again when its media change @type {Set<string>} */
-    const seen = new Set();
-    /** @type {Map<string, Record<string, unknown>>} */
-    const users = new Map();
-    /** `author` / `fromUser` are either an id or a user object @param {unknown} v */
-    const userOf = (v) => users.get(String(isObj(v) ? v.id : v));
-    /**
-     * @param {unknown[]} posts
-     */
-    const filterPosts = (posts) => {
-      for (const p of posts) {
-        if (!isObj(p) || !Array.isArray(p.media) || p.isMediaReady === false) continue;
-        const sig = `${p.id}:${p.media.length}`;
-        if (seen.has(sig)) continue;
-        const user =
-          userOf(p.author) ?? userOf(p.fromUser) ?? userOf(p.withUser) ?? userOf(p.chatId);
-        // The post is retried once its user is known
-        if (!user?.name) continue;
-        seen.add(sig);
-        const previews = new Set(toArray(p.previews).map(String));
-        const media = p.media
-          .map(ofMedia)
-          .filter((m) => m !== null)
-          .map((m) => ({ ...m, preview: previews.has(m.id) }));
-        if (isEmpty(media)) continue;
-        L.addPost({
-          id: String(p.id),
-          variant: 'post',
-          groupKey: String(user.id),
-          groupTitle: user.name,
-          user: { name: user.name, username: user.username, avatar: user.avatar },
-          date: p.postedAt ?? p.createdAt,
-          price: p.price,
-          isFree: p.isFree,
-          isMessage: p.responseType === 'message' || 'fromUser' in p,
-          text: htmlToText(p.text),
-          original:
-            p.responseType === 'message' || 'fromUser' in p
-              ? `/my/chats/chat/${user.id}/?firstId=${p.id}`
-              : `/${p.id}/${user.username}`,
-          media
-        });
-      }
-    };
-    appVue.$store.watch((/** @type {Record<string, unknown>} */ a) => {
-      try {
-        for (const u of Object.values(a.users?.items ?? {})) {
-          if (isObj(u) && u.id != null) users.set(String(u.id), u);
-        }
-        /** @type {unknown[]} */
-        const toGrab = [
-          ...Object.values(a.posts?.items ?? {}),
-          ...Object.values(a.chats?.items ?? {}),
-          ...Object.values(a.chats?.messages ?? {})
-        ];
-        filterPosts(toGrab);
-      } catch (ex) {
-        con.dbg('OnlyFans store:', errMsg(ex));
-      }
-      return undefined;
+    return;
+  }
+
+  if (root === 'sxyprn') {
+    // The address of the video is set by the scripts of the page
+    const player = await waitFor(() => {
+      /** @type {?HTMLVideoElement} */
+      const el = qs('#player_el');
+      return el?.src && el.src !== window.location.href ? el : null;
+    }, 30000);
+    if (!player) return;
+    const title = qs('.post_text')?.textContent?.trim()?.slice(0, 150) ?? document.title;
+    L.addVideo({
+      title,
+      poster: player.poster,
+      files: [player.src]
     });
+    return;
   }
 
   if (path.includes('Video')) {
     L.addVideo(await R.find());
   } else if (path === 'GIF') {
-    const page = R.webpage;
-    const doc = await Network.doc(page);
+    const doc = await Network.doc(pgUrl);
     const nodes = ldNodes(doc).filter((n) => n.contentUrl || n.thumbnailUrl);
     L.addVideo({
       title: nodes[0]?.name ?? doc.title,
-      poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), page) : undefined,
-      files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), page)).filter(Boolean)
+      poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), pgUrl) : undefined,
+      files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), pgUrl)).filter(Boolean)
     });
   } else if (path === 'Shorties') {
-    const doc = await Network.doc(R.webpage);
+    const doc = await Network.doc(pgUrl);
     const token = qs('.slider-container', doc)?.dataset.token;
     /** @type {Set<string>} */
     const seen = new Set();
@@ -5532,7 +6121,7 @@ const runSite = async (input) => {
           const [def] = toArray(s.mediaDefinitions).filter((m) => m.format === 'mp4');
           if (!def) continue;
           /** @type {Array<{ videoUrl: string }>} */
-          const list = await Network.req(absURL(def.videoUrl, R.webpage));
+          const list = await Network.req(absURL(def.videoUrl, pgUrl));
           const files = toArray(list)
             .map((v) => v.videoUrl)
             .filter((v) => /\.mp4[.?]/.test(v) && !seen.has(v));
@@ -5548,8 +6137,7 @@ const runSite = async (input) => {
         }
       }
     };
-    for (const script of doc.scripts) {
-      const txt = script.textContent ?? '';
+    for (const txt of Array.from(doc.scripts, (e) => e?.textContent ?? '')) {
       const at = txt.search(/JSON_SHORTIES\s*=/);
       if (at < 0) continue;
       try {
@@ -5559,7 +6147,8 @@ const runSite = async (input) => {
       }
       break;
     }
-    window.addEventListener(
+    ael(
+      window,
       'scroll',
       async () => {
         const y = window.scrollY;
@@ -5571,7 +6160,7 @@ const runSite = async (input) => {
         try {
           page++;
           const params = Page.toSearchParams({ page: String(page), token });
-          const next = await Network.req(toURL(`/shorties/get?${params}`, R.webpage.origin));
+          const next = await Network.req(toURL(`/shorties/get?${params}`, pgUrl.origin));
           await makeData(next);
         } catch (ex) {
           con.err(ex);
@@ -5590,7 +6179,7 @@ const runSite = async (input) => {
       const title = img?.alt ?? qs('div > a > div', li)?.textContent?.trim();
       const poster = img?.dataset?.src ?? img?.src;
       if (isEmpty(vid) || isEmpty(poster)) continue;
-      toLibrary(
+      toCard(
         {
           files: [vid],
           title,
@@ -5611,7 +6200,7 @@ const runSite = async (input) => {
       const title = qs('.video-title', li)?.textContent?.trim();
       const overlay = qs('.thumb-overlay', li);
       const poster = qs('img', overlay)?.src;
-      toLibrary(
+      toCard(
         {
           id: overlay?.id,
           files: [li.href],
@@ -5635,7 +6224,7 @@ const runSite = async (input) => {
       const title = img?.alt ?? qs('.meta-data-title > a', li)?.textContent?.trim();
       const poster = img?.src;
       if (isEmpty(vid) || isEmpty(poster)) continue;
-      toLibrary(
+      toCard(
         {
           files: [vid],
           title,
@@ -5658,7 +6247,7 @@ const runSite = async (input) => {
       const title = img?.alt ?? qs('.title > a', li)?.textContent?.trim();
       const poster = img?.dataset?.src ?? img?.src;
       if (isEmpty(vid) || isEmpty(poster)) continue;
-      toLibrary(
+      toCard(
         {
           files: [vid],
           title,
@@ -5681,7 +6270,7 @@ const runSite = async (input) => {
       const title = img?.alt ?? qs('.mbtit > a', li)?.textContent?.trim();
       const poster = img?.dataset?.src ?? img?.src;
       if (isEmpty(vid) || isEmpty(poster)) continue;
-      toLibrary(
+      toCard(
         {
           files: [vid],
           title,
@@ -5703,7 +6292,7 @@ const runSite = async (input) => {
       const title = qs('.video-title > a', li)?.textContent?.trim();
       const poster = qs('.frame-wrapper img', li)?.dataset?.original;
       if (isEmpty(vid)) continue;
-      toLibrary(
+      toCard(
         {
           id: `${li.dataset.videoid}`,
           files: [vid],
@@ -5729,7 +6318,7 @@ const runSite = async (input) => {
           ? userElem?.textContent?.trim()
           : userElem?.title?.trim();
         const title = (qs('.title', li)?.title ?? qs('.title', li)?.textContent ?? root).trim();
-        toLibrary(
+        toCard(
           {
             id: `${dataset.id}`,
             groupKey: dataset.eventLabel?.trim() ?? root,
@@ -5744,7 +6333,7 @@ const runSite = async (input) => {
             },
             user: {
               name: userName ?? root,
-              username: getUsername(userElem?.href)
+              username: getUser(userElem?.href)
             }
           },
           i
@@ -5762,7 +6351,7 @@ const runSite = async (input) => {
         const userElem = qs('a.author-title-text', li);
         const title = li.ariaLabel;
         const p = qs('.thumb-image', li);
-        toLibrary(
+        toCard(
           {
             id: `${dataset.videoId}`,
             files: [a],
@@ -5775,7 +6364,7 @@ const runSite = async (input) => {
             },
             user: {
               name: userElem?.textContent?.trim() ?? root,
-              username: getUsername(userElem?.href)
+              username: getUser(userElem?.href)
             }
           },
           i
@@ -5783,8 +6372,7 @@ const runSite = async (input) => {
       }
     }
   } else if (root === 'youporn') {
-    const vidInfo = toURL(R.webpage.href);
-    vidInfo.pathname = '/getVideoInfo';
+    const vidInfo = toURL('/getVideoInfo', pgUrl);
     const sp = vidInfo.searchParams;
     for (const article of qsA('article.video-box')) {
       const dataset = article.dataset;
@@ -5796,7 +6384,7 @@ const runSite = async (input) => {
     if (Array.isArray(req)) {
       for (let i = 0; i < req.length; i++) {
         const o = req[i];
-        toLibrary(
+        toCard(
           {
             id: `${o.id}`,
             files: [o.link],
@@ -5810,7 +6398,7 @@ const runSite = async (input) => {
             poster: isMobile ? o.thumbMobile : o.thumbPC,
             user: {
               name: o.uploaderName,
-              username: getUsername(o.uploaderUrl)
+              username: getUser(o.uploaderUrl)
             }
           },
           i
@@ -5824,7 +6412,7 @@ const runSite = async (input) => {
         .split(/ |,/g)
         .filter((i) => i.startsWith('http'))
         .at(-1);
-      toLibrary({
+      toCard({
         id: `${li.dataset.videoId}`,
         files: [`/${li.dataset.videoId}`],
         title,
@@ -5836,7 +6424,7 @@ const runSite = async (input) => {
         },
         user: {
           name: li.dataset.uploaderName,
-          username: getUsername(qs('.author-title-text ', li)?.href)
+          username: getUser(qs('.author-title-text ', li)?.href)
         }
       });
     }
@@ -5846,7 +6434,7 @@ const runSite = async (input) => {
       if (a && a.href) {
         const userName = qs('.video-uploader__name', elem);
         const avatar = qs('.video-uploader-logo', elem)?.dataset?.backgroundImage;
-        toLibrary({
+        toCard({
           id: `${elem.dataset.videoId}`,
           title: a.ariaLabel.trim(),
           files: [a.href],
@@ -5857,7 +6445,7 @@ const runSite = async (input) => {
           },
           user: {
             name: userName?.textContent?.trim() ?? root,
-            username: getUsername(userName?.href),
+            username: getUser(userName?.href),
             avatar
           },
           poster: qs('.thumb-image-container__image', elem)?.src
@@ -5869,7 +6457,7 @@ const runSite = async (input) => {
       const poster = qs('img[x-ref]', li)?.src;
       const thumbUnder = qs('a[href]', li);
       if (!(thumbUnder?.href ?? '').includes('/video/')) continue;
-      toLibrary({
+      toCard({
         id: `${li.dataset.id}`,
         title: poster?.alt,
         files: [thumbUnder?.href],
@@ -5888,7 +6476,7 @@ const runSite = async (input) => {
       const thumbUnder = qs('.thumb-under > p > a', li);
       const uploader = qs('.uploader > a', li) ?? qs('.thumb-under .metadata a', li);
       if (isEmpty(thumbUnder?.href)) continue;
-      toLibrary({
+      toCard({
         id: `${li.dataset.id}`,
         title: thumbUnder?.title,
         files: [thumbUnder?.href],
@@ -5899,7 +6487,7 @@ const runSite = async (input) => {
         },
         user: {
           name: uploader?.textContent?.trim() ?? root,
-          username: getUsername(uploader?.href)
+          username: getUser(uploader?.href)
         },
         poster
       });
@@ -5914,7 +6502,7 @@ const runSite = async (input) => {
   //  */
   // const requestOptions = (root) => {
   //   if (/xhamster/.test(root)) {
-  //     return { credentials: 'omit', referrer: `${R.webpage.protocol}//${R.host}/` };
+  //     return { credentials: 'omit', referrer: `${pgUrl.protocol}//${R.host}/` };
   //   }
   //   return {};
   // };

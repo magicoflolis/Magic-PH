@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "성인 시청 경험을 향상시킵니다: 깔끔하고 빠르고 간편하게."
+  },
+  "extShortDesc": {
+    "message": "깔끔하고 빠르고 간편하게"
+  },
+  "copy": {
+    "message": "복사"
+  },
+  "remove": {
+    "message": "제거"
+  },
+  "close": {
+    "message": "닫기"
+  },
+  "download": {
+    "message": "다운로드"
+  },
+  "open": {
+    "message": "열기"
+  },
+  "min": {
+    "message": "최소화"
+  },
+  "max": {
+    "message": "최대화"
+  },
+  "settings": {
+    "message": "설정"
+  },
+  "save": {
+    "message": "저장"
+  },
+  "reset": {
+    "message": "초기화"
+  },
+  "general": {
+    "message": "일반"
+  },
+  "theme": {
+    "message": "테마"
+  },
+  "free": {
+    "message": "무료"
+  },
+  "prev": {
+    "message": "이전"
+  },
+  "next": {
+    "message": "다음"
+  },
+  "auto": {
+    "message": "자동"
+  },
+  "video": {
+    "message": "동영상"
+  },
+  "videos": {
+    "message": "동영상"
+  },
+  "photo": {
+    "message": "사진"
+  },
+  "photos": {
+    "message": "사진"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "오디오"
+  },
+  "audios": {
+    "message": "오디오"
+  },
+  "message": {
+    "message": "메시지"
+  },
+  "search": {
+    "message": "검색"
+  },
+  "issue": {
+    "message": "새 이슈"
+  },
+  "autoinject": {
+    "message": "페이지 로드 시 버튼 표시"
+  },
+  "fullscreen": {
+    "message": "최대화하여 열기"
+  },
+  "newTab": {
+    "message": "새 탭"
+  },
+  "newtab_hint": {
+    "message": "주소 표시줄에 동영상 URL 또는 ID를 입력하거나 붙여넣고 Enter를 누르세요."
+  },
+  "empty": {
+    "message": "이 페이지에서 동영상을 찾을 수 없습니다."
+  },
+  "copy_all": {
+    "message": "모든 동영상의 URL 복사"
+  },
+  "download_all": {
+    "message": "모든 동영상 다운로드"
+  },
+  "remove_all": {
+    "message": "모든 동영상 제거"
+  },
+  "import_export": {
+    "message": "가져오기 / 내보내기"
+  },
+  "import_config": {
+    "message": "설정 가져오기"
+  },
+  "export_config": {
+    "message": "설정 내보내기"
+  },
+  "clear_tab_cache": {
+    "message": "탭을 닫을 때 해당 탭의 동영상 삭제"
+  },
+  "limit_downloads": {
+    "message": "한 번에 동영상 하나씩 다운로드"
+  },
+  "auto_hls": {
+    "message": "HLS 동영상 자동 생성"
+  },
+  "native_player": {
+    "message": "기본 동영상 플레이어 우선 사용"
+  },
+  "concurrency": {
+    "message": "동시 다운로드 수"
+  },
+  "dtime": {
+    "message": "버튼이 흐려지기까지의 시간"
+  },
+  "hls_load": {
+    "message": "HLS 스트림에서 가져오기"
+  },
+  "position": {
+    "message": "버튼 위치"
+  },
+  "free_preview": {
+    "message": "무료 미리보기"
+  },
+  "drm_notice": {
+    "message": "DRM으로 보호됨: 재생하거나 다운로드할 항목이 없습니다."
+  },
+  "play_error": {
+    "message": "브라우저에서 이 동영상을 재생할 수 없습니다. 대신 다운로드하세요."
+  }
+}

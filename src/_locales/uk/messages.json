@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Покращує перегляд контенту для дорослих: чисто, швидко й просто."
+  },
+  "extShortDesc": {
+    "message": "Чисто, швидко й просто"
+  },
+  "copy": {
+    "message": "Копіювати"
+  },
+  "remove": {
+    "message": "Видалити"
+  },
+  "close": {
+    "message": "Закрити"
+  },
+  "download": {
+    "message": "Завантажити"
+  },
+  "open": {
+    "message": "Відкрити"
+  },
+  "min": {
+    "message": "Згорнути"
+  },
+  "max": {
+    "message": "Розгорнути"
+  },
+  "settings": {
+    "message": "Налаштування"
+  },
+  "save": {
+    "message": "Зберегти"
+  },
+  "reset": {
+    "message": "Скинути"
+  },
+  "general": {
+    "message": "Загальні"
+  },
+  "theme": {
+    "message": "Тема"
+  },
+  "free": {
+    "message": "Безкоштовно"
+  },
+  "prev": {
+    "message": "Попередній"
+  },
+  "next": {
+    "message": "Наступний"
+  },
+  "auto": {
+    "message": "Автоматично"
+  },
+  "video": {
+    "message": "відео"
+  },
+  "videos": {
+    "message": "відео"
+  },
+  "photo": {
+    "message": "фото"
+  },
+  "photos": {
+    "message": "фото"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "аудіо"
+  },
+  "audios": {
+    "message": "аудіо"
+  },
+  "message": {
+    "message": "Повідомлення"
+  },
+  "search": {
+    "message": "Пошук"
+  },
+  "issue": {
+    "message": "Нова проблема"
+  },
+  "autoinject": {
+    "message": "Показувати кнопку під час завантаження сторінки"
+  },
+  "fullscreen": {
+    "message": "Відкривати розгорнутим"
+  },
+  "newTab": {
+    "message": "Нова вкладка"
+  },
+  "newtab_hint": {
+    "message": "Введіть або вставте URL чи ID відео в адресний рядок і натисніть Enter."
+  },
+  "empty": {
+    "message": "На цій сторінці відео не знайдено."
+  },
+  "copy_all": {
+    "message": "Копіювати URL кожного відео"
+  },
+  "download_all": {
+    "message": "Завантажити всі відео"
+  },
+  "remove_all": {
+    "message": "Видалити всі відео"
+  },
+  "import_export": {
+    "message": "Імпорт / експорт"
+  },
+  "import_config": {
+    "message": "Імпортувати налаштування"
+  },
+  "export_config": {
+    "message": "Експортувати налаштування"
+  },
+  "clear_tab_cache": {
+    "message": "Видаляти відео вкладки під час її закриття"
+  },
+  "limit_downloads": {
+    "message": "Завантажувати по одному відео"
+  },
+  "auto_hls": {
+    "message": "Автоматично збирати HLS-відео"
+  },
+  "native_player": {
+    "message": "Віддавати перевагу вбудованому відеоплеєру"
+  },
+  "concurrency": {
+    "message": "Одночасні завантаження"
+  },
+  "dtime": {
+    "message": "Час до зникнення кнопки"
+  },
+  "hls_load": {
+    "message": "Отримати з HLS-потоку"
+  },
+  "position": {
+    "message": "Розташування кнопки"
+  },
+  "free_preview": {
+    "message": "Безкоштовний перегляд"
+  },
+  "drm_notice": {
+    "message": "Захищено DRM: нічого відтворювати чи завантажувати."
+  },
+  "play_error": {
+    "message": "Браузер не може відтворити це відео. Завантажте його."
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Huboresha hali ya kutazama maudhui ya watu wazima: safi, haraka na rahisi."
+  },
+  "extShortDesc": {
+    "message": "Safi, haraka na rahisi"
+  },
+  "copy": {
+    "message": "Nakili"
+  },
+  "remove": {
+    "message": "Ondoa"
+  },
+  "close": {
+    "message": "Funga"
+  },
+  "download": {
+    "message": "Pakua"
+  },
+  "open": {
+    "message": "Fungua"
+  },
+  "min": {
+    "message": "Punguza"
+  },
+  "max": {
+    "message": "Kuza"
+  },
+  "settings": {
+    "message": "Mipangilio"
+  },
+  "save": {
+    "message": "Hifadhi"
+  },
+  "reset": {
+    "message": "Weka upya"
+  },
+  "general": {
+    "message": "Jumla"
+  },
+  "theme": {
+    "message": "Mandhari"
+  },
+  "free": {
+    "message": "Bila malipo"
+  },
+  "prev": {
+    "message": "Iliyotangulia"
+  },
+  "next": {
+    "message": "Inayofuata"
+  },
+  "auto": {
+    "message": "Otomatiki"
+  },
+  "video": {
+    "message": "video"
+  },
+  "videos": {
+    "message": "video"
+  },
+  "photo": {
+    "message": "picha"
+  },
+  "photos": {
+    "message": "picha"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "sauti"
+  },
+  "audios": {
+    "message": "sauti"
+  },
+  "message": {
+    "message": "Ujumbe"
+  },
+  "search": {
+    "message": "Tafuta"
+  },
+  "issue": {
+    "message": "Suala jipya"
+  },
+  "autoinject": {
+    "message": "Onyesha kitufe ukurasa unapopakia"
+  },
+  "fullscreen": {
+    "message": "Fungua kwa ukubwa kamili"
+  },
+  "newTab": {
+    "message": "Kichupo Kipya"
+  },
+  "newtab_hint": {
+    "message": "Andika au bandika URL au kitambulisho cha video kwenye upau wa anwani kisha ubonyeze Enter."
+  },
+  "empty": {
+    "message": "Hakuna video zilizopatikana kwenye ukurasa huu."
+  },
+  "copy_all": {
+    "message": "Nakili URL ya kila video"
+  },
+  "download_all": {
+    "message": "Pakua kila video"
+  },
+  "remove_all": {
+    "message": "Ondoa kila video"
+  },
+  "import_export": {
+    "message": "Leta / Hamisha"
+  },
+  "import_config": {
+    "message": "Leta mipangilio"
+  },
+  "export_config": {
+    "message": "Hamisha mipangilio"
+  },
+  "clear_tab_cache": {
+    "message": "Futa video za kichupo kinapofungwa"
+  },
+  "limit_downloads": {
+    "message": "Pakua video moja kwa wakati mmoja"
+  },
+  "auto_hls": {
+    "message": "Tengeneza video za HLS kiotomatiki"
+  },
+  "native_player": {
+    "message": "Pendelea kicheza video asilia"
+  },
+  "concurrency": {
+    "message": "Upakuaji wa wakati mmoja"
+  },
+  "dtime": {
+    "message": "Muda kabla kitufe kufifia"
+  },
+  "hls_load": {
+    "message": "Pata kutoka mtiririko wa HLS"
+  },
+  "position": {
+    "message": "Nafasi ya kitufe"
+  },
+  "free_preview": {
+    "message": "Onyesho la kuchungulia bila malipo"
+  },
+  "drm_notice": {
+    "message": "Imelindwa na DRM: hakuna cha kucheza wala kupakua."
+  },
+  "play_error": {
+    "message": "Kivinjari hakiwezi kucheza video hii. Ipakue badala yake."
+  }
+}

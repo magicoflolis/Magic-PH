@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "வயது வந்தோருக்கான பார்வை அனுபவத்தை மேம்படுத்துகிறது: சுத்தமாக, வேகமாக, எளிதாக."
+  },
+  "extShortDesc": {
+    "message": "சுத்தமாக, வேகமாக, எளிதாக"
+  },
+  "copy": {
+    "message": "நகலெடு"
+  },
+  "remove": {
+    "message": "அகற்று"
+  },
+  "close": {
+    "message": "மூடு"
+  },
+  "download": {
+    "message": "பதிவிறக்கு"
+  },
+  "open": {
+    "message": "திற"
+  },
+  "min": {
+    "message": "சிறிதாக்கு"
+  },
+  "max": {
+    "message": "பெரிதாக்கு"
+  },
+  "settings": {
+    "message": "அமைப்புகள்"
+  },
+  "save": {
+    "message": "சேமி"
+  },
+  "reset": {
+    "message": "மீட்டமை"
+  },
+  "general": {
+    "message": "பொது"
+  },
+  "theme": {
+    "message": "தீம்"
+  },
+  "free": {
+    "message": "இலவசம்"
+  },
+  "prev": {
+    "message": "முந்தையது"
+  },
+  "next": {
+    "message": "அடுத்தது"
+  },
+  "auto": {
+    "message": "தானியங்கு"
+  },
+  "video": {
+    "message": "வீடியோ"
+  },
+  "videos": {
+    "message": "வீடியோக்கள்"
+  },
+  "photo": {
+    "message": "புகைப்படம்"
+  },
+  "photos": {
+    "message": "புகைப்படங்கள்"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIFகள்"
+  },
+  "audio": {
+    "message": "ஆடியோ"
+  },
+  "audios": {
+    "message": "ஆடியோக்கள்"
+  },
+  "message": {
+    "message": "செய்தி"
+  },
+  "search": {
+    "message": "தேடு"
+  },
+  "issue": {
+    "message": "புதிய சிக்கல்"
+  },
+  "autoinject": {
+    "message": "பக்கம் ஏற்றப்படும்போது பொத்தானைக் காட்டு"
+  },
+  "fullscreen": {
+    "message": "பெரிதாக்கித் திற"
+  },
+  "newTab": {
+    "message": "புதிய தாவல்"
+  },
+  "newtab_hint": {
+    "message": "முகவரிப் பட்டியில் வீடியோ URL அல்லது ID ஐ தட்டச்சு செய்யவும் அல்லது ஒட்டவும், பின்னர் Enter அழுத்தவும்."
+  },
+  "empty": {
+    "message": "இந்தப் பக்கத்தில் வீடியோக்கள் எதுவும் இல்லை."
+  },
+  "copy_all": {
+    "message": "ஒவ்வொரு வீடியோவின் URL ஐயும் நகலெடு"
+  },
+  "download_all": {
+    "message": "ஒவ்வொரு வீடியோவையும் பதிவிறக்கு"
+  },
+  "remove_all": {
+    "message": "ஒவ்வொரு வீடியோவையும் அகற்று"
+  },
+  "import_export": {
+    "message": "இறக்குமதி / ஏற்றுமதி"
+  },
+  "import_config": {
+    "message": "உள்ளமைவை இறக்குமதி செய்"
+  },
+  "export_config": {
+    "message": "உள்ளமைவை ஏற்றுமதி செய்"
+  },
+  "clear_tab_cache": {
+    "message": "தாவல் மூடப்படும்போது அதன் வீடியோக்களை நீக்கு"
+  },
+  "limit_downloads": {
+    "message": "ஒரு நேரத்தில் ஒரு வீடியோவைப் பதிவிறக்கு"
+  },
+  "auto_hls": {
+    "message": "HLS வீடியோக்களை தானாக உருவாக்கு"
+  },
+  "native_player": {
+    "message": "சொந்த வீடியோ பிளேயருக்கு முன்னுரிமை கொடு"
+  },
+  "concurrency": {
+    "message": "ஒரே நேரத்தில் பதிவிறக்கங்கள்"
+  },
+  "dtime": {
+    "message": "பொத்தான் மங்குவதற்கு முன் நேரம்"
+  },
+  "hls_load": {
+    "message": "HLS ஸ்ட்ரீமிலிருந்து பெறு"
+  },
+  "position": {
+    "message": "பொத்தானின் இடம்"
+  },
+  "free_preview": {
+    "message": "இலவச முன்னோட்டம்"
+  },
+  "drm_notice": {
+    "message": "DRM பாதுகாக்கப்பட்டது: இயக்க அல்லது பதிவிறக்க எதுவும் இல்லை."
+  },
+  "play_error": {
+    "message": "உலாவியால் இந்த வீடியோவை இயக்க முடியாது. அதற்குப் பதிலாக பதிவிறக்கவும்."
+  }
+}

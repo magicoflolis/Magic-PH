@@ -1,9 +1,25 @@
 # Changelog
 
-Known Issues:
+Known Issues: (_within the UserScript; not website_)
 
 * Thumbnails may not load on 91porna
+  * _Likely DRM protected_
+* Video playback may not function on eporner
+  * _All other features working as intended_
+* Downloader may cause OnlyFans to reload; mobile and large videos only
+  * _Can still be downloaded when navigating to the direct link_
 * Not all browsers support video codecs; _"The browser cannot play this video. Download it instead."_
+  * _Download then use your devices media/video player_
+
+Planned:
+
+* Fansly support
+* For mobile: load all videos on the webpages homepage
+
+## v5.1.2
+
+* Added 25 translations based on the most spoken languages
+* Minor changes to `Network` class.
 
 ## v5.1.1
 

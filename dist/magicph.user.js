@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      5.1.1
+// @version      5.1.2
 // @name         MagicPH
 // @description  A video downloader for various adult websites.
 // @author       Magic <magicoflolis@tuta.io>
@@ -100,45 +100,175 @@ if (
 
 /** [i18n directory](https://github.com/magicoflolis/Magic-PH/tree/master/src/_locales) */
 const translations = {
+ "ar": {
+  "copy": "نسخ",
+  "remove": "إزالة",
+  "close": "إغلاق",
+  "download": "تنزيل",
+  "open": "فتح",
+  "min": "تصغير",
+  "max": "تكبير",
+  "settings": "الإعدادات",
+  "save": "حفظ",
+  "reset": "إعادة تعيين",
+  "general": "عام",
+  "theme": "السمة",
+  "free": "مجاني",
+  "prev": "السابق",
+  "next": "التالي",
+  "auto": "تلقائي",
+  "video": "فيديو",
+  "videos": "فيديوهات",
+  "photo": "صورة",
+  "photos": "صور",
+  "gif": "GIF",
+  "gifs": "صور GIF",
+  "audio": "صوت",
+  "audios": "ملفات صوتية",
+  "message": "رسالة",
+  "search": "بحث",
+  "issue": "مشكلة جديدة",
+  "autoinject": "إظهار الزر عند تحميل الصفحة",
+  "fullscreen": "الفتح بحجم مكبّر",
+  "newTab": "علامة تبويب جديدة",
+  "newtab_hint": "اكتب أو الصق رابط فيديو أو معرّفه في شريط العناوين ثم اضغط Enter.",
+  "empty": "لم يتم العثور على فيديوهات في هذه الصفحة.",
+  "copy_all": "نسخ رابط كل فيديو",
+  "download_all": "تنزيل كل الفيديوهات",
+  "remove_all": "إزالة كل الفيديوهات",
+  "import_export": "استيراد / تصدير",
+  "import_config": "استيراد الإعدادات",
+  "export_config": "تصدير الإعدادات",
+  "clear_tab_cache": "حذف فيديوهات علامة التبويب عند إغلاقها",
+  "limit_downloads": "تنزيل فيديو واحد في كل مرة",
+  "auto_hls": "إنشاء فيديوهات HLS تلقائيًا",
+  "native_player": "تفضيل مشغّل الفيديو الأصلي",
+  "concurrency": "التنزيلات المتزامنة",
+  "dtime": "المدة قبل أن يتلاشى الزر",
+  "hls_load": "الجلب من بث HLS",
+  "position": "موضع الزر",
+  "free_preview": "معاينة مجانية",
+  "drm_notice": "محمي بتقنية DRM: لا يوجد ما يمكن تشغيله أو تنزيله.",
+  "play_error": "لا يستطيع المتصفح تشغيل هذا الفيديو. نزّله بدلًا من ذلك."
+ },
+ "bn": {
+  "copy": "কপি করুন",
+  "remove": "সরান",
+  "close": "বন্ধ করুন",
+  "download": "ডাউনলোড করুন",
+  "open": "খুলুন",
+  "min": "ছোট করুন",
+  "max": "বড় করুন",
+  "settings": "সেটিংস",
+  "save": "সংরক্ষণ করুন",
+  "reset": "রিসেট করুন",
+  "general": "সাধারণ",
+  "theme": "থিম",
+  "free": "বিনামূল্যে",
+  "prev": "আগের",
+  "next": "পরবর্তী",
+  "auto": "স্বয়ংক্রিয়",
+  "video": "ভিডিও",
+  "videos": "ভিডিও",
+  "photo": "ছবি",
+  "photos": "ছবি",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "অডিও",
+  "audios": "অডিও",
+  "message": "বার্তা",
+  "search": "খুঁজুন",
+  "issue": "নতুন ইস্যু",
+  "autoinject": "পেজ লোড হলে বোতামটি দেখান",
+  "fullscreen": "বড় করে খুলুন",
+  "newTab": "নতুন ট্যাব",
+  "newtab_hint": "অ্যাড্রেস বারে ভিডিওর URL বা ID টাইপ বা পেস্ট করে Enter চাপুন।",
+  "empty": "এই পেজে কোনো ভিডিও পাওয়া যায়নি।",
+  "copy_all": "সব ভিডিওর URL কপি করুন",
+  "download_all": "সব ভিডিও ডাউনলোড করুন",
+  "remove_all": "সব ভিডিও সরান",
+  "import_export": "ইমপোর্ট / এক্সপোর্ট",
+  "import_config": "কনফিগ ইমপোর্ট করুন",
+  "export_config": "কনফিগ এক্সপোর্ট করুন",
+  "clear_tab_cache": "ট্যাব বন্ধ হলে তার ভিডিও মুছে ফেলুন",
+  "limit_downloads": "একবারে একটি ভিডিও ডাউনলোড করুন",
+  "auto_hls": "HLS ভিডিও স্বয়ংক্রিয়ভাবে তৈরি করুন",
+  "native_player": "নেটিভ ভিডিও প্লেয়ারকে অগ্রাধিকার দিন",
+  "concurrency": "একসঙ্গে ডাউনলোড",
+  "dtime": "বোতাম ম্লান হওয়ার আগের সময়",
+  "hls_load": "HLS স্ট্রিম থেকে নিন",
+  "position": "বোতামের অবস্থান",
+  "free_preview": "বিনামূল্যে প্রিভিউ",
+  "drm_notice": "DRM সুরক্ষিত: চালানো বা ডাউনলোড করার কিছু নেই।",
+  "play_error": "ব্রাউজার এই ভিডিও চালাতে পারছে না। এর পরিবর্তে ডাউনলোড করুন।"
+ },
+ "de": {
+  "copy": "Kopieren",
+  "remove": "Entfernen",
+  "close": "Schließen",
+  "download": "Herunterladen",
+  "open": "Öffnen",
+  "min": "Minimieren",
+  "max": "Maximieren",
+  "settings": "Einstellungen",
+  "save": "Speichern",
+  "reset": "Zurücksetzen",
+  "general": "Allgemein",
+  "theme": "Design",
+  "free": "Kostenlos",
+  "prev": "Zurück",
+  "next": "Weiter",
+  "auto": "Automatisch",
+  "video": "Video",
+  "videos": "Videos",
+  "photo": "Foto",
+  "photos": "Fotos",
+  "gif": "GIF",
+  "gifs": "GIFs",
+  "audio": "Audio",
+  "audios": "Audios",
+  "message": "Nachricht",
+  "search": "Suchen",
+  "issue": "Neues Issue",
+  "autoinject": "Schaltfläche beim Laden der Seite anzeigen",
+  "fullscreen": "Maximiert öffnen",
+  "newTab": "Neuer Tab",
+  "newtab_hint": "Gib eine Video-URL oder -ID in die Adressleiste ein oder füge sie dort ein und drücke die Eingabetaste.",
+  "empty": "Auf dieser Seite wurden keine Videos gefunden.",
+  "copy_all": "URL jedes Videos kopieren",
+  "download_all": "Alle Videos herunterladen",
+  "remove_all": "Alle Videos entfernen",
+  "import_export": "Import / Export",
+  "import_config": "Konfiguration importieren",
+  "export_config": "Konfiguration exportieren",
+  "clear_tab_cache": "Videos eines Tabs beim Schließen löschen",
+  "limit_downloads": "Immer nur ein Video herunterladen",
+  "auto_hls": "HLS-Videos automatisch erstellen",
+  "native_player": "Nativen Videoplayer bevorzugen",
+  "concurrency": "Gleichzeitige Downloads",
+  "dtime": "Zeit, bis die Schaltfläche ausgeblendet wird",
+  "hls_load": "Aus HLS-Stream abrufen",
+  "position": "Position der Schaltfläche",
+  "free_preview": "Kostenlose Vorschau",
+  "drm_notice": "DRM-geschützt: Es gibt nichts abzuspielen oder herunterzuladen.",
+  "play_error": "Der Browser kann dieses Video nicht abspielen. Lade es stattdessen herunter."
+ },
  "en": {
-  "userjs_autoinject": "Show the button on page load",
-  "userjs_fullscreen": "Open maximized",
-  "newTab": "New Tab",
-  "newtab_hint": "Type or paste a video URL or ID in the address bar and press Enter.",
-  "empty": "No videos found on this page.",
-  "search_placeholder": "Filter videos",
-  "search_settings": "Settings",
   "copy": "Copy",
-  "copy_all": "Copy the URL of every video",
+  "remove": "Remove",
   "close": "Close",
   "download": "Download",
-  "download_all": "Download every video",
-  "remove": "Remove",
-  "remove_all": "Remove every video",
   "open": "Open",
   "min": "Minimize",
   "max": "Maximize",
-  "issue": "New issue",
   "settings": "Settings",
   "save": "Save",
   "reset": "Reset",
   "general": "General",
   "theme": "Theme",
-  "import_export": "Import / Export",
-  "import_config": "Import config",
-  "export_config": "Export config",
-  "clear_tab_cache": "Delete the videos of a tab when it is closed",
-  "limit_downloads": "Download one video at a time",
-  "auto_hls": "Build HLS videos automatically",
-  "native_player": "Prefer native video player",
-  "concurrency": "Simultaneous downloads",
-  "dtime": "Time before the button fades",
-  "hls_load": "Get from HLS stream",
   "free": "Free",
   "prev": "Previous",
   "next": "Next",
-  "drm_notice": "DRM protected: there is nothing to play or download.",
-  "position": "Button position",
   "auto": "Automatic",
   "video": "video",
   "videos": "videos",
@@ -149,12 +279,1156 @@ const translations = {
   "audio": "audio",
   "audios": "audios",
   "message": "Message",
+  "search": "Search",
+  "issue": "New issue",
+  "autoinject": "Show the button on page load",
+  "fullscreen": "Open maximized",
+  "newTab": "New Tab",
+  "newtab_hint": "Type or paste a video URL or ID in the address bar and press Enter.",
+  "empty": "No videos found on this page.",
+  "copy_all": "Copy the URL of every video",
+  "download_all": "Download every video",
+  "remove_all": "Remove every video",
+  "import_export": "Import / Export",
+  "import_config": "Import config",
+  "export_config": "Export config",
+  "clear_tab_cache": "Delete the videos of a tab when it is closed",
+  "limit_downloads": "Download one video at a time",
+  "auto_hls": "Build HLS videos automatically",
+  "native_player": "Prefer native video player",
+  "concurrency": "Simultaneous downloads",
+  "dtime": "Time before the button fades",
+  "hls_load": "Get from HLS stream",
+  "position": "Button position",
   "free_preview": "Free preview",
+  "drm_notice": "DRM protected: there is nothing to play or download.",
   "play_error": "The browser cannot play this video. Download it instead."
+ },
+ "es": {
+  "copy": "Copiar",
+  "remove": "Eliminar",
+  "close": "Cerrar",
+  "download": "Descargar",
+  "open": "Abrir",
+  "min": "Minimizar",
+  "max": "Maximizar",
+  "settings": "Ajustes",
+  "save": "Guardar",
+  "reset": "Restablecer",
+  "general": "General",
+  "theme": "Tema",
+  "free": "Gratis",
+  "prev": "Anterior",
+  "next": "Siguiente",
+  "auto": "Automático",
+  "video": "vídeo",
+  "videos": "vídeos",
+  "photo": "foto",
+  "photos": "fotos",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "audio",
+  "audios": "audios",
+  "message": "Mensaje",
+  "search": "Buscar",
+  "issue": "Nueva incidencia",
+  "autoinject": "Mostrar el botón al cargar la página",
+  "fullscreen": "Abrir maximizado",
+  "newTab": "Nueva pestaña",
+  "newtab_hint": "Escribe o pega la URL o el ID de un vídeo en la barra de direcciones y pulsa Intro.",
+  "empty": "No se encontraron vídeos en esta página.",
+  "copy_all": "Copiar la URL de todos los vídeos",
+  "download_all": "Descargar todos los vídeos",
+  "remove_all": "Eliminar todos los vídeos",
+  "import_export": "Importar / Exportar",
+  "import_config": "Importar configuración",
+  "export_config": "Exportar configuración",
+  "clear_tab_cache": "Eliminar los vídeos de una pestaña al cerrarla",
+  "limit_downloads": "Descargar un vídeo a la vez",
+  "auto_hls": "Crear vídeos HLS automáticamente",
+  "native_player": "Preferir el reproductor de vídeo nativo",
+  "concurrency": "Descargas simultáneas",
+  "dtime": "Tiempo antes de que el botón se desvanezca",
+  "hls_load": "Obtener de la transmisión HLS",
+  "position": "Posición del botón",
+  "free_preview": "Vista previa gratuita",
+  "drm_notice": "Protegido con DRM: no hay nada que reproducir ni descargar.",
+  "play_error": "El navegador no puede reproducir este vídeo. Descárgalo en su lugar."
+ },
+ "fa": {
+  "copy": "کپی",
+  "remove": "حذف",
+  "close": "بستن",
+  "download": "دانلود",
+  "open": "باز کردن",
+  "min": "کوچک‌سازی",
+  "max": "بزرگ‌سازی",
+  "settings": "تنظیمات",
+  "save": "ذخیره",
+  "reset": "بازنشانی",
+  "general": "عمومی",
+  "theme": "پوسته",
+  "free": "رایگان",
+  "prev": "قبلی",
+  "next": "بعدی",
+  "auto": "خودکار",
+  "video": "ویدیو",
+  "videos": "ویدیوها",
+  "photo": "عکس",
+  "photos": "عکس‌ها",
+  "gif": "GIF",
+  "gifs": "GIFها",
+  "audio": "صدا",
+  "audios": "صداها",
+  "message": "پیام",
+  "search": "جست‌وجو",
+  "issue": "مشکل جدید",
+  "autoinject": "نمایش دکمه هنگام بارگذاری صفحه",
+  "fullscreen": "باز کردن در حالت بزرگ‌شده",
+  "newTab": "زبانهٔ جدید",
+  "newtab_hint": "URL یا شناسهٔ ویدیو را در نوار نشانی تایپ یا جای‌گذاری کنید و Enter را فشار دهید.",
+  "empty": "در این صفحه ویدیویی پیدا نشد.",
+  "copy_all": "کپی URL همهٔ ویدیوها",
+  "download_all": "دانلود همهٔ ویدیوها",
+  "remove_all": "حذف همهٔ ویدیوها",
+  "import_export": "درون‌ریزی / برون‌بری",
+  "import_config": "درون‌ریزی پیکربندی",
+  "export_config": "برون‌بری پیکربندی",
+  "clear_tab_cache": "حذف ویدیوهای زبانه هنگام بسته شدن آن",
+  "limit_downloads": "دانلود یک ویدیو در هر زمان",
+  "auto_hls": "ساخت خودکار ویدیوهای HLS",
+  "native_player": "ترجیح پخش‌کنندهٔ ویدیوی بومی",
+  "concurrency": "دانلودهای همزمان",
+  "dtime": "زمان پیش از محو شدن دکمه",
+  "hls_load": "دریافت از جریان HLS",
+  "position": "موقعیت دکمه",
+  "free_preview": "پیش‌نمایش رایگان",
+  "drm_notice": "محافظت‌شده با DRM: چیزی برای پخش یا دانلود وجود ندارد.",
+  "play_error": "مرورگر نمی‌تواند این ویدیو را پخش کند. به‌جای آن دانلودش کنید."
+ },
+ "fr": {
+  "copy": "Copier",
+  "remove": "Supprimer",
+  "close": "Fermer",
+  "download": "Télécharger",
+  "open": "Ouvrir",
+  "min": "Réduire",
+  "max": "Agrandir",
+  "settings": "Paramètres",
+  "save": "Enregistrer",
+  "reset": "Réinitialiser",
+  "general": "Général",
+  "theme": "Thème",
+  "free": "Gratuit",
+  "prev": "Précédent",
+  "next": "Suivant",
+  "auto": "Automatique",
+  "video": "vidéo",
+  "videos": "vidéos",
+  "photo": "photo",
+  "photos": "photos",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "audio",
+  "audios": "audios",
+  "message": "Message",
+  "search": "Rechercher",
+  "issue": "Nouveau ticket",
+  "autoinject": "Afficher le bouton au chargement de la page",
+  "fullscreen": "Ouvrir en grand",
+  "newTab": "Nouvel onglet",
+  "newtab_hint": "Saisissez ou collez l'URL ou l'ID d'une vidéo dans la barre d'adresse, puis appuyez sur Entrée.",
+  "empty": "Aucune vidéo trouvée sur cette page.",
+  "copy_all": "Copier l'URL de chaque vidéo",
+  "download_all": "Télécharger chaque vidéo",
+  "remove_all": "Supprimer chaque vidéo",
+  "import_export": "Importer / Exporter",
+  "import_config": "Importer la configuration",
+  "export_config": "Exporter la configuration",
+  "clear_tab_cache": "Supprimer les vidéos d'un onglet à sa fermeture",
+  "limit_downloads": "Télécharger une vidéo à la fois",
+  "auto_hls": "Créer automatiquement les vidéos HLS",
+  "native_player": "Préférer le lecteur vidéo natif",
+  "concurrency": "Téléchargements simultanés",
+  "dtime": "Délai avant que le bouton s'estompe",
+  "hls_load": "Récupérer depuis le flux HLS",
+  "position": "Position du bouton",
+  "free_preview": "Aperçu gratuit",
+  "drm_notice": "Protégé par DRM : rien à lire ni à télécharger.",
+  "play_error": "Le navigateur ne peut pas lire cette vidéo. Téléchargez-la plutôt."
+ },
+ "gu": {
+  "copy": "કૉપિ કરો",
+  "remove": "દૂર કરો",
+  "close": "બંધ કરો",
+  "download": "ડાઉનલોડ કરો",
+  "open": "ખોલો",
+  "min": "નાનું કરો",
+  "max": "મોટું કરો",
+  "settings": "સેટિંગ્સ",
+  "save": "સાચવો",
+  "reset": "રીસેટ કરો",
+  "general": "સામાન્ય",
+  "theme": "થીમ",
+  "free": "મફત",
+  "prev": "પાછળનું",
+  "next": "આગળનું",
+  "auto": "આપમેળે",
+  "video": "વીડિયો",
+  "videos": "વીડિયો",
+  "photo": "ફોટો",
+  "photos": "ફોટા",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "ઑડિયો",
+  "audios": "ઑડિયો",
+  "message": "સંદેશ",
+  "search": "શોધો",
+  "issue": "નવી સમસ્યા",
+  "autoinject": "પેજ લોડ થાય ત્યારે બટન બતાવો",
+  "fullscreen": "મોટું કરીને ખોલો",
+  "newTab": "નવું ટૅબ",
+  "newtab_hint": "ઍડ્રેસ બારમાં વીડિયોનો URL અથવા ID લખો અથવા પેસ્ટ કરો અને Enter દબાવો.",
+  "empty": "આ પેજ પર કોઈ વીડિયો મળ્યો નથી.",
+  "copy_all": "દરેક વીડિયોનો URL કૉપિ કરો",
+  "download_all": "દરેક વીડિયો ડાઉનલોડ કરો",
+  "remove_all": "દરેક વીડિયો દૂર કરો",
+  "import_export": "આયાત / નિકાસ",
+  "import_config": "કન્ફિગ આયાત કરો",
+  "export_config": "કન્ફિગ નિકાસ કરો",
+  "clear_tab_cache": "ટૅબ બંધ થાય ત્યારે તેના વીડિયો કાઢી નાખો",
+  "limit_downloads": "એક સમયે એક વીડિયો ડાઉનલોડ કરો",
+  "auto_hls": "HLS વીડિયો આપમેળે બનાવો",
+  "native_player": "નેટિવ વીડિયો પ્લેયરને પ્રાધાન્ય આપો",
+  "concurrency": "એકસાથે ડાઉનલોડ",
+  "dtime": "બટન ઝાંખું થાય તે પહેલાંનો સમય",
+  "hls_load": "HLS સ્ટ્રીમમાંથી મેળવો",
+  "position": "બટનની સ્થિતિ",
+  "free_preview": "મફત પૂર્વાવલોકન",
+  "drm_notice": "DRM સુરક્ષિત: ચલાવવા અથવા ડાઉનલોડ કરવા માટે કંઈ નથી.",
+  "play_error": "બ્રાઉઝર આ વીડિયો ચલાવી શકતું નથી. તેના બદલે ડાઉનલોડ કરો."
+ },
+ "hi": {
+  "copy": "कॉपी करें",
+  "remove": "हटाएँ",
+  "close": "बंद करें",
+  "download": "डाउनलोड करें",
+  "open": "खोलें",
+  "min": "छोटा करें",
+  "max": "बड़ा करें",
+  "settings": "सेटिंग्स",
+  "save": "सहेजें",
+  "reset": "रीसेट करें",
+  "general": "सामान्य",
+  "theme": "थीम",
+  "free": "निःशुल्क",
+  "prev": "पिछला",
+  "next": "अगला",
+  "auto": "स्वचालित",
+  "video": "वीडियो",
+  "videos": "वीडियो",
+  "photo": "फ़ोटो",
+  "photos": "फ़ोटो",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "ऑडियो",
+  "audios": "ऑडियो",
+  "message": "संदेश",
+  "search": "खोजें",
+  "issue": "नई समस्या",
+  "autoinject": "पेज लोड होने पर बटन दिखाएँ",
+  "fullscreen": "बड़ी विंडो में खोलें",
+  "newTab": "नया टैब",
+  "newtab_hint": "वीडियो का URL या ID एड्रेस बार में टाइप या पेस्ट करें और Enter दबाएँ।",
+  "empty": "इस पेज पर कोई वीडियो नहीं मिला।",
+  "copy_all": "सभी वीडियो के URL कॉपी करें",
+  "download_all": "सभी वीडियो डाउनलोड करें",
+  "remove_all": "सभी वीडियो हटाएँ",
+  "import_export": "आयात / निर्यात",
+  "import_config": "कॉन्फ़िग आयात करें",
+  "export_config": "कॉन्फ़िग निर्यात करें",
+  "clear_tab_cache": "टैब बंद होने पर उसके वीडियो हटाएँ",
+  "limit_downloads": "एक बार में एक वीडियो डाउनलोड करें",
+  "auto_hls": "HLS वीडियो अपने-आप बनाएँ",
+  "native_player": "नेटिव वीडियो प्लेयर को प्राथमिकता दें",
+  "concurrency": "एक साथ डाउनलोड",
+  "dtime": "बटन धुंधला होने से पहले का समय",
+  "hls_load": "HLS स्ट्रीम से प्राप्त करें",
+  "position": "बटन की स्थिति",
+  "free_preview": "निःशुल्क पूर्वावलोकन",
+  "drm_notice": "DRM सुरक्षित: चलाने या डाउनलोड करने के लिए कुछ नहीं है।",
+  "play_error": "ब्राउज़र यह वीडियो नहीं चला सकता। इसके बजाय इसे डाउनलोड करें।"
+ },
+ "id": {
+  "copy": "Salin",
+  "remove": "Hapus",
+  "close": "Tutup",
+  "download": "Unduh",
+  "open": "Buka",
+  "min": "Kecilkan",
+  "max": "Besarkan",
+  "settings": "Pengaturan",
+  "save": "Simpan",
+  "reset": "Atur ulang",
+  "general": "Umum",
+  "theme": "Tema",
+  "free": "Gratis",
+  "prev": "Sebelumnya",
+  "next": "Berikutnya",
+  "auto": "Otomatis",
+  "video": "video",
+  "videos": "video",
+  "photo": "foto",
+  "photos": "foto",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "audio",
+  "audios": "audio",
+  "message": "Pesan",
+  "search": "Cari",
+  "issue": "Isu baru",
+  "autoinject": "Tampilkan tombol saat halaman dimuat",
+  "fullscreen": "Buka dalam ukuran maksimal",
+  "newTab": "Tab Baru",
+  "newtab_hint": "Ketik atau tempel URL atau ID video di bilah alamat lalu tekan Enter.",
+  "empty": "Tidak ada video di halaman ini.",
+  "copy_all": "Salin URL semua video",
+  "download_all": "Unduh semua video",
+  "remove_all": "Hapus semua video",
+  "import_export": "Impor / Ekspor",
+  "import_config": "Impor konfigurasi",
+  "export_config": "Ekspor konfigurasi",
+  "clear_tab_cache": "Hapus video suatu tab saat tab ditutup",
+  "limit_downloads": "Unduh satu video sekali waktu",
+  "auto_hls": "Buat video HLS secara otomatis",
+  "native_player": "Utamakan pemutar video bawaan",
+  "concurrency": "Unduhan bersamaan",
+  "dtime": "Waktu sebelum tombol memudar",
+  "hls_load": "Ambil dari aliran HLS",
+  "position": "Posisi tombol",
+  "free_preview": "Pratinjau gratis",
+  "drm_notice": "Dilindungi DRM: tidak ada yang bisa diputar atau diunduh.",
+  "play_error": "Browser tidak dapat memutar video ini. Unduh saja."
+ },
+ "it": {
+  "copy": "Copia",
+  "remove": "Rimuovi",
+  "close": "Chiudi",
+  "download": "Scarica",
+  "open": "Apri",
+  "min": "Riduci a icona",
+  "max": "Ingrandisci",
+  "settings": "Impostazioni",
+  "save": "Salva",
+  "reset": "Reimposta",
+  "general": "Generali",
+  "theme": "Tema",
+  "free": "Gratis",
+  "prev": "Precedente",
+  "next": "Successivo",
+  "auto": "Automatico",
+  "video": "video",
+  "videos": "video",
+  "photo": "foto",
+  "photos": "foto",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "audio",
+  "audios": "audio",
+  "message": "Messaggio",
+  "search": "Cerca",
+  "issue": "Nuova segnalazione",
+  "autoinject": "Mostra il pulsante al caricamento della pagina",
+  "fullscreen": "Apri ingrandito",
+  "newTab": "Nuova scheda",
+  "newtab_hint": "Digita o incolla l'URL o l'ID di un video nella barra degli indirizzi e premi Invio.",
+  "empty": "Nessun video trovato in questa pagina.",
+  "copy_all": "Copia l'URL di ogni video",
+  "download_all": "Scarica ogni video",
+  "remove_all": "Rimuovi ogni video",
+  "import_export": "Importa / Esporta",
+  "import_config": "Importa configurazione",
+  "export_config": "Esporta configurazione",
+  "clear_tab_cache": "Elimina i video di una scheda alla sua chiusura",
+  "limit_downloads": "Scarica un video alla volta",
+  "auto_hls": "Crea automaticamente i video HLS",
+  "native_player": "Preferisci il lettore video nativo",
+  "concurrency": "Download simultanei",
+  "dtime": "Tempo prima che il pulsante svanisca",
+  "hls_load": "Ottieni dallo stream HLS",
+  "position": "Posizione del pulsante",
+  "free_preview": "Anteprima gratuita",
+  "drm_notice": "Protetto da DRM: non c'è nulla da riprodurre o scaricare.",
+  "play_error": "Il browser non può riprodurre questo video. Scaricalo invece."
+ },
+ "ja": {
+  "copy": "コピー",
+  "remove": "削除",
+  "close": "閉じる",
+  "download": "ダウンロード",
+  "open": "開く",
+  "min": "最小化",
+  "max": "最大化",
+  "settings": "設定",
+  "save": "保存",
+  "reset": "リセット",
+  "general": "一般",
+  "theme": "テーマ",
+  "free": "無料",
+  "prev": "前へ",
+  "next": "次へ",
+  "auto": "自動",
+  "video": "動画",
+  "videos": "動画",
+  "photo": "写真",
+  "photos": "写真",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "音声",
+  "audios": "音声",
+  "message": "メッセージ",
+  "search": "検索",
+  "issue": "新しいIssue",
+  "autoinject": "ページ読み込み時にボタンを表示",
+  "fullscreen": "最大化して開く",
+  "newTab": "新しいタブ",
+  "newtab_hint": "アドレスバーに動画のURLまたはIDを入力または貼り付けて、Enterキーを押してください。",
+  "empty": "このページに動画は見つかりませんでした。",
+  "copy_all": "すべての動画のURLをコピー",
+  "download_all": "すべての動画をダウンロード",
+  "remove_all": "すべての動画を削除",
+  "import_export": "インポート / エクスポート",
+  "import_config": "設定をインポート",
+  "export_config": "設定をエクスポート",
+  "clear_tab_cache": "タブを閉じたときにそのタブの動画を削除",
+  "limit_downloads": "動画を1つずつダウンロード",
+  "auto_hls": "HLS動画を自動的に作成",
+  "native_player": "ネイティブ動画プレーヤーを優先",
+  "concurrency": "同時ダウンロード数",
+  "dtime": "ボタンが薄くなるまでの時間",
+  "hls_load": "HLSストリームから取得",
+  "position": "ボタンの位置",
+  "free_preview": "無料プレビュー",
+  "drm_notice": "DRMで保護されています。再生もダウンロードもできません。",
+  "play_error": "ブラウザーでこの動画を再生できません。代わりにダウンロードしてください。"
+ },
+ "kn": {
+  "copy": "ನಕಲಿಸಿ",
+  "remove": "ತೆಗೆದುಹಾಕಿ",
+  "close": "ಮುಚ್ಚಿ",
+  "download": "ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "open": "ತೆರೆಯಿರಿ",
+  "min": "ಕಿರಿದಾಗಿಸಿ",
+  "max": "ಹಿರಿದಾಗಿಸಿ",
+  "settings": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "save": "ಉಳಿಸಿ",
+  "reset": "ಮರುಹೊಂದಿಸಿ",
+  "general": "ಸಾಮಾನ್ಯ",
+  "theme": "ಥೀಮ್",
+  "free": "ಉಚಿತ",
+  "prev": "ಹಿಂದಿನದು",
+  "next": "ಮುಂದಿನದು",
+  "auto": "ಸ್ವಯಂಚಾಲಿತ",
+  "video": "ವೀಡಿಯೊ",
+  "videos": "ವೀಡಿಯೊಗಳು",
+  "photo": "ಫೋಟೋ",
+  "photos": "ಫೋಟೋಗಳು",
+  "gif": "GIF",
+  "gifs": "GIFಗಳು",
+  "audio": "ಆಡಿಯೊ",
+  "audios": "ಆಡಿಯೊಗಳು",
+  "message": "ಸಂದೇಶ",
+  "search": "ಹುಡುಕಿ",
+  "issue": "ಹೊಸ ಸಮಸ್ಯೆ",
+  "autoinject": "ಪುಟ ಲೋಡ್ ಆದಾಗ ಬಟನ್ ತೋರಿಸಿ",
+  "fullscreen": "ಗರಿಷ್ಠಗೊಳಿಸಿ ತೆರೆಯಿರಿ",
+  "newTab": "ಹೊಸ ಟ್ಯಾಬ್",
+  "newtab_hint": "ವಿಳಾಸ ಪಟ್ಟಿಯಲ್ಲಿ ವೀಡಿಯೊ URL ಅಥವಾ ID ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ ಮತ್ತು Enter ಒತ್ತಿರಿ.",
+  "empty": "ಈ ಪುಟದಲ್ಲಿ ಯಾವುದೇ ವೀಡಿಯೊಗಳು ಕಂಡುಬಂದಿಲ್ಲ.",
+  "copy_all": "ಪ್ರತಿ ವೀಡಿಯೊದ URL ನಕಲಿಸಿ",
+  "download_all": "ಪ್ರತಿ ವೀಡಿಯೊವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "remove_all": "ಪ್ರತಿ ವೀಡಿಯೊವನ್ನು ತೆಗೆದುಹಾಕಿ",
+  "import_export": "ಆಮದು / ರಫ್ತು",
+  "import_config": "ಕಾನ್ಫಿಗ್ ಆಮದು ಮಾಡಿ",
+  "export_config": "ಕಾನ್ಫಿಗ್ ರಫ್ತು ಮಾಡಿ",
+  "clear_tab_cache": "ಟ್ಯಾಬ್ ಮುಚ್ಚಿದಾಗ ಅದರ ವೀಡಿಯೊಗಳನ್ನು ಅಳಿಸಿ",
+  "limit_downloads": "ಒಂದು ಬಾರಿಗೆ ಒಂದು ವೀಡಿಯೊ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "auto_hls": "HLS ವೀಡಿಯೊಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚಿಸಿ",
+  "native_player": "ಸ್ಥಳೀಯ ವೀಡಿಯೊ ಪ್ಲೇಯರ್‌ಗೆ ಆದ್ಯತೆ ನೀಡಿ",
+  "concurrency": "ಏಕಕಾಲಿಕ ಡೌನ್‌ಲೋಡ್‌ಗಳು",
+  "dtime": "ಬಟನ್ ಮಸುಕಾಗುವ ಮೊದಲಿನ ಸಮಯ",
+  "hls_load": "HLS ಸ್ಟ್ರೀಮ್‌ನಿಂದ ಪಡೆಯಿರಿ",
+  "position": "ಬಟನ್ ಸ್ಥಾನ",
+  "free_preview": "ಉಚಿತ ಪೂರ್ವವೀಕ್ಷಣೆ",
+  "drm_notice": "DRM ರಕ್ಷಿತ: ಪ್ಲೇ ಮಾಡಲು ಅಥವಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು ಏನೂ ಇಲ್ಲ.",
+  "play_error": "ಬ್ರೌಸರ್ ಈ ವೀಡಿಯೊವನ್ನು ಪ್ಲೇ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ. ಬದಲಿಗೆ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ."
+ },
+ "ko": {
+  "copy": "복사",
+  "remove": "제거",
+  "close": "닫기",
+  "download": "다운로드",
+  "open": "열기",
+  "min": "최소화",
+  "max": "최대화",
+  "settings": "설정",
+  "save": "저장",
+  "reset": "초기화",
+  "general": "일반",
+  "theme": "테마",
+  "free": "무료",
+  "prev": "이전",
+  "next": "다음",
+  "auto": "자동",
+  "video": "동영상",
+  "videos": "동영상",
+  "photo": "사진",
+  "photos": "사진",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "오디오",
+  "audios": "오디오",
+  "message": "메시지",
+  "search": "검색",
+  "issue": "새 이슈",
+  "autoinject": "페이지 로드 시 버튼 표시",
+  "fullscreen": "최대화하여 열기",
+  "newTab": "새 탭",
+  "newtab_hint": "주소 표시줄에 동영상 URL 또는 ID를 입력하거나 붙여넣고 Enter를 누르세요.",
+  "empty": "이 페이지에서 동영상을 찾을 수 없습니다.",
+  "copy_all": "모든 동영상의 URL 복사",
+  "download_all": "모든 동영상 다운로드",
+  "remove_all": "모든 동영상 제거",
+  "import_export": "가져오기 / 내보내기",
+  "import_config": "설정 가져오기",
+  "export_config": "설정 내보내기",
+  "clear_tab_cache": "탭을 닫을 때 해당 탭의 동영상 삭제",
+  "limit_downloads": "한 번에 동영상 하나씩 다운로드",
+  "auto_hls": "HLS 동영상 자동 생성",
+  "native_player": "기본 동영상 플레이어 우선 사용",
+  "concurrency": "동시 다운로드 수",
+  "dtime": "버튼이 흐려지기까지의 시간",
+  "hls_load": "HLS 스트림에서 가져오기",
+  "position": "버튼 위치",
+  "free_preview": "무료 미리보기",
+  "drm_notice": "DRM으로 보호됨: 재생하거나 다운로드할 항목이 없습니다.",
+  "play_error": "브라우저에서 이 동영상을 재생할 수 없습니다. 대신 다운로드하세요."
+ },
+ "ml": {
+  "copy": "പകർത്തുക",
+  "remove": "നീക്കം ചെയ്യുക",
+  "close": "അടയ്ക്കുക",
+  "download": "ഡൗൺലോഡ് ചെയ്യുക",
+  "open": "തുറക്കുക",
+  "min": "ചെറുതാക്കുക",
+  "max": "വലുതാക്കുക",
+  "settings": "ക്രമീകരണങ്ങൾ",
+  "save": "സംരക്ഷിക്കുക",
+  "reset": "റീസെറ്റ് ചെയ്യുക",
+  "general": "പൊതുവായത്",
+  "theme": "തീം",
+  "free": "സൗജന്യം",
+  "prev": "മുമ്പത്തെ",
+  "next": "അടുത്തത്",
+  "auto": "സ്വയമേവ",
+  "video": "വീഡിയോ",
+  "videos": "വീഡിയോകൾ",
+  "photo": "ഫോട്ടോ",
+  "photos": "ഫോട്ടോകൾ",
+  "gif": "GIF",
+  "gifs": "GIFകൾ",
+  "audio": "ഓഡിയോ",
+  "audios": "ഓഡിയോകൾ",
+  "message": "സന്ദേശം",
+  "search": "തിരയുക",
+  "issue": "പുതിയ പ്രശ്നം",
+  "autoinject": "പേജ് ലോഡ് ആകുമ്പോൾ ബട്ടൺ കാണിക്കുക",
+  "fullscreen": "വലുതാക്കി തുറക്കുക",
+  "newTab": "പുതിയ ടാബ്",
+  "newtab_hint": "വിലാസ ബാറിൽ വീഡിയോ URL അല്ലെങ്കിൽ ID ടൈപ്പ് ചെയ്യുകയോ ഒട്ടിക്കുകയോ ചെയ്ത് Enter അമർത്തുക.",
+  "empty": "ഈ പേജിൽ വീഡിയോകളൊന്നും കണ്ടെത്തിയില്ല.",
+  "copy_all": "എല്ലാ വീഡിയോകളുടെയും URL പകർത്തുക",
+  "download_all": "എല്ലാ വീഡിയോകളും ഡൗൺലോഡ് ചെയ്യുക",
+  "remove_all": "എല്ലാ വീഡിയോകളും നീക്കം ചെയ്യുക",
+  "import_export": "ഇറക്കുമതി / കയറ്റുമതി",
+  "import_config": "കോൺഫിഗ് ഇറക്കുമതി ചെയ്യുക",
+  "export_config": "കോൺഫിഗ് കയറ്റുമതി ചെയ്യുക",
+  "clear_tab_cache": "ടാബ് അടയ്ക്കുമ്പോൾ അതിലെ വീഡിയോകൾ ഇല്ലാതാക്കുക",
+  "limit_downloads": "ഒരു സമയം ഒരു വീഡിയോ ഡൗൺലോഡ് ചെയ്യുക",
+  "auto_hls": "HLS വീഡിയോകൾ സ്വയമേവ നിർമ്മിക്കുക",
+  "native_player": "നേറ്റീവ് വീഡിയോ പ്ലെയറിന് മുൻഗണന നൽകുക",
+  "concurrency": "ഒരേസമയമുള്ള ഡൗൺലോഡുകൾ",
+  "dtime": "ബട്ടൺ മങ്ങുന്നതിന് മുമ്പുള്ള സമയം",
+  "hls_load": "HLS സ്ട്രീമിൽ നിന്ന് നേടുക",
+  "position": "ബട്ടണിന്റെ സ്ഥാനം",
+  "free_preview": "സൗജന്യ പ്രിവ്യൂ",
+  "drm_notice": "DRM പരിരക്ഷിതം: പ്ലേ ചെയ്യാനോ ഡൗൺലോഡ് ചെയ്യാനോ ഒന്നുമില്ല.",
+  "play_error": "ബ്രൗസറിന് ഈ വീഡിയോ പ്ലേ ചെയ്യാൻ കഴിയില്ല. പകരം ഡൗൺലോഡ് ചെയ്യുക."
+ },
+ "mr": {
+  "copy": "कॉपी करा",
+  "remove": "काढा",
+  "close": "बंद करा",
+  "download": "डाउनलोड करा",
+  "open": "उघडा",
+  "min": "लहान करा",
+  "max": "मोठे करा",
+  "settings": "सेटिंग्ज",
+  "save": "जतन करा",
+  "reset": "रीसेट करा",
+  "general": "सामान्य",
+  "theme": "थीम",
+  "free": "विनामूल्य",
+  "prev": "मागील",
+  "next": "पुढील",
+  "auto": "स्वयंचलित",
+  "video": "व्हिडिओ",
+  "videos": "व्हिडिओ",
+  "photo": "फोटो",
+  "photos": "फोटो",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "ऑडिओ",
+  "audios": "ऑडिओ",
+  "message": "संदेश",
+  "search": "शोधा",
+  "issue": "नवीन समस्या",
+  "autoinject": "पेज लोड होताना बटण दाखवा",
+  "fullscreen": "मोठ्या आकारात उघडा",
+  "newTab": "नवीन टॅब",
+  "newtab_hint": "अ‍ॅड्रेस बारमध्ये व्हिडिओचा URL किंवा ID टाइप करा किंवा पेस्ट करा आणि Enter दाबा.",
+  "empty": "या पेजवर कोणतेही व्हिडिओ आढळले नाहीत.",
+  "copy_all": "प्रत्येक व्हिडिओचा URL कॉपी करा",
+  "download_all": "प्रत्येक व्हिडिओ डाउनलोड करा",
+  "remove_all": "प्रत्येक व्हिडिओ काढा",
+  "import_export": "आयात / निर्यात",
+  "import_config": "कॉन्फिग आयात करा",
+  "export_config": "कॉन्फिग निर्यात करा",
+  "clear_tab_cache": "टॅब बंद केल्यावर त्यातील व्हिडिओ हटवा",
+  "limit_downloads": "एका वेळी एक व्हिडिओ डाउनलोड करा",
+  "auto_hls": "HLS व्हिडिओ आपोआप तयार करा",
+  "native_player": "नेटिव्ह व्हिडिओ प्लेयरला प्राधान्य द्या",
+  "concurrency": "एकाच वेळी डाउनलोड",
+  "dtime": "बटण फिके होण्यापूर्वीचा वेळ",
+  "hls_load": "HLS स्ट्रीममधून मिळवा",
+  "position": "बटणाचे स्थान",
+  "free_preview": "विनामूल्य पूर्वावलोकन",
+  "drm_notice": "DRM संरक्षित: प्ले किंवा डाउनलोड करण्यासारखे काही नाही.",
+  "play_error": "ब्राउझर हा व्हिडिओ प्ले करू शकत नाही. त्याऐवजी डाउनलोड करा."
+ },
+ "nl": {
+  "copy": "Kopiëren",
+  "remove": "Verwijderen",
+  "close": "Sluiten",
+  "download": "Downloaden",
+  "open": "Openen",
+  "min": "Minimaliseren",
+  "max": "Maximaliseren",
+  "settings": "Instellingen",
+  "save": "Opslaan",
+  "reset": "Resetten",
+  "general": "Algemeen",
+  "theme": "Thema",
+  "free": "Gratis",
+  "prev": "Vorige",
+  "next": "Volgende",
+  "auto": "Automatisch",
+  "video": "video",
+  "videos": "video's",
+  "photo": "foto",
+  "photos": "foto's",
+  "gif": "GIF",
+  "gifs": "GIF's",
+  "audio": "audio",
+  "audios": "audiobestanden",
+  "message": "Bericht",
+  "search": "Zoeken",
+  "issue": "Nieuw issue",
+  "autoinject": "Toon de knop bij het laden van de pagina",
+  "fullscreen": "Gemaximaliseerd openen",
+  "newTab": "Nieuw tabblad",
+  "newtab_hint": "Typ of plak een video-URL of -ID in de adresbalk en druk op Enter.",
+  "empty": "Geen video's gevonden op deze pagina.",
+  "copy_all": "URL van elke video kopiëren",
+  "download_all": "Alle video's downloaden",
+  "remove_all": "Alle video's verwijderen",
+  "import_export": "Importeren / exporteren",
+  "import_config": "Configuratie importeren",
+  "export_config": "Configuratie exporteren",
+  "clear_tab_cache": "Video's van een tabblad verwijderen als het wordt gesloten",
+  "limit_downloads": "Eén video tegelijk downloaden",
+  "auto_hls": "HLS-video's automatisch samenstellen",
+  "native_player": "Eigen videospeler van de browser verkiezen",
+  "concurrency": "Gelijktijdige downloads",
+  "dtime": "Tijd voordat de knop vervaagt",
+  "hls_load": "Ophalen uit HLS-stream",
+  "position": "Positie van de knop",
+  "free_preview": "Gratis voorbeeld",
+  "drm_notice": "DRM-beveiligd: er is niets om af te spelen of te downloaden.",
+  "play_error": "De browser kan deze video niet afspelen. Download hem in plaats daarvan."
+ },
+ "pl": {
+  "copy": "Kopiuj",
+  "remove": "Usuń",
+  "close": "Zamknij",
+  "download": "Pobierz",
+  "open": "Otwórz",
+  "min": "Minimalizuj",
+  "max": "Maksymalizuj",
+  "settings": "Ustawienia",
+  "save": "Zapisz",
+  "reset": "Resetuj",
+  "general": "Ogólne",
+  "theme": "Motyw",
+  "free": "Bezpłatne",
+  "prev": "Poprzedni",
+  "next": "Następny",
+  "auto": "Automatycznie",
+  "video": "wideo",
+  "videos": "filmy",
+  "photo": "zdjęcie",
+  "photos": "zdjęcia",
+  "gif": "GIF",
+  "gifs": "GIF-y",
+  "audio": "dźwięk",
+  "audios": "pliki audio",
+  "message": "Wiadomość",
+  "search": "Szukaj",
+  "issue": "Nowy problem",
+  "autoinject": "Pokaż przycisk po załadowaniu strony",
+  "fullscreen": "Otwórz zmaksymalizowane",
+  "newTab": "Nowa karta",
+  "newtab_hint": "Wpisz lub wklej adres URL albo ID filmu w pasku adresu i naciśnij Enter.",
+  "empty": "Nie znaleziono filmów na tej stronie.",
+  "copy_all": "Kopiuj adres URL każdego filmu",
+  "download_all": "Pobierz wszystkie filmy",
+  "remove_all": "Usuń wszystkie filmy",
+  "import_export": "Import / eksport",
+  "import_config": "Importuj konfigurację",
+  "export_config": "Eksportuj konfigurację",
+  "clear_tab_cache": "Usuń filmy karty po jej zamknięciu",
+  "limit_downloads": "Pobieraj jeden film naraz",
+  "auto_hls": "Twórz filmy HLS automatycznie",
+  "native_player": "Preferuj natywny odtwarzacz wideo",
+  "concurrency": "Jednoczesne pobierania",
+  "dtime": "Czas do zanikania przycisku",
+  "hls_load": "Pobierz ze strumienia HLS",
+  "position": "Położenie przycisku",
+  "free_preview": "Bezpłatny podgląd",
+  "drm_notice": "Chronione przez DRM: nie ma nic do odtworzenia ani pobrania.",
+  "play_error": "Przeglądarka nie może odtworzyć tego filmu. Pobierz go zamiast tego."
+ },
+ "ru": {
+  "copy": "Копировать",
+  "remove": "Удалить",
+  "close": "Закрыть",
+  "download": "Скачать",
+  "open": "Открыть",
+  "min": "Свернуть",
+  "max": "Развернуть",
+  "settings": "Настройки",
+  "save": "Сохранить",
+  "reset": "Сбросить",
+  "general": "Общие",
+  "theme": "Тема",
+  "free": "Бесплатно",
+  "prev": "Предыдущий",
+  "next": "Следующий",
+  "auto": "Автоматически",
+  "video": "видео",
+  "videos": "видео",
+  "photo": "фото",
+  "photos": "фото",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "аудио",
+  "audios": "аудио",
+  "message": "Сообщение",
+  "search": "Поиск",
+  "issue": "Новая проблема",
+  "autoinject": "Показывать кнопку при загрузке страницы",
+  "fullscreen": "Открывать в развёрнутом виде",
+  "newTab": "Новая вкладка",
+  "newtab_hint": "Введите или вставьте URL или ID видео в адресную строку и нажмите Enter.",
+  "empty": "На этой странице видео не найдены.",
+  "copy_all": "Скопировать URL каждого видео",
+  "download_all": "Скачать все видео",
+  "remove_all": "Удалить все видео",
+  "import_export": "Импорт / экспорт",
+  "import_config": "Импортировать настройки",
+  "export_config": "Экспортировать настройки",
+  "clear_tab_cache": "Удалять видео вкладки при её закрытии",
+  "limit_downloads": "Скачивать по одному видео",
+  "auto_hls": "Автоматически собирать HLS-видео",
+  "native_player": "Предпочитать встроенный видеоплеер",
+  "concurrency": "Одновременные загрузки",
+  "dtime": "Время до скрытия кнопки",
+  "hls_load": "Получить из HLS-потока",
+  "position": "Положение кнопки",
+  "free_preview": "Бесплатный просмотр",
+  "drm_notice": "Защита DRM: нечего воспроизводить или скачивать.",
+  "play_error": "Браузер не может воспроизвести это видео. Скачайте его."
+ },
+ "sw": {
+  "copy": "Nakili",
+  "remove": "Ondoa",
+  "close": "Funga",
+  "download": "Pakua",
+  "open": "Fungua",
+  "min": "Punguza",
+  "max": "Kuza",
+  "settings": "Mipangilio",
+  "save": "Hifadhi",
+  "reset": "Weka upya",
+  "general": "Jumla",
+  "theme": "Mandhari",
+  "free": "Bila malipo",
+  "prev": "Iliyotangulia",
+  "next": "Inayofuata",
+  "auto": "Otomatiki",
+  "video": "video",
+  "videos": "video",
+  "photo": "picha",
+  "photos": "picha",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "sauti",
+  "audios": "sauti",
+  "message": "Ujumbe",
+  "search": "Tafuta",
+  "issue": "Suala jipya",
+  "autoinject": "Onyesha kitufe ukurasa unapopakia",
+  "fullscreen": "Fungua kwa ukubwa kamili",
+  "newTab": "Kichupo Kipya",
+  "newtab_hint": "Andika au bandika URL au kitambulisho cha video kwenye upau wa anwani kisha ubonyeze Enter.",
+  "empty": "Hakuna video zilizopatikana kwenye ukurasa huu.",
+  "copy_all": "Nakili URL ya kila video",
+  "download_all": "Pakua kila video",
+  "remove_all": "Ondoa kila video",
+  "import_export": "Leta / Hamisha",
+  "import_config": "Leta mipangilio",
+  "export_config": "Hamisha mipangilio",
+  "clear_tab_cache": "Futa video za kichupo kinapofungwa",
+  "limit_downloads": "Pakua video moja kwa wakati mmoja",
+  "auto_hls": "Tengeneza video za HLS kiotomatiki",
+  "native_player": "Pendelea kicheza video asilia",
+  "concurrency": "Upakuaji wa wakati mmoja",
+  "dtime": "Muda kabla kitufe kufifia",
+  "hls_load": "Pata kutoka mtiririko wa HLS",
+  "position": "Nafasi ya kitufe",
+  "free_preview": "Onyesho la kuchungulia bila malipo",
+  "drm_notice": "Imelindwa na DRM: hakuna cha kucheza wala kupakua.",
+  "play_error": "Kivinjari hakiwezi kucheza video hii. Ipakue badala yake."
+ },
+ "ta": {
+  "copy": "நகலெடு",
+  "remove": "அகற்று",
+  "close": "மூடு",
+  "download": "பதிவிறக்கு",
+  "open": "திற",
+  "min": "சிறிதாக்கு",
+  "max": "பெரிதாக்கு",
+  "settings": "அமைப்புகள்",
+  "save": "சேமி",
+  "reset": "மீட்டமை",
+  "general": "பொது",
+  "theme": "தீம்",
+  "free": "இலவசம்",
+  "prev": "முந்தையது",
+  "next": "அடுத்தது",
+  "auto": "தானியங்கு",
+  "video": "வீடியோ",
+  "videos": "வீடியோக்கள்",
+  "photo": "புகைப்படம்",
+  "photos": "புகைப்படங்கள்",
+  "gif": "GIF",
+  "gifs": "GIFகள்",
+  "audio": "ஆடியோ",
+  "audios": "ஆடியோக்கள்",
+  "message": "செய்தி",
+  "search": "தேடு",
+  "issue": "புதிய சிக்கல்",
+  "autoinject": "பக்கம் ஏற்றப்படும்போது பொத்தானைக் காட்டு",
+  "fullscreen": "பெரிதாக்கித் திற",
+  "newTab": "புதிய தாவல்",
+  "newtab_hint": "முகவரிப் பட்டியில் வீடியோ URL அல்லது ID ஐ தட்டச்சு செய்யவும் அல்லது ஒட்டவும், பின்னர் Enter அழுத்தவும்.",
+  "empty": "இந்தப் பக்கத்தில் வீடியோக்கள் எதுவும் இல்லை.",
+  "copy_all": "ஒவ்வொரு வீடியோவின் URL ஐயும் நகலெடு",
+  "download_all": "ஒவ்வொரு வீடியோவையும் பதிவிறக்கு",
+  "remove_all": "ஒவ்வொரு வீடியோவையும் அகற்று",
+  "import_export": "இறக்குமதி / ஏற்றுமதி",
+  "import_config": "உள்ளமைவை இறக்குமதி செய்",
+  "export_config": "உள்ளமைவை ஏற்றுமதி செய்",
+  "clear_tab_cache": "தாவல் மூடப்படும்போது அதன் வீடியோக்களை நீக்கு",
+  "limit_downloads": "ஒரு நேரத்தில் ஒரு வீடியோவைப் பதிவிறக்கு",
+  "auto_hls": "HLS வீடியோக்களை தானாக உருவாக்கு",
+  "native_player": "சொந்த வீடியோ பிளேயருக்கு முன்னுரிமை கொடு",
+  "concurrency": "ஒரே நேரத்தில் பதிவிறக்கங்கள்",
+  "dtime": "பொத்தான் மங்குவதற்கு முன் நேரம்",
+  "hls_load": "HLS ஸ்ட்ரீமிலிருந்து பெறு",
+  "position": "பொத்தானின் இடம்",
+  "free_preview": "இலவச முன்னோட்டம்",
+  "drm_notice": "DRM பாதுகாக்கப்பட்டது: இயக்க அல்லது பதிவிறக்க எதுவும் இல்லை.",
+  "play_error": "உலாவியால் இந்த வீடியோவை இயக்க முடியாது. அதற்குப் பதிலாக பதிவிறக்கவும்."
+ },
+ "te": {
+  "copy": "కాపీ చేయండి",
+  "remove": "తీసివేయండి",
+  "close": "మూసివేయండి",
+  "download": "డౌన్‌లోడ్ చేయండి",
+  "open": "తెరవండి",
+  "min": "కనిష్టీకరించండి",
+  "max": "గరిష్టీకరించండి",
+  "settings": "సెట్టింగ్‌లు",
+  "save": "సేవ్ చేయండి",
+  "reset": "రీసెట్ చేయండి",
+  "general": "సాధారణం",
+  "theme": "థీమ్",
+  "free": "ఉచితం",
+  "prev": "మునుపటి",
+  "next": "తదుపరి",
+  "auto": "స్వయంచాలకం",
+  "video": "వీడియో",
+  "videos": "వీడియోలు",
+  "photo": "ఫోటో",
+  "photos": "ఫోటోలు",
+  "gif": "GIF",
+  "gifs": "GIFలు",
+  "audio": "ఆడియో",
+  "audios": "ఆడియోలు",
+  "message": "సందేశం",
+  "search": "శోధించండి",
+  "issue": "కొత్త ఇష్యూ",
+  "autoinject": "పేజీ లోడ్ అయినప్పుడు బటన్‌ను చూపండి",
+  "fullscreen": "గరిష్ఠంగా తెరవండి",
+  "newTab": "కొత్త ట్యాబ్",
+  "newtab_hint": "అడ్రస్ బార్‌లో వీడియో URL లేదా IDని టైప్ చేయండి లేదా పేస్ట్ చేసి Enter నొక్కండి.",
+  "empty": "ఈ పేజీలో వీడియోలు ఏవీ కనుగొనబడలేదు.",
+  "copy_all": "ప్రతి వీడియో URLని కాపీ చేయండి",
+  "download_all": "ప్రతి వీడియోను డౌన్‌లోడ్ చేయండి",
+  "remove_all": "ప్రతి వీడియోను తీసివేయండి",
+  "import_export": "దిగుమతి / ఎగుమతి",
+  "import_config": "కాన్ఫిగ్‌ను దిగుమతి చేయండి",
+  "export_config": "కాన్ఫిగ్‌ను ఎగుమతి చేయండి",
+  "clear_tab_cache": "ట్యాబ్ మూసివేసినప్పుడు దాని వీడియోలను తొలగించండి",
+  "limit_downloads": "ఒకేసారి ఒక వీడియోను డౌన్‌లోడ్ చేయండి",
+  "auto_hls": "HLS వీడియోలను స్వయంచాలకంగా రూపొందించండి",
+  "native_player": "స్థానిక వీడియో ప్లేయర్‌కు ప్రాధాన్యత ఇవ్వండి",
+  "concurrency": "ఏకకాల డౌన్‌లోడ్‌లు",
+  "dtime": "బటన్ మసకబారడానికి ముందు సమయం",
+  "hls_load": "HLS స్ట్రీమ్ నుండి పొందండి",
+  "position": "బటన్ స్థానం",
+  "free_preview": "ఉచిత ప్రివ్యూ",
+  "drm_notice": "DRM రక్షితం: ప్లే చేయడానికి లేదా డౌన్‌లోడ్ చేయడానికి ఏమీ లేదు.",
+  "play_error": "బ్రౌజర్ ఈ వీడియోను ప్లే చేయలేదు. బదులుగా డౌన్‌లోడ్ చేయండి."
+ },
+ "th": {
+  "copy": "คัดลอก",
+  "remove": "ลบ",
+  "close": "ปิด",
+  "download": "ดาวน์โหลด",
+  "open": "เปิด",
+  "min": "ย่อเล็กสุด",
+  "max": "ขยายใหญ่สุด",
+  "settings": "การตั้งค่า",
+  "save": "บันทึก",
+  "reset": "รีเซ็ต",
+  "general": "ทั่วไป",
+  "theme": "ธีม",
+  "free": "ฟรี",
+  "prev": "ก่อนหน้า",
+  "next": "ถัดไป",
+  "auto": "อัตโนมัติ",
+  "video": "วิดีโอ",
+  "videos": "วิดีโอ",
+  "photo": "รูปภาพ",
+  "photos": "รูปภาพ",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "เสียง",
+  "audios": "เสียง",
+  "message": "ข้อความ",
+  "search": "ค้นหา",
+  "issue": "ปัญหาใหม่",
+  "autoinject": "แสดงปุ่มเมื่อโหลดหน้า",
+  "fullscreen": "เปิดแบบขยายใหญ่สุด",
+  "newTab": "แท็บใหม่",
+  "newtab_hint": "พิมพ์หรือวาง URL หรือ ID ของวิดีโอในแถบที่อยู่ แล้วกด Enter",
+  "empty": "ไม่พบวิดีโอในหน้านี้",
+  "copy_all": "คัดลอก URL ของวิดีโอทั้งหมด",
+  "download_all": "ดาวน์โหลดวิดีโอทั้งหมด",
+  "remove_all": "ลบวิดีโอทั้งหมด",
+  "import_export": "นำเข้า / ส่งออก",
+  "import_config": "นำเข้าการกำหนดค่า",
+  "export_config": "ส่งออกการกำหนดค่า",
+  "clear_tab_cache": "ลบวิดีโอของแท็บเมื่อปิดแท็บ",
+  "limit_downloads": "ดาวน์โหลดทีละวิดีโอ",
+  "auto_hls": "สร้างวิดีโอ HLS อัตโนมัติ",
+  "native_player": "ใช้โปรแกรมเล่นวิดีโอของเบราว์เซอร์เป็นหลัก",
+  "concurrency": "ดาวน์โหลดพร้อมกัน",
+  "dtime": "เวลาก่อนที่ปุ่มจะจางลง",
+  "hls_load": "ดึงจากสตรีม HLS",
+  "position": "ตำแหน่งปุ่ม",
+  "free_preview": "ตัวอย่างฟรี",
+  "drm_notice": "ป้องกันด้วย DRM: ไม่มีสิ่งที่เล่นหรือดาวน์โหลดได้",
+  "play_error": "เบราว์เซอร์เล่นวิดีโอนี้ไม่ได้ โปรดดาวน์โหลดแทน"
+ },
+ "tr": {
+  "copy": "Kopyala",
+  "remove": "Kaldır",
+  "close": "Kapat",
+  "download": "İndir",
+  "open": "Aç",
+  "min": "Küçült",
+  "max": "Büyüt",
+  "settings": "Ayarlar",
+  "save": "Kaydet",
+  "reset": "Sıfırla",
+  "general": "Genel",
+  "theme": "Tema",
+  "free": "Ücretsiz",
+  "prev": "Önceki",
+  "next": "Sonraki",
+  "auto": "Otomatik",
+  "video": "video",
+  "videos": "video",
+  "photo": "fotoğraf",
+  "photos": "fotoğraf",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "ses",
+  "audios": "ses",
+  "message": "Mesaj",
+  "search": "Ara",
+  "issue": "Yeni sorun",
+  "autoinject": "Sayfa yüklendiğinde düğmeyi göster",
+  "fullscreen": "Büyütülmüş aç",
+  "newTab": "Yeni Sekme",
+  "newtab_hint": "Adres çubuğuna bir video URL'si veya kimliği yazın ya da yapıştırın ve Enter'a basın.",
+  "empty": "Bu sayfada video bulunamadı.",
+  "copy_all": "Her videonun URL'sini kopyala",
+  "download_all": "Tüm videoları indir",
+  "remove_all": "Tüm videoları kaldır",
+  "import_export": "İçe / Dışa Aktar",
+  "import_config": "Yapılandırmayı içe aktar",
+  "export_config": "Yapılandırmayı dışa aktar",
+  "clear_tab_cache": "Sekme kapatıldığında videolarını sil",
+  "limit_downloads": "Aynı anda bir video indir",
+  "auto_hls": "HLS videolarını otomatik oluştur",
+  "native_player": "Yerel video oynatıcıyı tercih et",
+  "concurrency": "Eş zamanlı indirmeler",
+  "dtime": "Düğme solmadan önceki süre",
+  "hls_load": "HLS akışından al",
+  "position": "Düğme konumu",
+  "free_preview": "Ücretsiz önizleme",
+  "drm_notice": "DRM korumalı: oynatılacak veya indirilecek bir şey yok.",
+  "play_error": "Tarayıcı bu videoyu oynatamıyor. Bunun yerine indirin."
+ },
+ "uk": {
+  "copy": "Копіювати",
+  "remove": "Видалити",
+  "close": "Закрити",
+  "download": "Завантажити",
+  "open": "Відкрити",
+  "min": "Згорнути",
+  "max": "Розгорнути",
+  "settings": "Налаштування",
+  "save": "Зберегти",
+  "reset": "Скинути",
+  "general": "Загальні",
+  "theme": "Тема",
+  "free": "Безкоштовно",
+  "prev": "Попередній",
+  "next": "Наступний",
+  "auto": "Автоматично",
+  "video": "відео",
+  "videos": "відео",
+  "photo": "фото",
+  "photos": "фото",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "аудіо",
+  "audios": "аудіо",
+  "message": "Повідомлення",
+  "search": "Пошук",
+  "issue": "Нова проблема",
+  "autoinject": "Показувати кнопку під час завантаження сторінки",
+  "fullscreen": "Відкривати розгорнутим",
+  "newTab": "Нова вкладка",
+  "newtab_hint": "Введіть або вставте URL чи ID відео в адресний рядок і натисніть Enter.",
+  "empty": "На цій сторінці відео не знайдено.",
+  "copy_all": "Копіювати URL кожного відео",
+  "download_all": "Завантажити всі відео",
+  "remove_all": "Видалити всі відео",
+  "import_export": "Імпорт / експорт",
+  "import_config": "Імпортувати налаштування",
+  "export_config": "Експортувати налаштування",
+  "clear_tab_cache": "Видаляти відео вкладки під час її закриття",
+  "limit_downloads": "Завантажувати по одному відео",
+  "auto_hls": "Автоматично збирати HLS-відео",
+  "native_player": "Віддавати перевагу вбудованому відеоплеєру",
+  "concurrency": "Одночасні завантаження",
+  "dtime": "Час до зникнення кнопки",
+  "hls_load": "Отримати з HLS-потоку",
+  "position": "Розташування кнопки",
+  "free_preview": "Безкоштовний перегляд",
+  "drm_notice": "Захищено DRM: нічого відтворювати чи завантажувати.",
+  "play_error": "Браузер не може відтворити це відео. Завантажте його."
+ },
+ "vi": {
+  "copy": "Sao chép",
+  "remove": "Xóa",
+  "close": "Đóng",
+  "download": "Tải xuống",
+  "open": "Mở",
+  "min": "Thu nhỏ",
+  "max": "Phóng to",
+  "settings": "Cài đặt",
+  "save": "Lưu",
+  "reset": "Đặt lại",
+  "general": "Chung",
+  "theme": "Giao diện",
+  "free": "Miễn phí",
+  "prev": "Trước",
+  "next": "Sau",
+  "auto": "Tự động",
+  "video": "video",
+  "videos": "video",
+  "photo": "ảnh",
+  "photos": "ảnh",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "âm thanh",
+  "audios": "âm thanh",
+  "message": "Tin nhắn",
+  "search": "Tìm kiếm",
+  "issue": "Vấn đề mới",
+  "autoinject": "Hiện nút khi trang tải xong",
+  "fullscreen": "Mở ở kích thước tối đa",
+  "newTab": "Tab mới",
+  "newtab_hint": "Nhập hoặc dán URL hoặc ID video vào thanh địa chỉ rồi nhấn Enter.",
+  "empty": "Không tìm thấy video nào trên trang này.",
+  "copy_all": "Sao chép URL của mọi video",
+  "download_all": "Tải xuống mọi video",
+  "remove_all": "Xóa mọi video",
+  "import_export": "Nhập / Xuất",
+  "import_config": "Nhập cấu hình",
+  "export_config": "Xuất cấu hình",
+  "clear_tab_cache": "Xóa video của tab khi đóng tab",
+  "limit_downloads": "Tải xuống từng video một",
+  "auto_hls": "Tự động tạo video HLS",
+  "native_player": "Ưu tiên trình phát video gốc",
+  "concurrency": "Số lượt tải xuống đồng thời",
+  "dtime": "Thời gian trước khi nút mờ dần",
+  "hls_load": "Lấy từ luồng HLS",
+  "position": "Vị trí nút",
+  "free_preview": "Xem trước miễn phí",
+  "drm_notice": "Được bảo vệ bằng DRM: không có gì để phát hoặc tải xuống.",
+  "play_error": "Trình duyệt không thể phát video này. Hãy tải xuống thay thế."
  }
 };
 /** [source code](https://github.com/magicoflolis/Magic-PH/tree/master/src/sass/_main.scss) */
-const main_css = `mph-root{font-family:var(--mph-font-family, Arial, Helvetica, sans-serif);text-rendering:optimizeLegibility;word-break:normal;font-size:14px;line-height:1.35;color:var(--mph-text-color, hsl(210, 12%, 97%));text-align:start}mph-root,mph-root *{box-sizing:border-box}mph-root *{scrollbar-color:var(--mph-site-color, hsl(36, 100%, 50%)) hsl(224,14%,15%);scrollbar-width:thin}mph-root,mph-main,mph-toolbar,mph-header,mph-body,mph-list,mph-post,mph-tile,mph-viewer,mph-config,mph-section,mph-url,mph-empty,mph-elem,mu-js,tab-content,tab-host{display:block}.hidden{display:none !important}mph-column,mph-row,tab-root,.mph-sty-flex{display:flex}mph-column,mph-row{gap:.5em}.mph-icon{width:1em;height:1em;fill:currentcolor;flex:none;vertical-align:-0.125em}mph-a,mph-btn,tab-add,tab-close{cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}mph-a,mph-btn{display:inline-flex;align-items:center;justify-content:center;gap:.3em;padding:.3em .7em;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:6px;background:var(--mph-background-color, hsl(0, 0%, 0%));color:var(--mph-site-color, hsl(36, 100%, 50%));font-weight:500;text-decoration:none;width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}mph-a:hover,mph-a:focus-visible,mph-btn:hover,mph-btn:focus-visible{background:var(--mph-hover-color, hsl(36, 100%, 35%));color:var(--mph-text-color, hsl(210, 12%, 97%));outline:none}mph-a:focus-visible,mph-btn:focus-visible{box-shadow:0 0 0 2px var(--mph-site-color, hsl(36, 100%, 50%))}mph-a[data-busy],mph-btn[data-busy]{opacity:.6;pointer-events:none}mph-a[disabled],mph-btn[disabled]{opacity:.5;pointer-events:none}mph-frame{position:fixed;z-index:2147483647;bottom:var(--mph-position-bottom, 1rem);right:var(--mph-position-right, 1rem);top:var(--mph-position-top, auto);left:var(--mph-position-left, auto);display:flex;align-items:center;gap:.4em;padding:.55em .9em;border:2px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:1000px;background:var(--mph-background-color, hsl(0, 0%, 0%));color:var(--mph-site-color, hsl(36, 100%, 50%));font-size:16px;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;transition:opacity .25s ease}mph-frame:hover,mph-frame:focus-visible{background:var(--mph-hover-color, hsl(36, 100%, 35%));color:var(--mph-text-color, hsl(210, 12%, 97%));outline:none}mph-frame .mph-icon{width:1.3em;height:1.3em}count-frame{display:inline-block;min-width:1em;text-align:center;font-weight:700}mph-toast{display:none;position:fixed;z-index:100000000000000000;top:1em;left:50%;max-width:min(90vw,40em);padding:.6em 1.1em;transform:translateX(-50%);border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:1000px;background:var(--mph-background-color, hsl(0, 0%, 0%));color:var(--mph-site-color, hsl(36, 100%, 50%));font-weight:600;text-align:center;overflow-wrap:anywhere;pointer-events:none}mph-toast.show{display:block}mph-main{position:fixed;z-index:2147483647;right:1rem;bottom:1rem;width:min(780px,100vw - 2rem);height:min(492px,100vh - 2rem);flex-direction:column;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:16px;background:var(--mph-root-bg, hsla(0, 0%, 6%, 0.97));color:var(--mph-text-color, hsl(210, 12%, 97%));overflow:hidden}mph-main:not(.hidden){display:flex}mph-main.expanded{right:0;bottom:0;left:0;width:100%;height:100%;border-radius:0}@media screen and (max-width: 800px){mph-main{left:0;right:0;bottom:0;width:100%;height:min(72vh,100%);border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom, 0px)}mph-main.expanded{height:100%;border-radius:0}}@media screen and (max-height: 500px){mph-main{height:100%}}mph-root[data-side=left] mph-main:not(.expanded){right:auto;left:1rem}mph-toolbar{display:flex;justify-content:space-between;gap:.5em;padding:.5em;flex:none}mph-toolbar .btn-handles{order:999;flex:none}mph-toolbar tab-root{flex:1;min-width:0;order:0;flex-flow:row nowrap;gap:.5em;text-align:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px}mph-toolbar tab-root::-webkit-scrollbar{display:none;width:0;height:0}tab-content{display:flex;justify-content:space-between;gap:.5em;padding:.25em .5em;min-width:8em;max-width:min(16em,100% - 2.5em);flex:none;border:1px solid rgba(0,0,0,0);border-radius:4px;cursor:pointer;width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}tab-content.active,tab-content:hover{background:hsla(0,0%,100%,.06);border-color:var(--mph-border-color, hsl(36, 100%, 50%))}tab-content tab-host{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}tab-content tab-close{flex:none;opacity:.7}tab-content tab-close:hover{opacity:1;color:var(--mph-site-color, hsl(36, 100%, 50%))}tab-add{position:-webkit-sticky;position:sticky;right:0;flex:none;background:var(--mph-root-bg, hsla(0, 0%, 6%, 0.97));order:999999;padding:0 .4em;font-size:20px;line-height:1.2;border-radius:4px}tab-add:hover{background:hsla(0,0%,100%,.06)}mph-header{display:flex;flex:none;align-items:center;gap:.5em;padding:.5em;background:var(--mph-header-bg, hsla(0, 0%, 0%, 0.35));border-top:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-bottom:1px solid var(--mph-border-color, hsl(36, 100%, 50%));flex-wrap:wrap}mph-header mph-url{flex:1 1 10em;min-width:0}mph-header .of-actions{flex:none}mph-column.btn-handles{align-items:center}.btn-handles mph-btn{padding:.3em .5em}input{font:inherit;color:var(--mph-text-color, hsl(210, 12%, 97%));background:rgba(0,0,0,.35);border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:6px;padding:.3em .6em;outline:none}input:focus{box-shadow:0 0 0 2px var(--mph-site-color, hsl(36, 100%, 50%))}input[type=checkbox]{display:none}.mph-url-bar{width:100%}mph-body{flex:1;min-height:0;overflow:auto;padding:.5em}mph-empty{padding:2em 1em;text-align:center;opacity:.8}.mph-footer{flex:none;flex-direction:column;max-height:25%;overflow:auto;padding:0 .5em}.mph-footer .error{display:block;margin:.25em 0;padding:.4em .6em;border-radius:6px;background:rgb(112.2,0,0);white-space:pre-wrap;overflow-wrap:anywhere;cursor:pointer}.mph-feed{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 21em), 1fr));align-items:start;gap:.75em}.mph-feed.hidden{display:none}mph-post{display:flex;flex-direction:column;gap:.6em;justify-self:center;width:100%;max-width:34em;padding:.75em;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:14px;background:hsla(0,0%,100%,.06)}.post-head{align-items:center;gap:.75em}.post-head>mph-a{flex:none}.avatar{display:flex;flex:none;align-items:center;justify-content:center;width:2.6em;height:2.6em;overflow:hidden;border-radius:50%;background:var(--mph-accent, var(--mph-site-color, hsl(196, 100%, 47%)));color:#fff;font-weight:700}.avatar img{width:100%;height:100%;-o-object-fit:cover;object-fit:cover}.avatar .mph-icon{width:1.2em;height:1.2em}.post-who{flex:1;min-width:0}.post-name{font-weight:700;overflow-wrap:anywhere}mph-post[data-variant=video]{max-width:60em}mph-post[data-variant=video] .post-name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-handle{font-weight:400;opacity:.7}.post-meta{font-size:12px;opacity:.75}.post-meta:empty{display:none}.pill{flex:none;padding:.15em .75em;border-radius:1000px;background:var(--mph-accent, var(--mph-site-color, hsl(196, 100%, 47%)));color:#fff;font-weight:700}.pill.free{background:hsl(140,55%,33%)}.pill.muted{background:hsla(0,0%,100%,.06);color:var(--mph-text-color, hsl(210, 12%, 97%));font-weight:500}.post-text{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:4;white-space:pre-wrap;overflow-wrap:anywhere}.post-media{display:grid;grid-template-columns:repeat(2, 1fr);grid-gap:.5rem;overflow:hidden;border-radius:10px}.post-media mph-tile{aspect-ratio:16/9}.post-media[data-count="1"]{grid-template-columns:1fr}mph-post[data-variant=post] .post-media mph-tile{aspect-ratio:1}mph-post[data-variant=post] .post-media[data-count="1"] mph-tile{aspect-ratio:16/9}mph-post[data-variant=post] .post-media[data-count="2"]{grid-template-columns:1fr 1fr}mph-post[data-variant=post] .post-media[data-count="3"]{grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr}mph-post[data-variant=post] .post-media[data-count="3"] mph-tile:first-child{grid-row:span 2;aspect-ratio:auto}mph-tile{position:relative;overflow:hidden;background:hsl(0,0%,12%);min-height:5rem}mph-tile[data-command]{cursor:pointer}mph-tile[data-busy]{opacity:.7;pointer-events:none}mph-tile>img,mph-tile>video,mph-tile>.thumb-none{position:absolute;inset:0;width:100%;height:100%;-o-object-fit:cover;object-fit:cover}mph-tile>video,mph-tile>.thumb-none{pointer-events:none}mph-tile>.thumb-none{display:flex;align-items:center;justify-content:center;opacity:.5}mph-tile>.thumb-none .mph-icon{width:2em;height:2em}mph-tile[data-type=video][data-command]::after{content:"";position:absolute;top:50%;left:50%;width:0;height:0;transform:translate(-35%, -50%);border-style:solid;border-width:.6em 0 .6em 1em;border-color:rgba(0,0,0,0) rgba(0,0,0,0) rgba(0,0,0,0) hsla(0,0%,100%,.9);-webkit-filter:drop-shadow(0 0 4px hsla(0, 0%, 0%, 0.6));filter:drop-shadow(0 0 4px hsla(0, 0%, 0%, 0.6));pointer-events:none}mph-tile .badge{position:absolute;bottom:.4em;left:.4em;z-index:1;display:flex;align-items:center;gap:.25em;padding:.1em .55em;border-radius:1000px;background:rgba(0,0,0,.7);color:#fff;font-size:12px;font-weight:600}mph-tile .badge.drm{background:hsl(0,80%,35%)}mph-tile .badge.top{top:.4em;bottom:auto}mph-tile .tile-actions{position:absolute;top:.35em;right:.35em;z-index:1;display:flex;gap:.25em;opacity:0;transition:opacity .15s ease}mph-tile:hover .tile-actions,mph-tile:focus-within .tile-actions{opacity:1}mph-tile .tile-btn{padding:.3em;border-color:rgba(0,0,0,0);background:rgba(0,0,0,.7);color:#fff}mph-viewer{position:fixed;z-index:2147483647;inset:0;display:flex;flex-direction:column;background:rgba(0,0,0,.94);color:#fff}mph-viewer.hidden{display:none !important}.viewer-bar{flex:none;align-items:center;padding:calc(.5em + env(safe-area-inset-top, 0px)) calc(.75em + env(safe-area-inset-right, 0px)) .5em calc(.75em + env(safe-area-inset-left, 0px))}.viewer-count{flex:none;opacity:.8}.viewer-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.viewer-wrap{position:relative;display:flex;flex:1;min-height:0}.viewer-stage{display:flex;flex:1;align-items:center;justify-content:center;min-width:0;padding:.25em}.viewer-stage video-player,.viewer-stage img,.viewer-stage video{max-width:100%;max-height:100%;-o-object-fit:contain;object-fit:contain}.viewer-stage audio{width:min(90%,32em)}.viewer-msg{max-width:28em;padding:1em;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:12px;text-align:center}.viewer-strip{display:flex;flex:none;gap:4px;overflow-x:auto;padding:.5em .5em calc(.5em + env(safe-area-inset-bottom, 0px));scrollbar-width:none;-ms-overflow-style:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.viewer-strip::-webkit-scrollbar{display:none;width:0;height:0}.viewer-strip.hidden{display:none}.viewer-strip .thumb{flex:none;width:56px;height:56px;border-radius:6px;opacity:.6;color:#fff;text-align:center;line-height:56px}.viewer-strip .thumb:first-child{margin-left:auto}.viewer-strip .thumb:last-child{margin-right:auto}.viewer-strip .thumb.active{opacity:1;outline:2px solid var(--mph-accent, var(--mph-site-color, hsl(196, 100%, 47%)))}.viewer-strip .thumb-label{position:absolute;right:0;bottom:0;left:0;background:rgba(0,0,0,.7);font-size:11px;line-height:1.6}mph-root[data-mobile] mph-a,mph-root[data-mobile] mph-btn{min-height:40px}mph-root[data-mobile] input,mph-root[data-mobile] select{font-size:16px}mph-root[data-mobile] mph-tile .tile-actions{opacity:1}mph-root[data-mobile] .btn-handles mph-btn{min-width:40px}select{font:inherit;color:var(--mph-text-color, hsl(210, 12%, 97%));background:rgba(0,0,0,.35);border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:6px;padding:.3em .6em}mph-config{display:flex;flex-direction:column;gap:.5em}mph-config.hidden{display:none}mph-section{display:flex;flex-direction:column;gap:.25em;padding:.5em;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:8px}mph-section>label{font-size:16px;font-weight:600;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}mph-section.collapsed>*:not(:first-child){display:none}.sub-section{display:flex;align-items:center;justify-content:space-between;gap:1em;padding:.2em .25em;overflow-wrap:anywhere}.sub-section input:not([type=checkbox]){width:14em;max-width:50%}mph-btn.sub-section{align-self:anchor-center}.mph-inlab{position:relative;flex:none;width:38px}.mph-inlab input[type=checkbox]{display:none}.mph-inlab input[type=checkbox]:checked+label{background:var(--mph-site-color, hsl(36, 100%, 50%))}.mph-inlab input[type=checkbox]:checked+label::before{right:0}.mph-inlab label{display:block;overflow:hidden;height:16px;padding:0;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:20px;cursor:pointer}.mph-inlab label::before{content:"";display:block;position:absolute;top:0;right:20px;width:20px;height:20px;margin:-2px;border-radius:20px;background:var(--mph-text-color, hsl(210, 12%, 97%))}.mph-sty-flex{justify-content:space-evenly;flex-wrap:wrap;gap:.5em;padding:.5em 0}.mph-sty-flex mph-btn{padding:.4em 1.5em}.about mph-a{border-color:rgba(0,0,0,0);background:rgba(0,0,0,0);text-decoration:underline}.mph-invalid{border-color:red !important;box-shadow:0 0 0 2px red}@property --media-slider-fill{syntax:"<percentage>";inherits:true;initial-value:0%}@property --media-slider-buffer{syntax:"<percentage>";inherits:true;initial-value:0%}video-player,live-video-player,media-i18n,media-dialog,media-alert-dialog,media-error-dialog,media-controls{display:contents}media-container video,media-container [slot=poster]{width:100%;height:100%;display:block}media-container video::-webkit-media-text-track-container{z-index:1;scale:.98;translate:0 var(--media-caption-track-y, 0);-webkit-transition:translate var(--media-caption-track-duration, 0) ease-out;transition:translate var(--media-caption-track-duration, 0) ease-out;transition-delay:var(--media-caption-track-delay, 0);font-family:inherit}`;
+const main_css = `mph-root{font-family:var(--mph-font-family, Arial, Helvetica, sans-serif);text-rendering:optimizeLegibility;word-break:normal;font-size:14px;line-height:1.35;color:var(--mph-text-color, hsl(210, 12%, 97%));text-align:start}mph-root,mph-root *{box-sizing:border-box}mph-root *{scrollbar-color:var(--mph-site-color, hsl(36, 100%, 50%)) hsl(224,14%,15%);scrollbar-width:thin}mph-root,mph-main,mph-toolbar,mph-header,mph-body,mph-list,mph-post,mph-tile,mph-viewer,mph-config,mph-section,mph-url,mph-empty,mph-elem,mu-js,tab-content,tab-host{display:block}.hidden{display:none !important}mph-column,mph-row,tab-root,.mph-sty-flex{display:flex}mph-column,mph-row{gap:.5em}.mph-icon{width:1em;height:1em;fill:currentcolor;flex:none;vertical-align:-0.125em}mph-a,mph-btn,tab-add,tab-close{cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}mph-a,mph-btn{display:inline-flex;align-items:center;justify-content:center;gap:.3em;padding:.3em .7em;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:6px;background:var(--mph-background-color, hsl(0, 0%, 0%));color:var(--mph-site-color, hsl(36, 100%, 50%));font-weight:500;text-decoration:none;width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}mph-a:hover,mph-a:focus-visible,mph-btn:hover,mph-btn:focus-visible{background:var(--mph-hover-color, hsl(36, 100%, 35%));color:var(--mph-text-color, hsl(210, 12%, 97%));outline:none}mph-a:focus-visible,mph-btn:focus-visible{box-shadow:0 0 0 2px var(--mph-site-color, hsl(36, 100%, 50%))}mph-a[data-busy],mph-btn[data-busy]{opacity:.6;pointer-events:none}mph-a[disabled],mph-btn[disabled]{opacity:.5;pointer-events:none}mph-frame{position:fixed;z-index:2147483647;bottom:var(--mph-position-bottom, 1rem);right:var(--mph-position-right, 1rem);top:var(--mph-position-top, auto);left:var(--mph-position-left, auto);display:flex;align-items:center;gap:.4em;padding:.55em .9em;border:2px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:1000px;background:var(--mph-background-color, hsl(0, 0%, 0%));color:var(--mph-site-color, hsl(36, 100%, 50%));font-size:16px;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;transition:opacity .25s ease}mph-frame:hover,mph-frame:focus-visible{background:var(--mph-hover-color, hsl(36, 100%, 35%));color:var(--mph-text-color, hsl(210, 12%, 97%));outline:none}mph-frame .mph-icon{width:1.3em;height:1.3em}count-frame{display:inline-block;min-width:1em;text-align:center;font-weight:700}mph-toast{display:none;position:fixed;z-index:2147483647;inset:1em auto auto 50%;max-width:min(90vw,40em);padding:.6em 1.1em;transform:translateX(-50%);border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:1000px;background:var(--mph-background-color, hsl(0, 0%, 0%));color:var(--mph-site-color, hsl(36, 100%, 50%));font-weight:600;text-align:center;overflow-wrap:anywhere;pointer-events:none}mph-toast.show{display:block}mph-main{position:fixed;z-index:2147483647;right:1rem;bottom:1rem;width:min(780px,100vw - 2rem);height:min(492px,100vh - 2rem);flex-direction:column;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:16px;background:var(--mph-root-bg, hsla(0, 0%, 6%, 0.97));color:var(--mph-text-color, hsl(210, 12%, 97%));overflow:hidden}mph-main:not(.hidden){display:flex}mph-main.expanded{right:0;bottom:0;left:0;width:100%;height:100%;border-radius:0}@media screen and (max-width: 800px){mph-main{left:0;right:0;bottom:0;width:100%;height:min(72vh,100%);border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom, 0px)}mph-main.expanded{height:100%;border-radius:0}}@media screen and (max-height: 500px){mph-main{height:100%}}mph-root[data-side=left] mph-main:not(.expanded){right:auto;left:1rem}mph-toolbar{display:flex;justify-content:space-between;gap:.5em;padding:.5em;flex:none}mph-toolbar .btn-handles{order:999;flex:none}mph-toolbar tab-root{flex:1;min-width:0;order:0;flex-flow:row nowrap;gap:.5em;text-align:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px}mph-toolbar tab-root::-webkit-scrollbar{display:none;width:0;height:0}tab-content{display:flex;justify-content:space-between;gap:.5em;padding:.25em .5em;min-width:8em;max-width:min(16em,100% - 2.5em);flex:none;border:1px solid rgba(0,0,0,0);border-radius:4px;cursor:pointer;width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}tab-content.active,tab-content:hover{background:hsla(0,0%,100%,.06);border-color:var(--mph-border-color, hsl(36, 100%, 50%))}tab-content tab-host{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}tab-content tab-close{flex:none;opacity:.7}tab-content tab-close:hover{opacity:1;color:var(--mph-site-color, hsl(36, 100%, 50%))}tab-add{position:-webkit-sticky;position:sticky;right:0;flex:none;background:var(--mph-root-bg, hsla(0, 0%, 6%, 0.97));order:999999;padding:0 .4em;font-size:20px;line-height:1.2;border-radius:4px}tab-add:hover{background:hsla(0,0%,100%,.06)}mph-header{display:flex;flex:none;align-items:center;gap:.5em;padding:.5em;background:var(--mph-header-bg, hsla(0, 0%, 0%, 0.35));border-top:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-bottom:1px solid var(--mph-border-color, hsl(36, 100%, 50%));flex-wrap:wrap}mph-header mph-url{flex:1 1 10em;min-width:0}mph-header .of-actions{flex:none}mph-column.btn-handles{align-items:center}.btn-handles mph-btn{padding:.3em .5em}input{font:inherit;color:var(--mph-text-color, hsl(210, 12%, 97%));background:rgba(0,0,0,.35);border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:6px;padding:.3em .6em;outline:none}input:focus{box-shadow:0 0 0 2px var(--mph-site-color, hsl(36, 100%, 50%))}input[type=checkbox]{display:none}.mph-url-bar{width:100%}mph-body{flex:1;min-height:0;overflow:auto;padding:.5em}mph-empty{padding:2em 1em;text-align:center;opacity:.8}.mph-footer{flex:none;flex-direction:column;max-height:25%;overflow:auto;padding:0 .5em}.mph-footer .error{display:block;margin:.25em 0;padding:.4em .6em;border-radius:6px;background:rgb(112.2,0,0);white-space:pre-wrap;overflow-wrap:anywhere;cursor:pointer}.mph-feed{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 21em), 1fr));align-items:start;gap:.75em}.mph-feed.hidden{display:none}mph-post{display:flex;flex-direction:column;gap:.6em;justify-self:center;width:100%;max-width:34em;padding:.75em;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:14px;background:hsla(0,0%,100%,.06)}.post-head{align-items:center}.post-head>mph-a{flex:none}.avatar{display:flex;flex:none;align-items:center;justify-content:center;width:2.6em;height:2.6em;overflow:hidden;border-radius:50%;background:var(--mph-accent, var(--mph-site-color, hsl(196, 100%, 47%)));color:#fff;font-weight:700}.avatar img{width:100%;height:100%;-o-object-fit:cover;object-fit:cover}.avatar .mph-icon{width:1.2em;height:1.2em}.post-who{flex:1;min-width:0}.post-name{font-weight:700;overflow-wrap:anywhere}mph-post[data-variant=video]{max-width:60em}mph-post[data-variant=video] .post-name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-handle{font-weight:400;opacity:.7}.post-meta{font-size:12px;opacity:.75}.post-meta:empty{display:none}.pill{flex:none;padding:.15em .75em;border-radius:1000px;background:var(--mph-accent, var(--mph-site-color, hsl(196, 100%, 47%)));color:#fff;font-weight:700}.pill.free{background:hsl(140,55%,33%)}.pill.muted{background:hsla(0,0%,100%,.06);color:var(--mph-text-color, hsl(210, 12%, 97%));font-weight:500}.post-text{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:4;white-space:pre-wrap;overflow-wrap:anywhere}.post-media{display:grid;grid-template-columns:repeat(2, 1fr);grid-gap:.5rem;overflow:hidden;border-radius:10px}.post-media mph-tile{aspect-ratio:16/9}.post-media[data-count="1"]{grid-template-columns:1fr}mph-post[data-variant=post] .post-media mph-tile{aspect-ratio:1}mph-post[data-variant=post] .post-media[data-count="1"] mph-tile{aspect-ratio:16/9}mph-post[data-variant=post] .post-media[data-count="2"]{grid-template-columns:1fr 1fr}mph-post[data-variant=post] .post-media[data-count="3"]{grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr}mph-post[data-variant=post] .post-media[data-count="3"] mph-tile:first-child{grid-row:span 2;aspect-ratio:auto}mph-tile{position:relative;overflow:hidden;background:hsl(0,0%,12%);min-height:5rem}mph-tile[data-command]{cursor:pointer}mph-tile[data-busy],mph-tile[data-fetching=true]{opacity:.44;pointer-events:none}mph-tile>img,mph-tile>video,mph-tile>.thumb-none{position:absolute;inset:0;width:100%;height:100%;-o-object-fit:cover;object-fit:cover}mph-tile>video,mph-tile>.thumb-none{pointer-events:none}mph-tile>.thumb-none{display:flex;align-items:center;justify-content:center;opacity:.5}mph-tile>.thumb-none .mph-icon{width:2em;height:2em}mph-tile[data-type=video][data-command]::after{content:"";position:absolute;top:50%;left:50%;width:0;height:0;transform:translate(-35%, -50%);border-style:solid;border-width:.6em 0 .6em 1em;border-color:rgba(0,0,0,0) rgba(0,0,0,0) rgba(0,0,0,0) hsla(0,0%,100%,.9);-webkit-filter:drop-shadow(0 0 4px hsla(0, 0%, 0%, 0.6));filter:drop-shadow(0 0 4px hsla(0, 0%, 0%, 0.6));pointer-events:none}mph-tile .badge{position:absolute;bottom:.4em;left:.4em;z-index:1;display:flex;align-items:center;gap:.25em;padding:.1em .55em;border-radius:1000px;background:rgba(0,0,0,.7);color:#fff;font-size:12px;font-weight:600}mph-tile .badge.drm{background:hsl(0,80%,35%)}mph-tile .badge.top{top:.4em;bottom:auto}mph-tile .tile-actions{position:absolute;top:.35em;right:.35em;z-index:1;display:flex;gap:.25em;opacity:0;transition:opacity .15s ease}mph-tile:hover .tile-actions,mph-tile:focus-within .tile-actions{opacity:1}mph-tile .tile-btn{padding:.3em;border-color:rgba(0,0,0,0);background:rgba(0,0,0,.7);color:#fff}mph-viewer{position:fixed;z-index:2147483647;inset:0;display:flex;flex-direction:column;background:rgba(0,0,0,.94);color:#fff}mph-viewer.hidden{display:none !important}.viewer-bar{flex:none;align-items:center;padding:calc(.5em + env(safe-area-inset-top, 0px)) calc(.75em + env(safe-area-inset-right, 0px)) .5em calc(.75em + env(safe-area-inset-left, 0px))}.viewer-count{flex:none;opacity:.8}.viewer-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.viewer-wrap{position:relative;display:flex;flex:1;min-height:0}.viewer-stage{display:flex;flex:1;align-items:center;justify-content:center;min-width:0;padding:.25em}.viewer-stage video-player,.viewer-stage img,.viewer-stage video{max-width:100%;max-height:100%;-o-object-fit:contain;object-fit:contain}.viewer-stage audio{width:min(90%,32em)}.viewer-msg{max-width:28em;padding:1em;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:12px;text-align:center}.viewer-strip{display:flex;flex:none;gap:4px;overflow-x:auto;padding:.5em .5em calc(.5em + env(safe-area-inset-bottom, 0px));scrollbar-width:none;-ms-overflow-style:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.viewer-strip::-webkit-scrollbar{display:none;width:0;height:0}.viewer-strip.hidden{display:none}.viewer-strip .thumb{flex:none;width:56px;height:56px;border-radius:6px;opacity:.6;color:#fff;text-align:center;line-height:56px}.viewer-strip .thumb:first-child{margin-left:auto}.viewer-strip .thumb:last-child{margin-right:auto}.viewer-strip .thumb.active{opacity:1;outline:2px solid var(--mph-accent, var(--mph-site-color, hsl(196, 100%, 47%)))}.viewer-strip .thumb-label{position:absolute;right:0;bottom:0;left:0;background:rgba(0,0,0,.7);font-size:11px;line-height:1.6}mph-root[data-mobile] mph-a,mph-root[data-mobile] mph-btn{min-height:40px}mph-root[data-mobile] input,mph-root[data-mobile] select{font-size:16px}mph-root[data-mobile] mph-tile .tile-actions{opacity:1}mph-root[data-mobile] .btn-handles mph-btn{min-width:40px}select{font:inherit;color:var(--mph-text-color, hsl(210, 12%, 97%));background:rgba(0,0,0,.35);border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:6px;padding:.3em .6em}mph-config{display:flex;flex-direction:column;gap:.5em}mph-config.hidden{display:none}mph-section{display:flex;flex-direction:column;gap:.25em;padding:.5em;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:8px}mph-section>label{font-size:16px;font-weight:600;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}mph-section.collapsed>*:not(:first-child){display:none}.sub-section{display:flex;align-items:center;justify-content:space-between;gap:1em;padding:.2em .25em;overflow-wrap:anywhere}.sub-section input:not([type=checkbox]){width:14em;max-width:50%}mph-btn.sub-section{align-self:anchor-center}.mph-inlab{position:relative;flex:none;width:38px}.mph-inlab input[type=checkbox]{display:none}.mph-inlab input[type=checkbox]:checked+label{background:var(--mph-site-color, hsl(36, 100%, 50%))}.mph-inlab input[type=checkbox]:checked+label::before{right:0}.mph-inlab label{display:block;overflow:hidden;height:16px;padding:0;border:1px solid var(--mph-border-color, hsl(36, 100%, 50%));border-radius:20px;cursor:pointer}.mph-inlab label::before{content:"";display:block;position:absolute;top:0;right:20px;width:20px;height:20px;margin:-2px;border-radius:20px;background:var(--mph-text-color, hsl(210, 12%, 97%))}.mph-sty-flex{justify-content:space-evenly;flex-wrap:wrap;gap:.5em;padding:.5em 0}.mph-sty-flex mph-btn{padding:.4em 1.5em}.about mph-a{border-color:rgba(0,0,0,0);background:rgba(0,0,0,0);text-decoration:underline}.mph-invalid{border-color:red !important;box-shadow:0 0 0 2px red}@property --media-slider-fill{syntax:"<percentage>";inherits:true;initial-value:0%}@property --media-slider-buffer{syntax:"<percentage>";inherits:true;initial-value:0%}video-player,live-video-player,media-i18n,media-dialog,media-alert-dialog,media-error-dialog,media-controls{display:contents}media-container video,media-container [slot=poster]{width:100%;height:100%;display:block}media-container video::-webkit-media-text-track-container{z-index:1;scale:.98;translate:0 var(--media-caption-track-y, 0);-webkit-transition:translate var(--media-caption-track-duration, 0) ease-out;transition:translate var(--media-caption-track-duration, 0) ease-out;transition-delay:var(--media-caption-track-delay, 0);font-family:inherit}`;
 /******************************************************************************/
 /**
  * A tile: a quality of a video, a media of a video post
@@ -196,6 +1470,10 @@ const main_css = `mph-root{font-family:var(--mph-font-family, Arial, Helvetica, 
 
 /**
  * @typedef { import("../typings/types.d.ts").MPHConfig } MPHConfig
+ */
+
+/**
+ * @typedef { import("../typings/types.d.ts").OFStore } OFStore
  */
 
 //#region Console
@@ -569,6 +1847,14 @@ class $GM extends null {
   static get isGM() {
     return typeof GM !== 'undefined';
   }
+  static get env() {
+    if ($GM.isGM) {
+      return 'GM';
+    } else if (typeof GM_xmlhttpRequest !== 'undefined') {
+      return 'deprecated';
+    }
+    return 'native';
+  }
   /**
    * @returns {VMScriptGMInfoObject | Partial<VMScriptGMInfoObject>}
    */
@@ -830,7 +2116,12 @@ const make = (tagName, ...attributes) => {
  * @type { import("../typings/types.d.ts").ael }
  */
 const ael = (el, type, listener, options) => {
-  const opts = typeof options === 'object' && options !== null ? options : { capture: !!options };
+  const opts =
+    typeof options === 'boolean' ? options : isObj(options) ? options : { capture: !!options };
+  if (el instanceof Window || el instanceof Document) {
+    el.addEventListener(type, listener, opts);
+    return;
+  }
   for (const elem of toArray(el).filter(isHTML)) {
     elem.addEventListener(type, listener, opts);
   }
@@ -983,10 +2274,7 @@ const ttPolicy = (() => {
  */
 const parseHTML = (html) => {
   const str = String(html);
-  return new DOMParser().parseFromString(
-    /** @type {string} */ (ttPolicy.createHTML(str)),
-    'text/html'
-  );
+  return new DOMParser().parseFromString(ttPolicy.createHTML(str), 'text/html');
 };
 /**
  * Plain text of an HTML fragment.
@@ -1535,6 +2823,256 @@ class jsStorage extends null {
 }
 //#endregion
 //#region Network
+// class Net {
+//   /**
+//    * @template {string | Request | URL} R
+//    * @template {string | object | Document | ArrayBuffer | Blob} T
+//    * @param {R} requestURL
+//    * @param {string} method
+//    * @param {VMScriptResponseType} responseType
+//    * @param {VMScriptGMXHRDetails<T> | RequestInit} data
+//    * @param {boolean} useFetch
+//    * @returns {Promise<T>}
+//    */
+//   static req(requestURL, method = 'GET', responseType = 'json', data, useFetch = false) {
+//     const params = Object.assign({}, data);
+//     if (typeof method === 'string') {
+//       params.method = method.toUpperCase().replaceAll(/\W/g, '');
+//     }
+//     if (typeof responseType === 'string') {
+//       responseType = responseType.toLowerCase().replaceAll(/\W/g, '');
+//     }
+//     if (params.credentials && $GM.isGM && !useFetch) {
+//       params.anonymous = Object.is(params.credentials, 'omit');
+//       delete params.credentials;
+//     } else if (params.onprogress) {
+//       delete params.onprogress;
+//     }
+//     return new Promise((resolve, reject) => {
+//       if (useFetch) {
+//         const _request =
+//           requestURL instanceof Request ? requestURL : new Request(requestURL, params);
+//         fetch(_request)
+//           .then((resp) => {
+//             if (resp.ok) {
+//               if (/array|buffer/i.test(responseType)) {
+//                 resolve(resp.arrayBuffer());
+//               } else if (/json/i.test(responseType)) {
+//                 resolve(resp.json());
+//               } else if (/text/i.test(responseType)) {
+//                 resolve(resp.text());
+//               } else if (/blob/i.test(responseType)) {
+//                 resolve(resp.blob());
+//               } else if (/form|data/i.test(responseType)) {
+//                 resolve(resp.formData());
+//               } else if (/clone|copy/i.test(responseType)) {
+//                 resolve(resp.clone());
+//               } else if (/document/i.test(responseType)) {
+//                 const responseText = resp.text();
+//                 const domParser = new DOMParser();
+//                 if (responseText instanceof Promise) {
+//                   responseText.then((txt) => {
+//                     const doc = domParser.parseFromString(txt, 'text/html');
+//                     resolve(doc);
+//                   });
+//                 } else {
+//                   const doc = domParser.parseFromString(responseText, 'text/html');
+//                   resolve(doc);
+//                 }
+//               } else {
+//                 resolve(resp);
+//               }
+//             } else {
+//               reject(resp);
+//             }
+//           })
+//           .catch(reject);
+//       } else {
+//         const fallback = () =>
+//           Network.req(requestURL, method, responseType, data, true).then(resolve, reject);
+//         /** @type {VMScriptGMXHRDetails<typeof responseType>} */
+//         const DETAILS = {
+//           url: requestURL,
+//           responseType,
+//           ...params,
+//           onerror() {
+//             fallback();
+//           },
+//           onload(r_1) {
+//             if (r_1.status !== 200) {
+//               fallback();
+//             } else if (/basic/i.test(responseType)) {
+//               resolve(r_1);
+//             } else {
+//               resolve(r_1.response);
+//             }
+//           }
+//         };
+//         $GM.xmlHttpRequest(DETAILS);
+//       }
+//     });
+//   }
+//   /**
+//    * @template { { baseURL: string | URL; data?: Record<PropertyKey, unknown>; useFetch?: boolean; } } CreateBody
+//    * @param {CreateBody} config
+//    */
+//   create(config = {}) {
+//     const { baseURL, data, useFetch } = config;
+//     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+//     /**
+//      * @template {string | URL} U
+//      * @param {U} pageURL
+//      * @param {VMScriptResponseType} [responseType]
+//      */
+//     async function req(pageURL, responseType, _data, _useFetch) {
+//       return await Net.req(
+//         toURL(pageURL, baseURL),
+//         'GET',
+//         responseType,
+//         _data ?? data,
+//         _useFetch ?? useFetch
+//       );
+//     }
+//     /**
+//      * @template {ArrayBuffer} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function arrayBuffer(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'arraybuffer', _data, _useFetch);
+//     }
+//     /**
+//      * @template {Document} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function doc(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'document', _data, _useFetch);
+//     }
+//     /**
+//      * @template {Record<PropertyKey, unknown>} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function json(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'json', _data, _useFetch);
+//     }
+//     /**
+//      * @template {string} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function text(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'text', _data, _useFetch);
+//     }
+//     /**
+//      * @template {Response} R
+//      * @param {string | URL} pageURL
+//      * @returns {Promise<R>}
+//      */
+//     async function basic(pageURL, _data, _useFetch) {
+//       return await req(pageURL, 'basic', _data, _useFetch);
+//     }
+//     return {
+//       sizes,
+//       req,
+//       arrayBuffer,
+//       doc,
+//       json,
+//       text,
+//       basic,
+//       /**
+//        * @param {number} bytes
+//        * @param {number} [decimals]
+//        * @returns {string}
+//        */
+//       format(bytes, decimals = 2) {
+//         if (Number.isNaN(bytes) || !Number.isFinite(bytes) || bytes <= 0)
+//           return `0 ${sizes[0]}`;
+//         const k = 1024;
+//         const dm = decimals < 0 ? 0 : decimals;
+//         const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1);
+//         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+//       },
+//       /**
+//        * @param { { loaded: number; total: number; } } evt
+//        */
+//       prog(evt) {
+//         return !evt.total
+//           ? Net.format(evt.loaded)
+//           : `${+((evt.loaded / evt.total) * 100).toFixed(2)}%`;
+//       },
+//       /**
+//        * @param {string | URL} chunkURL
+//        * @param {VMScriptGMXHRDetails<Response> | RequestInit} [data]
+//        * @param {(evt: { loaded: number; total: number; }) => void} onProgress
+//        * @returns {Promise<{ chunks: Uint8Array[]; size: number }>}
+//        */
+//       async fetchChunks(chunkURL, data, onProgress) {
+//         /** @type {Response} */
+//         const resp = await req(chunkURL, 'basic', { timeout: 0, ...data }, true);
+//         const total = Number(resp.headers.get('Content-Length')) || 0;
+//         if (!resp.body || !isFN(resp.body.getReader)) {
+//           const buf = new Uint8Array(await resp.arrayBuffer());
+//           if (isFN(onProgress)) onProgress({ loaded: buf.length, total: buf.length });
+//           return { chunks: [buf], size: buf.length };
+//         }
+//         /** @type {Uint8Array[]} */
+//         const chunks = [];
+//         let loaded = 0;
+//         const reader = resp.body.getReader();
+//         try {
+//           while (true) {
+//             const { done, value } = await reader.read();
+//             if (done) break;
+//             chunks.push(value);
+//             loaded += value.length;
+//             if (isFN(onProgress)) onProgress({ loaded, total });
+//           }
+//         } finally {
+//           reader.releaseLock();
+//         }
+//         return { chunks, size: loaded };
+//       },
+//       /**
+//        *
+//        * @param {string | URL} blobURL
+//        * @param {Record<string, unknown>} [data]
+//        * @param {(evt: { loaded: number; total: number; }) => void} [onprogress]
+//        * @returns {Promise<Blob>}
+//        */
+//       gmBlob(blobURL, data, onprogress) {
+//         return new Promise((resolve, reject) => {
+//           /**
+//            * @param {string | number} status
+//            */
+//           const fail = (status) =>
+//             reject(
+//               new Error(`status: ${status} finalURL: ${blobURL}`, { cause: 'Network.gmBlob' })
+//             );
+//           $GM.xmlHttpRequest({
+//             url: blobURL,
+//             method: 'GET',
+//             responseType: 'blob',
+//             anonymous: Object.is(data?.credentials, 'omit'),
+//             headers: data?.referrer ? { Referer: data.referrer } : undefined,
+//             onprogress,
+//             onload(r) {
+//               if (r.status >= 200 && r.status < 300 && r.response) {
+//                 resolve(r.response);
+//               } else {
+//                 fail(r.status);
+//               }
+//             },
+//             onerror: (r) => fail(r?.status ?? 0),
+//             ontimeout: () => fail('timeout'),
+//             onabort: () => fail('aborted')
+//           });
+//         });
+//       }
+//     };
+//   }
+// }
 class Network extends null {
   static sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
   /**
@@ -1563,9 +3101,7 @@ class Network extends null {
     }
     return new Promise((resolve, reject) => {
       if (useFetch) {
-        const _request =
-          requestURL instanceof Request ? requestURL : new Request(requestURL, params);
-        fetch(_request)
+        fetch(requestURL instanceof Request ? requestURL : new Request(requestURL, params))
           .then((resp) => {
             if (resp.ok) {
               if (/array|buffer/i.test(responseType)) {
@@ -1581,13 +3117,15 @@ class Network extends null {
               } else if (/clone|copy/i.test(responseType)) {
                 resolve(resp.clone());
               } else if (/document/i.test(responseType)) {
-                const responseText = resp.text();
                 const domParser = new DOMParser();
+                const responseText = resp.text();
                 if (responseText instanceof Promise) {
-                  responseText.then((txt) => {
-                    const doc = domParser.parseFromString(txt, 'text/html');
-                    resolve(doc);
-                  });
+                  responseText
+                    .then((txt) => {
+                      const doc = domParser.parseFromString(txt, 'text/html');
+                      resolve(doc);
+                    })
+                    .catch(() => reject(resp));
                 } else {
                   const doc = domParser.parseFromString(responseText, 'text/html');
                   resolve(doc);
@@ -1626,6 +3164,159 @@ class Network extends null {
     });
   }
   /**
+   * @template { { baseURL: string | URL; data: Record<PropertyKey, unknown>; useFetch: boolean; } } CreateBody
+   * @param {Partial<CreateBody>} config
+   */
+  static create(config = {}) {
+    if (isEmpty(config.baseURL)) config.baseURL = window.location.href;
+    if (isEmpty(config.data)) config.data = {};
+    if (!(typeof config.useFetch === 'boolean')) config.useFetch = !$GM.isGM;
+    /**
+     * @template R
+     * @param {string | URL} pageURL
+     * @param {VMScriptResponseType} [responseType]
+     * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+     * @param {boolean} [_useFetch]
+     */
+    async function get(pageURL, responseType, _data, _useFetch) {
+      if (isEmpty(_data) || isObj(_data) & !Object.is(_data, config.data))
+        _data = sanitizeConfig(_data, config.data);
+      if (!(typeof _useFetch === 'boolean')) _useFetch = config.useFetch;
+      return await Network.req(
+        toURL(pageURL, config.baseURL),
+        'GET',
+        responseType,
+        _data,
+        _useFetch
+      );
+    }
+    return {
+      get,
+      /**
+       * @template {ArrayBuffer} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async arrayBuffer(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'arraybuffer', _data, _useFetch);
+      },
+      /**
+       * @template {Document} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async doc(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'document', _data, _useFetch);
+      },
+      /**
+       * @template {Record<PropertyKey, unknown>} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async json(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'json', _data, _useFetch);
+      },
+      /**
+       * @template {string} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async text(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'text', _data, _useFetch);
+      },
+      /**
+       * @template {Response} R
+       * @param {string | URL} pageURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {boolean} [_useFetch]
+       * @returns {Promise<R>}
+       */
+      async basic(pageURL, _data, _useFetch) {
+        return await get(pageURL, 'basic', _data, _useFetch);
+      },
+      /**
+       * @template {Response} R
+       * @param {string | URL} chunkURL
+       * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+       * @param {(evt: { loaded: number; total: number; }) => void} onProgress
+       * @returns {Promise<{ chunks: Uint8Array[]; size: number }>}
+       */
+      async $chunks(chunkURL, _data, onProgress) {
+        if (isEmpty(_data) || isObj(_data) & !Object.is(_data, config.data))
+          _data = sanitizeConfig(_data, config.data);
+        const resp = await fetch(new Request(chunkURL, _data));
+        const total = Number(resp.headers.get('Content-Length')) || 0;
+        if (!resp.body || !isFN(resp.body.getReader)) {
+          const buf = new Uint8Array(await resp.arrayBuffer());
+          if (isFN(onProgress)) onProgress({ loaded: buf.length, total: buf.length });
+          return { chunks: [buf], size: buf.length };
+        }
+        /** @type {Uint8Array[]} */
+        const chunks = [];
+        let loaded = 0;
+        const reader = resp.body.getReader();
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            loaded += value.length;
+            if (isFN(onProgress)) onProgress({ loaded, total });
+          }
+        } finally {
+          reader.releaseLock();
+        }
+        return { chunks, size: loaded };
+      },
+      /**
+       *
+       * @param {string | URL} blobURL
+       * @param {Record<string, unknown>} [_data]
+       * @param {(evt: { loaded: number; total: number; }) => void} [onprogress]
+       * @returns {Promise<Blob>}
+       */
+      $blob(blobURL, _data, onprogress) {
+        return new Promise((resolve, reject) => {
+          if (isEmpty(_data) || isObj(_data) & !Object.is(_data, config.data))
+            _data = sanitizeConfig(_data, config.data);
+          /**
+           * @param {string | number} status
+           */
+          const fail = (status) =>
+            reject(
+              new Error(`status: ${status} finalURL: ${blobURL}`, { cause: 'Network.gmBlob' })
+            );
+          $GM.xmlHttpRequest({
+            url: blobURL,
+            method: 'GET',
+            responseType: 'blob',
+            anonymous: Object.is(_data?.credentials, 'omit'),
+            headers: _data?.referrer ? { Referer: _data.referrer } : undefined,
+            onprogress,
+            onload(r) {
+              if (r.status >= 200 && r.status < 300 && r.response) {
+                resolve(r.response);
+              } else {
+                fail(r.status);
+              }
+            },
+            onerror: (r) => fail(r?.status ?? 0),
+            ontimeout: () => fail('timeout'),
+            onabort: () => fail('aborted')
+          });
+        });
+      }
+    };
+  }
+  /**
    * @param {number} bytes
    * @param {number} [decimals]
    * @returns {string}
@@ -1646,25 +3337,13 @@ class Network extends null {
       : `${+((evt.loaded / evt.total) * 100).toFixed(2)}%`;
   }
   /**
-   *
-   * @param {string | URL} pageURL
-   * @param {VMScriptGMXHRDetails<Document> | RequestInit} [data]
-   * @param {boolean} [useFetch]
-   * @returns {Promise<Document>}
-   */
-  static async doc(pageURL, data, useFetch) {
-    return await Network.req(pageURL, 'GET', 'document', data, useFetch);
-  }
-  /**
-   *
    * @param {string | URL} chunkURL
    * @param {VMScriptGMXHRDetails<Response> | RequestInit} [data]
    * @param {(evt: { loaded: number; total: number; }) => void} onProgress
    * @returns {Promise<{ chunks: Uint8Array[]; size: number }>}
    */
-  static async fetchChunks(chunkURL, data, onProgress) {
-    /** @type {Response} */
-    const resp = await Network.req(chunkURL, 'GET', 'basic', { timeout: 0, ...data }, true);
+  static async $chunks(chunkURL, data, onProgress) {
+    const resp = await fetch(new Request(chunkURL, data));
     const total = Number(resp.headers.get('Content-Length')) || 0;
     if (!resp.body || !isFN(resp.body.getReader)) {
       const buf = new Uint8Array(await resp.arrayBuffer());
@@ -1695,7 +3374,7 @@ class Network extends null {
    * @param {(evt: { loaded: number; total: number; }) => void} [onprogress]
    * @returns {Promise<Blob>}
    */
-  static gmBlob(blobURL, data, onprogress) {
+  static $blob(blobURL, data, onprogress) {
     return new Promise((resolve, reject) => {
       /**
        * @param {string | number} status
@@ -1721,6 +3400,56 @@ class Network extends null {
         onabort: () => fail('aborted')
       });
     });
+  }
+  /**
+   * @template {ArrayBuffer} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<R>}
+   */
+  static async arrayBuffer(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'arraybuffer', data, useFetch);
+  }
+  /**
+   * @template {Document} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<R>}
+   */
+  static async doc(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'document', data, useFetch);
+  }
+  /**
+   * @template {Record<PropertyKey, unknown>} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<R>}
+   */
+  static async json(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'json', data, useFetch);
+  }
+  /**
+   * @template {string} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [data]
+   * @param {boolean} [useFetch]
+   * @returns {Promise<R>}
+   */
+  static async text(pageURL, data, useFetch) {
+    return await Network.req(pageURL, 'GET', 'text', data, useFetch);
+  }
+  /**
+   * @template {Response} R
+   * @param {string | URL} pageURL
+   * @param {VMScriptGMXHRDetails<R> | RequestInit} [_data]
+   * @param {boolean} [_useFetch]
+   * @returns {Promise<R>}
+   */
+  static async basic(pageURL, _data, _useFetch) {
+    return await Network.req(pageURL, 'basic', _data, _useFetch);
   }
 }
 //#endregion
@@ -1790,8 +3519,8 @@ class MainUserJS extends Base {
           sty = make('style', { textContent: css });
           parent.append(sty);
         }
-        sty.dataset.insertedBy = $GM.info.script.name;
         sty.dataset.role = role;
+        sty.dataset.insertedBy = $GM.info.script.name;
         return sty;
       } catch (ex) {
         con.err(ex);
@@ -1807,8 +3536,8 @@ class MainUserJS extends Base {
     shadow.append(root);
     this._mph_.root = root;
     defer(() => {
-      this.dataset.insertedBy = $GM.info.script.name;
       this.dataset.role = 'primary-container';
+      this.dataset.insertedBy = $GM.info.script.name;
     });
   }
   get injected() {
@@ -1854,13 +3583,22 @@ class Root extends Base {
     jable: { domains: ['jable.tv', 'fs1.app'] },
     missav: { domains: ['missav.ai', 'missav.ws', 'missav.com'] }
   };
+  constructor() {
+    super();
+    this.current = url;
+  }
   /**
-   * Resolves `input` without touching any state.
-   * @template {string | URL | Location} I
-   * @param {I} [input]
    * @returns {Omit<SiteInfo, "router">}
    */
-  static resolve(input = Page.location.href) {
+  get current() {
+    return this._mph_;
+  }
+  /**
+   * @template {string | URL | Location} I
+   * @param {I} [input]
+   */
+  set current(input) {
+    let obj = {};
     try {
       const webpage = toURL(input);
       const host = getHostname(webpage.hostname);
@@ -1917,17 +3655,40 @@ class Root extends Base {
         [...routes].find(([, reg]) =>
           isRegExp(reg) ? reg.test(webpage.pathname) : reg === webpage.pathname
         )?.[0] ?? 'Unknown';
-      return { webpage, host, root, path };
+      obj = { webpage, host, root, path };
     } catch {
-      return { webpage: new URL(BLANK_PAGE), host: 'blank', root: 'blank', path: 'Unknown' };
+      obj = { webpage: new URL(BLANK_PAGE), host: 'blank', root: 'blank', path: 'Unknown' };
+    } finally {
+      this._mph_ = obj;
     }
   }
+  get webpage() {
+    return this.current.webpage ?? null;
+  }
+  get host() {
+    return this.current.host ?? null;
+  }
+  get path() {
+    return this.current.path ?? null;
+  }
+  get root() {
+    return this.current.root ?? null;
+  }
+  get router() {
+    return this.current.router ?? null;
+  }
   /**
-   * Site palette, applied as CSS variables.
-   * @param {string} root
-   * @returns {Record<string, string>}
+   * @param {{ push: (path: string) => unknown } | null} pageRouter
    */
-  static palette(root) {
+  set router(pageRouter) {
+    if (isNull(pageRouter)) {
+      this.current.router = null;
+    } else {
+      this.current.router = pageRouter;
+    }
+  }
+  get palette() {
+    const { root = '' } = this.current;
     if (/tube8/.test(root)) {
       return {
         'mph-site-color': 'hsl(201, 64%, 40%)',
@@ -1982,89 +3743,6 @@ class Root extends Base {
     };
   }
   /**
-   * Where the floating button sits, as `--mph-position-*` values.
-   * @param {string} [corner] - `auto` (website default), `top-left`, `top-right`, `bottom-left` or `bottom-right`
-   * @param {string} [root] - Website
-   * @param {boolean} [mobile]
-   * @returns {Record<string, string>}
-   */
-  static placement(corner = 'auto', root = 'default', mobile = isMobile) {
-    /**
-     * Default spot of the floating button, `[corner, distance from the edge in rem]`.
-     *
-     * Keeps it clear of what websites pin to their corners: bottom navigation bars on phones,
-     * "live cams" / chat popups on desktop.
-     * @type {Record<string, { desktop: [string, number]; mobile: [string, number] }>}
-     */
-    const SPOTS = {
-      default: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 4.5] },
-      onlyfans: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 5] },
-      xhamster: { desktop: ['bottom-left', 1], mobile: ['bottom-right', 4.5] }
-    };
-    const spot = (SPOTS[root] ?? SPOTS.default)[mobile ? 'mobile' : 'desktop'];
-    const [where, lift] = /^(top|bottom)-(left|right)$/.test(corner) ? [corner, 1] : spot;
-    const [vertical, horizontal] = where.split('-');
-    const safe = (/** @type {string} */ edge) => `env(safe-area-inset-${edge}, 0px)`;
-    /** @param {string} edge @param {number} rem */
-    const at = (edge, rem) => `calc(${rem}rem + ${safe(edge)})`;
-    return {
-      'mph-position-top': vertical === 'top' ? at('top', lift) : 'auto',
-      'mph-position-bottom': vertical === 'bottom' ? at('bottom', lift) : 'auto',
-      'mph-position-left': horizontal === 'left' ? at('left', 1) : 'auto',
-      'mph-position-right': horizontal === 'right' ? at('right', 1) : 'auto'
-    };
-  }
-  constructor() {
-    super();
-
-    this.current = url;
-  }
-  /**
-   * @returns {SiteInfo}
-   */
-  get current() {
-    return this._mph_;
-  }
-  /**
-   * @template {string | URL | Location} I
-   * @param {I} [input]
-   */
-  set current(input) {
-    try {
-      this._mph_ = Root.resolve(input);
-    } catch {
-      this._mph_ = {};
-    }
-  }
-  get webpage() {
-    return this.current.webpage ?? null;
-  }
-  get host() {
-    return this.current.host ?? null;
-  }
-  get path() {
-    return this.current.path ?? null;
-  }
-  get root() {
-    return this.current.root ?? null;
-  }
-  get router() {
-    return this.current.router ?? null;
-  }
-  /**
-   * @param {{ push: (path: string) => unknown } | null} pageRouter
-   */
-  set router(pageRouter) {
-    if (isNull(pageRouter)) {
-      this.current.router = null;
-    } else {
-      this.current.router = pageRouter;
-    }
-  }
-  get palette() {
-    return Root.palette(this.current.root);
-  }
-  /**
    * Requests the page, resolves every video quality.
    * @returns {Promise<VideoData>}
    */
@@ -2076,12 +3754,12 @@ class Root extends Base {
       throw new Error('"webpage" is null', { cause: 'Root:find()' });
     }
     const { root: R, webpage: U, path: P } = this;
+    const params = U.href.includes('mydaddy.cc') ? [{ credentials: 'omit' }, true] : [];
     // mydaddy.cc (hqporner's player iframe) rejects the request made through the userscript
     // manager's own networking, a plain `fetch` with no cookies attached goes through instead
-    const doc = await (U.href.includes('mydaddy.cc')
-      ? Network.doc(U, { credentials: 'omit' }, true)
-      : Network.doc(U));
+    const doc = await Network.doc(U, ...params);
     const meta = readMeta(doc, U);
+    const docScripts = Array.from(doc.scripts, (e) => e?.textContent ?? '');
     /** @type {Set<string>} */
     const files = new Set();
     /** @type {Set<string>} */
@@ -2263,12 +3941,10 @@ class Root extends Base {
         ts.add(h);
       }
     } else if (/\.(xnxx|xvideos)\./.test(U.href)) {
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').find((t) =>
-        t.includes('html5player.setVideo')
-      );
+      const txt = docScripts.find((t) => t.includes('html5player.setVideo')) ?? '';
       /** @param {string} name */
       const setup = (name) =>
-        new RegExp(`html5player\\.${name}\\('((?:[^'\\\\]|\\\\.)*)'\\)`).exec(txt ?? '')?.[1];
+        new RegExp(`html5player\\.${name}\\('((?:[^'\\\\]|\\\\.)*)'\\)`).exec(txt)?.[1];
       const hls = setup('setVideoHLS');
       return {
         title: meta.title || htmlToText(setup('setVideoTitle')) || document.title,
@@ -2286,13 +3962,11 @@ class Root extends Base {
     } else if (R === 'youjizz') {
       // `dataEncodings` lists every quality twice: a direct file and its single-bitrate HLS
       // equivalent, plus one "Auto" adaptive playlist bundling a few of those qualities together
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').find((t) =>
-        t.includes('dataEncodings')
-      );
+      const txt = docScripts.find((t) => t.includes('dataEncodings')) ?? '';
       /** @type {{ quality?: string; filename?: string }[]} */
       let entries = [];
       try {
-        entries = extractJSON(txt ?? '', (txt ?? '').indexOf('dataEncodings'));
+        entries = extractJSON(txt, txt.indexOf('dataEncodings'));
       } catch (ex) {
         con.err(ex);
       }
@@ -2320,8 +3994,8 @@ class Root extends Base {
        * @param {Document} page
        */
       const spankBangFiles = (page) => {
-        for (const script of page.scripts) {
-          const [, raw] = /stream_data\s*=\s*(\{.*?\});/s.exec(script.textContent ?? '') ?? [];
+        for (const script of Array.from(page.scripts, (e) => e?.textContent ?? '')) {
+          const [, raw] = /stream_data\s*=\s*(\{.*?\});/s.exec(script) ?? [];
           if (!raw) continue;
           try {
             /** @type {Record<string, string[]>} */
@@ -2387,8 +4061,7 @@ class Root extends Base {
       // A packed script sets `source` (adaptive), `source1280` (1080p) and `source842` (720p)
       /** @param {Document} page */
       const sources = (page) => {
-        for (const script of page.scripts) {
-          const txt = script.textContent ?? '';
+        for (const txt of Array.from(page.scripts, (e) => e?.textContent ?? '')) {
           if (!txt.includes('eval(function(p,a,c,k,e,d)') || !txt.includes('m3u8')) continue;
           const setup = unpackJS(txt);
           return ['source', 'source1280', 'source842']
@@ -2407,7 +4080,7 @@ class Root extends Base {
         ts: sources(found)
       };
     } else if (R === '91porn') {
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const txt = docScripts.join('\n');
       const [, encoded = ''] = /strencode2\("([^"]+)"\)/.exec(txt) ?? [];
       const src = qs('source', parseHTML(decodeURIComponent(encoded)))?.getAttribute('src');
       return {
@@ -2422,11 +4095,9 @@ class Root extends Base {
     } else if (R === '91porna') {
       const decoder = (src) => {
         if (!src) {
-          const s = [...doc.scripts].find((x) =>
-            x.textContent.includes('eval(function(p,a,c,k,e,d)')
-          );
+          const s = docScripts.find((x) => x.includes('eval(function(p,a,c,k,e,d)'));
           if (!s) throw new Error('Packed script not found on this page');
-          src = s.textContent;
+          src = s;
         }
         const m = src.match(/\}\('([\s\S]*)',\s*(\d+),\s*(\d+),\s*'([\s\S]*?)'\.split\('\|'\)/);
         if (!m) throw new Error('Not a p,a,c,k,e,d blob');
@@ -2508,7 +4179,7 @@ class Root extends Base {
         };
       };
       const decoded = decodeVideo();
-      const obj = decodePlaylist(await Network.req(decoded.scriptUrl, 'GET', 'text'));
+      const obj = decodePlaylist(await Network.text(decoded.scriptUrl));
       poster = decoded.poster || obj.poster || meta.poster;
       return {
         title: meta.title || doc.title.trim() || document.title,
@@ -2518,7 +4189,7 @@ class Root extends Base {
       };
     } else if (R === 'jable') {
       const obj = {};
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const txt = docScripts.join('\n');
       const [, hlsUrl = ''] = /hlsUrl = '([^']+)'/.exec(txt) ?? [];
       if (!isEmpty(hlsUrl)) {
         obj.ts = [hlsUrl];
@@ -2535,7 +4206,7 @@ class Root extends Base {
       }
       return obj;
     } else if (R === 'eporner') {
-      const txt = Array.from(doc.scripts, (e) => e.textContent ?? '').join('\n');
+      const txt = docScripts.join('\n');
       const arr = Array.from(
         txt.matchAll(/EP\.video\.player\.(poster|vid|hash) = '(.*)'/g),
         ([, a, b]) => [a, b]
@@ -2563,7 +4234,7 @@ class Root extends Base {
       sp.append('embed', false);
       sp.append('supportedFormats', ['hls', 'dash', 'h265', 'vp9', 'av1', 'mp4']);
       sp.append('_', new Date().getTime());
-      const req = await Network.req(vidUrl, 'GET', 'json', { credentials: 'include' });
+      const req = await Network.json(vidUrl, { credentials: 'include' });
       const ts = req?.sources?.hls?.auto?.src;
       const files = req?.sources?.mp4;
       return {
@@ -2752,6 +4423,48 @@ class Root extends Base {
       con.err(ex);
     }
     return false;
+  }
+  /**
+   * Where the floating button sits, as `--mph-position-*` values.
+   * @param {string} [corner] - `auto` (website default), `top-left`, `top-right`, `bottom-left` or `bottom-right`
+   * @returns {Record<string, string>}
+   */
+  placement(corner = 'auto') {
+    /**
+     * Default spot of the floating button, `[corner, distance from the edge in rem]`.
+     *
+     * Keeps it clear of what websites pin to their corners: bottom navigation bars on phones,
+     * "live cams" / chat popups on desktop.
+     * @type {Record<string, { desktop: [string, number]; mobile: [string, number] }>}
+     */
+    const SPOTS = {
+      default: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 4.5] },
+      onlyfans: { desktop: ['bottom-right', 1], mobile: ['bottom-right', 5] },
+      xhamster: { desktop: ['bottom-left', 1], mobile: ['bottom-right', 4.5] }
+    };
+    const spot = (SPOTS[this.root] ?? SPOTS.default)[isMobile ? 'mobile' : 'desktop'];
+    const [where, lift] = /^(top|bottom)-(left|right)$/.test(corner) ? [corner, 1] : spot;
+    const [vertical, horizontal] = where.split('-');
+    /**
+     * @template {string} E
+     * @param {E} edge
+     * @returns { `env(safe-area-inset-${E}, 0px)` }
+     */
+    const safe = (edge) => `env(safe-area-inset-${edge}, 0px)`;
+    /**
+     * @template {string} E
+     * @template {number} R
+     * @param {E} edge
+     * @param {R} rem
+     * @returns { `calc(${R}rem + ${E})` }
+     */
+    const at = (edge, rem) => `calc(${rem}rem + ${safe(edge)})`;
+    return {
+      'mph-position-top': vertical === 'top' ? at('top', lift) : 'auto',
+      'mph-position-bottom': vertical === 'bottom' ? at('bottom', lift) : 'auto',
+      'mph-position-left': horizontal === 'left' ? at('left', 1) : 'auto',
+      'mph-position-right': horizontal === 'right' ? at('right', 1) : 'auto'
+    };
   }
 }
 
@@ -3055,7 +4768,6 @@ class MainBody extends Base {
     container.init();
     const video = post.variant === 'video';
     const activate = video || container.toolbar._active === null;
-    /** @type {MediaGroup} */
     const group = this.groups.getOrInsertComputed(post.groupKey, (key) => {
       /** @type {List} */
       const pane = make('mph-list', 'mph-feed hidden', { dataset: { host: key } });
@@ -3500,8 +5212,7 @@ class ConfigElement extends Base {
    * Builds the settings page.
    */
   build() {
-    if (typeof container === 'undefined') return;
-    if (this.built) return;
+    if (this.built || typeof container === 'undefined') return;
     this.built = true;
     const savebtn = make('mph-btn', 'save', {
       textContent: i18n$('save'),
@@ -3559,11 +5270,10 @@ class ConfigElement extends Base {
       const lb = make('label', 'sub-section', { dataset: { config: key } });
       lb.append(make('mu-js', { textContent: label }));
       const { options, ...rest } = attrs;
-      const inp = /** @type {HTMLInputElement} */ (
+      const inp =
         type === 'select'
           ? make('select', { className: 'mph-select' })
-          : make('input', { type, ...rest })
-      );
+          : make('input', { type, ...rest });
       if (type === 'select') {
         for (const value of options)
           inp.append(make('option', { value, textContent: i18n$(value) }));
@@ -3610,8 +5320,8 @@ class ConfigElement extends Base {
       this.rows.push({ key, elem: inp, type });
       return lb;
     };
-    if ($GM.isGM) makeRow(sections.general, i18n$('userjs_autoinject'), 'autoinject', 'checkbox');
-    makeRow(sections.general, i18n$('userjs_fullscreen'), 'autoexpand', 'checkbox');
+    if ($GM.isGM) makeRow(sections.general, i18n$('autoinject'), 'autoinject', 'checkbox');
+    makeRow(sections.general, i18n$('fullscreen'), 'autoexpand', 'checkbox');
     makeRow(sections.general, i18n$('clear_tab_cache'), 'clearTabCache', 'checkbox');
     makeRow(sections.general, i18n$('position'), 'position', 'select', {
       options: ['auto', 'top-left', 'top-right', 'bottom-left', 'bottom-right']
@@ -3927,7 +5637,7 @@ class Toolbar extends Base {
     for (const evt of [...this._mph_.events].filter((event) => event.type === type)) {
       try {
         if (isFN(evt.listener)) {
-          /** @type {Function} */ (evt.listener).call(this, ...args);
+          evt.listener.call(this, ...args);
         }
       } catch (ex) {
         con.err(ex);
@@ -4040,20 +5750,22 @@ for (const [name, constructor] of customElementMap.entries()) {
  * HTTP Live Streaming, merges the segments of a playlist into a single file.
  */
 class mphHLS {
+  /** @type {ReturnType<typeof Network.create>} */
+  net;
   /**
    * @param {string[]} playlists - URLs of the (master) playlist, mirrors are tried in order
    * @param {Record<string, unknown>} [data] - Request options
    * @param {?HTMLElement} [$el] - Element that displays the progress
    * @param {string} [root] - Website "root" name
    */
-  constructor(playlists, data = {}, $el = null, root = container.root.root) {
+  constructor(playlists = [], data = {}, $el = null, root = container.root.root) {
     this.urls = playlists;
-    this.data = data;
     this.$el = $el;
     /** File extension of the merged file */
     this.ext = 'ts';
     /** Use the userscript manager for segments, `fetch` is usually blocked by CORS */
     this.viaGM = /xhamster/.test(root);
+    this.net = Network.create({ data });
   }
   /**
    * Resolves a playlist entry against the playlist that lists it.
@@ -4062,13 +5774,6 @@ class mphHLS {
    */
   resolve(ref, from) {
     return toURL(ref, from).href.replace(/m3u8\/\//g, 'm3u8/');
-  }
-  /**
-   * @param {string} playlistURL
-   * @returns {Promise<string>}
-   */
-  async req(playlistURL, responseType = 'text') {
-    return await Network.req(playlistURL, 'GET', responseType, this.data);
   }
   /**
    * Reads a playlist: every line that is not a tag is a URI (RFC 8216), of a variant in a master playlist
@@ -4113,19 +5818,20 @@ class mphHLS {
    * @returns {Promise<BlobPart[]>}
    */
   async segment(segmentURL) {
+    const { net } = this;
     /** @type {unknown} */
     let last;
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         if (!this.viaGM) {
           try {
-            return (await Network.fetchChunks(segmentURL, this.data)).chunks;
+            return (await net.$chunks(segmentURL)).chunks;
           } catch (ex) {
             if (!$GM.isGM) throw ex;
             this.viaGM = true;
           }
         }
-        return [await Network.gmBlob(segmentURL, this.data)];
+        return [await net.$blob(segmentURL)];
       } catch (ex) {
         last = ex;
         await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
@@ -4140,6 +5846,7 @@ class mphHLS {
    */
   async merge(playlist, playlistURL) {
     if (isEmpty(playlist.segments)) throw new Error('No segments found', { cause: 'mphHLS.merge' });
+    const { net } = this;
     /** @type {BlobPart[]} */
     const parts = [];
     if (playlist.map) {
@@ -4155,7 +5862,7 @@ class mphHLS {
       const encryptedHls = async (m3u8Url) => {
         // parse segment URLs (absolute or relative)
         const base = toURL(m3u8Url);
-        const text = (await this.req(base)).trim();
+        const text = (await net.text(base)).trim();
         // parse key + IV
         const keyLine = text.match(/#EXT-X-KEY:([^\n]+)/)[1];
         const keyUri = keyLine.match(/URI="([^"]+)"/)[1];
@@ -4168,22 +5875,15 @@ class mphHLS {
 
         /**
          * Get key
-         * @type {ArrayBuffer}
          */
-        const keyBuf = await this.req(
-          keyUri.includes('//') ? keyUri : toURL(keyUri, base),
-          'arraybuffer'
-        );
+        const keyBuf = await net.arrayBuffer(keyUri.includes('//') ? keyUri : toURL(keyUri, base));
         const cryptoKey = await crypto.subtle.importKey('raw', keyBuf, { name: 'AES-CBC' }, false, [
           'decrypt'
         ]);
 
         const parts = [];
         for (const url of segs) {
-          /**
-           * @type {ArrayBuffer}
-           */
-          const enc = await this.req(url, 'arraybuffer');
+          const enc = await net.arrayBuffer(url);
           const dec = await crypto.subtle.decrypt({ name: 'AES-CBC', iv }, cryptoKey, enc);
           parts.push(new Uint8Array(dec));
           done++;
@@ -4235,20 +5935,21 @@ class mphHLS {
    * @returns {Promise<Blob>}
    */
   async build(url) {
+    const { net } = this;
     let base = url;
-    let text = (await this.req(base)).trim();
+    let text = (await net.text(base)).trim();
     if (text.startsWith('[{')) {
       // Pornhub lists the playlists as JSON
       const hls = JSON.parse(text).find((e) => e.format === 'hls' && e.defaultQuality);
       base = hls?.videoUrl;
-      text = (await this.req(base)).trim();
+      text = (await net.text(base)).trim();
     }
     const master = mphHLS.parse(text);
     let last = new Error('No qualities found', { cause: 'mphHLS.build' });
     for (const uri of master.variants.length ? master.variants.map((v) => v.uri) : [null]) {
       try {
         const playlistURL = uri ? this.resolve(uri, base) : base;
-        const playlist = uri ? mphHLS.parse((await this.req(playlistURL)).trim()) : master;
+        const playlist = uri ? mphHLS.parse((await net.text(playlistURL)).trim()) : master;
         msg(`Building cache for "${playlistURL.split(/[/?]/).filter(Boolean).pop()}"`);
         const blob = await this.merge(playlist, playlistURL);
         msg('Cache complete!', 2500);
@@ -4285,10 +5986,8 @@ class Container {
     toast: new Timeout()
   };
   constructor() {
-    this.webpage = url;
-    this.host = getHostname(url.hostname);
     con.onError = (...msg) => this.showError(...msg);
-    window.addEventListener('pagehide', this, false);
+    ael(window, 'pagehide', this, false);
   }
   /**
    * The element inserted into the page.
@@ -4334,7 +6033,7 @@ class Container {
         autocomplete: 'off',
         spellcheck: false,
         type: 'text',
-        placeholder: i18n$('search_placeholder')
+        placeholder: i18n$('search')
       });
       this.footer = make('mph-row', 'mph-footer');
       /** @type {Toolbar} */
@@ -4422,14 +6121,14 @@ class Container {
       } else if (host.startsWith(T._mph_.protocal)) {
         T.intFN(host);
       } else {
-        this.urlBar.placeholder = i18n$('search_placeholder');
+        this.urlBar.placeholder = i18n$('search');
         dom.cl.remove(L.groups.get(host)?.pane ?? [], 'hidden');
       }
     });
     T.addListener('internal', (host) => {
       if (host === 'settings') {
         this.cfgpage.build();
-        this.urlBar.placeholder = i18n$('search_settings');
+        this.urlBar.placeholder = i18n$('settings');
         dom.cl.remove(this.cfgpage, 'hidden');
       }
     });
@@ -4444,10 +6143,9 @@ class Container {
         }
       }
       if (tab.classList.contains('active')) {
-        const sibling = /** @type {?HTMLElement} */ (
-          [tab.nextElementSibling, tab.previousElementSibling].find(
-            (e) => e?.localName === 'tab-content'
-          )
+        /** @type {?HTMLElement} */
+        const sibling = [tab.nextElementSibling, tab.previousElementSibling].find(
+          (e) => e?.localName === 'tab-content'
         );
         if (sibling) {
           T.active(sibling);
@@ -4463,7 +6161,7 @@ class Container {
   #bindEvents() {
     const { root, mainframe } = this;
     ael(root, 'click', (evt) => {
-      this.handleClick(/** @type {MouseEvent} */ (evt)).catch((ex) => this.showError(ex));
+      this.handleClick(evt).catch((ex) => this.showError(ex));
     });
     ael(root, 'auxclick', (evt) => {
       // Middle click closes a tab
@@ -4549,7 +6247,7 @@ class Container {
    * @param {Event} event
    */
   handleEvent(event) {
-    if (event.type === 'pagehide' && !(/** @type {PageTransitionEvent} */ (event).persisted)) {
+    if (event.type === 'pagehide' && !event.persisted) {
       this.library.clear();
     }
   }
@@ -4579,7 +6277,7 @@ class Container {
    */
   setTheme() {
     const { style } = this.frame;
-    const base = { ...this.root.palette, ...Root.placement(cfg?.position, this.root.root) };
+    const base = { ...this.root.palette, ...this.root.placement(cfg?.position) };
     for (const [k, v] of Object.entries(base)) style.setProperty(`--${k}`, v);
     // The panel opens on the side of the button
     this.root.dataset.side = base['mph-position-left'] === 'auto' ? 'right' : 'left';
@@ -4636,7 +6334,7 @@ class Container {
     toast.clearAll();
     if (text === undefined || (typeof text === 'number' && time === undefined)) {
       if (typeof text === 'number') await toast.set(text);
-      this.toastElem?.classList.remove('show');
+      this.toastElem.classList.remove('show');
       return this;
     }
     if (!this.init()) return this;
@@ -4908,13 +6606,13 @@ class Container {
       try {
         const getBlob = async () => {
           try {
-            const { chunks } = await Network.fetchChunks(item.src, item.data, progressNotice());
+            const { chunks } = await Network.$chunks(item.src, item.data, progressNotice());
             return new Blob(chunks, { type: 'application/octet-stream' });
           } catch (ex) {
             // Most commonly CORS, a userscript manager request is not bound by it
             if (!$GM.isGM) throw ex;
             con.info('Fetch failed, retrying with "xmlHttpRequest":', errMsg(ex));
-            return Network.gmBlob(item.src, item.data, progressNotice()).catch(con.err);
+            return Network.$blob(item.src, item.data, progressNotice()).catch(con.err);
           }
         };
         const blob = await getBlob();
@@ -5231,7 +6929,7 @@ class Container {
         tabIndex: 0,
         dataset: { command }
       });
-      if (icon) IconSVG.load(/** @type {unknown} */ (icon), btn);
+      if (icon) IconSVG.load(icon, btn);
       else btn.textContent = text;
       return btn;
     };
@@ -5362,12 +7060,19 @@ const runSite = async (input) => {
   if (!isEmpty(input)) {
     R.current = input;
   }
-  const { root, path } = R.current;
-  const getUsername = (str) => {
-    return (str ?? root)
-      .split('/')
-      .filter((i) => !isBlank(i))
-      .at(-1);
+  const { root, path, webpage: pgUrl } = R.current;
+  /**
+   * @template {string} S
+   * @param {S} str
+   */
+  const getUser = (str) => {
+    if (isEmpty(str)) str = root;
+    return (
+      str
+        .split('/')
+        .filter((i) => !isBlank(i))
+        .at(-1) ?? root
+    );
   };
   /**
    * @template {Partial<VideoData>} O
@@ -5375,7 +7080,7 @@ const runSite = async (input) => {
    * @param {number} i
    * @returns {O}
    */
-  const toLibrary = (obj, i) => {
+  const toCard = (obj, i) => {
     const n = `${root}-${i ?? obj?.id ?? 0}`;
     const data = {
       id: n,
@@ -5394,22 +7099,294 @@ const runSite = async (input) => {
 
   con.log(root, path);
 
-  if (root === 'sxyprn') {
-    // The address of the video is set by the scripts of the page
-    const player = await waitFor(() => {
-      /** @type {?HTMLVideoElement} */
-      const el = qs('#player_el');
-      return el?.src && el.src !== window.location.href ? el : null;
-    }, 30000);
-    if (!player) return;
-    const title = (qs('.post_text')?.textContent ?? '').trim();
-    L.addVideo({
-      title: isEmpty(title) ? document.title : title.slice(0, 150),
-      poster: player.poster,
-      files: [player.src]
-    });
-  } else if (root === 'beeg') {
+  if (root === 'onlyfans') {
+    /**
+     * Media of an OnlyFans post, the API changed its shape over time: `full` / `thumb` / `source` used to be
+     * on the media itself, they are in `files` now.
+     * @param {Record<string, unknown>} m
+     * @returns {?PostMedia}
+     */
+    const ofMedia = (m) => {
+      if (!m || m.canView === false || m.hasError || m.isReady === false) return null;
+      const f = m.files ?? {};
+      /**
+       * @param {*} v
+       * @returns {string | undefined}
+       */
+      const url = (v) => {
+        return typeof v === 'string' ? v : isObj(v) && !isEmpty(v?.url) ? v.url : undefined;
+      };
+      const type = /^(video|photo|gif|audio)$/.test(m.type) ? m.type : 'video';
+      const preview = url(f.preview) ?? url(m.preview);
+      const thumb = url(f.thumb) ?? url(m.thumb) ?? url(f.squarePreview) ?? url(m.squarePreview);
+      // The original, otherwise the highest quality
+      const [best] = Object.entries(m.videoSources ?? {})
+        .map(([quality, v]) => [parseInt(quality, 10) || 0, url(v)])
+        .filter(([, u]) => u)
+        .sort(([a], [b]) => Number(b) - Number(a));
+      let src =
+        url(m.full) ??
+        url(f.full) ??
+        url(m.src) ??
+        (type === 'photo' ? preview : undefined) ??
+        best?.[1];
+      // A protected video has nothing to play or download, only its preview image
+      const drm = !src && Boolean(url(f.drm?.manifest?.hls));
+      if (!src && !drm) return null;
+      if (f.drm && 'manifest' in f.drm) {
+        const type = 'dash';
+        const u = toURL(f.drm.manifest[type]);
+        u.pathname = u.pathname.replace(/\.mpd/, '_source.mp4');
+        const sp = u.searchParams;
+        for (const [k, v] of Object.entries(f.drm.signature[type])) {
+          if (k.includes('Policy')) {
+            sp.append('Policy', v);
+          } else if (k.includes('Signature')) {
+            sp.append('Signature', v);
+          } else if (k.includes('Key-Pair-Id')) {
+            sp.append('Key-Pair-Id', v);
+          }
+        }
+        src = u.toString();
+      }
+      const duration = m.duration ?? m.source?.duration;
+      return {
+        id: String(m.id),
+        type,
+        src,
+        drm,
+        preview: !isEmpty(preview),
+        poster: preview ?? thumb,
+        thumb: thumb ?? preview,
+        duration: duration ? fancyTimeFormat(duration) : undefined
+      };
+    };
+    /** Post id + number of media, a post is read again when its media change @type {Set<string>} */
+    const seen = new Set();
+    /** @type {Map<string, Record<string, unknown>>} */
+    const users = new Map();
+    /** `author` / `fromUser` are either an id or a user object @param {unknown} v */
+    const userOf = (v) => users.get(String(isObj(v) ? v.id : v));
+    /**
+     * @param {Record<string, unknown>[]} posts
+     */
+    const filterPosts = (posts) => {
+      for (const p of posts) {
+        if (!isObj(p) || !Array.isArray(p.media) || p.isMediaReady === false) continue;
+        const sig = `${p.id}:${p.media.length}`;
+        if (seen.has(sig)) continue;
+        const user =
+          userOf(p.author) ?? userOf(p.fromUser) ?? userOf(p.withUser) ?? userOf(p.chatId);
+        // The post is retried once its user is known
+        if (!user?.name) continue;
+        seen.add(sig);
+        const previews = new Set(toArray(p.previews).map(String));
+        const media = p.media
+          .map(ofMedia)
+          .filter((m) => m !== null)
+          .map((m) => ({ ...m, preview: previews.has(m.id) }));
+        if (isEmpty(media)) continue;
+        L.addPost({
+          id: String(p.id),
+          variant: 'post',
+          groupKey: String(user.id),
+          groupTitle: user.name,
+          user: { name: user.name, username: user.username, avatar: user.avatar },
+          date: p.postedAt ?? p.createdAt,
+          price: p.price,
+          isFree: p.isFree,
+          isMessage: p.responseType === 'message' || 'fromUser' in p,
+          text: htmlToText(p.text),
+          original:
+            p.responseType === 'message' || 'fromUser' in p
+              ? `/my/chats/chat/${user.id}/?firstId=${p.id}`
+              : `/${p.id}/${user.username}`,
+          media
+        });
+      }
+    };
+    const ofDiag = (() => {
+      const RULES_URL =
+        'https://raw.githubusercontent.com/DATAHOARDERS/dynamic-rules/refs/heads/main/onlyfans.json';
+      const DROPPABLE = new Set([]);
+      function normalizeRules(r) {
+        let prefix = r.prefix ?? r.start,
+          suffix = r.suffix ?? r.end;
+        if ((prefix == null || suffix == null) && typeof r.format === 'string') {
+          const p = r.format.split(':');
+          prefix ??= p[0];
+          suffix ??= p[p.length - 1];
+        }
+        return {
+          static_param: r.static_param,
+          checksum_indexes: r.checksum_indexes,
+          checksum_constant: r.checksum_constant,
+          prefix,
+          suffix,
+          app_token: r.app_token,
+          remove_headers: (r.remove_headers ?? []).filter((h) => DROPPABLE.has(h))
+        };
+      }
+      async function sha1hex(s) {
+        const d = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(s));
+        return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
+      }
+      async function makeSign({ path, userId, rules, time }) {
+        const t = String(time);
+        const sha1 = await sha1hex([rules.static_param, t, path, String(userId)].join('\n'));
+        const checksum =
+          rules.checksum_indexes.reduce((a, i) => a + sha1.charCodeAt(i), 0) +
+          rules.checksum_constant;
+        return {
+          sign: [rules.prefix, sha1, Math.abs(checksum).toString(16), rules.suffix].join(':'),
+          time: t
+        };
+      }
+      const getRules = async () =>
+        normalizeRules(await (await fetch(RULES_URL, { cache: 'no-store' })).json());
+      // Definitive staleness test: can the current feed reproduce a sign you captured in Network tab?
+      async function verifyAgainst({ time, path, userId, sign }) {
+        const rules = await getRules();
+        const mine = (await makeSign({ path, userId, rules, time })).sign;
+        const ok = mine === sign;
+        con.log(
+          ok
+            ? '✅ MATCH — feed reproduces your captured sign; signer is correct.'
+            : '❌ MISMATCH — feed cannot reproduce it; rules are stale/rotated.'
+        );
+        if (!ok) {
+          const a = sign.split(':'),
+            b = mine.split(':');
+          con.log('  captured:', sign);
+          con.log('  computed:', mine);
+          con.log(
+            '  prefix',
+            a[0],
+            '→',
+            b[0],
+            '| suffix',
+            a[3],
+            '→',
+            b[3],
+            '| sha1',
+            a[1] === b[1] ? 'same' : 'DIFF',
+            '| checksum',
+            a[2],
+            '→',
+            b[2]
+          );
+        }
+        return ok;
+      }
+      async function buildHeaders(reqURL) {
+        const rules = await getRules();
+        const userId = localStorage.getItem('user');
+        const c = qs('meta[property="og:image"]')?.getAttribute('content')?.trim() ?? '';
+        const [, ofRev] = /\/f\/(.*)\/images/.exec(c) || [];
+        const hash = (
+          await (await fetch(`https://cdn2.onlyfans.com/hash/?u=${userId}`)).text()
+        ).trim();
+        const u = typeof reqURL === 'string' ? toURL(reqURL) : reqURL;
+        const s = await makeSign({ path: u.pathname + u.search, userId, rules, time: Date.now() });
+        const headers = {
+          Accept: 'application/json, text/plain, */*',
+          'app-token': rules.app_token || '33d57ade8c02dbc5a333db99ff9ae26a',
+          'user-id': userId,
+          'x-bc': localStorage.getItem('bcTokenSha'),
+          'x-of-rev': ofRev,
+          'x-hash': hash,
+          ...s
+        };
+        for (const h of rules.remove_headers) delete headers[h];
+        return headers;
+      }
+      async function run(reqURL) {
+        if (typeof reqURL === 'string') reqURL = toURL(reqURL);
+        const headers = await buildHeaders(reqURL);
+        const resp = await fetch(reqURL, { credentials: 'include', headers });
+        const body = await resp.text();
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} — ${body.slice(0, 300)}`);
+        const data = JSON.parse(body);
+        return data;
+      }
+      return { run, verifyAgainst, buildHeaders };
+    })();
+    // `&beforePublishTime=${li.postedAtPrecise}`
+    const initArr = await Promise.all([
+      ofDiag.run('/api2/v2/posts?limit=100&order=publish_date_desc&format=infinite'),
+      ofDiag.run('/api2/v2/posts/paid/all?limit=100&format=infinite&offset=0')
+    ]);
+    for (const i of initArr) {
+      if (isObj(i) && Array.isArray(i.list)) {
+        /** @type {Promise<any>[]} */
+        const fetchArr = [];
+        const list = i.list.filter((li) => li.media.filter((m) => m.canView === true).length > 0);
+        for (const a of list) {
+          const author = a.author ?? a.fromUser ?? a.withUser ?? a.chatId;
+          if (!author) continue;
+          if ('email' in author) continue;
+          const id = String(author.id);
+          if (!users.has(id)) {
+            users.set(id, author);
+            fetchArr.push(
+              ofDiag.run(
+                `/api2/v2/users/${id}/posts?limit=100&order=publish_date_desc&skip_users=all&format=infinite&pinned=0&counters=0`
+              )
+            );
+            fetchArr.push(
+              ofDiag.run(`/api2/v2/chats/${id}/messages?limit=100&order=desc&skip_users=all`)
+            );
+            fetchArr.push(
+              ofDiag.run(
+                `/api2/v2/users/${id}/posts/streams?limit=100&order=publish_date_desc&skip_users=all&format=infinite&counters=0`
+              )
+            );
+          }
+        }
+        filterPosts(list);
+        Promise.all(fetchArr)
+          .then((arr) => {
+            for (const o of arr) {
+              if (isObj(o) && Array.isArray(o.list)) filterPosts(o.list);
+            }
+          })
+          .catch(con.err);
+      }
+    }
     // `__vue__` is only reliable once the content of the page is rendered
+    await query('main[id="content"]');
+    const app = await query('[id="app"]');
+    if (!app) return;
+    const appVue = await waitFor(() => app.__vue__, 120000, 250);
+    if (!appVue) {
+      con.err('OnlyFans: unable to find the Vue instance');
+      return;
+    }
+    R.router = appVue._routerRoot?.$options?.router ?? appVue.$router ?? null;
+    appVue.$store.watch((/** @type {OFStore} */ a) => {
+      // a.auth.user
+      // a.auth.visitorId
+      // a.init.currentRev
+      // a.hash.hash
+      try {
+        for (const u of Object.values(a.users?.items ?? {})) {
+          if (isObj(u) && u.id != null && !('email' in u)) users.set(String(u.id), u);
+        }
+        const toGrab = [
+          ...Object.values(a.posts?.items ?? {}),
+          ...Object.values(a.chats?.items ?? {}),
+          ...Object.values(a.chats?.messages ?? {})
+        ];
+        filterPosts(toGrab);
+      } catch (ex) {
+        con.dbg('Store:', errMsg(ex));
+      }
+      return undefined;
+    });
+    return;
+  }
+  if (root === 'beeg') {
+    // `__vue_app__` is only reliable once the content of the page is rendered
     await query('main.v-main');
     const app = await query('[id="app"]');
     if (!app) return;
@@ -5419,7 +7396,7 @@ const runSite = async (input) => {
       return;
     }
     R.router = app.__vue_app__?.config?.globalProperties?.$router ?? null;
-    const pathname = R.webpage.pathname;
+    const { pathname } = pgUrl;
     /** @type {Partial<VideoData>} */
     const fallback = {
       groupKey: 'beeg',
@@ -5529,152 +7506,38 @@ const runSite = async (input) => {
         }
       }
     }
-  } else if (root === 'onlyfans') {
-    // `__vue__` is only reliable once the content of the page is rendered
-    await query('main[id="content"]');
-    const app = await query('[id="app"]');
-    if (!app) return;
-    const appVue = await waitFor(() => app.__vue__, 120000, 250);
-    if (!appVue) {
-      con.err('OnlyFans: unable to find the Vue instance');
-      return;
-    }
-    R.router = appVue._routerRoot?.$options?.router ?? appVue.$router ?? null;
-    /**
-     * Media of an OnlyFans post, the API changed its shape over time: `full` / `thumb` / `source` used to be
-     * on the media itself, they are in `files` now.
-     * @param {Record<string, unknown>} m
-     * @returns {?PostMedia}
-     */
-    const ofMedia = (m) => {
-      if (!m || m.canView === false || m.hasError || m.isReady === false) return null;
-      const f = m.files ?? {};
-      /** @param {unknown} v */
-      const url = (v) => {
-        const u = typeof v === 'string' ? v : v?.url;
-        return typeof u === 'string' && u ? u : undefined;
-      };
-      const type = /^(video|photo|gif|audio)$/.test(m.type) ? m.type : 'video';
-      const preview = url(f.preview) ?? url(m.preview);
-      const thumb = url(f.thumb) ?? url(m.thumb) ?? url(f.squarePreview) ?? url(m.squarePreview);
-      // The original, otherwise the highest quality
-      const [best] = Object.entries(m.videoSources ?? {})
-        .map(([quality, v]) => [parseInt(quality, 10) || 0, url(v)])
-        .filter(([, u]) => u)
-        .sort(([a], [b]) => Number(b) - Number(a));
-      let src =
-        url(m.full) ??
-        url(f.full) ??
-        url(m.src) ??
-        (type === 'photo' ? preview : undefined) ??
-        best?.[1];
-      // A protected video has nothing to play or download, only its preview image
-      const drm = !src && Boolean(url(f.drm?.manifest?.hls));
-      if (!src && !drm) return null;
-      if (f.drm && 'manifest' in f.drm) {
-        const type = 'dash';
-        const u = toURL(f.drm.manifest[type]);
-        u.pathname = u.pathname.replace(/\.mpd/, '_source.mp4');
-        const sp = u.searchParams;
-        for (const [k, v] of Object.entries(f.drm.signature[type])) {
-          if (k.includes('Policy')) {
-            sp.append('Policy', v);
-          } else if (k.includes('Signature')) {
-            sp.append('Signature', v);
-          } else if (k.includes('Key-Pair-Id')) {
-            sp.append('Key-Pair-Id', v);
-          }
-        }
-        src = u.toString();
-      }
-      const duration = m.duration ?? m.source?.duration;
-      return {
-        id: String(m.id),
-        type,
-        src,
-        drm,
-        preview: !isEmpty(preview),
-        poster: preview ?? thumb,
-        thumb: thumb ?? preview,
-        duration: duration ? fancyTimeFormat(duration) : undefined
-      };
-    };
-    /** Post id + number of media, a post is read again when its media change @type {Set<string>} */
-    const seen = new Set();
-    /** @type {Map<string, Record<string, unknown>>} */
-    const users = new Map();
-    /** `author` / `fromUser` are either an id or a user object @param {unknown} v */
-    const userOf = (v) => users.get(String(isObj(v) ? v.id : v));
-    /**
-     * @param {unknown[]} posts
-     */
-    const filterPosts = (posts) => {
-      for (const p of posts) {
-        if (!isObj(p) || !Array.isArray(p.media) || p.isMediaReady === false) continue;
-        const sig = `${p.id}:${p.media.length}`;
-        if (seen.has(sig)) continue;
-        const user =
-          userOf(p.author) ?? userOf(p.fromUser) ?? userOf(p.withUser) ?? userOf(p.chatId);
-        // The post is retried once its user is known
-        if (!user?.name) continue;
-        seen.add(sig);
-        const previews = new Set(toArray(p.previews).map(String));
-        const media = p.media
-          .map(ofMedia)
-          .filter((m) => m !== null)
-          .map((m) => ({ ...m, preview: previews.has(m.id) }));
-        if (isEmpty(media)) continue;
-        L.addPost({
-          id: String(p.id),
-          variant: 'post',
-          groupKey: String(user.id),
-          groupTitle: user.name,
-          user: { name: user.name, username: user.username, avatar: user.avatar },
-          date: p.postedAt ?? p.createdAt,
-          price: p.price,
-          isFree: p.isFree,
-          isMessage: p.responseType === 'message' || 'fromUser' in p,
-          text: htmlToText(p.text),
-          original:
-            p.responseType === 'message' || 'fromUser' in p
-              ? `/my/chats/chat/${user.id}/?firstId=${p.id}`
-              : `/${p.id}/${user.username}`,
-          media
-        });
-      }
-    };
-    appVue.$store.watch((/** @type {Record<string, unknown>} */ a) => {
-      try {
-        for (const u of Object.values(a.users?.items ?? {})) {
-          if (isObj(u) && u.id != null) users.set(String(u.id), u);
-        }
-        /** @type {unknown[]} */
-        const toGrab = [
-          ...Object.values(a.posts?.items ?? {}),
-          ...Object.values(a.chats?.items ?? {}),
-          ...Object.values(a.chats?.messages ?? {})
-        ];
-        filterPosts(toGrab);
-      } catch (ex) {
-        con.dbg('OnlyFans store:', errMsg(ex));
-      }
-      return undefined;
+    return;
+  }
+
+  if (root === 'sxyprn') {
+    // The address of the video is set by the scripts of the page
+    const player = await waitFor(() => {
+      /** @type {?HTMLVideoElement} */
+      const el = qs('#player_el');
+      return el?.src && el.src !== window.location.href ? el : null;
+    }, 30000);
+    if (!player) return;
+    const title = qs('.post_text')?.textContent?.trim()?.slice(0, 150) ?? document.title;
+    L.addVideo({
+      title,
+      poster: player.poster,
+      files: [player.src]
     });
+    return;
   }
 
   if (path.includes('Video')) {
     L.addVideo(await R.find());
   } else if (path === 'GIF') {
-    const page = R.webpage;
-    const doc = await Network.doc(page);
+    const doc = await Network.doc(pgUrl);
     const nodes = ldNodes(doc).filter((n) => n.contentUrl || n.thumbnailUrl);
     L.addVideo({
       title: nodes[0]?.name ?? doc.title,
-      poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), page) : undefined,
-      files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), page)).filter(Boolean)
+      poster: nodes[0]?.contentUrl ? absURL(String(nodes[0].thumbnailUrl ?? ''), pgUrl) : undefined,
+      files: nodes.map((n) => absURL(String(n.contentUrl ?? n.thumbnailUrl), pgUrl)).filter(Boolean)
     });
   } else if (path === 'Shorties') {
-    const doc = await Network.doc(R.webpage);
+    const doc = await Network.doc(pgUrl);
     const token = qs('.slider-container', doc)?.dataset.token;
     /** @type {Set<string>} */
     const seen = new Set();
@@ -5690,7 +7553,7 @@ const runSite = async (input) => {
           const [def] = toArray(s.mediaDefinitions).filter((m) => m.format === 'mp4');
           if (!def) continue;
           /** @type {Array<{ videoUrl: string }>} */
-          const list = await Network.req(absURL(def.videoUrl, R.webpage));
+          const list = await Network.req(absURL(def.videoUrl, pgUrl));
           const files = toArray(list)
             .map((v) => v.videoUrl)
             .filter((v) => /\.mp4[.?]/.test(v) && !seen.has(v));
@@ -5706,8 +7569,7 @@ const runSite = async (input) => {
         }
       }
     };
-    for (const script of doc.scripts) {
-      const txt = script.textContent ?? '';
+    for (const txt of Array.from(doc.scripts, (e) => e?.textContent ?? '')) {
       const at = txt.search(/JSON_SHORTIES\s*=/);
       if (at < 0) continue;
       try {
@@ -5717,7 +7579,8 @@ const runSite = async (input) => {
       }
       break;
     }
-    window.addEventListener(
+    ael(
+      window,
       'scroll',
       async () => {
         const y = window.scrollY;
@@ -5729,7 +7592,7 @@ const runSite = async (input) => {
         try {
           page++;
           const params = Page.toSearchParams({ page: String(page), token });
-          const next = await Network.req(toURL(`/shorties/get?${params}`, R.webpage.origin));
+          const next = await Network.req(toURL(`/shorties/get?${params}`, pgUrl.origin));
           await makeData(next);
         } catch (ex) {
           con.err(ex);
@@ -5748,7 +7611,7 @@ const runSite = async (input) => {
       const title = img?.alt ?? qs('div > a > div', li)?.textContent?.trim();
       const poster = img?.dataset?.src ?? img?.src;
       if (isEmpty(vid) || isEmpty(poster)) continue;
-      toLibrary(
+      toCard(
         {
           files: [vid],
           title,
@@ -5769,7 +7632,7 @@ const runSite = async (input) => {
       const title = qs('.video-title', li)?.textContent?.trim();
       const overlay = qs('.thumb-overlay', li);
       const poster = qs('img', overlay)?.src;
-      toLibrary(
+      toCard(
         {
           id: overlay?.id,
           files: [li.href],
@@ -5793,7 +7656,7 @@ const runSite = async (input) => {
       const title = img?.alt ?? qs('.meta-data-title > a', li)?.textContent?.trim();
       const poster = img?.src;
       if (isEmpty(vid) || isEmpty(poster)) continue;
-      toLibrary(
+      toCard(
         {
           files: [vid],
           title,
@@ -5816,7 +7679,7 @@ const runSite = async (input) => {
       const title = img?.alt ?? qs('.title > a', li)?.textContent?.trim();
       const poster = img?.dataset?.src ?? img?.src;
       if (isEmpty(vid) || isEmpty(poster)) continue;
-      toLibrary(
+      toCard(
         {
           files: [vid],
           title,
@@ -5839,7 +7702,7 @@ const runSite = async (input) => {
       const title = img?.alt ?? qs('.mbtit > a', li)?.textContent?.trim();
       const poster = img?.dataset?.src ?? img?.src;
       if (isEmpty(vid) || isEmpty(poster)) continue;
-      toLibrary(
+      toCard(
         {
           files: [vid],
           title,
@@ -5861,7 +7724,7 @@ const runSite = async (input) => {
       const title = qs('.video-title > a', li)?.textContent?.trim();
       const poster = qs('.frame-wrapper img', li)?.dataset?.original;
       if (isEmpty(vid)) continue;
-      toLibrary(
+      toCard(
         {
           id: `${li.dataset.videoid}`,
           files: [vid],
@@ -5887,7 +7750,7 @@ const runSite = async (input) => {
           ? userElem?.textContent?.trim()
           : userElem?.title?.trim();
         const title = (qs('.title', li)?.title ?? qs('.title', li)?.textContent ?? root).trim();
-        toLibrary(
+        toCard(
           {
             id: `${dataset.id}`,
             groupKey: dataset.eventLabel?.trim() ?? root,
@@ -5902,7 +7765,7 @@ const runSite = async (input) => {
             },
             user: {
               name: userName ?? root,
-              username: getUsername(userElem?.href)
+              username: getUser(userElem?.href)
             }
           },
           i
@@ -5920,7 +7783,7 @@ const runSite = async (input) => {
         const userElem = qs('a.author-title-text', li);
         const title = li.ariaLabel;
         const p = qs('.thumb-image', li);
-        toLibrary(
+        toCard(
           {
             id: `${dataset.videoId}`,
             files: [a],
@@ -5933,7 +7796,7 @@ const runSite = async (input) => {
             },
             user: {
               name: userElem?.textContent?.trim() ?? root,
-              username: getUsername(userElem?.href)
+              username: getUser(userElem?.href)
             }
           },
           i
@@ -5941,8 +7804,7 @@ const runSite = async (input) => {
       }
     }
   } else if (root === 'youporn') {
-    const vidInfo = toURL(R.webpage.href);
-    vidInfo.pathname = '/getVideoInfo';
+    const vidInfo = toURL('/getVideoInfo', pgUrl);
     const sp = vidInfo.searchParams;
     for (const article of qsA('article.video-box')) {
       const dataset = article.dataset;
@@ -5954,7 +7816,7 @@ const runSite = async (input) => {
     if (Array.isArray(req)) {
       for (let i = 0; i < req.length; i++) {
         const o = req[i];
-        toLibrary(
+        toCard(
           {
             id: `${o.id}`,
             files: [o.link],
@@ -5968,7 +7830,7 @@ const runSite = async (input) => {
             poster: isMobile ? o.thumbMobile : o.thumbPC,
             user: {
               name: o.uploaderName,
-              username: getUsername(o.uploaderUrl)
+              username: getUser(o.uploaderUrl)
             }
           },
           i
@@ -5982,7 +7844,7 @@ const runSite = async (input) => {
         .split(/ |,/g)
         .filter((i) => i.startsWith('http'))
         .at(-1);
-      toLibrary({
+      toCard({
         id: `${li.dataset.videoId}`,
         files: [`/${li.dataset.videoId}`],
         title,
@@ -5994,7 +7856,7 @@ const runSite = async (input) => {
         },
         user: {
           name: li.dataset.uploaderName,
-          username: getUsername(qs('.author-title-text ', li)?.href)
+          username: getUser(qs('.author-title-text ', li)?.href)
         }
       });
     }
@@ -6004,7 +7866,7 @@ const runSite = async (input) => {
       if (a && a.href) {
         const userName = qs('.video-uploader__name', elem);
         const avatar = qs('.video-uploader-logo', elem)?.dataset?.backgroundImage;
-        toLibrary({
+        toCard({
           id: `${elem.dataset.videoId}`,
           title: a.ariaLabel.trim(),
           files: [a.href],
@@ -6015,7 +7877,7 @@ const runSite = async (input) => {
           },
           user: {
             name: userName?.textContent?.trim() ?? root,
-            username: getUsername(userName?.href),
+            username: getUser(userName?.href),
             avatar
           },
           poster: qs('.thumb-image-container__image', elem)?.src
@@ -6027,7 +7889,7 @@ const runSite = async (input) => {
       const poster = qs('img[x-ref]', li)?.src;
       const thumbUnder = qs('a[href]', li);
       if (!(thumbUnder?.href ?? '').includes('/video/')) continue;
-      toLibrary({
+      toCard({
         id: `${li.dataset.id}`,
         title: poster?.alt,
         files: [thumbUnder?.href],
@@ -6046,7 +7908,7 @@ const runSite = async (input) => {
       const thumbUnder = qs('.thumb-under > p > a', li);
       const uploader = qs('.uploader > a', li) ?? qs('.thumb-under .metadata a', li);
       if (isEmpty(thumbUnder?.href)) continue;
-      toLibrary({
+      toCard({
         id: `${li.dataset.id}`,
         title: thumbUnder?.title,
         files: [thumbUnder?.href],
@@ -6057,7 +7919,7 @@ const runSite = async (input) => {
         },
         user: {
           name: uploader?.textContent?.trim() ?? root,
-          username: getUsername(uploader?.href)
+          username: getUser(uploader?.href)
         },
         poster
       });
@@ -6072,7 +7934,7 @@ const runSite = async (input) => {
   //  */
   // const requestOptions = (root) => {
   //   if (/xhamster/.test(root)) {
-  //     return { credentials: 'omit', referrer: `${R.webpage.protocol}//${R.host}/` };
+  //     return { credentials: 'omit', referrer: `${pgUrl.protocol}//${R.host}/` };
   //   }
   //   return {};
   // };

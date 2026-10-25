@@ -9,23 +9,23 @@ import { loadLanguages } from '@userjs/i18n';
 import { compile } from 'sass-embedded';
 
 /**
- * @typedef { import('../typings/index.d.ts').UserJS } CFG
+ * @typedef { import('./index.d.ts').UserJS } CFG
  */
 
 const replaceTemplate = /\[\[(.*?)\]\]/g;
-const metadataTemplate = process.env.METADATA_TEMPLATE || '[[metadata]]';
+const metadataTemplate = process?.env?.METADATA_TEMPLATE || '[[metadata]]';
 
 const log = (/** @type {unknown[]} */ ...msg) => console.log('[LOG]', ...msg);
 const err = (/** @type {unknown[]} */ ...msg) => console.error('[ERROR]', ...msg);
 /**
- * Transform parameter into string
+ * Object to `[object *]`; tag: `[object RegExp]` gives `'RegExp'`
  * @template O
  * @param {O} obj
  * @returns {string}
  */
 function objToStr(obj) {
   try {
-    return Object.prototype.toString.call(obj).match(/\[object (.*)\]/)?.[1] || '';
+    return Object.prototype.toString.call(obj).slice(8, -1);
   } catch {
     return '';
   }
@@ -91,19 +91,6 @@ const isBlank = (obj) => {
     ? Object.is(obj.replaceAll('\0', '').trim(), '')
     : Object.is(toArray(obj, { keys: true }).length, 0);
 };
-// /**
-//  * Parameter is an empty `Array`, `JSON Object`, `Map`, `Set`, or `String`
-//  * @template O
-//  * @param {O} obj
-//  */
-// const isBlank = (obj) => {
-//   return (
-//     (typeof obj === 'string' && Object.is(obj.replaceAll('\0', '').trim(), '')) ||
-//     ((obj instanceof Set || obj instanceof Map) && Object.is(obj.size, 0)) ||
-//     (Array.isArray(obj) && Object.is(obj.length, 0)) ||
-//     (isObj(obj) && Object.is(Object.keys(obj).length, 0))
-//   );
-// };
 /**
  * Parameter is Empty
  * @template O
@@ -111,35 +98,24 @@ const isBlank = (obj) => {
  */
 const isEmpty = (obj) => isNull(obj) || isBlank(obj);
 /**
- * @template T
+ * @template {string} T
  * @template D
  * @param {T} template
  * @param {Record<PropertyKey, unknown> | Record<keyof D, D>} data
- * @returns {T | string}
+ * @returns {T}
  */
 const nano = (template, data) => {
+  let str = '';
   if (typeof template === 'string') {
-    return template.replace(replaceTemplate, (_, p1) => {
+    str = template.replace(replaceTemplate, (_, p1) => {
       // @ts-expect-error n/a
       return (p1 in data && data[p1]) || '';
     });
   }
-  return '';
+  return /** @type {T} */ (str);
 };
-// for (const i in keys.length) v = v[keys[i]];
-// const nano = (template, data) => {
-//   if (typeof template === 'string') {
-//     return template.replace(replaceTemplate, (_match, key) => {
-//       const keys = key.split('.');
-//       let v = data[keys.shift()];
-//       for (const i in keys.length) v = v[keys[i]];
-//       return isEmpty(v) ? '' : v;
-//     });
-//   }
-//   return '';
-// };
 /**
- * @param {import('node:fs').PathLike} filePath
+ * @param {string | URL} filePath
  * @param {BufferEncoding} encoding
  */
 const canAccess = async (filePath, encoding = 'utf-8') => {
@@ -151,24 +127,22 @@ const canAccess = async (filePath, encoding = 'utf-8') => {
     const data = await fs.promises.readFile(filePath, { encoding });
     return data.toString();
   }
-  return {
-    msg: `Cannot access provided filePath: ${filePath}`
-  };
+  return new Error(`Cannot access provided filePath: ${filePath}`, { cause: 'canAccess' });
 };
 /**
- * @param {import('node:fs').PathLike} filePath
+ * @param {string | URL} filePath
  * @param {BufferEncoding} encoding
  */
 const fileToJSON = async (filePath, encoding = 'utf-8') => {
   const testAccess = await canAccess(filePath, encoding);
   if (typeof testAccess !== 'string') {
-    throw new Error(testAccess.msg);
+    throw testAccess;
   }
   return JSON.parse(testAccess);
 };
 /**
  * @template {string | NodeJS.ArrayBufferView | Iterable<string | NodeJS.ArrayBufferView> | AsyncIterable<string | NodeJS.ArrayBufferView>} D
- * @param {import('node:fs').PathLike} destinationFilePath
+ * @param {string | URL} destinationFilePath
  * @param {D} data
  */
 const writeUserJS = async (destinationFilePath, data) => {
@@ -204,33 +178,38 @@ const addTo = (key, ...values) => {
   if (values.length === 0) {
     return '';
   }
-  if (dataMap.has(key)) {
-    if (compareArrays(dataMap.get(key), values)) {
-      return dataMap.get(key);
-    }
+  const existing = dataMap.getOrInsert(key, values);
+  if (existing === values || compareArrays(existing, values)) {
+    return existing;
   }
   dataMap.set(key, values);
-  return dataMap.get(key);
+  return values;
 };
 
 async function build() {
   try {
+    if (typeof process === 'undefined') {
+      return;
+    }
+    /**
+     * @template { { JS_ROOT: string; JS_ENV: string; JS_i18n: string; } } ENV
+     * @returns { ENV }
+     */
     const getEnv = () => {
-      const argv = minimist(process.argv.slice(2));
-      if (argv.JS_ROOT && argv.JS_ENV) {
-        return {
-          JS_ROOT: argv.JS_ROOT,
-          JS_ENV: argv.JS_ENV,
-          JS_i18n: `${argv.JS_ROOT}src/_locales`
-        };
+      let _env = /** @type {ENV} */ (process.env);
+      const { JS_ROOT = undefined, JS_ENV = undefined } = minimist(process.argv.slice(2));
+      if (typeof JS_ROOT === 'string' && typeof JS_ENV === 'string') {
+        _env = /** @type {ENV} */ ({
+          JS_ROOT: JS_ROOT,
+          JS_ENV: JS_ENV,
+          JS_i18n: `${JS_ROOT}src/_locales`
+        });
       }
-      return process.env;
+      return _env;
     };
     const { JS_ENV, JS_i18n } = getEnv();
+    /** @type { CFG[] } */
     const jsonRecords = await Promise.all([
-      // fileToJSON('./package.json').then(({ userJS }) => {
-      //   return userJS ?? {};
-      // }),
       fileToJSON('./UserJS.json')
         .then((userJS) => {
           return userJS ?? {};
@@ -241,11 +220,7 @@ async function build() {
     ]);
     if (isEmpty(jsonRecords))
       throw new Error('"UserJS.json" not found + no "userJS" key in package.json');
-    /**
-     * @type { CFG }
-     */
-    // @ts-expect-error n/a
-    const userJS = {};
+    const userJS = /** @type { CFG } */ ({});
     for (const r of jsonRecords) Object.assign(userJS, r);
     const isDev = isEmpty(JS_ENV) || JS_ENV === 'development';
     const buildUserJS = async () => {
@@ -432,11 +407,6 @@ async function build() {
       const wp = new Watchpack();
       let changed = new Set();
       wp.watch({ files: userJS.build.watch.files, directories: userJS.build.watch.directories });
-      // if (isEmpty(userJS.build.watch.files)) {
-      //   wp.watch(userJS.build.watch.dirs);
-      // } else {
-      //   wp.watch(userJS.build.watch.files, userJS.build.watch.dirs);
-      // }
       wp.on('change', (changedFile, mtime) => {
         if (mtime === null) {
           changed.delete(changedFile);

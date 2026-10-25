@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "يحسّن تجربة المشاهدة للبالغين: نظيفة وسريعة وسهلة."
+  },
+  "extShortDesc": {
+    "message": "نظيف وسريع وسهل"
+  },
+  "copy": {
+    "message": "نسخ"
+  },
+  "remove": {
+    "message": "إزالة"
+  },
+  "close": {
+    "message": "إغلاق"
+  },
+  "download": {
+    "message": "تنزيل"
+  },
+  "open": {
+    "message": "فتح"
+  },
+  "min": {
+    "message": "تصغير"
+  },
+  "max": {
+    "message": "تكبير"
+  },
+  "settings": {
+    "message": "الإعدادات"
+  },
+  "save": {
+    "message": "حفظ"
+  },
+  "reset": {
+    "message": "إعادة تعيين"
+  },
+  "general": {
+    "message": "عام"
+  },
+  "theme": {
+    "message": "السمة"
+  },
+  "free": {
+    "message": "مجاني"
+  },
+  "prev": {
+    "message": "السابق"
+  },
+  "next": {
+    "message": "التالي"
+  },
+  "auto": {
+    "message": "تلقائي"
+  },
+  "video": {
+    "message": "فيديو"
+  },
+  "videos": {
+    "message": "فيديوهات"
+  },
+  "photo": {
+    "message": "صورة"
+  },
+  "photos": {
+    "message": "صور"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "صور GIF"
+  },
+  "audio": {
+    "message": "صوت"
+  },
+  "audios": {
+    "message": "ملفات صوتية"
+  },
+  "message": {
+    "message": "رسالة"
+  },
+  "search": {
+    "message": "بحث"
+  },
+  "issue": {
+    "message": "مشكلة جديدة"
+  },
+  "autoinject": {
+    "message": "إظهار الزر عند تحميل الصفحة"
+  },
+  "fullscreen": {
+    "message": "الفتح بحجم مكبّر"
+  },
+  "newTab": {
+    "message": "علامة تبويب جديدة"
+  },
+  "newtab_hint": {
+    "message": "اكتب أو الصق رابط فيديو أو معرّفه في شريط العناوين ثم اضغط Enter."
+  },
+  "empty": {
+    "message": "لم يتم العثور على فيديوهات في هذه الصفحة."
+  },
+  "copy_all": {
+    "message": "نسخ رابط كل فيديو"
+  },
+  "download_all": {
+    "message": "تنزيل كل الفيديوهات"
+  },
+  "remove_all": {
+    "message": "إزالة كل الفيديوهات"
+  },
+  "import_export": {
+    "message": "استيراد / تصدير"
+  },
+  "import_config": {
+    "message": "استيراد الإعدادات"
+  },
+  "export_config": {
+    "message": "تصدير الإعدادات"
+  },
+  "clear_tab_cache": {
+    "message": "حذف فيديوهات علامة التبويب عند إغلاقها"
+  },
+  "limit_downloads": {
+    "message": "تنزيل فيديو واحد في كل مرة"
+  },
+  "auto_hls": {
+    "message": "إنشاء فيديوهات HLS تلقائيًا"
+  },
+  "native_player": {
+    "message": "تفضيل مشغّل الفيديو الأصلي"
+  },
+  "concurrency": {
+    "message": "التنزيلات المتزامنة"
+  },
+  "dtime": {
+    "message": "المدة قبل أن يتلاشى الزر"
+  },
+  "hls_load": {
+    "message": "الجلب من بث HLS"
+  },
+  "position": {
+    "message": "موضع الزر"
+  },
+  "free_preview": {
+    "message": "معاينة مجانية"
+  },
+  "drm_notice": {
+    "message": "محمي بتقنية DRM: لا يوجد ما يمكن تشغيله أو تنزيله."
+  },
+  "play_error": {
+    "message": "لا يستطيع المتصفح تشغيل هذا الفيديو. نزّله بدلًا من ذلك."
+  }
+}

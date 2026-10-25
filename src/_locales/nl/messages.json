@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Verbetert de kijkervaring voor volwassenen: schoon, snel en eenvoudig."
+  },
+  "extShortDesc": {
+    "message": "Schoon, snel en eenvoudig"
+  },
+  "copy": {
+    "message": "Kopiëren"
+  },
+  "remove": {
+    "message": "Verwijderen"
+  },
+  "close": {
+    "message": "Sluiten"
+  },
+  "download": {
+    "message": "Downloaden"
+  },
+  "open": {
+    "message": "Openen"
+  },
+  "min": {
+    "message": "Minimaliseren"
+  },
+  "max": {
+    "message": "Maximaliseren"
+  },
+  "settings": {
+    "message": "Instellingen"
+  },
+  "save": {
+    "message": "Opslaan"
+  },
+  "reset": {
+    "message": "Resetten"
+  },
+  "general": {
+    "message": "Algemeen"
+  },
+  "theme": {
+    "message": "Thema"
+  },
+  "free": {
+    "message": "Gratis"
+  },
+  "prev": {
+    "message": "Vorige"
+  },
+  "next": {
+    "message": "Volgende"
+  },
+  "auto": {
+    "message": "Automatisch"
+  },
+  "video": {
+    "message": "video"
+  },
+  "videos": {
+    "message": "video's"
+  },
+  "photo": {
+    "message": "foto"
+  },
+  "photos": {
+    "message": "foto's"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF's"
+  },
+  "audio": {
+    "message": "audio"
+  },
+  "audios": {
+    "message": "audiobestanden"
+  },
+  "message": {
+    "message": "Bericht"
+  },
+  "search": {
+    "message": "Zoeken"
+  },
+  "issue": {
+    "message": "Nieuw issue"
+  },
+  "autoinject": {
+    "message": "Toon de knop bij het laden van de pagina"
+  },
+  "fullscreen": {
+    "message": "Gemaximaliseerd openen"
+  },
+  "newTab": {
+    "message": "Nieuw tabblad"
+  },
+  "newtab_hint": {
+    "message": "Typ of plak een video-URL of -ID in de adresbalk en druk op Enter."
+  },
+  "empty": {
+    "message": "Geen video's gevonden op deze pagina."
+  },
+  "copy_all": {
+    "message": "URL van elke video kopiëren"
+  },
+  "download_all": {
+    "message": "Alle video's downloaden"
+  },
+  "remove_all": {
+    "message": "Alle video's verwijderen"
+  },
+  "import_export": {
+    "message": "Importeren / exporteren"
+  },
+  "import_config": {
+    "message": "Configuratie importeren"
+  },
+  "export_config": {
+    "message": "Configuratie exporteren"
+  },
+  "clear_tab_cache": {
+    "message": "Video's van een tabblad verwijderen als het wordt gesloten"
+  },
+  "limit_downloads": {
+    "message": "Eén video tegelijk downloaden"
+  },
+  "auto_hls": {
+    "message": "HLS-video's automatisch samenstellen"
+  },
+  "native_player": {
+    "message": "Eigen videospeler van de browser verkiezen"
+  },
+  "concurrency": {
+    "message": "Gelijktijdige downloads"
+  },
+  "dtime": {
+    "message": "Tijd voordat de knop vervaagt"
+  },
+  "hls_load": {
+    "message": "Ophalen uit HLS-stream"
+  },
+  "position": {
+    "message": "Positie van de knop"
+  },
+  "free_preview": {
+    "message": "Gratis voorbeeld"
+  },
+  "drm_notice": {
+    "message": "DRM-beveiligd: er is niets om af te spelen of te downloaden."
+  },
+  "play_error": {
+    "message": "De browser kan deze video niet afspelen. Download hem in plaats daarvan."
+  }
+}

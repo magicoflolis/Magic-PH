@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "वयस्क सामग्री देखने का अनुभव बेहतर बनाता है: साफ़, तेज़ और आसान।"
+  },
+  "extShortDesc": {
+    "message": "साफ़, तेज़ और आसान"
+  },
+  "copy": {
+    "message": "कॉपी करें"
+  },
+  "remove": {
+    "message": "हटाएँ"
+  },
+  "close": {
+    "message": "बंद करें"
+  },
+  "download": {
+    "message": "डाउनलोड करें"
+  },
+  "open": {
+    "message": "खोलें"
+  },
+  "min": {
+    "message": "छोटा करें"
+  },
+  "max": {
+    "message": "बड़ा करें"
+  },
+  "settings": {
+    "message": "सेटिंग्स"
+  },
+  "save": {
+    "message": "सहेजें"
+  },
+  "reset": {
+    "message": "रीसेट करें"
+  },
+  "general": {
+    "message": "सामान्य"
+  },
+  "theme": {
+    "message": "थीम"
+  },
+  "free": {
+    "message": "निःशुल्क"
+  },
+  "prev": {
+    "message": "पिछला"
+  },
+  "next": {
+    "message": "अगला"
+  },
+  "auto": {
+    "message": "स्वचालित"
+  },
+  "video": {
+    "message": "वीडियो"
+  },
+  "videos": {
+    "message": "वीडियो"
+  },
+  "photo": {
+    "message": "फ़ोटो"
+  },
+  "photos": {
+    "message": "फ़ोटो"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "ऑडियो"
+  },
+  "audios": {
+    "message": "ऑडियो"
+  },
+  "message": {
+    "message": "संदेश"
+  },
+  "search": {
+    "message": "खोजें"
+  },
+  "issue": {
+    "message": "नई समस्या"
+  },
+  "autoinject": {
+    "message": "पेज लोड होने पर बटन दिखाएँ"
+  },
+  "fullscreen": {
+    "message": "बड़ी विंडो में खोलें"
+  },
+  "newTab": {
+    "message": "नया टैब"
+  },
+  "newtab_hint": {
+    "message": "वीडियो का URL या ID एड्रेस बार में टाइप या पेस्ट करें और Enter दबाएँ।"
+  },
+  "empty": {
+    "message": "इस पेज पर कोई वीडियो नहीं मिला।"
+  },
+  "copy_all": {
+    "message": "सभी वीडियो के URL कॉपी करें"
+  },
+  "download_all": {
+    "message": "सभी वीडियो डाउनलोड करें"
+  },
+  "remove_all": {
+    "message": "सभी वीडियो हटाएँ"
+  },
+  "import_export": {
+    "message": "आयात / निर्यात"
+  },
+  "import_config": {
+    "message": "कॉन्फ़िग आयात करें"
+  },
+  "export_config": {
+    "message": "कॉन्फ़िग निर्यात करें"
+  },
+  "clear_tab_cache": {
+    "message": "टैब बंद होने पर उसके वीडियो हटाएँ"
+  },
+  "limit_downloads": {
+    "message": "एक बार में एक वीडियो डाउनलोड करें"
+  },
+  "auto_hls": {
+    "message": "HLS वीडियो अपने-आप बनाएँ"
+  },
+  "native_player": {
+    "message": "नेटिव वीडियो प्लेयर को प्राथमिकता दें"
+  },
+  "concurrency": {
+    "message": "एक साथ डाउनलोड"
+  },
+  "dtime": {
+    "message": "बटन धुंधला होने से पहले का समय"
+  },
+  "hls_load": {
+    "message": "HLS स्ट्रीम से प्राप्त करें"
+  },
+  "position": {
+    "message": "बटन की स्थिति"
+  },
+  "free_preview": {
+    "message": "निःशुल्क पूर्वावलोकन"
+  },
+  "drm_notice": {
+    "message": "DRM सुरक्षित: चलाने या डाउनलोड करने के लिए कुछ नहीं है।"
+  },
+  "play_error": {
+    "message": "ब्राउज़र यह वीडियो नहीं चला सकता। इसके बजाय इसे डाउनलोड करें।"
+  }
+}

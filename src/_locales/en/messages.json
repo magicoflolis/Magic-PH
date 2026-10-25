@@ -11,53 +11,17 @@
     "message": "Clean, quick, & easy",
     "description": "Must not exceed 112 characters"
   },
-  "userjs_name": {
-    "message": "MagicPH"
-  },
-  "userjs_description": {
-    "message": "A video downloader for various adult websites. Clean, easy, simple, and quick."
-  },
-  "userjs_autoinject": {
-    "message": "Show the button on page load"
-  },
-  "userjs_fullscreen": {
-    "message": "Open maximized"
-  },
-  "newTab": {
-    "message": "New Tab"
-  },
-  "newtab_hint": {
-    "message": "Type or paste a video URL or ID in the address bar and press Enter."
-  },
-  "empty": {
-    "message": "No videos found on this page."
-  },
-  "search_placeholder": {
-    "message": "Filter videos"
-  },
-  "search_settings": {
-    "message": "Settings"
-  },
   "copy": {
     "message": "Copy"
   },
-  "copy_all": {
-    "message": "Copy the URL of every video"
+  "remove": {
+    "message": "Remove"
   },
   "close": {
     "message": "Close"
   },
   "download": {
     "message": "Download"
-  },
-  "download_all": {
-    "message": "Download every video"
-  },
-  "remove": {
-    "message": "Remove"
-  },
-  "remove_all": {
-    "message": "Remove every video"
   },
   "open": {
     "message": "Open"
@@ -67,9 +31,6 @@
   },
   "max": {
     "message": "Maximize"
-  },
-  "issue": {
-    "message": "New issue"
   },
   "settings": {
     "message": "Settings"
@@ -86,36 +47,6 @@
   "theme": {
     "message": "Theme"
   },
-  "import_export": {
-    "message": "Import / Export"
-  },
-  "import_config": {
-    "message": "Import config"
-  },
-  "export_config": {
-    "message": "Export config"
-  },
-  "clear_tab_cache": {
-    "message": "Delete the videos of a tab when it is closed"
-  },
-  "limit_downloads": {
-    "message": "Download one video at a time"
-  },
-  "auto_hls": {
-    "message": "Build HLS videos automatically"
-  },
-  "native_player": {
-    "message": "Prefer native video player"
-  },
-  "concurrency": {
-    "message": "Simultaneous downloads"
-  },
-  "dtime": {
-    "message": "Time before the button fades"
-  },
-  "hls_load": {
-    "message": "Get from HLS stream"
-  },
   "free": {
     "message": "Free"
   },
@@ -124,12 +55,6 @@
   },
   "next": {
     "message": "Next"
-  },
-  "drm_notice": {
-    "message": "DRM protected: there is nothing to play or download."
-  },
-  "position": {
-    "message": "Button position"
   },
   "auto": {
     "message": "Automatic"
@@ -161,8 +86,74 @@
   "message": {
     "message": "Message"
   },
+  "search": {
+    "message": "Search"
+  },
+  "issue": {
+    "message": "New issue"
+  },
+  "autoinject": {
+    "message": "Show the button on page load"
+  },
+  "fullscreen": {
+    "message": "Open maximized"
+  },
+  "newTab": {
+    "message": "New Tab"
+  },
+  "newtab_hint": {
+    "message": "Type or paste a video URL or ID in the address bar and press Enter."
+  },
+  "empty": {
+    "message": "No videos found on this page."
+  },
+  "copy_all": {
+    "message": "Copy the URL of every video"
+  },
+  "download_all": {
+    "message": "Download every video"
+  },
+  "remove_all": {
+    "message": "Remove every video"
+  },
+  "import_export": {
+    "message": "Import / Export"
+  },
+  "import_config": {
+    "message": "Import config"
+  },
+  "export_config": {
+    "message": "Export config"
+  },
+  "clear_tab_cache": {
+    "message": "Delete the videos of a tab when it is closed"
+  },
+  "limit_downloads": {
+    "message": "Download one video at a time"
+  },
+  "auto_hls": {
+    "message": "Build HLS videos automatically"
+  },
+  "native_player": {
+    "message": "Prefer native video player"
+  },
+  "concurrency": {
+    "message": "Simultaneous downloads"
+  },
+  "dtime": {
+    "message": "Time before the button fades"
+  },
+  "hls_load": {
+    "message": "Get from HLS stream"
+  },
+  "position": {
+    "message": "Button position"
+  },
   "free_preview": {
     "message": "Free preview"
+  },
+  "drm_notice": {
+    "message": "DRM protected: there is nothing to play or download."
   },
   "play_error": {
     "message": "The browser cannot play this video. Download it instead."

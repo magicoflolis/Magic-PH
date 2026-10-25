@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Améliore l'expérience de visionnage pour adultes : propre, rapide et simple."
+  },
+  "extShortDesc": {
+    "message": "Propre, rapide et simple"
+  },
+  "copy": {
+    "message": "Copier"
+  },
+  "remove": {
+    "message": "Supprimer"
+  },
+  "close": {
+    "message": "Fermer"
+  },
+  "download": {
+    "message": "Télécharger"
+  },
+  "open": {
+    "message": "Ouvrir"
+  },
+  "min": {
+    "message": "Réduire"
+  },
+  "max": {
+    "message": "Agrandir"
+  },
+  "settings": {
+    "message": "Paramètres"
+  },
+  "save": {
+    "message": "Enregistrer"
+  },
+  "reset": {
+    "message": "Réinitialiser"
+  },
+  "general": {
+    "message": "Général"
+  },
+  "theme": {
+    "message": "Thème"
+  },
+  "free": {
+    "message": "Gratuit"
+  },
+  "prev": {
+    "message": "Précédent"
+  },
+  "next": {
+    "message": "Suivant"
+  },
+  "auto": {
+    "message": "Automatique"
+  },
+  "video": {
+    "message": "vidéo"
+  },
+  "videos": {
+    "message": "vidéos"
+  },
+  "photo": {
+    "message": "photo"
+  },
+  "photos": {
+    "message": "photos"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "audio"
+  },
+  "audios": {
+    "message": "audios"
+  },
+  "message": {
+    "message": "Message"
+  },
+  "search": {
+    "message": "Rechercher"
+  },
+  "issue": {
+    "message": "Nouveau ticket"
+  },
+  "autoinject": {
+    "message": "Afficher le bouton au chargement de la page"
+  },
+  "fullscreen": {
+    "message": "Ouvrir en grand"
+  },
+  "newTab": {
+    "message": "Nouvel onglet"
+  },
+  "newtab_hint": {
+    "message": "Saisissez ou collez l'URL ou l'ID d'une vidéo dans la barre d'adresse, puis appuyez sur Entrée."
+  },
+  "empty": {
+    "message": "Aucune vidéo trouvée sur cette page."
+  },
+  "copy_all": {
+    "message": "Copier l'URL de chaque vidéo"
+  },
+  "download_all": {
+    "message": "Télécharger chaque vidéo"
+  },
+  "remove_all": {
+    "message": "Supprimer chaque vidéo"
+  },
+  "import_export": {
+    "message": "Importer / Exporter"
+  },
+  "import_config": {
+    "message": "Importer la configuration"
+  },
+  "export_config": {
+    "message": "Exporter la configuration"
+  },
+  "clear_tab_cache": {
+    "message": "Supprimer les vidéos d'un onglet à sa fermeture"
+  },
+  "limit_downloads": {
+    "message": "Télécharger une vidéo à la fois"
+  },
+  "auto_hls": {
+    "message": "Créer automatiquement les vidéos HLS"
+  },
+  "native_player": {
+    "message": "Préférer le lecteur vidéo natif"
+  },
+  "concurrency": {
+    "message": "Téléchargements simultanés"
+  },
+  "dtime": {
+    "message": "Délai avant que le bouton s'estompe"
+  },
+  "hls_load": {
+    "message": "Récupérer depuis le flux HLS"
+  },
+  "position": {
+    "message": "Position du bouton"
+  },
+  "free_preview": {
+    "message": "Aperçu gratuit"
+  },
+  "drm_notice": {
+    "message": "Protégé par DRM : rien à lire ni à télécharger."
+  },
+  "play_error": {
+    "message": "Le navigateur ne peut pas lire cette vidéo. Téléchargez-la plutôt."
+  }
+}

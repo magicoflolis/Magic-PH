@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Migliora l'esperienza di visione per adulti: pulita, veloce e semplice."
+  },
+  "extShortDesc": {
+    "message": "Pulito, veloce e semplice"
+  },
+  "copy": {
+    "message": "Copia"
+  },
+  "remove": {
+    "message": "Rimuovi"
+  },
+  "close": {
+    "message": "Chiudi"
+  },
+  "download": {
+    "message": "Scarica"
+  },
+  "open": {
+    "message": "Apri"
+  },
+  "min": {
+    "message": "Riduci a icona"
+  },
+  "max": {
+    "message": "Ingrandisci"
+  },
+  "settings": {
+    "message": "Impostazioni"
+  },
+  "save": {
+    "message": "Salva"
+  },
+  "reset": {
+    "message": "Reimposta"
+  },
+  "general": {
+    "message": "Generali"
+  },
+  "theme": {
+    "message": "Tema"
+  },
+  "free": {
+    "message": "Gratis"
+  },
+  "prev": {
+    "message": "Precedente"
+  },
+  "next": {
+    "message": "Successivo"
+  },
+  "auto": {
+    "message": "Automatico"
+  },
+  "video": {
+    "message": "video"
+  },
+  "videos": {
+    "message": "video"
+  },
+  "photo": {
+    "message": "foto"
+  },
+  "photos": {
+    "message": "foto"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "audio"
+  },
+  "audios": {
+    "message": "audio"
+  },
+  "message": {
+    "message": "Messaggio"
+  },
+  "search": {
+    "message": "Cerca"
+  },
+  "issue": {
+    "message": "Nuova segnalazione"
+  },
+  "autoinject": {
+    "message": "Mostra il pulsante al caricamento della pagina"
+  },
+  "fullscreen": {
+    "message": "Apri ingrandito"
+  },
+  "newTab": {
+    "message": "Nuova scheda"
+  },
+  "newtab_hint": {
+    "message": "Digita o incolla l'URL o l'ID di un video nella barra degli indirizzi e premi Invio."
+  },
+  "empty": {
+    "message": "Nessun video trovato in questa pagina."
+  },
+  "copy_all": {
+    "message": "Copia l'URL di ogni video"
+  },
+  "download_all": {
+    "message": "Scarica ogni video"
+  },
+  "remove_all": {
+    "message": "Rimuovi ogni video"
+  },
+  "import_export": {
+    "message": "Importa / Esporta"
+  },
+  "import_config": {
+    "message": "Importa configurazione"
+  },
+  "export_config": {
+    "message": "Esporta configurazione"
+  },
+  "clear_tab_cache": {
+    "message": "Elimina i video di una scheda alla sua chiusura"
+  },
+  "limit_downloads": {
+    "message": "Scarica un video alla volta"
+  },
+  "auto_hls": {
+    "message": "Crea automaticamente i video HLS"
+  },
+  "native_player": {
+    "message": "Preferisci il lettore video nativo"
+  },
+  "concurrency": {
+    "message": "Download simultanei"
+  },
+  "dtime": {
+    "message": "Tempo prima che il pulsante svanisca"
+  },
+  "hls_load": {
+    "message": "Ottieni dallo stream HLS"
+  },
+  "position": {
+    "message": "Posizione del pulsante"
+  },
+  "free_preview": {
+    "message": "Anteprima gratuita"
+  },
+  "drm_notice": {
+    "message": "Protetto da DRM: non c'è nulla da riprodurre o scaricare."
+  },
+  "play_error": {
+    "message": "Il browser non può riprodurre questo video. Scaricalo invece."
+  }
+}

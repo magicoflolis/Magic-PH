@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "تجربهٔ تماشای بزرگسالان را بهتر می‌کند: تمیز، سریع و آسان."
+  },
+  "extShortDesc": {
+    "message": "تمیز، سریع و آسان"
+  },
+  "copy": {
+    "message": "کپی"
+  },
+  "remove": {
+    "message": "حذف"
+  },
+  "close": {
+    "message": "بستن"
+  },
+  "download": {
+    "message": "دانلود"
+  },
+  "open": {
+    "message": "باز کردن"
+  },
+  "min": {
+    "message": "کوچک‌سازی"
+  },
+  "max": {
+    "message": "بزرگ‌سازی"
+  },
+  "settings": {
+    "message": "تنظیمات"
+  },
+  "save": {
+    "message": "ذخیره"
+  },
+  "reset": {
+    "message": "بازنشانی"
+  },
+  "general": {
+    "message": "عمومی"
+  },
+  "theme": {
+    "message": "پوسته"
+  },
+  "free": {
+    "message": "رایگان"
+  },
+  "prev": {
+    "message": "قبلی"
+  },
+  "next": {
+    "message": "بعدی"
+  },
+  "auto": {
+    "message": "خودکار"
+  },
+  "video": {
+    "message": "ویدیو"
+  },
+  "videos": {
+    "message": "ویدیوها"
+  },
+  "photo": {
+    "message": "عکس"
+  },
+  "photos": {
+    "message": "عکس‌ها"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIFها"
+  },
+  "audio": {
+    "message": "صدا"
+  },
+  "audios": {
+    "message": "صداها"
+  },
+  "message": {
+    "message": "پیام"
+  },
+  "search": {
+    "message": "جست‌وجو"
+  },
+  "issue": {
+    "message": "مشکل جدید"
+  },
+  "autoinject": {
+    "message": "نمایش دکمه هنگام بارگذاری صفحه"
+  },
+  "fullscreen": {
+    "message": "باز کردن در حالت بزرگ‌شده"
+  },
+  "newTab": {
+    "message": "زبانهٔ جدید"
+  },
+  "newtab_hint": {
+    "message": "URL یا شناسهٔ ویدیو را در نوار نشانی تایپ یا جای‌گذاری کنید و Enter را فشار دهید."
+  },
+  "empty": {
+    "message": "در این صفحه ویدیویی پیدا نشد."
+  },
+  "copy_all": {
+    "message": "کپی URL همهٔ ویدیوها"
+  },
+  "download_all": {
+    "message": "دانلود همهٔ ویدیوها"
+  },
+  "remove_all": {
+    "message": "حذف همهٔ ویدیوها"
+  },
+  "import_export": {
+    "message": "درون‌ریزی / برون‌بری"
+  },
+  "import_config": {
+    "message": "درون‌ریزی پیکربندی"
+  },
+  "export_config": {
+    "message": "برون‌بری پیکربندی"
+  },
+  "clear_tab_cache": {
+    "message": "حذف ویدیوهای زبانه هنگام بسته شدن آن"
+  },
+  "limit_downloads": {
+    "message": "دانلود یک ویدیو در هر زمان"
+  },
+  "auto_hls": {
+    "message": "ساخت خودکار ویدیوهای HLS"
+  },
+  "native_player": {
+    "message": "ترجیح پخش‌کنندهٔ ویدیوی بومی"
+  },
+  "concurrency": {
+    "message": "دانلودهای همزمان"
+  },
+  "dtime": {
+    "message": "زمان پیش از محو شدن دکمه"
+  },
+  "hls_load": {
+    "message": "دریافت از جریان HLS"
+  },
+  "position": {
+    "message": "موقعیت دکمه"
+  },
+  "free_preview": {
+    "message": "پیش‌نمایش رایگان"
+  },
+  "drm_notice": {
+    "message": "محافظت‌شده با DRM: چیزی برای پخش یا دانلود وجود ندارد."
+  },
+  "play_error": {
+    "message": "مرورگر نمی‌تواند این ویدیو را پخش کند. به‌جای آن دانلودش کنید."
+  }
+}

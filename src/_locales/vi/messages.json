@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Nâng cao trải nghiệm xem dành cho người lớn: gọn gàng, nhanh chóng và dễ dàng."
+  },
+  "extShortDesc": {
+    "message": "Gọn gàng, nhanh chóng, dễ dàng"
+  },
+  "copy": {
+    "message": "Sao chép"
+  },
+  "remove": {
+    "message": "Xóa"
+  },
+  "close": {
+    "message": "Đóng"
+  },
+  "download": {
+    "message": "Tải xuống"
+  },
+  "open": {
+    "message": "Mở"
+  },
+  "min": {
+    "message": "Thu nhỏ"
+  },
+  "max": {
+    "message": "Phóng to"
+  },
+  "settings": {
+    "message": "Cài đặt"
+  },
+  "save": {
+    "message": "Lưu"
+  },
+  "reset": {
+    "message": "Đặt lại"
+  },
+  "general": {
+    "message": "Chung"
+  },
+  "theme": {
+    "message": "Giao diện"
+  },
+  "free": {
+    "message": "Miễn phí"
+  },
+  "prev": {
+    "message": "Trước"
+  },
+  "next": {
+    "message": "Sau"
+  },
+  "auto": {
+    "message": "Tự động"
+  },
+  "video": {
+    "message": "video"
+  },
+  "videos": {
+    "message": "video"
+  },
+  "photo": {
+    "message": "ảnh"
+  },
+  "photos": {
+    "message": "ảnh"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "âm thanh"
+  },
+  "audios": {
+    "message": "âm thanh"
+  },
+  "message": {
+    "message": "Tin nhắn"
+  },
+  "search": {
+    "message": "Tìm kiếm"
+  },
+  "issue": {
+    "message": "Vấn đề mới"
+  },
+  "autoinject": {
+    "message": "Hiện nút khi trang tải xong"
+  },
+  "fullscreen": {
+    "message": "Mở ở kích thước tối đa"
+  },
+  "newTab": {
+    "message": "Tab mới"
+  },
+  "newtab_hint": {
+    "message": "Nhập hoặc dán URL hoặc ID video vào thanh địa chỉ rồi nhấn Enter."
+  },
+  "empty": {
+    "message": "Không tìm thấy video nào trên trang này."
+  },
+  "copy_all": {
+    "message": "Sao chép URL của mọi video"
+  },
+  "download_all": {
+    "message": "Tải xuống mọi video"
+  },
+  "remove_all": {
+    "message": "Xóa mọi video"
+  },
+  "import_export": {
+    "message": "Nhập / Xuất"
+  },
+  "import_config": {
+    "message": "Nhập cấu hình"
+  },
+  "export_config": {
+    "message": "Xuất cấu hình"
+  },
+  "clear_tab_cache": {
+    "message": "Xóa video của tab khi đóng tab"
+  },
+  "limit_downloads": {
+    "message": "Tải xuống từng video một"
+  },
+  "auto_hls": {
+    "message": "Tự động tạo video HLS"
+  },
+  "native_player": {
+    "message": "Ưu tiên trình phát video gốc"
+  },
+  "concurrency": {
+    "message": "Số lượt tải xuống đồng thời"
+  },
+  "dtime": {
+    "message": "Thời gian trước khi nút mờ dần"
+  },
+  "hls_load": {
+    "message": "Lấy từ luồng HLS"
+  },
+  "position": {
+    "message": "Vị trí nút"
+  },
+  "free_preview": {
+    "message": "Xem trước miễn phí"
+  },
+  "drm_notice": {
+    "message": "Được bảo vệ bằng DRM: không có gì để phát hoặc tải xuống."
+  },
+  "play_error": {
+    "message": "Trình duyệt không thể phát video này. Hãy tải xuống thay thế."
+  }
+}

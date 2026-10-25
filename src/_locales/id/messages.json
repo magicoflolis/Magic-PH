@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Meningkatkan pengalaman menonton dewasa: bersih, cepat, dan mudah."
+  },
+  "extShortDesc": {
+    "message": "Bersih, cepat, dan mudah"
+  },
+  "copy": {
+    "message": "Salin"
+  },
+  "remove": {
+    "message": "Hapus"
+  },
+  "close": {
+    "message": "Tutup"
+  },
+  "download": {
+    "message": "Unduh"
+  },
+  "open": {
+    "message": "Buka"
+  },
+  "min": {
+    "message": "Kecilkan"
+  },
+  "max": {
+    "message": "Besarkan"
+  },
+  "settings": {
+    "message": "Pengaturan"
+  },
+  "save": {
+    "message": "Simpan"
+  },
+  "reset": {
+    "message": "Atur ulang"
+  },
+  "general": {
+    "message": "Umum"
+  },
+  "theme": {
+    "message": "Tema"
+  },
+  "free": {
+    "message": "Gratis"
+  },
+  "prev": {
+    "message": "Sebelumnya"
+  },
+  "next": {
+    "message": "Berikutnya"
+  },
+  "auto": {
+    "message": "Otomatis"
+  },
+  "video": {
+    "message": "video"
+  },
+  "videos": {
+    "message": "video"
+  },
+  "photo": {
+    "message": "foto"
+  },
+  "photos": {
+    "message": "foto"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "audio"
+  },
+  "audios": {
+    "message": "audio"
+  },
+  "message": {
+    "message": "Pesan"
+  },
+  "search": {
+    "message": "Cari"
+  },
+  "issue": {
+    "message": "Isu baru"
+  },
+  "autoinject": {
+    "message": "Tampilkan tombol saat halaman dimuat"
+  },
+  "fullscreen": {
+    "message": "Buka dalam ukuran maksimal"
+  },
+  "newTab": {
+    "message": "Tab Baru"
+  },
+  "newtab_hint": {
+    "message": "Ketik atau tempel URL atau ID video di bilah alamat lalu tekan Enter."
+  },
+  "empty": {
+    "message": "Tidak ada video di halaman ini."
+  },
+  "copy_all": {
+    "message": "Salin URL semua video"
+  },
+  "download_all": {
+    "message": "Unduh semua video"
+  },
+  "remove_all": {
+    "message": "Hapus semua video"
+  },
+  "import_export": {
+    "message": "Impor / Ekspor"
+  },
+  "import_config": {
+    "message": "Impor konfigurasi"
+  },
+  "export_config": {
+    "message": "Ekspor konfigurasi"
+  },
+  "clear_tab_cache": {
+    "message": "Hapus video suatu tab saat tab ditutup"
+  },
+  "limit_downloads": {
+    "message": "Unduh satu video sekali waktu"
+  },
+  "auto_hls": {
+    "message": "Buat video HLS secara otomatis"
+  },
+  "native_player": {
+    "message": "Utamakan pemutar video bawaan"
+  },
+  "concurrency": {
+    "message": "Unduhan bersamaan"
+  },
+  "dtime": {
+    "message": "Waktu sebelum tombol memudar"
+  },
+  "hls_load": {
+    "message": "Ambil dari aliran HLS"
+  },
+  "position": {
+    "message": "Posisi tombol"
+  },
+  "free_preview": {
+    "message": "Pratinjau gratis"
+  },
+  "drm_notice": {
+    "message": "Dilindungi DRM: tidak ada yang bisa diputar atau diunduh."
+  },
+  "play_error": {
+    "message": "Browser tidak dapat memutar video ini. Unduh saja."
+  }
+}

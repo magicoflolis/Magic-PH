@@ -187,9 +187,9 @@ count-frame {
 mph-toast {
   display: none;
   position: fixed;
-  z-index: 99999999999999999;
-  top: 1em;
-  left: 50%;
+  z-index: $z;
+  // z-index: 99999999999999999;
+  inset: 1em auto auto 50%;
   max-width: min(90vw, 40em);
   padding: 0.6em 1.1em;
   transform: translateX(-50%);
@@ -469,7 +469,7 @@ mph-post {
 
 .post-head {
   align-items: center;
-  gap: 0.75em;
+  // gap: 0.75em;
 
   > mph-a {
     flex: none;
@@ -619,8 +619,9 @@ mph-tile {
   }
 
   // Building an HLS video takes a while
-  &[data-busy] {
-    opacity: 0.7;
+  &[data-busy],
+  &[data-fetching='true'] {
+    opacity: 0.44;
     pointer-events: none;
   }
 

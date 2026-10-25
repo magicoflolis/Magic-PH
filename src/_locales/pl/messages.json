@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "Poprawia wrażenia z oglądania treści dla dorosłych: czysto, szybko i łatwo."
+  },
+  "extShortDesc": {
+    "message": "Czysto, szybko i łatwo"
+  },
+  "copy": {
+    "message": "Kopiuj"
+  },
+  "remove": {
+    "message": "Usuń"
+  },
+  "close": {
+    "message": "Zamknij"
+  },
+  "download": {
+    "message": "Pobierz"
+  },
+  "open": {
+    "message": "Otwórz"
+  },
+  "min": {
+    "message": "Minimalizuj"
+  },
+  "max": {
+    "message": "Maksymalizuj"
+  },
+  "settings": {
+    "message": "Ustawienia"
+  },
+  "save": {
+    "message": "Zapisz"
+  },
+  "reset": {
+    "message": "Resetuj"
+  },
+  "general": {
+    "message": "Ogólne"
+  },
+  "theme": {
+    "message": "Motyw"
+  },
+  "free": {
+    "message": "Bezpłatne"
+  },
+  "prev": {
+    "message": "Poprzedni"
+  },
+  "next": {
+    "message": "Następny"
+  },
+  "auto": {
+    "message": "Automatycznie"
+  },
+  "video": {
+    "message": "wideo"
+  },
+  "videos": {
+    "message": "filmy"
+  },
+  "photo": {
+    "message": "zdjęcie"
+  },
+  "photos": {
+    "message": "zdjęcia"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF-y"
+  },
+  "audio": {
+    "message": "dźwięk"
+  },
+  "audios": {
+    "message": "pliki audio"
+  },
+  "message": {
+    "message": "Wiadomość"
+  },
+  "search": {
+    "message": "Szukaj"
+  },
+  "issue": {
+    "message": "Nowy problem"
+  },
+  "autoinject": {
+    "message": "Pokaż przycisk po załadowaniu strony"
+  },
+  "fullscreen": {
+    "message": "Otwórz zmaksymalizowane"
+  },
+  "newTab": {
+    "message": "Nowa karta"
+  },
+  "newtab_hint": {
+    "message": "Wpisz lub wklej adres URL albo ID filmu w pasku adresu i naciśnij Enter."
+  },
+  "empty": {
+    "message": "Nie znaleziono filmów na tej stronie."
+  },
+  "copy_all": {
+    "message": "Kopiuj adres URL każdego filmu"
+  },
+  "download_all": {
+    "message": "Pobierz wszystkie filmy"
+  },
+  "remove_all": {
+    "message": "Usuń wszystkie filmy"
+  },
+  "import_export": {
+    "message": "Import / eksport"
+  },
+  "import_config": {
+    "message": "Importuj konfigurację"
+  },
+  "export_config": {
+    "message": "Eksportuj konfigurację"
+  },
+  "clear_tab_cache": {
+    "message": "Usuń filmy karty po jej zamknięciu"
+  },
+  "limit_downloads": {
+    "message": "Pobieraj jeden film naraz"
+  },
+  "auto_hls": {
+    "message": "Twórz filmy HLS automatycznie"
+  },
+  "native_player": {
+    "message": "Preferuj natywny odtwarzacz wideo"
+  },
+  "concurrency": {
+    "message": "Jednoczesne pobierania"
+  },
+  "dtime": {
+    "message": "Czas do zanikania przycisku"
+  },
+  "hls_load": {
+    "message": "Pobierz ze strumienia HLS"
+  },
+  "position": {
+    "message": "Położenie przycisku"
+  },
+  "free_preview": {
+    "message": "Bezpłatny podgląd"
+  },
+  "drm_notice": {
+    "message": "Chronione przez DRM: nie ma nic do odtworzenia ani pobrania."
+  },
+  "play_error": {
+    "message": "Przeglądarka nie może odtworzyć tego filmu. Pobierz go zamiast tego."
+  }
+}

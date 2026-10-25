@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "ವಯಸ್ಕರ ವೀಕ್ಷಣೆಯ ಅನುಭವವನ್ನು ಉತ್ತಮಗೊಳಿಸುತ್ತದೆ: ಸ್ವಚ್ಛ, ವೇಗ ಮತ್ತು ಸುಲಭ."
+  },
+  "extShortDesc": {
+    "message": "ಸ್ವಚ್ಛ, ವೇಗ ಮತ್ತು ಸುಲಭ"
+  },
+  "copy": {
+    "message": "ನಕಲಿಸಿ"
+  },
+  "remove": {
+    "message": "ತೆಗೆದುಹಾಕಿ"
+  },
+  "close": {
+    "message": "ಮುಚ್ಚಿ"
+  },
+  "download": {
+    "message": "ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ"
+  },
+  "open": {
+    "message": "ತೆರೆಯಿರಿ"
+  },
+  "min": {
+    "message": "ಕಿರಿದಾಗಿಸಿ"
+  },
+  "max": {
+    "message": "ಹಿರಿದಾಗಿಸಿ"
+  },
+  "settings": {
+    "message": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+  },
+  "save": {
+    "message": "ಉಳಿಸಿ"
+  },
+  "reset": {
+    "message": "ಮರುಹೊಂದಿಸಿ"
+  },
+  "general": {
+    "message": "ಸಾಮಾನ್ಯ"
+  },
+  "theme": {
+    "message": "ಥೀಮ್"
+  },
+  "free": {
+    "message": "ಉಚಿತ"
+  },
+  "prev": {
+    "message": "ಹಿಂದಿನದು"
+  },
+  "next": {
+    "message": "ಮುಂದಿನದು"
+  },
+  "auto": {
+    "message": "ಸ್ವಯಂಚಾಲಿತ"
+  },
+  "video": {
+    "message": "ವೀಡಿಯೊ"
+  },
+  "videos": {
+    "message": "ವೀಡಿಯೊಗಳು"
+  },
+  "photo": {
+    "message": "ಫೋಟೋ"
+  },
+  "photos": {
+    "message": "ಫೋಟೋಗಳು"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIFಗಳು"
+  },
+  "audio": {
+    "message": "ಆಡಿಯೊ"
+  },
+  "audios": {
+    "message": "ಆಡಿಯೊಗಳು"
+  },
+  "message": {
+    "message": "ಸಂದೇಶ"
+  },
+  "search": {
+    "message": "ಹುಡುಕಿ"
+  },
+  "issue": {
+    "message": "ಹೊಸ ಸಮಸ್ಯೆ"
+  },
+  "autoinject": {
+    "message": "ಪುಟ ಲೋಡ್ ಆದಾಗ ಬಟನ್ ತೋರಿಸಿ"
+  },
+  "fullscreen": {
+    "message": "ಗರಿಷ್ಠಗೊಳಿಸಿ ತೆರೆಯಿರಿ"
+  },
+  "newTab": {
+    "message": "ಹೊಸ ಟ್ಯಾಬ್"
+  },
+  "newtab_hint": {
+    "message": "ವಿಳಾಸ ಪಟ್ಟಿಯಲ್ಲಿ ವೀಡಿಯೊ URL ಅಥವಾ ID ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ ಮತ್ತು Enter ಒತ್ತಿರಿ."
+  },
+  "empty": {
+    "message": "ಈ ಪುಟದಲ್ಲಿ ಯಾವುದೇ ವೀಡಿಯೊಗಳು ಕಂಡುಬಂದಿಲ್ಲ."
+  },
+  "copy_all": {
+    "message": "ಪ್ರತಿ ವೀಡಿಯೊದ URL ನಕಲಿಸಿ"
+  },
+  "download_all": {
+    "message": "ಪ್ರತಿ ವೀಡಿಯೊವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ"
+  },
+  "remove_all": {
+    "message": "ಪ್ರತಿ ವೀಡಿಯೊವನ್ನು ತೆಗೆದುಹಾಕಿ"
+  },
+  "import_export": {
+    "message": "ಆಮದು / ರಫ್ತು"
+  },
+  "import_config": {
+    "message": "ಕಾನ್ಫಿಗ್ ಆಮದು ಮಾಡಿ"
+  },
+  "export_config": {
+    "message": "ಕಾನ್ಫಿಗ್ ರಫ್ತು ಮಾಡಿ"
+  },
+  "clear_tab_cache": {
+    "message": "ಟ್ಯಾಬ್ ಮುಚ್ಚಿದಾಗ ಅದರ ವೀಡಿಯೊಗಳನ್ನು ಅಳಿಸಿ"
+  },
+  "limit_downloads": {
+    "message": "ಒಂದು ಬಾರಿಗೆ ಒಂದು ವೀಡಿಯೊ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ"
+  },
+  "auto_hls": {
+    "message": "HLS ವೀಡಿಯೊಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚಿಸಿ"
+  },
+  "native_player": {
+    "message": "ಸ್ಥಳೀಯ ವೀಡಿಯೊ ಪ್ಲೇಯರ್‌ಗೆ ಆದ್ಯತೆ ನೀಡಿ"
+  },
+  "concurrency": {
+    "message": "ಏಕಕಾಲಿಕ ಡೌನ್‌ಲೋಡ್‌ಗಳು"
+  },
+  "dtime": {
+    "message": "ಬಟನ್ ಮಸುಕಾಗುವ ಮೊದಲಿನ ಸಮಯ"
+  },
+  "hls_load": {
+    "message": "HLS ಸ್ಟ್ರೀಮ್‌ನಿಂದ ಪಡೆಯಿರಿ"
+  },
+  "position": {
+    "message": "ಬಟನ್ ಸ್ಥಾನ"
+  },
+  "free_preview": {
+    "message": "ಉಚಿತ ಪೂರ್ವವೀಕ್ಷಣೆ"
+  },
+  "drm_notice": {
+    "message": "DRM ರಕ್ಷಿತ: ಪ್ಲೇ ಮಾಡಲು ಅಥವಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು ಏನೂ ಇಲ್ಲ."
+  },
+  "play_error": {
+    "message": "ಬ್ರೌಸರ್ ಈ ವೀಡಿಯೊವನ್ನು ಪ್ಲೇ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ. ಬದಲಿಗೆ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ."
+  }
+}
