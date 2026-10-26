@@ -12,62 +12,63 @@ MagicPH
 </h1>
 
 > [!IMPORTANT]
-> This userscript / webextension violates [websites](https://github.com/magicoflolis/Magic-PH/blob/master/pages.md) content policies on `Banning Downloads`.
+> This violates [websites](https://github.com/magicoflolis/Magic-PH/blob/master/pages.md) content policies on `Banning Downloads`
 >
 > **PLEASE USE AT YOUR OWN RISK!**
 
-_Recommend using "ad blocker" or "content blocker" ([uBlock Origin](https://github.com/gorhill/uBlock#readme)) along side._
-
 A video downloader for various adult websites. _WebExtension version has not been updated in a while, please use UserScript version!_
 
-[UserScript Changelog](https://github.com/magicoflolis/Magic-PH/blob/master/CHANGELOG.user.md)
+[Changelog (UserScript)](https://github.com/magicoflolis/Magic-PH/blob/master/CHANGELOG.user.md)
 
-**Supported Websites:** - [List of policy violations](https://github.com/magicoflolis/Magic-PH/blob/master/pages.md)
+**Supported Websites:**
+
+> [Policy violations by website](https://github.com/magicoflolis/Magic-PH/blob/master/pages.md)
 
 |                     Websites                      | Version (Desktop) | Version (Mobile) |
 | :-----------------------------------------------: | :---------------: | :--------------: |
-|             [Beeg](https://beeg.com)              |        ✅         |        ✅        |
-|         [Onlyfans](https://onlyfans.com)          |        ✅         |        ✅        |
-|        [Pornhub](https://www.pornhub.com)         |        ✅         |        ✅        |
-| [Pornhub Premium](https://www.pornhubpremium.com) |        ✅         |        ✅        |
-|        [RedTube](https://www.redtube.com)         |        ✅         |        ✅        |
-|          [Tube8](https://www.tube8.com)           |        ✅         |        ✅        |
-|     [Thumbzilla](https://www.thumbzilla.com)      |        ✅         |        ✅        |
-|         [xHamster](https://xhamster.com)          |        ✅         |        ✅        |
-|           [XNXX](https://www.xnxx.com)            |        ✅         |        ✅        |
-|        [xVideos](https://www.xvideos.com)         |        ✅         |        ✅        |
-|        [YouPorn](https://www.youporn.com)         |        ✅         |        ✅        |
+| [OnlyFans](https://onlyfans.com)                  |        ✅         |        ✅        |
+| [Pornhub (+premium)](https://www.pornhub.com)     |        ✅         |        ✅        |
+| [RedTube](https://www.redtube.com)                |        ✅         |        ✅        |
+| [Tube8](https://www.tube8.com)                    |        ✅         |        ✅        |
+| [Thumbzilla](https://www.thumbzilla.com)          |        ✅         |        ✅        |
+| [xHamster](https://xhamster.com)                  |        ✅         |        ✅        |
+| [XNXX](https://www.xnxx.com)                      |        ✅         |        ✅        |
+| [xVideos](https://www.xvideos.com)                |        ✅         |        ✅        |
+| [YouPorn (+domains)](https://www.youporn.com)     |        ✅         |        ✅        |
+| [91porn](https://91porn.com)                      |        ✅         |        ✅        |
+| [91porna](https://91porna.com)                    |        ✅         |        ✅        |
+| [hqporner](https://hqporner.com)                  |        ✅         |        ✅        |
+| [spankbang](https://spankbang.com)                |        ✅         |        ✅        |
+| [porntrex](https://www.porntrex.com)              |        ✅         |        ✅        |
+| [analdin](https://www.analdin.com)                |        ✅         |        ✅        |
+| [sxyprn](https://sxyprn.com)                      |        ✅         |        ✅        |
+| [porn00](https://www.porn00.org)                  |        ✅         |        ✅        |
+| [eporner](https://www.eporner.com)                |        ✅         |        ✅        |
+| [youjizz](https://www.youjizz.com)                |        ✅         |        ✅        |
+| [beeg](https://beeg.com)                          |        ✅         |        ✅        |
+| [jable (+domains)](https://jable.tv)              |        ✅         |        ✅        |
+| [missav (+domains)](https://missav.ai)            |        ✅         |        ✅        |
 
 ---
 
-## **Download**
+## **Download / Install**
 
 **UserScript:**
 
 - [Sleazy Fork](https://sleazyfork.org/scripts/492700)
-- [GitHub Repo](https://github.com/magicoflolis/Magic-PH/raw/master/dist/magicph.user.js)
-- [Open UserJS](https://openuserjs.org/scripts/Magic/MagicPH) - outdated
+- [GitHub (direct link)](https://github.com/magicoflolis/Magic-PH/raw/master/dist/magicph.user.js)
+- ~~[Open UserJS](https://openuserjs.org/scripts/Magic/MagicPH)~~ - OUTDATED
 
-**Web Extension (under construction):**
+**WebExtension:**
 
-_Firefox:_
+Not available.
 
-- ~~[GitHub Repo](https://github.com/magicoflolis/Magic-PH/releases)~~
-
-_Chromium:_
-
-- ~~[GitHub Repo](https://github.com/magicoflolis/Magic-PH/releases)~~
-
-**Bookmarklet (not recommended):**
+**Bookmarklet:** (NOT RECOMMENDED)
 
 Save this URL as a bookmark, clicking it will cause the **UserScript version** to inject itself into the current webpage.
 
 ```js
-javascript: (function () {
-  ['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/dist/magicph.user.js'].map(
-    (s) => (document.body.appendChild(document.createElement('script')).src = s)
-  );
-})();
+javascript: (function(){['https://cdn.jsdelivr.net/gh/magicoflolis/Magic-PH@master/dist/magicph.user.js'].map((s)=>(document.body.appendChild(document.createElement('script')).src=s))})();
 ```
 
 ## Features
@@ -129,65 +130,6 @@ Supported Methods:
 - xVideos - `/video.<video id>/<video name>`
 - Youporn (**Work in Progress**) - `/watch/<video id>/<video name>/`
 
-## Build
-
-Install [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/). _The version of Node.js should match or be greater than the `"node"` key in `package.json`._
-
-```sh
-# Install dependencies
-$ pnpm i
-```
-
-**Additional Help Links:**
-
-- [web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/)
-- [key.pem for Chrome](https://stackoverflow.com/a/46739698/9872174)
-
-**External Libraries:**
-
-- [Plyr](https://github.com/sampotts/plyr)
-
----
-
-**UserScript:**
-
-Before you begin, rename `.env.example` to `.env`
-
-**Recommened Testing Environments:**
-
-- **Desktop:** any browser with [ViolentMonkey](https://violentmonkey.github.io/), see [How to edit scripts with your favorite editor?](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/)
-- **Mobile:**
-  - Desktop: use "Responsive Design Mode (Ctrl+Shift+M)" on [FireFox Developer Edition](https://www.mozilla.org/firefox/developer/) or [FireFox](https://www.mozilla.org/firefox/)
-  - Android: any browser with UserScript support or support for installing a UserScript manager, I use [Cromite](https://github.com/uazo/cromite)
-  - IOS: any browser with UserScript support or support for installing a UserScript manager
-
-```sh
-# Watch and build to local HTTP server
-$ pnpm run dev:UserJS
-
-# Build UserScript to "./dist"
-$ pnpm run pub:UserJS
-```
-
-### Roadmap
-
-- Finish WebExtension version.
-- Fix any bugs along the way.
-
 ### Source Code
 
 - [https://github.com/magicoflolis/Magic-PH](https://github.com/magicoflolis/Magic-PH)
-
----
-
-## Development
-
-```sh
-pnpm install
-pnpm run dev:UserJS   # watch + serve ./web-server
-pnpm run pub:UserJS   # production build, ./dist
-pnpm run lint
-pnpm run check:types
-pnpm run check:grants
-pnpm run test:e2e     # see tests/README.md
-```

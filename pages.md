@@ -1,7 +1,7 @@
 # Policy Violations
 
-| Website | Violation Status | Section |
-|:---------:|:-----------:|:-----------:|
+| Website | Status | Section |
+| :---: | :---: | :---: |
 | [Beeg](https://beeg.com/terms) | UNKNOWN | ? |
 | [Onlyfans](https://onlyfans.com/terms#terms-use-all-users) | In Violation | `ACCEPTABLE USE POLICY 16.` |
 | [Pornhub](https://www.pornhub.com/information/terms) | In Violation | `Terms Of Service` |
