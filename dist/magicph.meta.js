@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      5.1.2
+// @version      5.1.3
 // @name         MagicPH
 // @description  A video downloader for various adult websites.
 // @author       Magic <magicoflolis@tuta.io>

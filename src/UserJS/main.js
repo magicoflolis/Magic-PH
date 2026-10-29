@@ -5739,6 +5739,7 @@ const runSite = async (input) => {
      * @param {Record<string, unknown>[]} posts
      */
     const filterPosts = (posts) => {
+      if (!Array.isArray(posts)) return;
       for (const p of posts) {
         if (!isObj(p) || !Array.isArray(p.media) || p.isMediaReady === false) continue;
         const sig = `${p.id}:${p.media.length}`;
@@ -5846,6 +5847,9 @@ const runSite = async (input) => {
         }
         return ok;
       }
+      /**
+       * @param {string | URL} reqURL
+       */
       async function buildHeaders(reqURL) {
         const rules = await getRules();
         const userId = localStorage.getItem('user');
@@ -5868,58 +5872,65 @@ const runSite = async (input) => {
         for (const h of rules.remove_headers) delete headers[h];
         return headers;
       }
+      /**
+       * @param {string | URL} reqURL
+       */
       async function run(reqURL) {
         if (typeof reqURL === 'string') reqURL = toURL(reqURL);
         const headers = await buildHeaders(reqURL);
         const resp = await fetch(reqURL, { credentials: 'include', headers });
         const body = await resp.text();
         if (!resp.ok) throw new Error(`HTTP ${resp.status} — ${body.slice(0, 300)}`);
+        /** @type {Record<string,unknown>} */
         const data = JSON.parse(body);
         return data;
       }
       return { run, verifyAgainst, buildHeaders };
     })();
-    // `&beforePublishTime=${li.postedAtPrecise}`
+    // Next page: `&beforePublishTime=${li.postedAtPrecise}`
     const initArr = await Promise.all([
       ofDiag.run('/api2/v2/posts?limit=100&order=publish_date_desc&format=infinite'),
       ofDiag.run('/api2/v2/posts/paid/all?limit=100&format=infinite&offset=0')
     ]);
-    for (const i of initArr) {
-      if (isObj(i) && Array.isArray(i.list)) {
-        /** @type {Promise<any>[]} */
-        const fetchArr = [];
-        const list = i.list.filter((li) => li.media.filter((m) => m.canView === true).length > 0);
-        for (const a of list) {
-          const author = a.author ?? a.fromUser ?? a.withUser ?? a.chatId;
-          if (!author) continue;
-          if ('email' in author) continue;
-          const id = String(author.id);
-          if (!users.has(id)) {
-            users.set(id, author);
-            fetchArr.push(
-              ofDiag.run(
-                `/api2/v2/users/${id}/posts?limit=100&order=publish_date_desc&skip_users=all&format=infinite&pinned=0&counters=0`
-              )
-            );
-            fetchArr.push(
-              ofDiag.run(`/api2/v2/chats/${id}/messages?limit=100&order=desc&skip_users=all`)
-            );
-            fetchArr.push(
-              ofDiag.run(
-                `/api2/v2/users/${id}/posts/streams?limit=100&order=publish_date_desc&skip_users=all&format=infinite&counters=0`
-              )
-            );
-          }
+    const toList = (item) => isObj(item) && Array.isArray(item.list);
+    for (const i of initArr.filter(toList)) {
+      /** @type {Promise<Record<string,unknown>>[]} */
+      const fetchArr = [];
+      /**
+       * @param {string} str
+       */
+      const addTo = (str) => {
+        fetchArr.push(ofDiag.run(`/api2/v2/${str}`));
+      };
+      const list = i.list.filter((li) => {
+        /** @type {Record<string,unknown>[]} */
+        const _media = li?.media ?? [];
+        return _media.filter((m) => m.canView === true).length > 0;
+      });
+      for (const a of list) {
+        const author = a.author ?? a.fromUser ?? a.withUser ?? a.chatId;
+        if (!author) continue;
+        if ('email' in author) continue;
+        const id = String(author.id);
+        if (!users.has(id)) {
+          users.set(id, author);
+          addTo(
+            `users/${id}/posts?limit=100&order=publish_date_desc&skip_users=all&format=infinite&pinned=0&counters=0`
+          );
+          addTo(`chats/${id}/messages?limit=100&order=desc&skip_users=all`);
+          addTo(
+            `users/${id}/posts/streams?limit=100&order=publish_date_desc&skip_users=all&format=infinite&counters=0`
+          );
         }
-        filterPosts(list);
-        Promise.all(fetchArr)
-          .then((arr) => {
-            for (const o of arr) {
-              if (isObj(o) && Array.isArray(o.list)) filterPosts(o.list);
-            }
-          })
-          .catch(con.err);
       }
+      filterPosts(list);
+      Promise.all(fetchArr)
+        .then((arr) => {
+          for (const o of arr.filter(toList)) {
+            filterPosts(o.list);
+          }
+        })
+        .catch(con.err);
     }
     // `__vue__` is only reliable once the content of the page is rendered
     await query('main[id="content"]');
@@ -5936,6 +5947,7 @@ const runSite = async (input) => {
       // a.auth.visitorId
       // a.init.currentRev
       // a.hash.hash
+      if (!isObj(a)) return;
       try {
         for (const u of Object.values(a.users?.items ?? {})) {
           if (isObj(u) && u.id != null && !('email' in u)) users.set(String(u.id), u);
@@ -5949,7 +5961,6 @@ const runSite = async (input) => {
       } catch (ex) {
         con.dbg('Store:', errMsg(ex));
       }
-      return undefined;
     });
     return;
   }

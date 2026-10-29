@@ -15,6 +15,12 @@ Planned:
 
 * Fansly support
 * For mobile: load all videos on the webpages homepage
+* For Onlyfans: cache fetched posts instead of always rendering to improve performance
+
+## v5.1.3
+
+* Added simplified Chinese
+* Fixed Onlyfans mobile
 
 ## v5.1.2
 

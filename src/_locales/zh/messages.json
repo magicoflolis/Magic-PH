@@ -1,0 +1,158 @@
+{
+  "extName": {
+    "message": "MagicPH"
+  },
+  "extDesc": {
+    "message": "提升成人内容的观看体验：简洁、快速、轻松。"
+  },
+  "extShortDesc": {
+    "message": "简洁、快速、轻松"
+  },
+  "copy": {
+    "message": "复制"
+  },
+  "remove": {
+    "message": "移除"
+  },
+  "close": {
+    "message": "关闭"
+  },
+  "download": {
+    "message": "下载"
+  },
+  "open": {
+    "message": "打开"
+  },
+  "min": {
+    "message": "最小化"
+  },
+  "max": {
+    "message": "最大化"
+  },
+  "settings": {
+    "message": "设置"
+  },
+  "save": {
+    "message": "保存"
+  },
+  "reset": {
+    "message": "重置"
+  },
+  "general": {
+    "message": "常规"
+  },
+  "theme": {
+    "message": "主题"
+  },
+  "free": {
+    "message": "免费"
+  },
+  "prev": {
+    "message": "上一个"
+  },
+  "next": {
+    "message": "下一个"
+  },
+  "auto": {
+    "message": "自动"
+  },
+  "video": {
+    "message": "视频"
+  },
+  "videos": {
+    "message": "视频"
+  },
+  "photo": {
+    "message": "照片"
+  },
+  "photos": {
+    "message": "照片"
+  },
+  "gif": {
+    "message": "GIF"
+  },
+  "gifs": {
+    "message": "GIF"
+  },
+  "audio": {
+    "message": "音频"
+  },
+  "audios": {
+    "message": "音频"
+  },
+  "message": {
+    "message": "消息"
+  },
+  "search": {
+    "message": "搜索"
+  },
+  "issue": {
+    "message": "新建问题"
+  },
+  "autoinject": {
+    "message": "页面加载时显示按钮"
+  },
+  "fullscreen": {
+    "message": "以最大化方式打开"
+  },
+  "newTab": {
+    "message": "新标签页"
+  },
+  "newtab_hint": {
+    "message": "在地址栏中输入或粘贴视频网址或 ID，然后按 Enter 键。"
+  },
+  "empty": {
+    "message": "此页面上未找到视频。"
+  },
+  "copy_all": {
+    "message": "复制所有视频的网址"
+  },
+  "download_all": {
+    "message": "下载所有视频"
+  },
+  "remove_all": {
+    "message": "移除所有视频"
+  },
+  "import_export": {
+    "message": "导入 / 导出"
+  },
+  "import_config": {
+    "message": "导入配置"
+  },
+  "export_config": {
+    "message": "导出配置"
+  },
+  "clear_tab_cache": {
+    "message": "关闭标签页时删除其视频"
+  },
+  "limit_downloads": {
+    "message": "一次下载一个视频"
+  },
+  "auto_hls": {
+    "message": "自动构建 HLS 视频"
+  },
+  "native_player": {
+    "message": "优先使用原生视频播放器"
+  },
+  "concurrency": {
+    "message": "同时下载数"
+  },
+  "dtime": {
+    "message": "按钮淡出前的时间"
+  },
+  "hls_load": {
+    "message": "从 HLS 流获取"
+  },
+  "position": {
+    "message": "按钮位置"
+  },
+  "free_preview": {
+    "message": "免费预览"
+  },
+  "drm_notice": {
+    "message": "受 DRM 保护：没有可播放或下载的内容。"
+  },
+  "play_error": {
+    "message": "浏览器无法播放此视频，请改为下载。"
+  }
+}

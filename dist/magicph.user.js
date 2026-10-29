@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      5.1.2
+// @version      5.1.3
 // @name         MagicPH
 // @description  A video downloader for various adult websites.
 // @author       Magic <magicoflolis@tuta.io>
@@ -1425,6 +1425,57 @@ const translations = {
   "free_preview": "Xem trước miễn phí",
   "drm_notice": "Được bảo vệ bằng DRM: không có gì để phát hoặc tải xuống.",
   "play_error": "Trình duyệt không thể phát video này. Hãy tải xuống thay thế."
+ },
+ "zh": {
+  "copy": "复制",
+  "remove": "移除",
+  "close": "关闭",
+  "download": "下载",
+  "open": "打开",
+  "min": "最小化",
+  "max": "最大化",
+  "settings": "设置",
+  "save": "保存",
+  "reset": "重置",
+  "general": "常规",
+  "theme": "主题",
+  "free": "免费",
+  "prev": "上一个",
+  "next": "下一个",
+  "auto": "自动",
+  "video": "视频",
+  "videos": "视频",
+  "photo": "照片",
+  "photos": "照片",
+  "gif": "GIF",
+  "gifs": "GIF",
+  "audio": "音频",
+  "audios": "音频",
+  "message": "消息",
+  "search": "搜索",
+  "issue": "新建问题",
+  "autoinject": "页面加载时显示按钮",
+  "fullscreen": "以最大化方式打开",
+  "newTab": "新标签页",
+  "newtab_hint": "在地址栏中输入或粘贴视频网址或 ID，然后按 Enter 键。",
+  "empty": "此页面上未找到视频。",
+  "copy_all": "复制所有视频的网址",
+  "download_all": "下载所有视频",
+  "remove_all": "移除所有视频",
+  "import_export": "导入 / 导出",
+  "import_config": "导入配置",
+  "export_config": "导出配置",
+  "clear_tab_cache": "关闭标签页时删除其视频",
+  "limit_downloads": "一次下载一个视频",
+  "auto_hls": "自动构建 HLS 视频",
+  "native_player": "优先使用原生视频播放器",
+  "concurrency": "同时下载数",
+  "dtime": "按钮淡出前的时间",
+  "hls_load": "从 HLS 流获取",
+  "position": "按钮位置",
+  "free_preview": "免费预览",
+  "drm_notice": "受 DRM 保护：没有可播放或下载的内容。",
+  "play_error": "浏览器无法播放此视频，请改为下载。"
  }
 };
 /** [source code](https://github.com/magicoflolis/Magic-PH/tree/master/src/sass/_main.scss) */
@@ -7171,6 +7222,7 @@ const runSite = async (input) => {
      * @param {Record<string, unknown>[]} posts
      */
     const filterPosts = (posts) => {
+      if (!Array.isArray(posts)) return;
       for (const p of posts) {
         if (!isObj(p) || !Array.isArray(p.media) || p.isMediaReady === false) continue;
         const sig = `${p.id}:${p.media.length}`;
@@ -7278,6 +7330,9 @@ const runSite = async (input) => {
         }
         return ok;
       }
+      /**
+       * @param {string | URL} reqURL
+       */
       async function buildHeaders(reqURL) {
         const rules = await getRules();
         const userId = localStorage.getItem('user');
@@ -7300,58 +7355,65 @@ const runSite = async (input) => {
         for (const h of rules.remove_headers) delete headers[h];
         return headers;
       }
+      /**
+       * @param {string | URL} reqURL
+       */
       async function run(reqURL) {
         if (typeof reqURL === 'string') reqURL = toURL(reqURL);
         const headers = await buildHeaders(reqURL);
         const resp = await fetch(reqURL, { credentials: 'include', headers });
         const body = await resp.text();
         if (!resp.ok) throw new Error(`HTTP ${resp.status} — ${body.slice(0, 300)}`);
+        /** @type {Record<string,unknown>} */
         const data = JSON.parse(body);
         return data;
       }
       return { run, verifyAgainst, buildHeaders };
     })();
-    // `&beforePublishTime=${li.postedAtPrecise}`
+    // Next page: `&beforePublishTime=${li.postedAtPrecise}`
     const initArr = await Promise.all([
       ofDiag.run('/api2/v2/posts?limit=100&order=publish_date_desc&format=infinite'),
       ofDiag.run('/api2/v2/posts/paid/all?limit=100&format=infinite&offset=0')
     ]);
-    for (const i of initArr) {
-      if (isObj(i) && Array.isArray(i.list)) {
-        /** @type {Promise<any>[]} */
-        const fetchArr = [];
-        const list = i.list.filter((li) => li.media.filter((m) => m.canView === true).length > 0);
-        for (const a of list) {
-          const author = a.author ?? a.fromUser ?? a.withUser ?? a.chatId;
-          if (!author) continue;
-          if ('email' in author) continue;
-          const id = String(author.id);
-          if (!users.has(id)) {
-            users.set(id, author);
-            fetchArr.push(
-              ofDiag.run(
-                `/api2/v2/users/${id}/posts?limit=100&order=publish_date_desc&skip_users=all&format=infinite&pinned=0&counters=0`
-              )
-            );
-            fetchArr.push(
-              ofDiag.run(`/api2/v2/chats/${id}/messages?limit=100&order=desc&skip_users=all`)
-            );
-            fetchArr.push(
-              ofDiag.run(
-                `/api2/v2/users/${id}/posts/streams?limit=100&order=publish_date_desc&skip_users=all&format=infinite&counters=0`
-              )
-            );
-          }
+    const toList = (item) => isObj(item) && Array.isArray(item.list);
+    for (const i of initArr.filter(toList)) {
+      /** @type {Promise<Record<string,unknown>>[]} */
+      const fetchArr = [];
+      /**
+       * @param {string} str
+       */
+      const addTo = (str) => {
+        fetchArr.push(ofDiag.run(`/api2/v2/${str}`));
+      };
+      const list = i.list.filter((li) => {
+        /** @type {Record<string,unknown>[]} */
+        const _media = li?.media ?? [];
+        return _media.filter((m) => m.canView === true).length > 0;
+      });
+      for (const a of list) {
+        const author = a.author ?? a.fromUser ?? a.withUser ?? a.chatId;
+        if (!author) continue;
+        if ('email' in author) continue;
+        const id = String(author.id);
+        if (!users.has(id)) {
+          users.set(id, author);
+          addTo(
+            `users/${id}/posts?limit=100&order=publish_date_desc&skip_users=all&format=infinite&pinned=0&counters=0`
+          );
+          addTo(`chats/${id}/messages?limit=100&order=desc&skip_users=all`);
+          addTo(
+            `users/${id}/posts/streams?limit=100&order=publish_date_desc&skip_users=all&format=infinite&counters=0`
+          );
         }
-        filterPosts(list);
-        Promise.all(fetchArr)
-          .then((arr) => {
-            for (const o of arr) {
-              if (isObj(o) && Array.isArray(o.list)) filterPosts(o.list);
-            }
-          })
-          .catch(con.err);
       }
+      filterPosts(list);
+      Promise.all(fetchArr)
+        .then((arr) => {
+          for (const o of arr.filter(toList)) {
+            filterPosts(o.list);
+          }
+        })
+        .catch(con.err);
     }
     // `__vue__` is only reliable once the content of the page is rendered
     await query('main[id="content"]');
@@ -7368,6 +7430,7 @@ const runSite = async (input) => {
       // a.auth.visitorId
       // a.init.currentRev
       // a.hash.hash
+      if (!isObj(a)) return;
       try {
         for (const u of Object.values(a.users?.items ?? {})) {
           if (isObj(u) && u.id != null && !('email' in u)) users.set(String(u.id), u);
@@ -7381,7 +7444,6 @@ const runSite = async (input) => {
       } catch (ex) {
         con.dbg('Store:', errMsg(ex));
       }
-      return undefined;
     });
     return;
   }
